@@ -6,13 +6,13 @@ jni-build/obj/**
 app/build
 
 # 2024/4/25 Chih-Yuan Yang: Unknown files
-*.bin
-.idea/
-app/.cxx/
-daemon/
-gradle/caches/
-gradle/native/
-gradle/wrapper/
+#*.bin
+#.idea/
+#app/.cxx/
+#daemon/
+#gradle/caches/
+#gradle/native/
+#gradle/wrapper/
 
 # Built application files
 *.apk

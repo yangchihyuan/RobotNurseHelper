@@ -1,0 +1,3 @@
+/home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app/.cxx/RelWithDebInfo/3kb3h114/x86/CMakeFiles/native-lib.dir
+/home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app/.cxx/RelWithDebInfo/3kb3h114/x86/CMakeFiles/edit_cache.dir
+/home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app/.cxx/RelWithDebInfo/3kb3h114/x86/CMakeFiles/rebuild_cache.dir
