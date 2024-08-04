@@ -86,6 +86,14 @@ sudo apt install qt6-multimedia-dev
 ```
 It will install Qt version 6.4.2.
 
+### Hint
+The two commands to install Qt base and multimedia libraries allow you to compile this project. However, they do not isntall Qt Designer, a convenient tool to the GUI file mainwindow.ui. If you want to install Qt Designer, you need to use this command
+```sh
+sudo apt install qtcreator
+```
+The Qt creator takes more than 1G disk space because it requires many libraries. Once installed, you can launch the program to open the mainwindow.ui file with Qt Designer.
+<img src="QtDesigner_Open.jpg" alt="QtDesigner_Open" height="100"/>
+
 ## PortAudio 
 We use it to play voice on the server transmitted from the Android app and received from the robot's microphone.
 There is no package made for the Ubuntu system, and we need to compile it from downloaded source files, which are available on its GitHub page

@@ -1,22 +1,34 @@
-This folder contains the source file of an Android app running on a Zenbo robot made by ASUS Inc.
+This folder contains the source files of our robot-side app of the ZenboNurseHelper project.
 
-# Requirement #
-This program runs on a Zenbo robot. Although this problem can be installed in Android devices, it won't work. 
+# Requirement
+This app runs on a Zenbo robot made by Asus Inc. Although this app can be installed on other Android devices, the Zenbo's features will not work.
 
-# Environment #
-- Android Studio Jellyfish
-- Zenbo built number MMB29M.TW_Zenbo-13.10.5.122-20190615
+# Developing Tool
+Android Studio Koala (2024.1.1)
 
-# Installation #
-- clone this repository to you computer
-- build this project
-- enable your Zenbo robot's developer options, and enable the USB debugging option
-- connect your computer with the Zenbo robot through a USB cable
-- in your Android Studio, click Run/Run 'app'
-- click the OK button in the Select Deployment Target window, and then the app will be installed and run on the Zenbo robot
+# Platform
+Ubuntu 24.04
 
-# Run the app #
-You can find the app 'Zenbo Nurse Helper' in both the robot's Android apps panel and Zenbo Apps panel.
+# Build
+Just use Android Studio to open this directory and the gradle will automatically build this project.
+
+# Installation
+The installation of this app is the same as ones of other Android apps. You can turn on your Zenbo robot's developer options as well as the USB debugging/installing options. Thereafter, you can install the app from the Android Studio through a USB cable connecting to the Zenbo robot by "Running the app on the Zenbo device".
+Another way is to build an APK file, copy the APK file to a USB thumb disk, and install the app through the APK file by inserting the USB thumb disk on a USB port on the Zenbo robot's head.
+
+# Hint
+If you use the USB debugging mode to install this app. You need to put your Ubuntu account in the plugdev group. Use this command to check whether your account is in the group already.
+```sh
+cat /etc/group | grep plugdev
+```
+If you can find your user name, your account is already in the group.
+Otherwise, use this command to add your account into the group
+```sh
+sudo adduser <your user name> plugdev
+```
+
+# Run the app
+You can find the app 'Zenbo Nurse Helper' in both the robot's Android apps panel.
 
 # Known problems and workarounds
 ## libprotobuf incompatible problem
