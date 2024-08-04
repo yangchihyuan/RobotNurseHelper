@@ -93,7 +93,8 @@ The two commands to install Qt base and multimedia libraries allow you to compil
 sudo apt install qtcreator
 ```
 The Qt creator takes more than 1G disk space because it requires many libraries. Once installed, you can launch the program to open the mainwindow.ui file with Qt Designer.
-<img src="QtDesigner_Open.jpg" alt="QtDesigner_Open" height="100"/>
+
+![QtDesigner_Open](QtDesigner_Open.jpg "QtDesigner_Open")
 
 ## PortAudio 
 We use it to play voice on the server transmitted from the Android app and received from the robot's microphone.
