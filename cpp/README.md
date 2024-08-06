@@ -1,5 +1,6 @@
 This folder contains the code files for the server side program of ZenboNurseHelper. It provides an Graphic User Interface (GUI) for a user to remotely control the robot's action. The GUI currently looks like the image below and allows a user to send commands to the robot-side's app, which calls Zenbo SDK to execute those commands.
-<img src="GUI.jpg" alt="GUI" height="250"/>
+
+![GUI](GUI.jpg "GUI")
 
 In this project, we utilize Intel OpenVINO's human_pose_estimation_demo in their Open Model Zoo 2024 demos as a tool to guide our Zenbo robot. Our server-side program receives frames transmitted from the robot-side app, estimates human pose landmark coordinates, and reports the results to the robot-side program.
 
@@ -92,7 +93,8 @@ The two commands to install Qt base and multimedia libraries allow you to compil
 sudo apt install qtcreator
 ```
 The Qt creator takes more than 1G disk space because it requires many libraries. Once installed, you can launch the program to open the mainwindow.ui file with Qt Designer.
-<img src="QtDesigner_Open.jpg" alt="QtDesigner_Open" height="100"/>
+
+![QtDesigner_Open](QtDesigner_Open.jpg "QtDesigner_Open")
 
 ## PortAudio 
 We use it to play voice on the server transmitted from the Android app and received from the robot's microphone.
