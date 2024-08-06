@@ -197,6 +197,9 @@ MainWindow::MainWindow(QWidget *parent)
 //      R"(/home/chihyuan/whisper.cpp/models/ggml-small.bin)", cparams);        
       R"(/home/chihyuan/whisper.cpp/models/ggml-base.bin)", cparams);
 //      R"(/home/chihyuan/whisper.cpp/models/ggml-medium.bin)", cparams);    //waiting time too long
+
+    //connect message and SendCommandThread
+    connect( this, &MainWindow::addSendCommandMessage, &thread_send_command, &SendCommandThread::AddMessage);
 }
 
 MainWindow::~MainWindow()
@@ -452,7 +455,7 @@ void MainWindow::displayMessage(const QString& str)
 void MainWindow::on_pushButton_speak_clicked()
 {
     //Get the content of the plainTextEdit_speak object, and send it to Robot.
-    QString text = ui->plainTextEdit_speak->toPlainText();
+    QString text = ui->plainTextEdit_speak->toPlainText();   //This line causes an exception. Why?
     QString speed = ui->lineEdit_speed->text();
     QString volume = ui->lineEdit_volume->text();
     QString speak_pitch = ui->lineEdit_speak_pitch->text();
@@ -465,8 +468,12 @@ void MainWindow::on_pushButton_speak_clicked()
     {
         QModelIndex index = ui->listView_FacialExpressions->currentIndex();
         report_data.set_face(index.row());
-    }        
-    thread_send_command.AddMessage(report_data);
+    }
+    //Does this command cause segmentation fault? Because my UI thread call a function in the
+    //send_command thread? If so, How to call it?
+    emit addSendCommandMessage(report_data);
+
+//    thread_send_command.AddMessage(report_data);
 }
 
 void MainWindow::on_pushButton_voice_to_text_clicked()
@@ -598,7 +605,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     QString action;
     int key = event->key();
-    std::cout << key << std::endl;
+//    std::cout << key << std::endl;
     bool bEffective = true;
     switch(key)
     {
@@ -644,6 +651,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             break;
         case 16777264:  //F1
             action = "speak " + ui->plainTextEdit_speak->toPlainText();
+            //show I send a message to the main window rather than call the function?
             on_pushButton_speak_clicked();
             break;
         case 16777265:  //F2
@@ -658,6 +666,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     //    QString str = QString::number(key);
         QString_SentCommands.append(action + "\n");
     //    QString_SentCommands.append(text + "\n");
+    //  It crashes in this command, why?
         ui->plainTextEdit_SentCommands->document()->setPlainText(QString_SentCommands);
         ui->plainTextEdit_SentCommands->verticalScrollBar()->setValue(ui->plainTextEdit_SentCommands->verticalScrollBar()->maximum());
     }

@@ -72,7 +72,8 @@ private:
     void send_move_head_command(int yaw, int pitch, int speed);
 
 signals:
-    void newMessage(QString);
+    void newMessage(QString);   //where is the connect for this signal?
+    void addSendCommandMessage(ZenboNurseHelperProtobuf::ReportAndCommand);
 
 private slots:
     void newConnection();

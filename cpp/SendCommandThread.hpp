@@ -20,11 +20,13 @@ class SendCommandThread: public QThread
 
 public:
     SendCommandThread();
-    void AddMessage(ZenboNurseHelperProtobuf::ReportAndCommand message);
 
     bool b_KeepLoop;
     QTcpSocket *pSocket = NULL;
     condition_variable cond_var_report_result;    
+
+public slots:
+    void AddMessage(ZenboNurseHelperProtobuf::ReportAndCommand);
 
 protected:
     void run();
@@ -33,7 +35,6 @@ protected:
     mutex mutex_result_buffer;
     queue<ZenboNurseHelperProtobuf::ReportAndCommand> mQueue;
 
-private:
 };
 
 #endif
