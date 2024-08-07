@@ -32,7 +32,7 @@ protected:
     void run();
     char str_results[4096];
     int str_results_len;
-    mutex mutex_result_buffer;
+    mutex mutex_message_buffer;
     queue<ZenboNurseHelperProtobuf::ReportAndCommand> mQueue;
 
 };
