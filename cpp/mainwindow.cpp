@@ -26,8 +26,6 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-//    QPixmap pix("/home/chihyuan/ZenboNurseHelper1/ZenboFacialExpression.jpeg");
-//    ui->label_FacialExpressions->setPixmap(pix.scaled(701,541,Qt::KeepAspectRatio));
 
     QStringList strList;
     strList.append("ACTIVE");
@@ -469,11 +467,11 @@ void MainWindow::on_pushButton_speak_clicked()
         QModelIndex index = ui->listView_FacialExpressions->currentIndex();
         report_data.set_face(index.row());
     }
-    //Does this command cause segmentation fault? Because my UI thread call a function in the
-    //send_command thread? If so, How to call it?
-    emit addSendCommandMessage(report_data);
+    //The segmentation fault only occurs when sockets are connected. Why?
+    //Something wrong in the thread?
+//    emit addSendCommandMessage(report_data);
 
-//    thread_send_command.AddMessage(report_data);
+    thread_send_command.AddMessage(report_data);
 }
 
 void MainWindow::on_pushButton_voice_to_text_clicked()

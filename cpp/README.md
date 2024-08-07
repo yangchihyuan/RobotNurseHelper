@@ -58,7 +58,7 @@ git clone https://github.com/yangchihyuan/ZenboNurseHelper.git
 ```
 
 # Install Dependencies
-## Protocol Buffer. 
+## Protocol Buffer 
 We use this tool to pass messages from our server program to the Android app.
 ```sh
 sudo apt install protobuf-compiler
