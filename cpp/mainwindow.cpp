@@ -117,6 +117,26 @@ MainWindow::MainWindow(QWidget *parent)
     ui->listView_PredefinedAction->setModel(ItemModel_action);
     ui->listView_PredefinedAction->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
+    QFile textFile("Sentence.txt");
+    QStandardItemModel* ItemModel_sentence = new QStandardItemModel(this);
+    if(textFile.open(QIODevice::ReadOnly))
+    {
+        QTextStream textStream(&textFile);
+        while (true)
+        {
+            QString line = textStream.readLine();
+            if (line.isNull())
+                break;
+            else
+            {
+                QStandardItem *item = new QStandardItem(line);
+                ItemModel_sentence->appendRow(item);
+            }
+        }
+        ui->listView_Sentence1->setModel(ItemModel_sentence);
+        ui->listView_Sentence1->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    } 
+
 
     //allocate buffer
     frame_buffer = std::make_unique<char[]>(100000);
@@ -472,6 +492,12 @@ void MainWindow::on_pushButton_speak_clicked()
 //    emit addSendCommandMessage(report_data);
 
     thread_send_command.AddMessage(report_data);
+
+    QString action;
+    action = "speak " + ui->plainTextEdit_speak->toPlainText();
+    QString_SentCommands.append(action + "\n");
+    ui->plainTextEdit_SentCommands->document()->setPlainText(QString_SentCommands);
+    ui->plainTextEdit_SentCommands->verticalScrollBar()->setValue(ui->plainTextEdit_SentCommands->verticalScrollBar()->maximum());
 }
 
 void MainWindow::on_pushButton_voice_to_text_clicked()
@@ -493,7 +519,8 @@ void MainWindow::on_pushButton_voice_to_text_clicked()
         whisper_full_params wparams = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
         wparams.translate = false;
         wparams.language = "zh";
-        wparams.n_threads = 8;
+        wparams.n_threads = 4;
+        wparams.no_context = true;
         if (whisper_full(ctx, wparams, (float*)buffer.buffer().constData(), buffer.size() / 4) == 0)
         {
             std::string text = "";
@@ -565,6 +592,18 @@ void MainWindow::on_listView_PredefinedAction_doubleClicked(const QModelIndex &i
     report_data.set_predefined_action(index.row());
     thread_send_command.AddMessage(report_data);
 }
+
+void MainWindow::on_listView_Sentence1_doubleClicked(const QModelIndex &index)
+{
+    on_pushButton_speak_clicked();
+}
+
+void MainWindow::on_listView_Sentence1_clicked(const QModelIndex &index)
+{
+    QString itemText = index.data(Qt::DisplayRole).toString();
+    ui->plainTextEdit_speak->setPlainText(itemText);
+}
+
 
 void MainWindow::timer_event()
 {
@@ -648,8 +687,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             send_move_head_command(m_iyaw, m_ipitch, 3);
             break;
         case 16777264:  //F1
-            action = "speak " + ui->plainTextEdit_speak->toPlainText();
-            //show I send a message to the main window rather than call the function?
             on_pushButton_speak_clicked();
             break;
         case 16777265:  //F2
@@ -661,10 +698,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     }
     if(bEffective)
     {
-    //    QString str = QString::number(key);
         QString_SentCommands.append(action + "\n");
-    //    QString_SentCommands.append(text + "\n");
-    //  It crashes in this command, why?
         ui->plainTextEdit_SentCommands->document()->setPlainText(QString_SentCommands);
         ui->plainTextEdit_SentCommands->verticalScrollBar()->setValue(ui->plainTextEdit_SentCommands->verticalScrollBar()->maximum());
     }

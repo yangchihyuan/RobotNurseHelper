@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1081</width>
-    <height>520</height>
+    <width>1014</width>
+    <height>857</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -750,6 +750,16 @@
     </property>
     <property name="text">
      <string>Voice to Text(F2)</string>
+    </property>
+   </widget>
+   <widget class="QListView" name="listView_Sentence1">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>480</y>
+      <width>161</width>
+      <height>361</height>
+     </rect>
     </property>
    </widget>
   </widget>
