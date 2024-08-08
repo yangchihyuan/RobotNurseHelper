@@ -46,8 +46,8 @@ void SendCommandThread::run()
 
 void SendCommandThread::AddMessage(ZenboNurseHelperProtobuf::ReportAndCommand message)
 {
-    mutex_result_buffer.lock();
+    mutex_message_buffer.lock();
     mQueue.push(message);
-    mutex_result_buffer.unlock();
+    mutex_message_buffer.unlock();
     cond_var_report_result.notify_one();
 }

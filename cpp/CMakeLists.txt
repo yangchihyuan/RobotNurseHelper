@@ -61,4 +61,4 @@ set_target_properties(${TARGET_NAME} PROPERTIES "CMAKE_CXX_FLAGS" "${CMAKE_CXX_F
 target_link_libraries(${OMZ_DEMO_NAME} PRIVATE ${PROTOBUF_LIBRARIES}
     Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network
     Qt${QT_VERSION_MAJOR}::Multimedia ${GGML_OBJECT} ${EXAMPLES_OBJECT}
-    gomp "$ENV{HOME}/whisper.cpp/src/whisper.o")
+    gomp "$ENV{HOME}/whisper.cpp/src/whisper.o" SDL2)
