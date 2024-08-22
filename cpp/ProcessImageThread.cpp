@@ -18,12 +18,17 @@ extern bool bNewoutFrame;
 
 ProcessImageThread::ProcessImageThread()
 {
-    frame_buffer1 = std::make_unique<char[]>(100000);
+    frame_buffer1 = std::make_unique<char[]>(buffer_size);
 }
 
 typedef pair<float,int> mypair;
 bool comparator ( const mypair& l, const mypair& r)
    { return l.first < r.first; }
+
+int ProcessImageThread::get_buffer_size()
+{
+    return buffer_size;
+}
 
 void ProcessImageThread::run()
 {

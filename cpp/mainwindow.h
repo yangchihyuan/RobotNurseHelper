@@ -73,6 +73,8 @@ private:
     int m_ipitch = 30;
     void send_move_head_command(int yaw, int pitch, int speed);
 
+    int buffer_size = 500000;
+
 signals:
     void newMessage(QString);   //where is the connect for this signal?
     void addSendCommandMessage(ZenboNurseHelperProtobuf::ReportAndCommand);

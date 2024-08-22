@@ -156,7 +156,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     //allocate buffer
-    frame_buffer = std::make_unique<char[]>(100000);
+    frame_buffer = std::make_unique<char[]>(buffer_size);   //how large should be the buffer size?
     buffer_length = 0;
     iEndOfAFrame = 0;
 
@@ -346,53 +346,64 @@ void MainWindow::readSocket()
 
 //    socketStream.startTransaction();
     char* frame_buffer_head = frame_buffer.get();
-    //Valgrind reports an error message here Invalid write of size 2. Why?
-    qint64 readlength = socketStream.readRawData(frame_buffer_head+buffer_length, byteAvailable);     //I can get data by using readRawData
     int buffer_length_old = buffer_length;
-    buffer_length += readlength;     //buffer gets longer from the read data
-
-    //look for the keyword "EndOfAFrame" in the buffer.
-    //The bug occurs if buffer_length_old <11
-    string pattern("EndOfAFrame");
-    int pattern_length = pattern.length();
-    string haystack;
-    int begin_pos = 0;
-    if(buffer_length_old >= pattern_length)
+    //Valgrind reports an error message here Invalid write of size 2. Why?
+    //prevent buffer overflow
+    if(buffer_length+byteAvailable < buffer_size )
     {
-        begin_pos = buffer_length_old - pattern_length;
-        haystack.assign(frame_buffer_head + buffer_length_old - pattern_length, readlength+pattern_length); 
-    }
-    else
-        haystack.assign(frame_buffer_head, buffer_length); 
+        qint64 readlength = socketStream.readRawData(frame_buffer_head+buffer_length, byteAvailable);     //I can get data by using readRawData
+        buffer_length += readlength;     //buffer gets longer from the read data
 
-    size_t n = haystack.find(pattern);
-
-    //if found, copy buffer to frame_buffer1
-    if (n != string::npos)
-    {
-        if( iEndOfAFrame % 1000 == 0)
-            cout << "Found EndOfAFrame " << iEndOfAFrame++ << endl;
+        //look for the keyword "EndOfAFrame" in the buffer.
+        //The bug occurs if buffer_length_old <11
+        string pattern("EndOfAFrame");
+        int pattern_length = pattern.length();
+        string haystack;
+        int begin_pos = 0;
+        if(buffer_length_old >= pattern_length)
+        {
+            begin_pos = buffer_length_old - pattern_length;
+            haystack.assign(frame_buffer_head + buffer_length_old - pattern_length, readlength+pattern_length); 
+        }
         else
-            iEndOfAFrame++;
+            haystack.assign(frame_buffer_head, buffer_length); 
 
-        //11 is the length of "EndOfAFrame"
-        size_t frame_length = begin_pos + n + pattern_length;   //include the pattern "EndOfAFrame"
-        thread_process_image.mutex_frame_buffer1.lock();
-        copy(frame_buffer_head,frame_buffer_head+frame_length,thread_process_image.frame_buffer1.get());
-        thread_process_image.b_frame_buffer1_unused = true;
-        thread_process_image.frame_buffer1_length = frame_length;
-        thread_process_image.mutex_frame_buffer1.unlock();
-        thread_process_image.cond_var_process_image.notify_one();
+        size_t n = haystack.find(pattern);
 
-        //move data
-        int remaining_length = buffer_length - frame_length;
-        if( remaining_length > 0)
-            copy(frame_buffer_head+frame_length,
-                    frame_buffer_head+buffer_length,
-                    frame_buffer_head);
-        
-        //update buffer_length
-        buffer_length = remaining_length;
+        //if found, copy buffer to frame_buffer1
+        if (n != string::npos)
+        {
+            if( iEndOfAFrame % 1000 == 0)
+                cout << "Found EndOfAFrame " << iEndOfAFrame++ << endl;
+            else
+                iEndOfAFrame++;
+
+            int frame_length = begin_pos + n + pattern_length;   //include the pattern "EndOfAFrame"
+            thread_process_image.mutex_frame_buffer1.lock();
+            //To prevent thread_process_image's frame_buffer1 overflow
+            if( frame_length <= thread_process_image.get_buffer_size())
+                copy(frame_buffer_head,frame_buffer_head+frame_length,thread_process_image.frame_buffer1.get());
+            else
+            {
+                stdout << "error, frame_length > buffer_size" << std::endl;
+                throw std::exception( "frame_length > buffer_size" );
+            }
+
+            thread_process_image.b_frame_buffer1_unused = true;
+            thread_process_image.frame_buffer1_length = frame_length;
+            thread_process_image.mutex_frame_buffer1.unlock();
+            thread_process_image.cond_var_process_image.notify_one();
+
+            //move data
+            int remaining_length = buffer_length - frame_length;
+            if( remaining_length > 0)
+                copy(frame_buffer_head+frame_length,
+                        frame_buffer_head+buffer_length,
+                        frame_buffer_head);
+            
+            //update buffer_length
+            buffer_length = remaining_length;
+        }
     }
 
 //        if(!socketStream.commitTransaction())
