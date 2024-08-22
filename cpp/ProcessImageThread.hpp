@@ -24,6 +24,7 @@ public:
     bool b_WhileLoop = true;
     mutex mutex_frame_buffer1;
     unique_ptr<char[]> frame_buffer1;    //frame_buffer1 is used for human pose estimation
+    int get_buffer_size();
     bool b_frame_buffer1_unused = false;    //Indicate whether frame_buffer1 is unused.
     int frame_buffer1_length = 0;
     condition_variable cond_var_process_image;
@@ -32,6 +33,10 @@ public:
 
 protected:
     void run();
+
+private:
+    int buffer_size = 500000;
+
 
 };
 
