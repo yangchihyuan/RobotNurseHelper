@@ -19,7 +19,8 @@
 #include <QAudioSource>
 #include <QBuffer>
  
-#include <whisper.h>
+//2024/8/21 disable whisper.cpp 
+//#include <whisper.h>
 
 
 using namespace std;
@@ -44,7 +45,8 @@ protected:
   QAudioSource* audioSrc = nullptr;
   QBuffer       buffer;
   bool bListening = false;
-  whisper_context* ctx = nullptr;
+  //2024/8/21 disable whisper.cpp
+//  whisper_context* ctx = nullptr;
 
 
 private:
@@ -104,6 +106,10 @@ private slots:
     void on_listView_PredefinedAction_doubleClicked(const QModelIndex &index);
     void on_listView_Sentence1_doubleClicked(const QModelIndex &index);
     void on_listView_Sentence1_clicked(const QModelIndex &index);
+    void on_listView_Sentence2_doubleClicked(const QModelIndex &index);
+    void on_listView_Sentence2_clicked(const QModelIndex &index);
+    void on_listView_Sentence3_doubleClicked(const QModelIndex &index);
+    void on_listView_Sentence3_clicked(const QModelIndex &index);
 
     void timer_event();
 
