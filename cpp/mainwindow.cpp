@@ -66,45 +66,45 @@ MainWindow::MainWindow(QWidget *parent)
     ui->listView_FacialExpressions->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     QStringList strList_action;
-    strList_action.append("Body_twist_1");
-    strList_action.append("Body_twist_2");
-    strList_action.append("Dance_2_loop");
-    strList_action.append("Dance_3_loop");
-    strList_action.append("Dance_b_1_loop");
-    strList_action.append("Dance_s_1_loop");
-    strList_action.append("Default_1");
-    strList_action.append("Default_2");
+    strList_action.append("Body_twist_1 large");
+    strList_action.append("Body_twist_2 small");
+    strList_action.append("Dance_2_loop nect move");
+    strList_action.append("Dance_3_loop nect still");
+    strList_action.append("Dance_b_1_loop nod+turn");
+    strList_action.append("Dance_s_1_loop nod");
+    strList_action.append("Default_1 to 15");
+    strList_action.append("Default_2 no difference");
     strList_action.append("Find_face");
-    strList_action.append("Head_down_1");
-    strList_action.append("Head_down_2");
-    strList_action.append("Head_down_3");
-    strList_action.append("Head_down_4");
-    strList_action.append("Head_down_5");
-    strList_action.append("Head_down_7");
+    strList_action.append("Head_down_1 slow");
+    strList_action.append("Head_down_2 fast");
+    strList_action.append("Head_down_3 slow");
+    strList_action.append("Head_down_4 very slow");
+    strList_action.append("Head_down_5 very slow");
+    strList_action.append("Head_down_7 slow to 0");
     strList_action.append("Head_twist_1_loop");
-    strList_action.append("Head_up_1");
-    strList_action.append("Head_up_2");
-    strList_action.append("Head_up_3");
-    strList_action.append("Head_up_4");
-    strList_action.append("Head_up_5");
-    strList_action.append("Head_up_6");
-    strList_action.append("Head_up_7");
+    strList_action.append("Head_up_1 +10 fast");
+    strList_action.append("Head_up_2 +10 slow");
+    strList_action.append("Head_up_3 to 30 slow");
+    strList_action.append("Head_up_4 to 15 slow");
+    strList_action.append("Head_up_5 +10 very slow");
+    strList_action.append("Head_up_6 +30 normal");
+    strList_action.append("Head_up_7 +10 fast");
     strList_action.append("Music_1_loop");
     strList_action.append("Nod_1");
-    strList_action.append("Shake_head_1");
-    strList_action.append("Shake_head_2");
-    strList_action.append("Shake_head_3");
+    strList_action.append("Shake_head_1 +5 slow left");
+    strList_action.append("Shake_head_2 -15 slow left");
+    strList_action.append("Shake_head_3 quick two sides");
     strList_action.append("Shake_head_4_loop");
-    strList_action.append("Shake_head_5");
-    strList_action.append("Shake_head_6");
-    strList_action.append("Turn_left_1");
-    strList_action.append("Turn_left_2");
-    strList_action.append("Turn_left_reverse_1");
-    strList_action.append("Turn_left_reverse_2");
-    strList_action.append("Turn_right_1");
-    strList_action.append("Turn_right_2");
-    strList_action.append("Turn_right_reverse_1");
-    strList_action.append("Turn_right_reverse_2");
+    strList_action.append("Shake_head_5 slow two sides");
+    strList_action.append("Shake_head_6 -10 no shake");
+    strList_action.append("Turn_left_1 neck from + to 0");
+    strList_action.append("Turn_left_2 body 20");
+    strList_action.append("Turn_left_reverse_1 neck +20");
+    strList_action.append("Turn_left_reverse_2 body +15");
+    strList_action.append("Turn_right_1 neck 22.5");
+    strList_action.append("Turn_right_2 body 20");
+    strList_action.append("Turn_right_reverse_1 neck 22.5");
+    strList_action.append("Turn_right_reverse_2 body 20");
 
     QStandardItemModel* ItemModel_action = new QStandardItemModel(this);
     nCount = strList_action.size();
@@ -118,23 +118,40 @@ MainWindow::MainWindow(QWidget *parent)
     ui->listView_PredefinedAction->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     QFile textFile("Sentence.txt");
-    QStandardItemModel* ItemModel_sentence = new QStandardItemModel(this);
     if(textFile.open(QIODevice::ReadOnly))
     {
         QTextStream textStream(&textFile);
-        while (true)
+        for( int listView_index = 0; listView_index <= 2; listView_index++)
         {
-            QString line = textStream.readLine();
-            if (line.isNull())
-                break;
-            else
+            QStandardItemModel* ItemModel_sentence = new QStandardItemModel(this);
+            for(int i=0;i<15;i++)
             {
-                QStandardItem *item = new QStandardItem(line);
-                ItemModel_sentence->appendRow(item);
+                QString line = textStream.readLine();
+                if (line.isNull())
+                    break;
+                else
+                {
+                    QStandardItem *item = new QStandardItem(line);
+                    ItemModel_sentence->appendRow(item);
+                }
+            }
+            
+            switch(listView_index)
+            {
+                case 0:
+                    ui->listView_Sentence1->setModel(ItemModel_sentence);
+                    ui->listView_Sentence1->setEditTriggers(QAbstractItemView::NoEditTriggers);
+                    break;
+                case 1:
+                    ui->listView_Sentence2->setModel(ItemModel_sentence);
+                    ui->listView_Sentence2->setEditTriggers(QAbstractItemView::NoEditTriggers);
+                    break;
+                case 2:
+                    ui->listView_Sentence3->setModel(ItemModel_sentence);
+                    ui->listView_Sentence3->setEditTriggers(QAbstractItemView::NoEditTriggers);
+                    break;
             }
         }
-        ui->listView_Sentence1->setModel(ItemModel_sentence);
-        ui->listView_Sentence1->setEditTriggers(QAbstractItemView::NoEditTriggers);
     } 
 
 
@@ -198,7 +215,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     // setup audio format
     QAudioFormat format;
-    format.setSampleRate(WHISPER_SAMPLE_RATE);
+    //2024/8/21 disable whisper.cpp
+//    format.setSampleRate(WHISPER_SAMPLE_RATE);
     format.setChannelCount(1);
     format.setSampleFormat(QAudioFormat::Float);
 
@@ -208,6 +226,8 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     // initial whisper.cpp
+    //2024/8/21 disable whisper.cpp
+    /*
     whisper_context_params cparams = whisper_context_default_params();
     cparams.use_gpu = true;
     //language is not set in the cparams
@@ -217,6 +237,7 @@ MainWindow::MainWindow(QWidget *parent)
 //      R"(/home/chihyuan/whisper.cpp/models/ggml-medium.bin)", cparams);    //waiting time too long
 
     //connect message and SendCommandThread
+    */
     connect( this, &MainWindow::addSendCommandMessage, &thread_send_command, &SendCommandThread::AddMessage);
 }
 
@@ -263,7 +284,8 @@ MainWindow::~MainWindow()
     if (audioSrc != nullptr)
       delete audioSrc;
  
-    whisper_free(ctx);
+    //2024/8/21 disable whisper.cpp
+//    whisper_free(ctx);
 
     delete ui;
 }
@@ -319,20 +341,33 @@ void MainWindow::readSocket()
     QByteArray buffer;
 
     QDataStream socketStream(socket);
-    socketStream.setVersion(QDataStream::Qt_DefaultCompiledVersion);
+//    socketStream.setVersion(QDataStream::Qt_DefaultCompiledVersion);
     qint64 byteAvailable = socket->bytesAvailable();
 
-    socketStream.startTransaction();
+//    socketStream.startTransaction();
     char* frame_buffer_head = frame_buffer.get();
+    //Valgrind reports an error message here Invalid write of size 2. Why?
     qint64 readlength = socketStream.readRawData(frame_buffer_head+buffer_length, byteAvailable);     //I can get data by using readRawData
-    buffer_length += readlength;
+    int buffer_length_old = buffer_length;
+    buffer_length += readlength;     //buffer gets longer from the read data
 
-    //look for the keyword "EndOfAFrame" in the large buffer.
-    string haystack(frame_buffer_head + buffer_length - readlength - 11, readlength+11); 
+    //look for the keyword "EndOfAFrame" in the buffer.
+    //The bug occurs if buffer_length_old <11
     string pattern("EndOfAFrame");
+    int pattern_length = pattern.length();
+    string haystack;
+    int begin_pos = 0;
+    if(buffer_length_old >= pattern_length)
+    {
+        begin_pos = buffer_length_old - pattern_length;
+        haystack.assign(frame_buffer_head + buffer_length_old - pattern_length, readlength+pattern_length); 
+    }
+    else
+        haystack.assign(frame_buffer_head, buffer_length); 
+
     size_t n = haystack.find(pattern);
 
-    //if found, copy large buffer to frame_buffer1
+    //if found, copy buffer to frame_buffer1
     if (n != string::npos)
     {
         if( iEndOfAFrame % 1000 == 0)
@@ -341,7 +376,7 @@ void MainWindow::readSocket()
             iEndOfAFrame++;
 
         //11 is the length of "EndOfAFrame"
-        size_t frame_length = buffer_length - readlength -11 + n + 11;   //include the "EndOfAFrame"
+        size_t frame_length = begin_pos + n + pattern_length;   //include the pattern "EndOfAFrame"
         thread_process_image.mutex_frame_buffer1.lock();
         copy(frame_buffer_head,frame_buffer_head+frame_length,thread_process_image.frame_buffer1.get());
         thread_process_image.b_frame_buffer1_unused = true;
@@ -360,13 +395,12 @@ void MainWindow::readSocket()
         buffer_length = remaining_length;
     }
 
-    if(!socketStream.commitTransaction())
-    {
-        QString message = QString("%1 :: Waiting for more data to come..").arg(socket->socketDescriptor());
-        emit newMessage(message);
-        return;
-    }
-
+//        if(!socketStream.commitTransaction())
+//        {
+//            QString message = QString("%1 :: Waiting for more data to come..").arg(socket->socketDescriptor());
+//            emit newMessage(message);
+//            return;
+//        }
 }
 
 
@@ -515,7 +549,8 @@ void MainWindow::on_pushButton_voice_to_text_clicked()
         bListening = false;
         audioSrc->stop();
         buffer.close();
-
+    //2024/8/21 disable whisper.cpp
+/*
         whisper_full_params wparams = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
         wparams.translate = false;
         wparams.language = "zh";
@@ -530,6 +565,7 @@ void MainWindow::on_pushButton_voice_to_text_clicked()
 
             ui->plainTextEdit_speak->setPlainText(QString::fromStdString(text));
         }
+        */
         ui->pushButton_voice_to_text->setText("Voice to Text(F2)");
     }
 }
@@ -604,6 +640,27 @@ void MainWindow::on_listView_Sentence1_clicked(const QModelIndex &index)
     ui->plainTextEdit_speak->setPlainText(itemText);
 }
 
+void MainWindow::on_listView_Sentence2_doubleClicked(const QModelIndex &index)
+{
+    on_pushButton_speak_clicked();
+}
+
+void MainWindow::on_listView_Sentence2_clicked(const QModelIndex &index)
+{
+    QString itemText = index.data(Qt::DisplayRole).toString();
+    ui->plainTextEdit_speak->setPlainText(itemText);
+}
+
+void MainWindow::on_listView_Sentence3_doubleClicked(const QModelIndex &index)
+{
+    on_pushButton_speak_clicked();
+}
+
+void MainWindow::on_listView_Sentence3_clicked(const QModelIndex &index)
+{
+    QString itemText = index.data(Qt::DisplayRole).toString();
+    ui->plainTextEdit_speak->setPlainText(itemText);
+}
 
 void MainWindow::timer_event()
 {
