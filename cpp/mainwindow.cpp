@@ -11,6 +11,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <QScrollBar>
+#include <stdexcept>
 
 extern std::mutex gMutex_audio_buffer;
 extern std::queue<short> AudioBuffer;
@@ -385,8 +386,8 @@ void MainWindow::readSocket()
                 copy(frame_buffer_head,frame_buffer_head+frame_length,thread_process_image.frame_buffer1.get());
             else
             {
-                stdout << "error, frame_length > buffer_size" << std::endl;
-                throw std::exception( "frame_length > buffer_size" );
+                std::cout << "error, frame_length > buffer_size" << std::endl;
+                throw( std::length_error( "frame_length > buffer_size" ) );
             }
 
             thread_process_image.b_frame_buffer1_unused = true;
