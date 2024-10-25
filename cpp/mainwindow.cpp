@@ -386,8 +386,8 @@ void MainWindow::readSocket()
                 copy(frame_buffer_head,frame_buffer_head+frame_length,thread_process_image.frame_buffer1.get());
             else
             {
-                cout << "error, frame_length > buffer_size" << std::endl;
-                throw std::exception();
+                stdout << "error, frame_length > buffer_size" << std::endl;
+                throw std::exception( "frame_length > buffer_size" );
             }
 
             thread_process_image.b_frame_buffer1_unused = true;
