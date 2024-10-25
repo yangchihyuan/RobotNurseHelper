@@ -125,7 +125,7 @@ sudo make install
 
 On some Linux systems, we need to reload the system to make the library visible.
 ```sh
-ldconfig
+sudo ldconfig
 ```
 
 
