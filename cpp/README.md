@@ -7,7 +7,7 @@ In this project, we utilize Intel OpenVINO's human_pose_estimation_demo in their
 # Install the compiler
 Your Ubuntu system may be too clear to have the compiler. Please install it by
 ```sh
-sudo apt-get -y install build-essential
+sudo apt -y install build-essential
 ```
 
 # OpenVINO Setting
