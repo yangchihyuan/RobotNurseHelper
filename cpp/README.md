@@ -41,6 +41,7 @@ We need a pretrained model human-pose-estimation-0001.xml and its bin file used 
 To download the model, we use a Python tool package omz_tools, whose installation instruction is a part of the open_model_zoo. See [(Link)](https://github.com/openvinotoolkit/open_model_zoo/blob/master/tools/model_tools/README.md).
 However, the instruction does not fully work on Ubuntu 24.04, which prevents system-wide Python package installation. Our solution is to install a Debian packaged Python application by
 ```sh
+sudo apt-get update
 sudo apt -y install python3-pip
 ```
 This command also installs the setuptools package, which is equivalent to the open_model_zoo's installation instruction "pip install setuptools".
