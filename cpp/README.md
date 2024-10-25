@@ -123,6 +123,12 @@ make
 sudo make install
 ```
 
+On some Linux systems, we need to reload the system to make the library visible.
+```sh
+ldconfig
+```
+
+
 ## whisper.cpp
 It is voice-to-text library and we utilize it on our server-side program to quickly generate sentences spoken by an operator, which will be sent to the Zenbo robot to speak out.
 There is no package make for the Ubuntu system, and we need to compile it from it source file downloaded from its GitHub repository
