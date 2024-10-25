@@ -32,9 +32,10 @@ int ProcessImageThread::get_buffer_size()
 
 void ProcessImageThread::run()
 {
-    std::string pose_model_path("/home/chihyuan/open_model_zoo/models/intel/human-pose-estimation-0001/FP32/human-pose-estimation-0001.xml");
+    std::string str_home_path(getenv("HOME"));
+    std::string pose_model_path = str_home_path + "/open_model_zoo/models/intel/human-pose-estimation-0001/FP32/human-pose-estimation-0001.xml";
     bool bSaveTransmittedImage = false;
-    std::string save_to_directory("/home/chihyuan/Downloads");
+    std::string save_to_directory = str_home_path + "/Downloads";
     HumanPoseEstimator estimator(pose_model_path);
     string raw_images_directory = save_to_directory + "/raw_images";
     if(bSaveTransmittedImage)
