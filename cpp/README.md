@@ -4,6 +4,20 @@ This folder contains the code files for the server side program of ZenboNurseHel
 
 In this project, we utilize Intel OpenVINO's human_pose_estimation_demo in their Open Model Zoo 2024 demos as a tool to guide our Zenbo robot. Our server-side program receives frames transmitted from the robot-side app, estimates human pose landmark coordinates, and reports the results to the robot-side program.
 
+# Install
+We create a script file to install our code and all required libraries including
+OpenVINO, OpenCV, git, gcc, Open_Model_Zoo, pip, Protocol Buffer, whisper.cpp, Qt, libgflags, and PortAudio.
+The easiest way to install our program is to execute the following script.
+```sh
+cd ~
+wget https://github.com/yangchihyuan/ZenboNurseHelper/cpp/install.sh
+chmod +x install.sh
+./install.sh
+```
+
+It will ask for your sudo password and take 20 to 30 minutes to install libraries
+and compile files. When everything is ready, you can use the following command to launch our program.
+
 # Install the compiler
 Your Ubuntu system may be too clear to have the compiler. Please install it by
 ```sh
