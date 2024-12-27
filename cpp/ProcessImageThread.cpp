@@ -8,6 +8,7 @@
 #include "JPEG.hpp"
 #include "ServerSend.pb.h"
 #include "Pose.hpp"
+#include "utility_directory.hpp"
 
 
 using namespace human_pose_estimation;
@@ -32,14 +33,10 @@ int ProcessImageThread::get_buffer_size()
 
 void ProcessImageThread::run()
 {
+    //2024/12/27 this is hard-coded, incorrect.
     std::string str_home_path(getenv("HOME"));
     std::string pose_model_path = str_home_path + "/open_model_zoo/models/intel/human-pose-estimation-0001/FP32/human-pose-estimation-0001.xml";
-    bool bSaveTransmittedImage = false;
-    std::string save_to_directory = str_home_path + "/Downloads";
     HumanPoseEstimator estimator(pose_model_path);
-    string raw_images_directory = save_to_directory + "/raw_images";
-    if(bSaveTransmittedImage)
-        CreateDirectory(raw_images_directory);
 
     mutex m;
     unique_lock<mutex> lock(m);
@@ -138,13 +135,11 @@ void ProcessImageThread::run()
 
             if( bCorrectlyDecoded)
             {
-                //This inputImage has little delay.
-//                cv::imshow("latest image",inputImage);
                 if(bSaveTransmittedImage)
                 {
                     string filename = raw_images_directory + "/" + str_timestamp + ".jpg";
                     save_image_JPEG(data_ + 30, iJPEG_length , filename);
-                    std::cout << filename << std::endl;
+//                    std::cout << filename << std::endl;
                 }
 
                 //Where is the displayImage used?

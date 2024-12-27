@@ -10,3 +10,4 @@ int ListFiles(const string& directory, const string& file_extension, vector<stri
 vector<string> ListFiles(const string& directory, const string& file_extension );
 vector<string> ListFiles_Sorted(const string& directory, const string& file_extension);
 void CreateDirectory(const string& directory);
+bool CheckDirectoryExist(const string& directory);

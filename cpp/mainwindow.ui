@@ -597,34 +597,7 @@
        </colorrole>
       </inactive>
       <disabled>
-       <colorrole role="WindowText">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>154</red>
-          <green>153</green>
-          <blue>150</blue>
-         </color>
-        </brush>
-       </colorrole>
        <colorrole role="Dark">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>154</red>
-          <green>153</green>
-          <blue>150</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="Text">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>154</red>
-          <green>153</green>
-          <blue>150</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="ButtonText">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
           <red>154</red>
@@ -680,34 +653,7 @@
        </colorrole>
       </inactive>
       <disabled>
-       <colorrole role="WindowText">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>154</red>
-          <green>153</green>
-          <blue>150</blue>
-         </color>
-        </brush>
-       </colorrole>
        <colorrole role="Dark">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>154</red>
-          <green>153</green>
-          <blue>150</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="Text">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>154</red>
-          <green>153</green>
-          <blue>150</blue>
-         </color>
-        </brush>
-       </colorrole>
-       <colorrole role="ButtonText">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
           <red>154</red>
@@ -780,6 +726,22 @@
       <width>331</width>
       <height>211</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_SaveImages">
+    <property name="geometry">
+     <rect>
+      <x>780</x>
+      <y>480</y>
+      <width>111</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Save images</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
     </property>
    </widget>
   </widget>

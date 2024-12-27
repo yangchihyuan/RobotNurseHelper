@@ -169,6 +169,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //sockets
     m_server_receive_image = new QTcpServer();
+    //2024/12/27 The port number is also hard-coded. I need to modify it in the future.
     if(m_server_receive_image->listen(QHostAddress::Any, 8895))
     {
        connect(m_server_receive_image, &QTcpServer::newConnection, this, &MainWindow::newConnection);
@@ -771,4 +772,30 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         ui->plainTextEdit_SentCommands->document()->setPlainText(QString_SentCommands);
         ui->plainTextEdit_SentCommands->verticalScrollBar()->setValue(ui->plainTextEdit_SentCommands->verticalScrollBar()->maximum());
     }
+}
+
+void MainWindow::on_checkBox_SaveImages_clicked()
+{
+    //std::cout << "on_CheckBox_SaveImages_clicked " << std::endl;
+    if( ui->checkBox_SaveImages->isChecked() )
+    {
+
+        //Check whether the save folder exist
+        std::string str_home_path(getenv("HOME"));
+        std::string save_to_directory = str_home_path + "/Downloads";
+        string raw_images_directory = save_to_directory + "/raw_images";
+        //std::cout << "string raw_images_directory " + raw_images_directory << std::endl;
+        if( !CheckDirectoryExist(raw_images_directory))
+        {
+            CreateDirectory(raw_images_directory);
+        }
+        thread_process_image.raw_images_directory = raw_images_directory;
+        thread_process_image.bSaveTransmittedImage = true;
+    }
+    else
+    {
+        thread_process_image.raw_images_directory = "";
+        thread_process_image.bSaveTransmittedImage = false;
+    }
+
 }
