@@ -114,18 +114,21 @@ static void _mkdir(const char *dir) {
 void CreateDirectory(const string& directory)
 {
     _mkdir(directory.c_str());
-/*
-    DIR* dir = opendir();
+}
+
+bool CheckDirectoryExist(const string& directory)
+{
+    DIR* dir = opendir(directory.c_str());
     if (dir)
     {
         // Directory exists. 
         closedir(dir);
+        return true;
     }
-    else if (ENOENT == errno)
-    {
-        /// Directory does not exist.
-        mkdir(directory.c_str(), S_IRWXU|S_IRWXG);
-    }
-*/
+//    else if (ENOENT == errno)
+//    {
+//        /// Directory does not exist.
+//        mkdir(directory.c_str(), S_IRWXU|S_IRWXG);
+//    }
+    return false;
 }
-

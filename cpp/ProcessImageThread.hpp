@@ -27,6 +27,8 @@ public:
     int get_buffer_size();
     bool b_frame_buffer1_unused = false;    //Indicate whether frame_buffer1 is unused.
     int frame_buffer1_length = 0;
+    bool bSaveTransmittedImage = false;
+    string raw_images_directory;
     condition_variable cond_var_process_image;
 
     SendCommandThread *pSendCommandThread;

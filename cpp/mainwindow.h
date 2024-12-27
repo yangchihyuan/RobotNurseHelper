@@ -18,6 +18,7 @@
 #include <QAudioDevice>
 #include <QAudioSource>
 #include <QBuffer>
+#include "utility_directory.hpp"
  
 //2024/8/21 disable whisper.cpp 
 //#include <whisper.h>
@@ -112,6 +113,8 @@ private slots:
     void on_listView_Sentence2_clicked(const QModelIndex &index);
     void on_listView_Sentence3_doubleClicked(const QModelIndex &index);
     void on_listView_Sentence3_clicked(const QModelIndex &index);
+
+    void on_checkBox_SaveImages_clicked();
 
     void timer_event();
 
