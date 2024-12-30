@@ -679,6 +679,11 @@ void MainWindow::timer_event()
 {
     if(bNewoutFrame )
     {
+        //2024/12/30, the bug is here. I use a timer to update the frame. On some low-end PC, 
+        //although I call imshow, the window does not refresh unless there is a signal sent
+        //to the window such as mouse hovering. It seems caused by the hardward driver.
+        //imshow is a high-level GUI. There is no extra argument for this function.
+        //How to force the problem to update the window?
         cv::imshow("Image", outFrame);
         bNewoutFrame = false;
     }
