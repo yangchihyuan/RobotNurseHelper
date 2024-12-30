@@ -10,7 +10,7 @@ OpenVINO, OpenCV, git, gcc, Open_Model_Zoo, pip, Protocol Buffer, whisper.cpp, Q
 The easiest way to install our program is to execute the following script.
 ```sh
 cd ~
-wget https://github.com/yangchihyuan/ZenboNurseHelper/tree/master/cpp/install.sh
+wget https://raw.githubusercontent.com/yangchihyuan/ZenboNurseHelper/refs/heads/master/cpp/install.sh
 chmod +x install.sh
 ./install.sh
 ```
