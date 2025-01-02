@@ -27,6 +27,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
@@ -506,7 +507,20 @@ public class MainActivity extends Activity {
         mMessageView_Timestamp = (MessageView) findViewById(R.id.MessageView_Timestamp);
         button_close = (Button) findViewById(R.id.button_close);
 
-        mServerURL = editText_Server.getText().toString();;
+        //get the default ServerURL
+        mServerURL = editText_Server.getText().toString();
+        SharedPreferences sharedPref = getSharedPreferences("ZenboNurseHelper_Preference", Context.MODE_PRIVATE);
+        String ServerURL = sharedPref.getString("ServerURL", "");
+        if( ServerURL.isEmpty() )
+        {
+            //Do nothing
+        }
+        else {
+            editText_Server.setText(ServerURL);
+            mServerURL = ServerURL;
+        }
+
+
         editText_Server.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -536,6 +550,12 @@ public class MainActivity extends Activity {
                 thread.start();
                 Handler handler = new Handler(thread.getLooper());
                 if (isChecked) {
+                    //Save the IP address to SharedPreferences
+                    SharedPreferences sharedPref = getSharedPreferences("ZenboNurseHelper_Preference", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putString("ServerURL", editText_Server.getText().toString());
+                    editor.apply();
+
                     recorder.startRecording();
                     handler.post(new Runnable() {
                         @Override
