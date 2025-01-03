@@ -44,6 +44,7 @@ class ImageListener implements OnImageAvailableListener {
 
     private static final Logger LOGGER = new Logger();
 
+    //Todo: why do I have the previewWidth and previewHeight here?
     private int previewWidth = 640;
     private int previewHeight = 480;
     private byte[][] yuvBytes;
