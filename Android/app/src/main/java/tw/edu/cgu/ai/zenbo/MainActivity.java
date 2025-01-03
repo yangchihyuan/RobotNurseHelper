@@ -404,7 +404,9 @@ public class MainActivity extends Activity {
                 @Override
                 public void onSurfaceTextureAvailable(
                         final SurfaceTexture texture, final int width, final int height) {
-                    openCamera();
+                    //2025/1/3: Here is a problem. The users may not grant the permission yet.
+                    if( checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED )
+                        openCamera();
                 }
 
                 @Override
@@ -481,11 +483,12 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main_activity);
-//        setContentView(R.layout.main_activity_redminote8t);
 
-        if (!hasPermission()) {
+        if(!hasPermission()) {
+            //This is a new thread, we don't know when users will finish it.
             requestPermission();
         }
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         robotCallback = new ZenboCallback();
@@ -511,11 +514,7 @@ public class MainActivity extends Activity {
         mServerURL = editText_Server.getText().toString();
         SharedPreferences sharedPref = getSharedPreferences("ZenboNurseHelper_Preference", Context.MODE_PRIVATE);
         String ServerURL = sharedPref.getString("ServerURL", "");
-        if( ServerURL.isEmpty() )
-        {
-            //Do nothing
-        }
-        else {
+        if( !ServerURL.isEmpty() ){
             editText_Server.setText(ServerURL);
             mServerURL = ServerURL;
         }
@@ -726,6 +725,7 @@ public class MainActivity extends Activity {
                     });
                 }
                 else {
+                    //2025/1/3 the recorder should stop in onPause()
                     recorder.stop();
                     handler.post(new Runnable() {
                         @Override
@@ -782,19 +782,19 @@ public class MainActivity extends Activity {
         m_DataBuffer = new DataBuffer(100);
         mActionRunnable.setDataBuffer(m_DataBuffer);
 
-//        timer_get_analyzed_results = new java.util.Timer(true);
-//        timer_get_analyzed_results.schedule(task_get_analyzed_results, 1000, 33);
-
         mRobotAPI.robot.speak("哈囉，你好。");
     }  //end of onCreate
 
+    //2025/1/3 This is a call back function, using the same thread as onCreate(). Thus, it is only be called after the onCreated is completed.
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case PERMISSIONS_REQUEST: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
+                    startThreads();
                 } else {
                     requestPermission();
                 }
@@ -828,7 +828,8 @@ public class MainActivity extends Activity {
         // a camera and start preview from here (otherwise, we wait until the surface is ready in
         // the SurfaceTextureListener).
         if (mTextureView.isAvailable()) {
-            openCamera();   //Chih-Yuan Yang 2024/6/25: This openCamera never be called
+            if( checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED)
+                openCamera();   //2025/1/3: It is called
         } else {
             mTextureView.setSurfaceTextureListener(surfaceTextureListener);
         }
@@ -874,7 +875,7 @@ public class MainActivity extends Activity {
             if (shouldShowRequestPermissionRationale(PERMISSION_CAMERA) ||
                     shouldShowRequestPermissionRationale(PERMISSION_STORAGE) ||
                     shouldShowRequestPermissionRationale(PERMISSION_RECORD_AUDIO)) {
-                Toast.makeText(this, "Camera AND storage permission are required for this demo", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Please grant permissions to execute this program", Toast.LENGTH_LONG).show();
             }
             requestPermissions(new String[]{PERMISSION_CAMERA, PERMISSION_STORAGE, PERMISSION_RECORD_AUDIO}, PERMISSIONS_REQUEST);
         }
