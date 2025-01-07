@@ -21,9 +21,6 @@ public class InputView extends View {
     }
 
     public void setBitmap( final Bitmap NewBitmap) {
-//        Matrix matrix = new Matrix();
-//        matrix.postScale(-1, 1, 240, 320);
-//        DisplayBitmap = Bitmap.createBitmap(NewBitmap,0,0,NewBitmap.getWidth(),NewBitmap.getHeight(),matrix,true);
         DisplayBitmap = NewBitmap;
     }
 
