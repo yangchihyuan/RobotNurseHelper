@@ -20,8 +20,8 @@ public class ZenboCallback extends RobotCallback {
     @Override
     public void onStateChange(int cmd, int serial, RobotErrorCode err_code, RobotCmdState state) {
         //check, what will happen is the power core is plugged?
+        Log.d("onStateChange", String.format("cmd %d serial %d ",cmd, serial) + "err_code " + err_code.toString() + " state " + state.toString());
         if (cmd == RobotCommand.MOTION_MOVE_BODY.getValue()) {        //cmd == 39 movebody
-//            Log.i("ZenboCallback", state.toString());
             if (state == RobotCmdState.ACTIVE) {
                 //It happen this callback is erased by the Zenbo system prompt.
                 RobotMovementFinished_Body = false;
@@ -78,7 +78,7 @@ public class ZenboCallback extends RobotCallback {
             }
         }
 
-        super.onStateChange(cmd, serial, err_code, state);      //Do I need this?
+        super.onStateChange(cmd, serial, err_code, state);
     }
 
     //
@@ -88,6 +88,6 @@ public class ZenboCallback extends RobotCallback {
                          android.os.Bundle result)
     {
         Log.d("onResult", Integer.toString(cmd));
-        super.onResult(cmd, serial, err_code, result);      //Do I need this?
+        super.onResult(cmd, serial, err_code, result);
     }
 }
