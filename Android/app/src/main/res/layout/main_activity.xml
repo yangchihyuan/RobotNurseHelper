@@ -37,46 +37,13 @@
         android:id="@+id/checkBox_connect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/checkBox_keepalert"
+        android:layout_alignStart="@id/editText_Server"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="13dp"
+        android:layout_marginStart="@dimen/margin_tiny"
+        android:layout_marginTop="@dimen/margin_medium"
         android:focusable="true"
         android:text="@string/EnableConnection"
         android:textSize="30sp" />
-
-    <CheckBox
-        android:id="@+id/checkBox_ShowFace"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="303dp"
-        android:layout_marginTop="179dp"
-        android:checked="true"
-        android:text="@string/showface" />
-
-    <CheckBox
-        android:id="@+id/checkBox_DontMove"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="404dp"
-        android:layout_marginTop="179dp"
-        android:text="@string/dontmove" />
-
-    <CheckBox
-        android:id="@+id/checkBox_DontRotate"
-        android:layout_width="197dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginLeft="510dp"
-        android:layout_marginTop="179dp"
-        android:layout_marginEnd="1213dp"
-        android:text="@string/dontrorate" />
 
     <EditText
         android:id="@+id/editText_Port"
@@ -112,30 +79,6 @@
         android:selectAllOnFocus="false"
         android:text="@string/server_url" />
 
-    <CheckBox
-        android:id="@+id/checkBox_keepalert"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/editText_Server"
-        android:layout_alignStart="@+id/editText_Server"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="-4dp"
-        android:layout_marginLeft="300dp"
-        android:layout_marginTop="63dp"
-        android:checked="true"
-        android:text="@string/Keep_Alert" />
-
-    <tw.edu.cgu.ai.zenbo.AutoFitTextureView
-        android:id="@+id/texture"
-        android:layout_width="114dp"
-        android:layout_height="66dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="517dp"
-        android:layout_marginTop="338dp"
-        tools:visibility="invisible" />
-
     <tw.edu.cgu.ai.zenbo.InputView
         android:id="@+id/inputview"
         android:layout_width="640dp"
@@ -143,34 +86,6 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="0dp" />
-
-    <tw.edu.cgu.ai.zenbo.KeyPointView
-        android:id="@+id/keypoint"
-        android:layout_width="640dp"
-        android:layout_height="480dp"
-        android:layout_alignTop="@+id/inputview"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="640dp" />
-
-    <tw.edu.cgu.ai.zenbo.MessageView
-        android:id="@+id/MessageView_Detection"
-        android:layout_width="628dp"
-        android:layout_height="120dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="300dp"
-        android:singleLine="false" />
-
-    <tw.edu.cgu.ai.zenbo.MessageView
-        android:id="@+id/MessageView_Timestamp"
-        android:layout_width="626dp"
-        android:layout_height="403dp"
-        android:layout_below="@+id/MessageView_Detection"
-        android:layout_alignStart="@+id/MessageView_Detection"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="3dp"
-        android:singleLine="false" />
 
     <Button
         android:id="@+id/button_close"

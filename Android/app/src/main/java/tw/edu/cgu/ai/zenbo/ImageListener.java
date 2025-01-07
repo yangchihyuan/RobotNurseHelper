@@ -47,6 +47,12 @@ class ImageListener implements OnImageAvailableListener {
     //Todo: why do I have the previewWidth and previewHeight here?
     private int previewWidth = 640;
     private int previewHeight = 480;
+    //Zenbo supports 1920x1080
+//    private int previewWidth = 1920;        //I can change here to get high-resolution images, but very slow
+//    private int previewHeight = 1080;
+    //Emulator only supports up to 1280x960
+//    private int previewWidth = 1280;        //I can change here to get high-resolution images, but very slow
+//    private int previewHeight = 960;
     private byte[][] yuvBytes;
     private int[] argbBytes = null;
     private Bitmap argbFrameBitmap = null;
@@ -55,7 +61,8 @@ class ImageListener implements OnImageAvailableListener {
     private ActionRunnable mActionRunnable;
     Socket socket;
     private long timestamp_prevous_processed_image = 0; //initial value
-    public boolean mbSendSuccessfully = true;
+    //2026/1/7 This variable is no longer used.
+//    public boolean mbSendSuccessfully = true;
 
     public void initialize(Handler handlerSendToServer, InputView inputView,
                            ActionRunnable ActionRunnable) {
@@ -73,13 +80,15 @@ class ImageListener implements OnImageAvailableListener {
 
     @Override
     public void onImageAvailable(final ImageReader reader) {
-        final Image image = reader.acquireLatestImage();    //Chih-Yuan Yang: What is the format of this image object? YUV422?
+        final Image image = reader.acquireLatestImage();
 
         if (image == null)
             return; //such a case happens.
 
         final long timestamp_image = System.currentTimeMillis();
-        long frame_send_postpone = 100; //in millisecond
+        //2025/1/6 Do I need this?
+        //long frame_send_postpone = 100; //in millisecond
+        long frame_send_postpone = 0; //in millisecond
         if (timestamp_image - timestamp_prevous_processed_image > frame_send_postpone) {
             timestamp_prevous_processed_image = timestamp_image;
 
@@ -144,14 +153,14 @@ class ImageListener implements OnImageAvailableListener {
                                     os.write(key.getBytes());
                                     os.write(array_JPEG);
                                     os.write("EndOfAFrame".getBytes());
-                                    mbSendSuccessfully = true;
+//                                    mbSendSuccessfully = true;
 //                                    Log.d("Send a frame", "No error");
                                 } catch (Exception e) {
                                     Log.d("Exception Send to Server fails", e.getMessage()); //sendto failed: EPIPE (Broken pipe)
-                                    if( e.getMessage().contains("EPIPE"))
-                                    {
-                                        mbSendSuccessfully = false;
-                                    }
+//                                    if( e.getMessage().contains("EPIPE"))
+//                                    {
+//                                        mbSendSuccessfully = false;
+//                                    }
                                 } finally {
                                 }
                             }//end of run

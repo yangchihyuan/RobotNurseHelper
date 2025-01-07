@@ -137,6 +137,7 @@ void ProcessImageThread::run()
             {
                 if(bSaveTransmittedImage)
                 {
+                    //2025/1/7 How to change the timestamp to a meaningful filename?
                     string filename = raw_images_directory + "/" + str_timestamp + ".jpg";
                     save_image_JPEG(data_ + 30, iJPEG_length , filename);
 //                    std::cout << filename << std::endl;

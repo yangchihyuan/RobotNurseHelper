@@ -19,8 +19,8 @@ public class ActionRunnable implements Runnable {
     private boolean bWaitingForRobotFinishesMovement = false;
     public boolean bDontMove = false;
     public boolean bDontRotateBody = false;
-    private MessageView mMessageView_Detection;
-    private MessageView mMessageView_Timestamp;
+//    private MessageView mMessageView_Detection;
+//    private MessageView mMessageView_Timestamp;
     private DataBuffer dataBuffer;
     public boolean mShowRobotFace = true;
     public enum RobotStatus
@@ -79,6 +79,7 @@ public class ActionRunnable implements Runnable {
         detection_mode_description[11]= "neglect, person on TV";
     }
 
+    /*
     public void setMessageView(MessageView MessageView_Detection, MessageView MessageView_Timestamp) {
         mMessageView_Detection = MessageView_Detection;
         mMessageView_Timestamp = MessageView_Timestamp;
@@ -86,7 +87,7 @@ public class ActionRunnable implements Runnable {
         robotCallback.RobotMovementFinished_Head = false;
         robotCallback.RobotMovementFinished_Body = false;
     }
-
+*/
 
     public void setDataBuffer(DataBuffer dataBuffer) {
         this.dataBuffer = dataBuffer;
@@ -159,7 +160,7 @@ public class ActionRunnable implements Runnable {
             }
         }
 
-        mMessageView_Timestamp.setString(mMessage_Timestamp);
+//        mMessageView_Timestamp.setString(mMessage_Timestamp);
 
         if( bContinue) {
 //            AnalyzedFrame LatestFrame = dataBuffer.getLatestFrame();
@@ -705,7 +706,7 @@ public class ActionRunnable implements Runnable {
                 ZenboAPI.robot.setExpression(newExpression);
                 mFaceStatus = newExpression;
             }
-            mMessageView_Detection.setString(mMessage_Detection);
+//            mMessageView_Detection.setString(mMessage_Detection);
         }
     }//end of run
 
