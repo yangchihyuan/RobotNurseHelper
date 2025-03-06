@@ -11,7 +11,7 @@ set(CMAKE_AUTORCC ON)
 find_package(Protobuf REQUIRED)
 find_package(OpenCV REQUIRED COMPONENTS core highgui videoio imgproc imgcodecs)
 list(APPEND CMAKE_PREFIX_PATH "$ENV{HOME}/Qt/6.7.2/gcc_64/")
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network Multimedia)
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Network Multimedia)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network Multimedia)
 
 set(PROTO_FILE ServerSend.proto)

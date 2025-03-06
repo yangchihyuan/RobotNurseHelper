@@ -90,6 +90,8 @@ public class DataBuffer {
         return AnalyzedFrameArray[frame_buffer_index];
     }
 
+    //2025/1/8 I did not use this function
+/*
     public AverageFrame getAverageFrame() {
         AverageFrame result = new AverageFrame();
         int number_of_checked_frames = 3;
@@ -136,7 +138,7 @@ public class DataBuffer {
 
         return result;
     }
-
+*/
     /*1: person at the righthand side
       2: person at the lefthand side
     */

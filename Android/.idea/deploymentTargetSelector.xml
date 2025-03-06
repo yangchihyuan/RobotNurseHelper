@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-01-06T07:53:53.434671437Z">
+        <DropdownSelection timestamp="2025-02-07T06:25:00.194315808Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=H7RBCY000555" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/home/chihyuan/.android/avd/Zenbo_Emulator_API_23.avd" />
             </handle>
           </Target>
         </DropdownSelection>
