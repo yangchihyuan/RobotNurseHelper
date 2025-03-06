@@ -292,9 +292,11 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+//This funciton is called when socket is connected.
 void MainWindow::newConnection()
 {
     std::cout << "newConnction()" << std::endl;
+    //Because of the loop, it always waits for new connections.
     while (m_server_receive_image->hasPendingConnections())
         appendToSocketList(m_server_receive_image->nextPendingConnection());
 }
@@ -311,7 +313,7 @@ void MainWindow::newConnection_receive_audio()
         appendToSocketList3(m_server_receive_audio->nextPendingConnection());
 }
 
-
+//Define the behavior of a socket.
 void MainWindow::appendToSocketList(QTcpSocket* socket)
 {
     connection_set.insert(socket);
@@ -320,6 +322,7 @@ void MainWindow::appendToSocketList(QTcpSocket* socket)
     connect(socket, &QAbstractSocket::errorOccurred, this, &MainWindow::displayError);
 }
 
+//There is no readSocket because I only use this connection to send commands.
 void MainWindow::appendToSocketList2(QTcpSocket* socket)
 {
     connection_set2.insert(socket);
@@ -338,6 +341,7 @@ void MainWindow::appendToSocketList3(QTcpSocket* socket)
 
 void MainWindow::readSocket()
 {
+    //sender() is a function of Qt to get the data source of this function.
     QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
 
     QByteArray buffer;

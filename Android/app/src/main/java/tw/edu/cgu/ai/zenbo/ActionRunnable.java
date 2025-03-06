@@ -168,8 +168,8 @@ public class ActionRunnable implements Runnable {
 //            mMessage_Timestamp = LatestFrame.actions[0] + newline + LatestFrame.actions[1] + newline + LatestFrame.actions[2];
 //            mMessageView_Timestamp.setString(mMessage_Timestamp);
 
-            //Chih-Yuan Yang 2024/6/15: I do not use the AverageFrames object. Why do I need this statement?
-            AverageFrame AverageFrames = dataBuffer.getAverageFrame();
+//            //Chih-Yuan Yang 2024/6/15: I do not use the AverageFrames object. Why do I need this statement?
+//            AverageFrame AverageFrames = dataBuffer.getAverageFrame();
             LatestFrame.bNew = false;
             float distance_d1811 = 0;
             DetectionMode detection_mode = DetectionMode.NOT_USED; //initialized
