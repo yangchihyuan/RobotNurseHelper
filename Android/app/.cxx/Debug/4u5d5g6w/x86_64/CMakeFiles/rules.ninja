@@ -42,7 +42,7 @@ rule CUSTOM_COMMAND
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = /home/chihyuan/Android/Sdk/cmake/3.22.1/bin/cmake --regenerate-during-build -S/home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app -B/home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app/.cxx/Debug/4u5d5g6w/x86_64
+  command = /home/chihyuan/Android/Sdk/cmake/3.22.1/bin/cmake --regenerate-during-build -S/home/chihyuan/ZenboNurseHelper/Android/app -B/home/chihyuan/ZenboNurseHelper/Android/app/.cxx/Debug/4u5d5g6w/x86_64
   description = Re-running CMake...
   generator = 1
 

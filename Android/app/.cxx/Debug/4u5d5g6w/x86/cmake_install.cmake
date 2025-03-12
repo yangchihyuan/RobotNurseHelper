@@ -1,4 +1,4 @@
-# Install script for directory: /home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app
+# Install script for directory: /home/chihyuan/ZenboNurseHelper/Android/app
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app/.cxx/Debug/4u5d5g6w/x86/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/chihyuan/ZenboNurseHelper/Android/app/.cxx/Debug/4u5d5g6w/x86/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
