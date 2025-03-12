@@ -1,0 +1,45 @@
+syntax = "proto2";
+
+package ZenboNurseHelperProtobuf;
+
+message ReportAndCommand {
+  optional uint64 time_stamp = 1;
+  optional int32 pitch_degree = 2;
+
+  message OpenPosePose{
+
+    required int64 score = 1;
+
+    message OpenPoseCoordinate{
+      required int64 x = 1;
+      required int64 y = 2;
+      required int64 valid = 3;
+    }
+
+    repeated OpenPoseCoordinate coord = 2;
+  }
+
+  repeated OpenPosePose pose = 3;
+  optional string speak_sentence = 4;
+  optional int32 x = 5;
+  optional int32 y = 6;
+  optional int32 degree = 7;
+  optional int32 bodyspeed = 8;
+  optional int32 yaw = 9;
+  optional int32 pitch = 10;
+  optional int32 headspeed = 11;
+  optional int32 face = 12;
+  optional int32 speed = 13;
+  optional int32 volume = 14;
+  optional int32 speak_pitch = 15;
+
+  enum MoveModeEnum{
+        Manual = 0;
+        LookForPeople = 1;
+    }
+
+  optional MoveModeEnum movemode = 16;
+  optional int32 stopmove = 17;
+  optional int32 predefined_action = 18;
+}
+
