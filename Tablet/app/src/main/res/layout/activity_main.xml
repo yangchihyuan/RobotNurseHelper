@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_main_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:weightSum="2"
+    android:gravity="center"
+    android:padding="16dp">
+
+    <!-- 第一顆: 痛覺量表按鈕(圖片) -->
+    <ImageButton
+        android:id="@+id/btnGoPain"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:src="@drawable/pain_btn"
+        android:background="@null"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/desc_pain_btn" />
+
+    <!-- 第二顆: 撥放影片按鈕(圖片) -->
+    <ImageButton
+        android:id="@+id/btnGoVideo"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:src="@drawable/video_btn"
+        android:background="@null"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/desc_video_btn" />
+
+</LinearLayout>

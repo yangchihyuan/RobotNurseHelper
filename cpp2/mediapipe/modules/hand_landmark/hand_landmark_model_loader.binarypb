@@ -1,0 +1,7 @@
+
+“SwitchContainer*SELECT:model_complexity2PACKET:model_path:Ó’Öá§
+ÌcConstantSidePacketCalculator:CªÐòÖ=
+;"9mediapipe/modules/hand_landmark/hand_landmark_lite.tflitecConstantSidePacketCalculator:CªÐòÖ=
+;"9mediapipe/modules/hand_landmark/hand_landmark_full.tflite
+MResourceProviderCalculator*RESOURCE_ID:model_path2RESOURCE:model_resource
+CTfLiteModelCalculator*MODEL_RESOURCE:model_resource2MODEL:model‚!MODEL_COMPLEXITY:model_complexityŠMODEL:model¢HandLandmarkModelLoader
