@@ -37,7 +37,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : ".cxx/Debug/4u5d5g6w/x86/CMakeFiles/3.22.1-g37088a8/CMakeSystem.cmake"
+			"path" : ".cxx/Debug/4u5d5g6w/x86_64/CMakeFiles/3.22.1-g37088a8/CMakeSystem.cmake"
 		},
 		{
 			"isExternal" : true,
@@ -303,7 +303,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : ".cxx/Debug/4u5d5g6w/x86/CMakeFiles/3.22.1-g37088a8/CMakeCCompiler.cmake"
+			"path" : ".cxx/Debug/4u5d5g6w/x86_64/CMakeFiles/3.22.1-g37088a8/CMakeCCompiler.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -537,7 +537,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : ".cxx/Debug/4u5d5g6w/x86/CMakeFiles/3.22.1-g37088a8/CMakeCXXCompiler.cmake"
+			"path" : ".cxx/Debug/4u5d5g6w/x86_64/CMakeFiles/3.22.1-g37088a8/CMakeCXXCompiler.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -688,7 +688,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : ".cxx/Debug/4u5d5g6w/x86/CMakeFiles/3.22.1-g37088a8/CMakeCCompiler.cmake"
+			"path" : ".cxx/Debug/4u5d5g6w/x86_64/CMakeFiles/3.22.1-g37088a8/CMakeCCompiler.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -782,14 +782,14 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : ".cxx/Debug/4u5d5g6w/x86/CMakeFiles/3.22.1-g37088a8/CMakeCXXCompiler.cmake"
+			"path" : ".cxx/Debug/4u5d5g6w/x86_64/CMakeFiles/3.22.1-g37088a8/CMakeCXXCompiler.cmake"
 		}
 	],
 	"kind" : "cmakeFiles",
 	"paths" : 
 	{
-		"build" : "/home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app/.cxx/Debug/4u5d5g6w/x86",
-		"source" : "/home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app"
+		"build" : "/home/chihyuan/ZenboNurseHelper/Android/app/.cxx/Debug/4u5d5g6w/x86_64",
+		"source" : "/home/chihyuan/ZenboNurseHelper/Android/app"
 	},
 	"version" : 
 	{
