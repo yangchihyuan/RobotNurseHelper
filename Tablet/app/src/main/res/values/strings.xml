@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">PainRating</string>
+
+    <!-- 首頁按鈕文字 (若需要用在 contentDescription 或 Toast) -->
+    <string name="desc_pain_btn">Pain Button</string>
+    <string name="desc_video_btn">Video Button</string>
+
+    <!-- 首頁文字按鈕(如需) -->
+    <string name="btn_pain">疼痛量表</string>
+    <string name="btn_video">播放影片</string>
+
+    <!-- PainActivity Toast -->
+    <string name="toast_no_face">未點中任何臉</string>
+    <string name="toast_face0">選擇了 0 分：無痛</string>
+    <string name="toast_face2">選擇了 2 分：微痛</string>
+    <string name="toast_face4">選擇了 4 分：輕痛</string>
+    <string name="toast_face6">選擇了 6 分：更痛</string>
+    <string name="toast_face8">選擇了 8 分：很痛</string>
+    <string name="toast_face10">選擇了 10 分：劇痛</string>
+</resources>

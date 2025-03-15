@@ -1,0 +1,8 @@
+<resources>
+    <style name="Theme.PainRating" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- AppCompat-based 設定 -->
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorAccent">@color/teal_200</item>
+        <!-- ... -->
+    </style>
+</resources>

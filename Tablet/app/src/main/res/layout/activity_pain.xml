@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_pain_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 一整張量表圖片 -->
+    <ImageView
+        android:id="@+id/imgPainScale"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/pain_scale"
+        android:contentDescription="@string/app_name"/>
+</FrameLayout>
