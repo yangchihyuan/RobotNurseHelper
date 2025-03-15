@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "native-lib::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-native-lib-Debug-77173cdae3254dcce330.json",
+					"jsonFile" : "target-native-lib-Debug-851787890f0b0c680c61.json",
 					"name" : "native-lib",
 					"projectIndex" : 0
 				}
@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app/.cxx/Debug/4u5d5g6w/x86",
-		"source" : "/home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app"
+		"build" : "/home/chihyuan/ZenboNurseHelper/Android/app/.cxx/Debug/4u5d5g6w/x86",
+		"source" : "/home/chihyuan/ZenboNurseHelper/Android/app"
 	},
 	"version" : 
 	{

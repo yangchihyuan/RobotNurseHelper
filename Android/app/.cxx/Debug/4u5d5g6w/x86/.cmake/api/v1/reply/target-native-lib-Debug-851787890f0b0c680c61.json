@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "/home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app/build/intermediates/cxx/Debug/4u5d5g6w/obj/x86/libnative-lib.so"
+			"path" : "/home/chihyuan/ZenboNurseHelper/Android/app/build/intermediates/cxx/Debug/4u5d5g6w/obj/x86/libnative-lib.so"
 		}
 	],
 	"backtrace" : 1,
