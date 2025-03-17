@@ -14,11 +14,13 @@
 #include "ProcessImageThread.hpp"
 #include <queue>
 #include "ProcessAudioThread.hpp"
+#include "ThreadTablet.hpp"
 #include <QMediaDevices>
 #include <QAudioDevice>
 #include <QAudioSource>
 #include <QBuffer>
 #include "utility_directory.hpp"
+#include "SocketHandler.hpp"
  
 //2024/8/21 disable whisper.cpp 
 //#include <whisper.h>
@@ -56,9 +58,7 @@ private:
     QTcpServer* m_server_receive_image;
     QSet<QTcpSocket*> connection_set;
     ProcessImageThread thread_process_image;
-    std::unique_ptr<char[]> frame_buffer;
-    int buffer_length;
-    int iEndOfAFrame;
+    SocketHandler socketHandler1;
 
     QTcpServer* m_server_send_command;
     QSet<QTcpSocket*> connection_set2;   //for send back command
@@ -67,6 +67,12 @@ private:
     QTcpServer* m_server_receive_audio;
     QSet<QTcpSocket*> connection_set3;   //for receive audio
     ProcessAudioThread thread_process_audio;
+
+    QTcpServer* m_server_Tablet;
+    QSet<QTcpSocket*> connection_set4;   //for Tablet
+    SocketHandler socketHandler4;
+    ThreadTablet thread_tablet;
+
 
     QString QString_SentCommands;
     void send_move_body_command(float x, float y, int degree, int speed);
@@ -85,19 +91,23 @@ private slots:
     void appendToSocketList(QTcpSocket* socket);
     void appendToSocketList2(QTcpSocket* socket);
     void appendToSocketList3(QTcpSocket* socket);
+    void appendToSocketList4(QTcpSocket* socket);
 
     void readSocket();
     void readSocket3();
+    void readSocket4();
 
     void discardSocket();
     void discardSocket2();
     void discardSocket3();
+    void discardSocket4();
     void displayError(QAbstractSocket::SocketError socketError);
 
     void displayMessage(const QString& str);
  
     void newConnection_send_command();
     void newConnection_receive_audio();
+    void newConnection_Tablet();
 
     void on_pushButton_speak_clicked();
     void on_pushButton_movebody_clicked();

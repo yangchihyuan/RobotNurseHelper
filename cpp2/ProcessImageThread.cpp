@@ -26,21 +26,19 @@ bool bNewoutFrame;
 
 ProcessImageThread::ProcessImageThread()
 {
-    frame_buffer1 = std::make_unique<char[]>(buffer_size);
 }
 
-typedef pair<float,int> mypair;
-bool comparator ( const mypair& l, const mypair& r)
-   { return l.first < r.first; }
+//typedef pair<float,int> mypair;
+//bool comparator ( const mypair& l, const mypair& r)
+//   { return l.first < r.first; }
 
-int ProcessImageThread::get_buffer_size()
-{
-    return buffer_size;
-}
+//int ProcessImageThread::get_buffer_size()
+//{
+//    return buffer_size;
+//}
 
 void ProcessImageThread::run()
 {
-    //2024/12/27 this is hard-coded, incorrect.
     std::string str_home_path(getenv("HOME"));
 //    std::string pose_model_path = str_home_path + "/open_model_zoo/models/intel/human-pose-estimation-0001/FP32/human-pose-estimation-0001.xml";
 //    HumanPoseEstimator estimator(pose_model_path);
@@ -134,40 +132,23 @@ node {
 	face_mesh->AddOutputStream("output_video");
 	face_mesh->Start();
 
-    mutex m;
-    unique_lock<mutex> lock(m);
-
     while(b_WhileLoop)
     {
-//        cond_var_process_image.wait(lock);
-        if( !qJPEG_buffer.empty() )    //here is an infinite loop
+        if( pSocketHandler->get_queue_length() > 0 )    //here is an infinite loop
         {
-            //frame_buffer1 should be protected by mutex here.
-            mutex_frame_buffer1.lock();
-            JPEG_buffer thisJPEG_buffer = qJPEG_buffer.front();
-            qJPEG_buffer.pop();
-            char* frame_buffer1 = thisJPEG_buffer.get_buffer();
-            int frame_buffer1_length = thisJPEG_buffer.get_length();
-            mutex_frame_buffer1.unlock();
-            
-            char *data_ = frame_buffer1.get();
 
+            //Get message from the queue
+            Message message = pSocketHandler->get_head();
+            pSocketHandler->pop_head();
+            char *data_ = message.data.get();
             string heading(data_);
 
             //Check the correctness of this frame buffer
-            if( heading.length() != 23){
+            if( heading.length() != 17){
                 cout << "heading length incorrect'" << endl;
-                b_frame_buffer1_unused = false;
-                mutex_frame_buffer1.unlock();
                 continue;
             }
 
-            if( heading.substr(0,6) != "Begin:"){
-                cout << "Beginning is not 'Begin:'" << endl;
-                b_frame_buffer1_unused = false;
-                mutex_frame_buffer1.unlock();
-                continue;
-            }
 
             string sJPEG_length(data_+heading.length()+1);
             int iJPEG_length = 0;
@@ -175,31 +156,27 @@ node {
                 iJPEG_length = stoi(sJPEG_length);
             }
             catch(exception &e){
-                b_frame_buffer1_unused = false;
-                mutex_frame_buffer1.unlock();
                 cout << "Convert sJPEG_length to iJPEG_length fails" << endl;
                 continue;
             }
 
-            //check if length correct
-            if( iJPEG_length + 41 != frame_buffer1_length){
-                b_frame_buffer1_unused = false;
-                mutex_frame_buffer1.unlock();
-                cout << "Buffer length does not match heading plus JPEG data" << endl;
-                cout << "frame_buffer1_length " << frame_buffer1_length << endl;
-                cout << "iJPEG_length+41 " << iJPEG_length + 41 << endl;
-                continue;
-            }
+//            cout << "iJPEG_length " << iJPEG_length << endl;
+//            cout << "JPEG length check " << message.length - 24 << endl;
 
             //check JPEG signature
-            if( !(static_cast<int>(static_cast<unsigned char>(data_[30])) == 0xFF &&
-                static_cast<int>(static_cast<unsigned char>(data_[31])) == 0xD8 &&
-                static_cast<int>(static_cast<unsigned char>(data_[32])) == 0xFF &&
-                static_cast<int>(static_cast<unsigned char>(data_[30+iJPEG_length-2])) == 0xFF &&
-                static_cast<int>(static_cast<unsigned char>(data_[30+iJPEG_length-1])) == 0xD9 ))
+            int shift_length = 13 + 1 + 3 + 1 + sJPEG_length.length() + 1;
+            if( !(static_cast<int>(static_cast<unsigned char>(data_[shift_length])) == 0xFF &&
+                static_cast<int>(static_cast<unsigned char>(data_[shift_length+1])) == 0xD8 &&
+                static_cast<int>(static_cast<unsigned char>(data_[shift_length+2])) == 0xFF 
+                && static_cast<int>(static_cast<unsigned char>(data_[shift_length+iJPEG_length-2])) == 0xFF
+                && static_cast<int>(static_cast<unsigned char>(data_[shift_length+iJPEG_length-1])) == 0xD9 
+            ))
             {
-                b_frame_buffer1_unused = false;
-                mutex_frame_buffer1.unlock();
+                cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length])) << endl;
+                cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length+1])) << endl;
+                cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length+2])) << endl;
+                cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length+iJPEG_length-2])) << endl;
+                cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length+iJPEG_length-1])) << endl;
                 cout << "JPEG signature does not match" << endl;
                 continue;
             }
@@ -207,8 +184,11 @@ node {
             //2024/6/8 Report result back to Zenbo so it can take actions.
             ZenboNurseHelperProtobuf::ReportAndCommand report_data;
             string header(data_);
-            string str_timestamp = header.substr(6,13);
-            string str_pitch_degree = header.substr(20,2);
+            string str_timestamp = header.substr(0,13);
+            string str_pitch_degree = header.substr(14,3);
+//            cout << "str_timestamp " << str_timestamp << endl;
+//            cout << "str_pitch_degree " << str_pitch_degree << endl;
+
             long timestamp = 0;
             int pitch_degree = 0;
             try{
@@ -225,7 +205,7 @@ node {
             //In OpenCV 4.6, imdecode still works, but in OpenCV 4.11 and 4.12, it fails.
             //That is the reason that in my imshow() output window, the bottom region is always blurred.
             //The reason is that the imdecode() function fails to decode the JPEG image. 
-            vector<uchar> JPEG_Data(data_ + 30, data_+30+iJPEG_length);
+            vector<uchar> JPEG_Data(data_ + shift_length, data_+shift_length+iJPEG_length);
 
             bool bCorrectlyDecoded = false;
             Mat inputImage;
@@ -236,8 +216,6 @@ node {
                 else
                 {
                     cout << "imdecode fails." << std::endl;
-                    b_frame_buffer1_unused = false;
-                    mutex_frame_buffer1.unlock();
                     continue;
                 }
             }
@@ -248,15 +226,13 @@ node {
 
             if( bCorrectlyDecoded)
             {
-//                cout << "bCorrectlyDecoded." << std::endl;
                 bNewoutFrame = true;
-//                inputImage.copyTo(outFrame);
 
                 if(bSaveTransmittedImage)
                 {
                     //2025/1/7 How to change the timestamp to a meaningful filename?
                     string filename = raw_images_directory + "/" + str_timestamp + ".jpg";
-                    save_image_JPEG(data_ + 30, iJPEG_length , filename);
+                    save_image_JPEG(data_ + shift_length, iJPEG_length , filename);
 //                    std::cout << filename << std::endl;
                 }
 
@@ -283,8 +259,8 @@ node {
                     else
                     {
                         cout << "WriteOutputImage fails." << std::endl;
-                        b_frame_buffer1_unused = false;
-                        mutex_frame_buffer1.unlock();
+//                        b_frame_buffer1_unused = false;
+//                        mutex_frame_buffer1.unlock();
                         continue;
                     }
 
@@ -324,18 +300,20 @@ node {
 //                    }else
 //                        throw( "report_data too large.");
 
-                    b_frame_buffer1_unused = false;
+//                    b_frame_buffer1_unused = false;
 //                    pSendCommandThread->cond_var_report_result.notify_one();
                 }
                 else
                 {
                     inputImage.copyTo(outFrame);
-//                    outFrame = inputImage;
-                    bNewoutFrame = true;
-                    b_frame_buffer1_unused = false;
                 }
             }
-            mutex_frame_buffer1.unlock();
+        }
+        else
+        {
+            //wait until being notified
+            std::unique_lock<std::mutex> lk(mtx);
+            cond_var_process_image.wait(lk);
         }
     }
     cout << "Exit while loop." << std::endl;

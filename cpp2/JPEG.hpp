@@ -12,6 +12,6 @@ public:
     char* get_buffer();
     size_t get_length();
 private:
-    char* data;
-    size_t length;
+    char* data = nullptr;
+    size_t length = 0;
 };
