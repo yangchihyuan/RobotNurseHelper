@@ -36,6 +36,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 class ImageListener implements OnImageAvailableListener {
 
     static {
@@ -143,18 +146,33 @@ class ImageListener implements OnImageAvailableListener {
 
                                     byte[] array_JPEG = baos.toByteArray();
 
-                                    String key;
+                                    String Timestamp = Long.toString(timestamp_image);
+                                    String PitchDegree;
                                     if (mActionRunnable.pitchDegree >= 0)
-                                        key = "Begin:" + Long.toString(timestamp_image) + "_" + String.format("%03d", mActionRunnable.pitchDegree) + '\0' + String.format("%05d", array_JPEG.length) + '\0';
+                                        PitchDegree = String.format("%03d", mActionRunnable.pitchDegree);
                                     else
-                                        key = "Begin:" + Long.toString(timestamp_image) + "_-" + String.format("%02d", Math.abs(mActionRunnable.pitchDegree)) + '\0' + String.format("%05d", array_JPEG.length) + '\0';
+                                        PitchDegree = String.format("%02d", Math.abs(mActionRunnable.pitchDegree));
 
+                                    String JPEG_length = String.format("%05d", array_JPEG.length);
                                     OutputStream os = socket.getOutputStream();
-                                    os.write(key.getBytes());
+                                    os.write("Begin:".getBytes());
+                                    Long message_length = (long) (Timestamp.length() + 1 + 3 + 1 + JPEG_length.length() + 1 + array_JPEG.length);
+                                    Log.d("message_length", Long.toString(message_length));
+                                    ByteBuffer buffer = ByteBuffer.allocate(8);
+                                    buffer.order(ByteOrder.LITTLE_ENDIAN); // Ubuntu byte order
+                                    buffer.putLong(message_length);
+                                    byte[] byteArray = buffer.array();
+
+                                    os.write(byteArray);
+                                    os.write(Timestamp.getBytes());
+                                    os.write("_".getBytes());
+                                    os.write(PitchDegree.getBytes());
+                                    String Null = "\0";
+                                    os.write(Null.getBytes());
+                                    os.write(JPEG_length.getBytes());
+                                    os.write(Null.getBytes());
                                     os.write(array_JPEG);
                                     os.write("EndOfAFrame".getBytes());
-//                                    mbSendSuccessfully = true;
-//                                    Log.d("Send a frame", "No error");
                                 } catch (Exception e) {
                                     Log.d("Exception Send to Server fails", e.getMessage()); //sendto failed: EPIPE (Broken pipe)
 //                                    if( e.getMessage().contains("EPIPE"))

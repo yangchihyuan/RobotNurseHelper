@@ -1,38 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_main_root"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:weightSum="2"
     android:gravity="center"
-    android:padding="16dp">
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:weightSum="2">
 
     <!-- 第一顆: 痛覺量表按鈕(圖片) -->
-    <ImageButton
-        android:id="@+id/btnGoPain"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:src="@drawable/pain_btn"
-        android:background="@null"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        android:contentDescription="@string/desc_pain_btn" />
 
     <!-- 第二顆: 撥放影片按鈕(圖片) -->
+
+    <ImageButton
+        android:id="@+id/btnGoPain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="300dp"
+        android:layout_marginBottom="183dp"
+        android:adjustViewBounds="true"
+        android:background="@null"
+        android:contentDescription="@string/desc_pain_btn"
+        android:scaleType="fitCenter"
+        android:src="@drawable/pain_btn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnGoVideo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageButton
         android:id="@+id/btnGoVideo"
-        android:layout_width="0dp"
-        android:layout_weight="1"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:src="@drawable/video_btn"
-        android:background="@null"
+        android:layout_marginTop="258dp"
+        android:layout_marginBottom="121dp"
         android:adjustViewBounds="true"
+        android:background="@null"
+        android:contentDescription="@string/desc_video_btn"
         android:scaleType="fitCenter"
-        android:contentDescription="@string/desc_video_btn" />
+        android:src="@drawable/video_btn"
+        app:layout_constraintBottom_toTopOf="@+id/btnNetworkSetting"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnGoPain"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</LinearLayout>
+    <Button
+        android:id="@+id/btnNetworkSetting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Network Setting"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

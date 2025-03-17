@@ -2,14 +2,22 @@ package com.example.painrating;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.RectF;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.content.Intent;
 
+import java.io.OutputStream;
+import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +32,25 @@ public class PainActivity extends AppCompatActivity {
 
     // 把 ImageView 宣告為成員 (class-level field)，避免 “needs to be declared final” 問題
     private ImageView imgPainScale;
+
+    private String mServerURL;
+    private Integer mPortNumber;
+
+    Socket SocketToServer;
+    int gfaceIndex;
+
+    protected void RetrieveSharedPreferences(){
+        SharedPreferences sharedPref = getSharedPreferences("PainRating_Preference", Context.MODE_PRIVATE);
+        String ServerURL = sharedPref.getString("ServerURL", "");
+        if (!ServerURL.isEmpty()) {
+            mServerURL = ServerURL;
+        }
+
+        String PortNumber = sharedPref.getString("PortNumber", "");
+        if (!PortNumber.isEmpty()) {
+            mPortNumber = Integer.parseInt(PortNumber);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,11 +97,58 @@ public class PainActivity extends AppCompatActivity {
                     } else {
                         // 顯示分數
                         showFaceToast(faceIndex);
+                        gfaceIndex = faceIndex;
                     }
+
+                    //There are two types of touch events: ACTION_DOWN and ACTION_UP.
+                    //Create a socket, send a message to the server and close the socket.
+                    HandlerThread thread = new HandlerThread("SocketProcess");
+                    thread.start();
+                    Handler handler = new Handler(thread.getLooper());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                RetrieveSharedPreferences();
+                                SocketToServer = new Socket(mServerURL, mPortNumber);
+                                if (SocketToServer.isConnected()) {
+                                    OutputStream os = SocketToServer.getOutputStream();
+                                    os.write("Begin:".getBytes());
+                                    Long message_length = (long) (4);   //value
+                                    ByteBuffer buffer = ByteBuffer.allocate(8);
+                                    buffer.order(ByteOrder.LITTLE_ENDIAN); // Ubuntu byte order
+                                    buffer.putLong(message_length);
+                                    byte[] byteArray = buffer.array();
+                                    os.write(byteArray);
+
+                                    ByteBuffer buffer2 = ByteBuffer.allocate(4);
+                                    buffer2.order(ByteOrder.LITTLE_ENDIAN); // Ubuntu byte order
+                                    buffer2.putInt(gfaceIndex);
+                                    byte[] byteArray2 = buffer2.array();
+                                    os.write(byteArray2);
+
+//                                os.write(gfaceIndex);   //Here is the bug, only 1 byte is sent. Need to send 4 bytes. Maybe there is an implicit convertion.
+                                    os.write("EndOfAFrame".getBytes());
+                                } else {
+                                }
+                                SocketToServer.close();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+
+
+
                 }
+
+
                 return true; // return true 表示消費該事件
             }
         });
+
+
     }
 
     /**
@@ -122,5 +196,15 @@ public class PainActivity extends AppCompatActivity {
         Intent intent = new Intent(PainActivity.this, FaceResultActivity.class);
         intent.putExtra("score", score);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            SocketToServer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

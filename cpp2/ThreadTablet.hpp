@@ -9,18 +9,16 @@
 #include "SendCommandThread.hpp"
 #include "SocketHandler.hpp"
 
-#ifndef ProcessImageThread_hpp
-#define ProcessImageThread_hpp
+#ifndef ThreadTablet_hpp
+#define ThreadTablet_hpp
 
 using namespace std;
 
-class ProcessImageThread: public QThread
+class ThreadTablet: public QThread
 {
     Q_OBJECT
 
 public:
-    ProcessImageThread();
-
     bool b_HumanPoseEstimation = false;
     bool b_WhileLoop = true;
     bool bSaveTransmittedImage = false;

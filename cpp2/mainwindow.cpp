@@ -155,17 +155,14 @@ MainWindow::MainWindow(QWidget *parent)
         }
     } 
 
-
-    //allocate buffer
-    frame_buffer = std::make_unique<char[]>(buffer_size);   //how large should be the buffer size?
-    buffer_length = 0;
-    iEndOfAFrame = 0;
-
     //run threads
     thread_process_image.start();
     thread_send_command.start();
     thread_process_image.pSendCommandThread = &thread_send_command;
+    thread_process_image.pSocketHandler = &socketHandler1;
     thread_process_audio.start();
+    thread_tablet.start();
+    thread_tablet.pSocketHandler = &socketHandler4;    
 
     //sockets
     m_server_receive_image = new QTcpServer();
@@ -198,6 +195,18 @@ MainWindow::MainWindow(QWidget *parent)
     {
         exit(EXIT_FAILURE);
     }
+
+    m_server_Tablet = new QTcpServer();
+    if(m_server_Tablet->listen(QHostAddress::Any, 8898))
+    {
+       connect(m_server_Tablet, &QTcpServer::newConnection, this, &MainWindow::newConnection_Tablet);
+       cout << "Listening port 8898" << endl;
+    }
+    else
+    {
+        exit(EXIT_FAILURE);
+    }
+
 
     QTimer *timer = new QTimer(this);
     connect( timer, &QTimer::timeout, this, &MainWindow::timer_event);
@@ -286,6 +295,18 @@ MainWindow::~MainWindow()
     if (audioSrc != nullptr)
       delete audioSrc;
  
+    thread_tablet.b_WhileLoop = false;
+    thread_tablet.cond_var_process_image.notify_one();
+    thread_tablet.wait();
+    foreach (QTcpSocket* socket, connection_set4)
+    {
+        socket->close();
+        socket->deleteLater();
+    }
+    m_server_Tablet->close();
+    m_server_Tablet->deleteLater();
+  
+
     //2024/8/21 disable whisper.cpp
 //    whisper_free(ctx);
 
@@ -311,6 +332,12 @@ void MainWindow::newConnection_receive_audio()
 {
     while (m_server_receive_audio->hasPendingConnections())
         appendToSocketList3(m_server_receive_audio->nextPendingConnection());
+}
+
+void MainWindow::newConnection_Tablet()
+{
+    while (m_server_Tablet->hasPendingConnections())
+        appendToSocketList4(m_server_Tablet->nextPendingConnection());
 }
 
 //Define the behavior of a socket.
@@ -339,6 +366,14 @@ void MainWindow::appendToSocketList3(QTcpSocket* socket)
     connect(socket, &QAbstractSocket::errorOccurred, this, &MainWindow::displayError);
 }
 
+void MainWindow::appendToSocketList4(QTcpSocket* socket)
+{
+    connection_set4.insert(socket);
+    connect(socket, &QTcpSocket::readyRead, this, &MainWindow::readSocket4);
+    connect(socket, &QTcpSocket::disconnected, this, &MainWindow::discardSocket4);
+    connect(socket, &QAbstractSocket::errorOccurred, this, &MainWindow::displayError);
+}
+
 void MainWindow::readSocket()
 {
     //sender() is a function of Qt to get the data source of this function.
@@ -349,84 +384,12 @@ void MainWindow::readSocket()
     QDataStream socketStream(socket);
     qint64 byteAvailable = socket->bytesAvailable();
 
-    char* frame_buffer_head = frame_buffer.get();
-    int buffer_length_old = buffer_length;
-//    cout << "buffer_length_old " << buffer_length_old << endl;
-    //prevent buffer overflow
-    if(buffer_length+byteAvailable < buffer_size )     //always true
-    {
-        qint64 readlength = socketStream.readRawData(frame_buffer_head+buffer_length, byteAvailable);     //I can get data by using readRawData
-        buffer_length += readlength;     //buffer gets longer from the read data
 
-//        cout << "readlength " << readlength << endl;       //readlength changes a lot
-//        cout << "buffer_length " << buffer_length << endl;
-
-        //look for the keyword "EndOfAFrame" in the buffer.
-        //The bug occurs if buffer_length_old <11
-        string pattern("EndOfAFrame");
-        int pattern_length = pattern.length();
-//        cout << "pattern_length " << pattern_length << endl;
-
-        string haystack;
-        int begin_pos = 0;
-        if(buffer_length_old >= pattern_length)
-        {
-            begin_pos = buffer_length_old - pattern_length;
-            haystack.assign(frame_buffer_head + buffer_length_old - pattern_length, readlength+pattern_length); 
-        }
-        else
-            haystack.assign(frame_buffer_head, buffer_length); 
-
-        size_t n = haystack.find(pattern);
-
-        //if found, copy buffer to frame_buffer1
-        if (n != string::npos)
-        {
-            if( iEndOfAFrame % 1000 == 0)
-                cout << "Found EndOfAFrame " << iEndOfAFrame++ << endl;
-            else
-                iEndOfAFrame++;
-
-            int frame_length = begin_pos + n + pattern_length;   //include the pattern "EndOfAFrame"
-//            cout << "frame_length " << frame_length << std::endl;
-
-//            thread_process_image.mutex_frame_buffer1.lock();
-            //To prevent thread_process_image's frame_buffer1 overflow
-            if( frame_length <= thread_process_image.get_buffer_size())
-            {
-                JEPG_buffer thisJPEG_buffer;
-                size_t buffer_head_length = "Begin:".length();
-                size_t buffer_end_length = "EndOfAFrame".length();
-                thisJPEG_buffer.set_buffer(frame_buffer_head+buffer_head_length, frame_length-buffer_end_length);
-                thread_process_image.mutex_frame_buffer1.lock();
-                thread_process_image.qJPEG_buffer.push(thisJPEG_buffer);
-                thread_process_image.mutex_frame_buffer1.unlock();
-                copy(frame_buffer_head,frame_buffer_head+frame_length,thread_process_image.frame_buffer1.get());
-            }
-            else
-            {
-                cout << "error, frame_length > buffer_size" << std::endl;
-                throw std::exception();
-            }
-
-            thread_process_image.b_frame_buffer1_unused = true;
-            thread_process_image.frame_buffer1_length = frame_length;
-//            thread_process_image.mutex_frame_buffer1.unlock();
-//            thread_process_image.cond_var_process_image.notify_one();
-
-            //move data
-            int remaining_length = buffer_length - frame_length;
-            if( remaining_length > 0)
-                copy(frame_buffer_head+frame_length,
-                        frame_buffer_head+buffer_length,
-                        frame_buffer_head);
-            
-            //update buffer_length
-            buffer_length = remaining_length;
-        }
-    }
+    unique_ptr<char[]> pReadData = std::make_unique<char[]>(byteAvailable);
+    qint64 readlength = socketStream.readRawData(pReadData.get(), byteAvailable);
+    socketHandler1.add_data(pReadData.get(), byteAvailable);
+    thread_process_image.cond_var_process_image.notify_one();
 }
-
 
 void MainWindow::readSocket3()
 {
@@ -465,6 +428,20 @@ void MainWindow::readSocket3()
 
 }
 
+void MainWindow::readSocket4()
+{
+    QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
+
+    QByteArray buffer;
+
+    QDataStream socketStream(socket);
+    qint64 byteAvailable = socket->bytesAvailable();
+
+    unique_ptr<char[]> pReadData = std::make_unique<char[]>(byteAvailable);
+    qint64 readlength = socketStream.readRawData(pReadData.get(), byteAvailable);
+    socketHandler4.add_data(pReadData.get(), byteAvailable);
+    thread_tablet.cond_var_process_image.notify_one();
+}
 
 void MainWindow::discardSocket()
 {
@@ -498,6 +475,18 @@ void MainWindow::discardSocket3()
     if (it != connection_set3.end()){
         displayMessage(QString("INFO :: A client has just left the room").arg(socket->socketDescriptor()));
         connection_set3.remove(*it);
+    }
+    
+    socket->deleteLater();
+}
+
+void MainWindow::discardSocket4()
+{
+    QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
+    QSet<QTcpSocket*>::iterator it = connection_set4.find(socket);
+    if (it != connection_set4.end()){
+        displayMessage(QString("INFO :: A client has just left the room").arg(socket->socketDescriptor()));
+        connection_set4.remove(*it);
     }
     
     socket->deleteLater();

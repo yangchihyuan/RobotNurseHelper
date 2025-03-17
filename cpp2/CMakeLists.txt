@@ -72,6 +72,8 @@ set(SOURCES JPEG.cpp
             ProcessImageThread.cpp
             SendCommandThread.cpp
             ProcessAudioThread.cpp
+            SocketHandler.cpp
+            ThreadTablet.cpp
     )
 
 add_executable(ZenboNurseHelper ${SOURCES} ${HEADERS} ${LIBMP_Header})
