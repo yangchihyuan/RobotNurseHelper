@@ -12,6 +12,25 @@ sudo apt -y install build-essential
 #install git
 sudo apt -y install git
 
+#install zip
+sudo apt -y install zip
+
+#install libgtk2.0-dev, which is used in OpenCV to show images
+sudo apt -y install libgtk2.0-dev 
+
+#install OpenCV 3.11, which is required by MediaPipe
+wget -O opencv4.11.zip https://github.com/opencv/opencv/archive/refs/tags/4.11.0.zip
+wget -O opencv_contrib4.11.zip https://github.com/opencv/opencv_contrib/archive/refs/tags/4.11.0.zip
+unzip opencv4.11.zip
+unzip opencv_contrib4.11.zip
+cd opencv-4.11.0
+mkdir -p build && cd build
+cmake -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-4.11.0/modules ..
+cmake --build .
+sudo make install
+#to config the loading directories to let /usr/local/lib works
+sudo ldconfig
+
 #install MediaPipe v0.10.22
 git clone https://github.com/google-ai-edge/mediapipe.git
 cd mediapipe
@@ -23,7 +42,19 @@ git checkout v0.10.22
 cd ~ 
 git clone https://github.com/yangchihyuan/ZenboNurseHelper.git
 #copy our code to the mediapipe folder
-cp ZenboNurseHelper/cpp2/mediapipe_addition/* mediapipe/
+cp -r ~/ZenboNurseHelper/cpp2/mediapipe_addition/* ~/mediapipe/
+
+#Install bazelisk
+wget https://github.com/bazelbuild/bazelisk/releases/download/v1.25.0/bazelisk-amd64.deb
+sudo dpkg -i bazelisk-amd64.deb
+
+#build libmp library
+cd ~/mediapipe
+bazel build -c opt --define MEDIAPIPE_DISABLE_GPU=1 mediapipe/examples/desktop/libmp:libmp.so
+
+#copy the .so file to our folder
+mkdir ~/ZenboNurseHelper/cpp2/build
+cp ~/mediapipe/bazel-bin/mediapipe/examples/desktop/libmp/libmp.so ~/ZenboNurseHelper/cpp2/build
 
 #Qt
 #We use it to create our GUI
@@ -67,14 +98,10 @@ bash ./models/download-ggml-model.sh base
 
 make
 
-#Because whisper.cpp runs slowly if it only uses CPUs, we need a GPU to accelerate its computation. In our case, Ubuntu desktop 24.04 installs the NVidia-driver 535 by default. It is not the latest one, but still works.
-
-#Compile and Run
-#We need CMake to build open_model_zoo projects.
-sudo apt -y install cmake
-
 #Run the OpenVINO's build_demos.sh in ~/open_model_zoo/demos to build this project, and an executable file 9_NurseHelper should be created at ~/omz_demos_build/intel64/Release/ To make it easy, we make s build_demos.sh in the directory ~/open_model_zoo/demos/ZenboNurseHelper/cpp
+cd ~/ZenboNurseHelper/cpp2/build
+cmake ..
+cmake --build .
+cd ..
 
-cd ~/ZenboNurseHelper/cpp2
-./build.sh
 

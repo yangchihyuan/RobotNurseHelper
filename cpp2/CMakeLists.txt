@@ -15,7 +15,7 @@ list(APPEND CMAKE_PREFIX_PATH "usr/local")
 #try to use mediapipe's protobuf
 # Protobuf
 # use Protobuf bundled with LibMP
-set(MEDIAPIPE_DIR "/home/chihyuan/mediapipe")
+set(MEDIAPIPE_DIR "/home/$ENV{HOME}/mediapipe")
 get_filename_component(MEDIAPIPE_DIRNAME "${MEDIAPIPE_DIR}" NAME)
 #The version is 3.19.1
 set(protobuf_source_dir "${MEDIAPIPE_DIR}/bazel-${MEDIAPIPE_DIRNAME}/external/com_google_protobuf")
