@@ -1,5 +1,5 @@
-#2024/12/3
-#Install Zenbo Nurse Helper to Ubuntu 24.04
+#2025/3/20
+#Install Zenbo Nurse Helper cpp2 to Ubuntu 24.04
 #Author: Chih-Yuan Yang
 #Project: Zenbo Nurse Helper
 
@@ -9,60 +9,16 @@
 #Your Ubuntu system may be too clear to have the compiler. Please install it by
 sudo apt -y install build-essential
 
-#OpenVINO Setting
-#Please download the Intel OpenVINO 2024.3's Ubuntu 24 archive. There are many ways to install OpenVINO (Link). For our case, we should use the archive file because it contains a setupvars.sh file, which is required by the open_model_zoo demo code.
-
-cd ~
-wget https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.3/linux/l_openvino_toolkit_ubuntu24_2024.3.0.16041.1e3b88e4e3f_x86_64.tgz
-#unzip file
-tar -xvzf l_openvino_toolkit_ubuntu24_2024.3.0.16041.1e3b88e4e3f_x86_64.tgz
-#Create a symbolic link
-ln -s l_openvino_toolkit_ubuntu24_2024.3.0.16041.1e3b88e4e3f_x86_64 OpenVINO
-#Delete the downloaded file
-rm l_openvino_toolkit_ubuntu24_2024.3.0.16041.1e3b88e4e3f_x86_64.tgz
-#install git
-sudo apt -y install git
-#download open_model_zoo files
-cd ~
-git clone --recurse-submodules https://github.com/openvinotoolkit/open_model_zoo.git
-
-#We need a pretrained model human-pose-estimation-0001.xml and its bin file used in the human_pose_estimation_demo, which is a part of the OpenPose algorithm. To download the model, we use a Python tool package omz_tools, whose installation instruction is a part of the open_model_zoo. See (Link). However, the instruction does not fully work on Ubuntu 24.04, which prevents system-wide Python package installation. Our solution is to install a Debian packaged Python application by
-sudo apt-get update
-sudo apt -y install python3-pip
-
-#This command also installs the setuptools package, which is equivalent to the open_model_zoo's installation instruction "pip install setuptools". Thereafter, we install the the openvino-dev package. Because Ubuntu 24.04 prevent system-wide Python package installation, we need to modify Intel's instruction by replacing "pip install openvino-dev" to
-pip install openvino-dev --break-system-packages
-
-#Navigate to the open_model_zoo/tools/model_tools directory, and install the omz_tools package
-cd ~/open_model_zoo/tools/model_tools
-pip install . --break-system-packages
-
-#After installing the model_tools package, we use this command to download the human-pose-estimation models from a file server.
-python3 ~/open_model_zoo/tools/model_tools/src/omz_tools/omz_downloader.py --list ~/open_model_zoo/demos/human_pose_estimation_demo/cpp/models.lst -o ~/open_model_zoo/models
-#It will download 23 files saved in ~/open_model_zoo/models/intel and ~/open_model_zoo/models/public although we only need 2 of them. However, this command is better than the Intel's instruction "omz_downloader --all" because it will download a lot of files and take a long time.
+#install MediaPipe v0.10.22
+git clone https://github.com/google-ai-edge/mediapipe.git
+git checkout v0.10.22
 
 #Install Our Files
 #Suppose your Open Model Zoo is installed in ~/open_model_zoo. Please git clone this repository into the demos directory.
 
-cd ~/open_model_zoo/demos
 git clone https://github.com/yangchihyuan/ZenboNurseHelper.git
-
-#Install Dependencies
-#Protocol Buffer
-#We use this tool to pass messages from our server program to the Android app.
-sudo apt -y install protobuf-compiler
-
-#It will install Protocol Buffer version 3.21.12-8.2.
-
-#OpenCV
-#It is required by the open_model_zoo's human_pose_estimation demo, and we use it to show images captured by the Zenbo robot's camera.
-sudo apt -y install libopencv-dev
-#It will install OpenCV version 4.6.0.
-
-#libgflags
-#It is a tool library to help us parse command arguments
-sudo apt -y install libgflags-dev
-#It will install libgflags 2.2.2-2.
+#copy our code to the mediapipe folder
+cp ZenboNurseHelper/cpp2/mediapipe_addition/* mediapipe/mediapipe/
 
 #Qt
 #We use it to create our GUI
@@ -114,6 +70,6 @@ sudo apt -y install cmake
 
 #Run the OpenVINO's build_demos.sh in ~/open_model_zoo/demos to build this project, and an executable file 9_NurseHelper should be created at ~/omz_demos_build/intel64/Release/ To make it easy, we make s build_demos.sh in the directory ~/open_model_zoo/demos/ZenboNurseHelper/cpp
 
-cd ~/open_model_zoo/demos/ZenboNurseHelper/cpp
-./build_demo.sh
+cd ~/ZenboNurseHelper/cpp2
+./build.sh
 

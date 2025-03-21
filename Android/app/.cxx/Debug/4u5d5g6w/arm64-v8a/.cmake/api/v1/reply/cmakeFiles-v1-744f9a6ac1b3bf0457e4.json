@@ -788,8 +788,8 @@
 	"kind" : "cmakeFiles",
 	"paths" : 
 	{
-		"build" : "/home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app/.cxx/Debug/4u5d5g6w/arm64-v8a",
-		"source" : "/home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app"
+		"build" : "/home/chihyuan/ZenboNurseHelper/Android/app/.cxx/Debug/4u5d5g6w/arm64-v8a",
+		"source" : "/home/chihyuan/ZenboNurseHelper/Android/app"
 	},
 	"version" : 
 	{
