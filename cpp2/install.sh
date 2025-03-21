@@ -9,16 +9,21 @@
 #Your Ubuntu system may be too clear to have the compiler. Please install it by
 sudo apt -y install build-essential
 
+#install git
+sudo apt -y install git
+
 #install MediaPipe v0.10.22
 git clone https://github.com/google-ai-edge/mediapipe.git
+cd mediapipe
 git checkout v0.10.22
 
 #Install Our Files
 #Suppose your Open Model Zoo is installed in ~/open_model_zoo. Please git clone this repository into the demos directory.
 
+cd ~ 
 git clone https://github.com/yangchihyuan/ZenboNurseHelper.git
 #copy our code to the mediapipe folder
-cp ZenboNurseHelper/cpp2/mediapipe_addition/* mediapipe/mediapipe/
+cp ZenboNurseHelper/cpp2/mediapipe_addition/* mediapipe/
 
 #Qt
 #We use it to create our GUI
@@ -28,7 +33,7 @@ sudo apt -y install qt6-multimedia-dev
 #It will install Qt version 6.4.2.
 
 #Hint
-#The two commands to install Qt base and multimedia libraries allow you to compile this project. However, they do not isntall Qt Designer, a convenient tool to the GUI file mainwindow.ui. If you want to install Qt Designer, you need to use this command
+#The two commands to install Qt base and multimedia libraries allow you to compile this project. However, they do not install Qt Designer, a convenient tool to the GUI file mainwindow.ui. If you want to install Qt Designer, you need to use this command
 sudo apt -y install qtcreator
 #The Qt creator takes more than 1G disk space because it requires many libraries. Once installed, you can launch the program to open the mainwindow.ui file with Qt Designer.
 
