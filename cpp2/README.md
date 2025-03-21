@@ -2,15 +2,14 @@ This folder contains the code files for the server side program of ZenboNurseHel
 
 ![GUI](GUI.jpg "GUI")
 
-In this project, we utilize Intel OpenVINO's human_pose_estimation_demo in their Open Model Zoo 2024 demos as a tool to guide our Zenbo robot. Our server-side program receives frames transmitted from the robot-side app, estimates human pose landmark coordinates, and reports the results to the robot-side program.
+In this project, we utilize MediaPipe as the pose estimation library to guide our Zenbo robot. Our server-side program receives frames transmitted from the robot-side app, estimates human pose landmark coordinates, send commands to robot to call robot's movement APIs.
 
 # Install
-We create a script file to install our code and all required libraries including
-OpenVINO, OpenCV, git, gcc, Open_Model_Zoo, pip, Protocol Buffer, whisper.cpp, Qt, libgflags, and PortAudio.
+We create a script file to install our code and all required libraries MediaPipe, OpenCV, git, gcc, Protocol Buffer, Qt, and PortAudio.
 The easiest way to install our program is to execute the following script.
 ```sh
 cd ~
-wget https://raw.githubusercontent.com/yangchihyuan/ZenboNurseHelper/refs/heads/master/cpp/install.sh
+wget https://raw.githubusercontent.com/yangchihyuan/ZenboNurseHelper/refs/heads/master/cpp2/install.sh
 chmod +x install.sh
 ./install.sh
 ```
@@ -28,6 +27,4 @@ The program easily crashes because we use several libraries containing bugs. To 
 which use gdb for debugging.
 
 # Known problems and workarounds
-## Qt FreeType crash problem
-Our program often crashes in this function FT_Load_Glyph () at /lib/x86_64-linux-gnu/libfreetype.so.6, which is called by QFontEngineFT::loadGlyph(QFontEngineFT::QGlyphSet*, unsigned int, QFixedPoint const&, QFontEngine::GlyphFormat, bool, bool) const () at /home/chihyuan/Qt/6.7.2/gcc_64/lib/libQt6Gui.so.6. According to two blogs [(Link1)](https://stackoverflow.com/questions/40490414/cannot-trace-cause-of-crash-in-qt-program) [(Link2)](https://blog.csdn.net/weixin_41797797/article/details/105861978), it is a Qt bug only occurring on Linux. To avoid this problem, use the command in the terminal window before launching our program.
-
+You cannot install the pre-built OpenCV and Protocol Buffer packages for Ubuntu 24.04. The pre-built OpenCV 4.6.0 conflicts with MediaPipe's dependent OpenCV version in terms of their included Protocol Buffer version.

@@ -39,7 +39,7 @@ include CMakeFiles/rules.ninja
 #############################################
 # Logical path to working directory; prefix for absolute paths.
 
-cmake_ninja_workdir = /home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app/.cxx/Debug/4u5d5g6w/armeabi-v7a/
+cmake_ninja_workdir = /home/chihyuan/ZenboNurseHelper/Android/app/.cxx/Debug/4u5d5g6w/armeabi-v7a/
 # =============================================================================
 # Object build statements for SHARED_LIBRARY target native-lib
 
@@ -49,7 +49,7 @@ cmake_ninja_workdir = /home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Andro
 
 build cmake_object_order_depends_target_native-lib: phony || CMakeFiles/native-lib.dir
 
-build CMakeFiles/native-lib.dir/src/main/jni/rgb2yuv.cc.o: CXX_COMPILER__native-lib_Debug /home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app/src/main/jni/rgb2yuv.cc || cmake_object_order_depends_target_native-lib
+build CMakeFiles/native-lib.dir/src/main/jni/rgb2yuv.cc.o: CXX_COMPILER__native-lib_Debug /home/chihyuan/ZenboNurseHelper/Android/app/src/main/jni/rgb2yuv.cc || cmake_object_order_depends_target_native-lib
   DEFINES = -Dnative_lib_EXPORTS
   DEP_FILE = CMakeFiles/native-lib.dir/src/main/jni/rgb2yuv.cc.o.d
   FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC
@@ -58,7 +58,7 @@ build CMakeFiles/native-lib.dir/src/main/jni/rgb2yuv.cc.o: CXX_COMPILER__native-
   TARGET_COMPILE_PDB = CMakeFiles/native-lib.dir/
   TARGET_PDB = ../../../../build/intermediates/cxx/Debug/4u5d5g6w/obj/armeabi-v7a/libnative-lib.pdb
 
-build CMakeFiles/native-lib.dir/src/main/jni/yuv2rgb.cc.o: CXX_COMPILER__native-lib_Debug /home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app/src/main/jni/yuv2rgb.cc || cmake_object_order_depends_target_native-lib
+build CMakeFiles/native-lib.dir/src/main/jni/yuv2rgb.cc.o: CXX_COMPILER__native-lib_Debug /home/chihyuan/ZenboNurseHelper/Android/app/src/main/jni/yuv2rgb.cc || cmake_object_order_depends_target_native-lib
   DEFINES = -Dnative_lib_EXPORTS
   DEP_FILE = CMakeFiles/native-lib.dir/src/main/jni/yuv2rgb.cc.o.d
   FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC
@@ -67,7 +67,7 @@ build CMakeFiles/native-lib.dir/src/main/jni/yuv2rgb.cc.o: CXX_COMPILER__native-
   TARGET_COMPILE_PDB = CMakeFiles/native-lib.dir/
   TARGET_PDB = ../../../../build/intermediates/cxx/Debug/4u5d5g6w/obj/armeabi-v7a/libnative-lib.pdb
 
-build CMakeFiles/native-lib.dir/src/main/jni/imageutils_jni.cc.o: CXX_COMPILER__native-lib_Debug /home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app/src/main/jni/imageutils_jni.cc || cmake_object_order_depends_target_native-lib
+build CMakeFiles/native-lib.dir/src/main/jni/imageutils_jni.cc.o: CXX_COMPILER__native-lib_Debug /home/chihyuan/ZenboNurseHelper/Android/app/src/main/jni/imageutils_jni.cc || cmake_object_order_depends_target_native-lib
   DEFINES = -Dnative_lib_EXPORTS
   DEP_FILE = CMakeFiles/native-lib.dir/src/main/jni/imageutils_jni.cc.o.d
   FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC
@@ -102,7 +102,7 @@ build ../../../../build/intermediates/cxx/Debug/4u5d5g6w/obj/armeabi-v7a/libnati
 # Utility command for edit_cache
 
 build CMakeFiles/edit_cache.util: CUSTOM_COMMAND
-  COMMAND = cd /home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app/.cxx/Debug/4u5d5g6w/armeabi-v7a && /home/chihyuan/Android/Sdk/cmake/3.22.1/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+  COMMAND = cd /home/chihyuan/ZenboNurseHelper/Android/app/.cxx/Debug/4u5d5g6w/armeabi-v7a && /home/chihyuan/Android/Sdk/cmake/3.22.1/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
   DESC = No interactive CMake dialog available...
   restat = 1
 
@@ -113,7 +113,7 @@ build edit_cache: phony CMakeFiles/edit_cache.util
 # Utility command for rebuild_cache
 
 build CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
-  COMMAND = cd /home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app/.cxx/Debug/4u5d5g6w/armeabi-v7a && /home/chihyuan/Android/Sdk/cmake/3.22.1/bin/cmake --regenerate-during-build -S/home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app -B/home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app/.cxx/Debug/4u5d5g6w/armeabi-v7a
+  COMMAND = cd /home/chihyuan/ZenboNurseHelper/Android/app/.cxx/Debug/4u5d5g6w/armeabi-v7a && /home/chihyuan/Android/Sdk/cmake/3.22.1/bin/cmake --regenerate-during-build -S/home/chihyuan/ZenboNurseHelper/Android/app -B/home/chihyuan/ZenboNurseHelper/Android/app/.cxx/Debug/4u5d5g6w/armeabi-v7a
   DESC = Running CMake to regenerate build system...
   pool = console
   restat = 1
@@ -133,7 +133,7 @@ build native-lib: phony ../../../../build/intermediates/cxx/Debug/4u5d5g6w/obj/a
 # =============================================================================
 
 #############################################
-# Folder: /home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/Android/app/.cxx/Debug/4u5d5g6w/armeabi-v7a
+# Folder: /home/chihyuan/ZenboNurseHelper/Android/app/.cxx/Debug/4u5d5g6w/armeabi-v7a
 
 build all: phony ../../../../build/intermediates/cxx/Debug/4u5d5g6w/obj/armeabi-v7a/libnative-lib.so
 
