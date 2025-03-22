@@ -33,6 +33,7 @@ sudo make install
 sudo ldconfig
 
 #install MediaPipe v0.10.22
+cd ~
 git clone https://github.com/google-ai-edge/mediapipe.git
 cd mediapipe
 git checkout v0.10.22
