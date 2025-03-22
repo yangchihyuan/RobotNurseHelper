@@ -19,6 +19,7 @@ sudo apt -y install zip
 sudo apt -y install libgtk2.0-dev 
 
 #install OpenCV 3.11, which is required by MediaPipe
+sudo apt -y install cmake
 wget -O opencv4.11.zip https://github.com/opencv/opencv/archive/refs/tags/4.11.0.zip
 wget -O opencv_contrib4.11.zip https://github.com/opencv/opencv_contrib/archive/refs/tags/4.11.0.zip
 unzip opencv4.11.zip
