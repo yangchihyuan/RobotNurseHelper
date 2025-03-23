@@ -27,7 +27,7 @@ unzip opencv_contrib4.11.zip
 cd opencv-4.11.0
 mkdir -p build && cd build
 cmake -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-4.11.0/modules ..
-cmake --build .
+cmake --build . -j $(nproc)
 sudo make install
 #to config the loading directories to let /usr/local/lib works
 sudo ldconfig
@@ -103,7 +103,7 @@ make
 #Run the OpenVINO's build_demos.sh in ~/open_model_zoo/demos to build this project, and an executable file 9_NurseHelper should be created at ~/omz_demos_build/intel64/Release/ To make it easy, we make s build_demos.sh in the directory ~/open_model_zoo/demos/ZenboNurseHelper/cpp
 cd ~/ZenboNurseHelper/cpp2/build
 cmake ..
-cmake --build .
+cmake --build . -j $(nproc)
 cd ..
 
 
