@@ -7,6 +7,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     QCoreApplication::setApplicationName("Zenbo Nurse Helper");
     QCoreApplication::setApplicationVersion("25.3.12");
+    a.setWindowIcon(QIcon(":/ZenboNurse.png"));
 
     QCommandLineParser parser;
     parser.setApplicationDescription("Zenbo Nurse Helper");

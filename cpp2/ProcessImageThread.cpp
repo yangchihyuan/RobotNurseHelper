@@ -10,16 +10,25 @@
 //#include "Pose.hpp"
 #include "utility_directory.hpp"
 #include <opencv2/opencv.hpp>
+#include "RobotStatus.hpp"
+#include "ActionOption.hpp"
+
 
 #include "libmp.h"
 
 // Compiled protobuf headers for MediaPipe types used
 #include "mediapipe/framework/formats/landmark.pb.h"
 #include "mediapipe/framework/formats/image_format.pb.h"
+#include <google/protobuf/text_format.h>
 
+#include "GetLandmarks.hpp"
+#include "FaceLandmarkToZenboAction.hpp"
 
 //using namespace human_pose_estimation;
 using namespace cv;
+
+RobotStatus robot_status;
+ActionOption action_option;
 
 cv::Mat outFrame;
 bool bNewoutFrame;
@@ -28,109 +37,88 @@ ProcessImageThread::ProcessImageThread()
 {
 }
 
-//typedef pair<float,int> mypair;
-//bool comparator ( const mypair& l, const mypair& r)
-//   { return l.first < r.first; }
-
-//int ProcessImageThread::get_buffer_size()
-//{
-//    return buffer_size;
-//}
-
 void ProcessImageThread::run()
 {
     std::string str_home_path(getenv("HOME"));
-//    std::string pose_model_path = str_home_path + "/open_model_zoo/models/intel/human-pose-estimation-0001/FP32/human-pose-estimation-0001.xml";
-//    HumanPoseEstimator estimator(pose_model_path);
-
 
 const char* graph = R"(
-    # CPU image. (ImageFrame)
-input_stream: "input_video"
+		# MediaPipe graph that performs face mesh with TensorFlow Lite on CPU.
 
-# My added output
-#input_stream: "FLOATS:output_landmark_vector"
-#output_stream: "output_landmark_vector"
+		# Input image. (ImageFrame)
+		input_stream: "input_video"
 
+		# Output image with rendered results. (ImageFrame)
+		output_stream: "output_video"
+		# Collection of detected/processed faces, each represented as a list of
+		# landmarks. (std::vector<NormalizedLandmarkList>)
+		output_stream: "multi_face_landmarks"
 
-# CPU image with rendered results. (ImageFrame)
-output_stream: "output_video"
+		# Throttles the images flowing downstream for flow control. It passes through
+		# the very first incoming image unaltered, and waits for downstream nodes
+		# (calculators and subgraphs) in the graph to finish their tasks before it
+		# passes through another image. All images that come in while waiting are
+		# dropped, limiting the number of in-flight images in most part of the graph to
+		# 1. This prevents the downstream nodes from queuing up incoming images and data
+		# excessively, which leads to increased latency and memory usage, unwanted in
+		# real-time mobile applications. It also eliminates unnecessarily computation,
+		# e.g., the output produced by a node may get dropped downstream if the
+		# subsequent nodes are still busy processing previous inputs.
+		node {
+			calculator: "FlowLimiterCalculator"
+			input_stream: "input_video"
+			input_stream: "FINISHED:output_video"
+			input_stream_info: {
+				tag_index: "FINISHED"
+				back_edge: true
+			}
+			output_stream: "throttled_input_video"
+		}
 
+		# Defines side packets for further use in the graph.
+		node {
+			calculator: "ConstantSidePacketCalculator"
+			output_side_packet: "PACKET:0:num_faces"
+			output_side_packet: "PACKET:1:use_prev_landmarks"
+			output_side_packet: "PACKET:2:with_attention"
+			node_options: {
+				[type.googleapis.com/mediapipe.ConstantSidePacketCalculatorOptions]: {
+#					packet { int_value: 1 }
+					packet { int_value: 3 }
+					packet { bool_value: true }
+					packet { bool_value: true }
+				}
+			}
+		}
+		# Subgraph that detects faces and corresponding landmarks.
+		node {
+			calculator: "FaceLandmarkFrontCpu"
+			input_stream: "IMAGE:throttled_input_video"
+			input_side_packet: "NUM_FACES:num_faces"
+			input_side_packet: "USE_PREV_LANDMARKS:use_prev_landmarks"
+			input_side_packet: "WITH_ATTENTION:with_attention"
+			output_stream: "LANDMARKS:multi_face_landmarks"
+			output_stream: "ROIS_FROM_LANDMARKS:face_rects_from_landmarks"
+			output_stream: "DETECTIONS:face_detections"
+			output_stream: "ROIS_FROM_DETECTIONS:face_rects_from_detections"
+		}
+		# Subgraph that renders face-landmark annotation onto the input image.
+		node {
+			calculator: "FaceRendererCpu"
+			input_stream: "IMAGE:throttled_input_video"
+			input_stream: "LANDMARKS:multi_face_landmarks"
+			input_stream: "NORM_RECTS:face_rects_from_landmarks"
+			input_stream: "DETECTIONS:face_detections"
+			output_stream: "IMAGE:output_video"
+		}
 
-# Gets image size.
-node {
-  calculator: "ImagePropertiesCalculator"
-  input_stream: "IMAGE:throttled_input_video"
-  output_stream: "SIZE:image_size"
-}
-
-# Throttles the images flowing downstream for flow control. It passes through
-# the very first incoming image unaltered, and waits for downstream nodes
-# (calculators and subgraphs) in the graph to finish their tasks before it
-# passes through another image. All images that come in while waiting are
-# dropped, limiting the number of in-flight images in most part of the graph to
-# 1. This prevents the downstream nodes from queuing up incoming images and data
-# excessively, which leads to increased latency and memory usage, unwanted in
-# real-time mobile applications. It also eliminates unnecessarily computation,
-# e.g., the output produced by a node may get dropped downstream if the
-# subsequent nodes are still busy processing previous inputs.
-node {
-  calculator: "FlowLimiterCalculator"
-  input_stream: "input_video"
-  input_stream: "FINISHED:output_video"
-  input_stream_info: {
-    tag_index: "FINISHED"
-    back_edge: true
-  }
-  output_stream: "throttled_input_video"
-  node_options: {
-    [type.googleapis.com/mediapipe.FlowLimiterCalculatorOptions] {
-      max_in_flight: 1
-      max_in_queue: 1
-      # Timeout is disabled (set to 0) as first frame processing can take more
-      # than 1 second.
-      in_flight_timeout: 0
-    }
-  }
-}
-
-# Converts pose, hands and face landmarks to a render data vector.
-node {
-  calculator: "HolisticTrackingToRenderData"
-  input_stream: "IMAGE_SIZE:image_size"
-  input_stream: "POSE_LANDMARKS:pose_landmarks"
-  input_stream: "POSE_ROI:pose_roi"
-  input_stream: "LEFT_HAND_LANDMARKS:left_hand_landmarks"
-  input_stream: "RIGHT_HAND_LANDMARKS:right_hand_landmarks"
-  input_stream: "FACE_LANDMARKS:face_landmarks"
-  output_stream: "RENDER_DATA_VECTOR:render_data_vector"
-  output_stream: "FLOATS:output_landmark_vector"
-}
-
-# Draws annotations and overlays them on top of the input images.
-node {
-  calculator: "AnnotationOverlayCalculator"
-  input_stream: "IMAGE:throttled_input_video"
-  input_stream: "VECTOR:render_data_vector"
-  output_stream: "IMAGE:output_video"
-}
-
-# Tracks and renders pose + hands + face landmarks.
-node {
-  calculator: "HolisticLandmarkCpu"
-  input_stream: "IMAGE:throttled_input_video"
-  output_stream: "POSE_LANDMARKS:pose_landmarks"
-  output_stream: "POSE_ROI:pose_roi"
-  output_stream: "POSE_DETECTION:pose_detection"
-  output_stream: "FACE_LANDMARKS:face_landmarks"
-  output_stream: "LEFT_HAND_LANDMARKS:left_hand_landmarks"
-  output_stream: "RIGHT_HAND_LANDMARKS:right_hand_landmarks"
-}
 )";
 
-    std::shared_ptr<mediapipe::LibMP> face_mesh(mediapipe::LibMP::Create(graph, "input_video"));
-	face_mesh->AddOutputStream("output_video");
-	face_mesh->Start();
+    std::shared_ptr<mediapipe::LibMP> libmp(mediapipe::LibMP::Create(graph, "input_video"));
+	libmp->AddOutputStream("output_video");
+	libmp->AddOutputStream("multi_face_landmarks");
+	libmp->Start();
+
+    auto previous_time = std::chrono::high_resolution_clock::now();
 
     while(b_WhileLoop)
     {
@@ -182,7 +170,7 @@ node {
             }
 
             //2024/6/8 Report result back to Zenbo so it can take actions.
-            ZenboNurseHelperProtobuf::ReportAndCommand report_data;
+//            ZenboNurseHelperProtobuf::ReportAndCommand report_data;
             string header(data_);
             string str_timestamp = header.substr(0,13);
             string str_pitch_degree = header.substr(14,3);
@@ -199,8 +187,8 @@ node {
             {
                 throw("cannot do stol");
             }
-            report_data.set_time_stamp(timestamp);
-            report_data.set_pitch_degree(pitch_degree);
+//            report_data.set_time_stamp(timestamp);
+//            report_data.set_pitch_degree(pitch_degree);
             //2025/3/9 Bug note: my previous end argument is wrong: data_+iJPEG_length where "+30" is missing.
             //In OpenCV 4.6, imdecode still works, but in OpenCV 4.11 and 4.12, it fails.
             //That is the reason that in my imshow() output window, the bottom region is always blurred.
@@ -238,37 +226,53 @@ node {
 
                 if( b_HumanPoseEstimation)
                 {
-//                    vector<HumanPose> poses = estimator.estimate(inputImage );
-                    //This function is written in the Pose.cpp
-//                    poses = SortPosesByHeight(poses);
-                    //Do I need to convert color channels?
-//                    cv::Mat frame_rgb;
-//                    cv::cvtColor(inputImage, frame_rgb, cv::COLOR_BGR2RGB);
-
-                    if (!face_mesh->Process(inputImage.data, inputImage.cols, inputImage.rows, mediapipe::ImageFormat::SRGB)) {
-                //    if (!face_mesh->Process(frame_rgb.data, frame_rgb.cols, frame_rgb.rows, mediapipe::ImageFormat::SRGB)) {
+                    if (!libmp->Process(inputImage.data, inputImage.cols, inputImage.rows, mediapipe::ImageFormat::SRGB)) {
                         std::cerr << "Process() failed!" << std::endl;
                         break;
                     }
-//                    face_mesh->WaitUntilIdle();
+                    libmp->WaitUntilIdle();
 
-                    if( face_mesh->WriteOutputImage(outFrame.data, face_mesh->GetOutputPacket("output_video")) )
+                    if( libmp->WriteOutputImage(outFrame.data, libmp->GetOutputPacket("output_video")) )
                     {
-//                        cout << "outFrame." << std::endl;
                     }
                     else
                     {
                         cout << "WriteOutputImage fails." << std::endl;
-//                        b_frame_buffer1_unused = false;
-//                        mutex_frame_buffer1.unlock();
                         continue;
                     }
 
-//                    for( unsigned int idx = 0; idx < poses.size(); idx++ )
+                    std::vector<std::vector<std::array<float, 3>>> normalized_landmarks = get_landmarks(libmp);
+                    if (normalized_landmarks.empty()) {
+//                        std::cerr << "No landmarks detected!" << std::endl;
+//                        continue;
+                    }
+                    else
+                    {
+//                        std::cout << "Detected " << normalized_landmarks.size() << " faces." << std::endl;
+
+                        //2025/3/29 I need a component to generate Zenbo's action from the landmarks.
+                        //use time control first, wait for 5 seconds
+                        auto current_time = std::chrono::high_resolution_clock::now();
+                        auto duration = std::chrono::duration_cast<std::chrono::seconds>(current_time - previous_time);
+                        if (duration.count() >= 5) {
+                            ZenboNurseHelperProtobuf::ReportAndCommand message;
+                            FaceLandmarks_to_ZenboAction(normalized_landmarks, robot_status, action_option, message);
+                            previous_time = current_time;
+                            pSendCommandThread->AddMessage(message);
+                            pSendCommandThread->cond_var_report_result.notify_one();
+                            std::string str_out;
+                            google::protobuf::TextFormat::PrintToString(message, &str_out);
+                            std::cout << str_out << std::endl;
+                            std::cout << "Yaw degree " << robot_status.yaw_degree << std::endl;
+                            std::cout << "Pitch degree " << robot_status.pitch_degree << std::endl;
+                        }
+                    }
+
+
                     for( unsigned int idx = 0; idx < 0; idx++ )
                     {
 //                        HumanPose pose = poses[idx];
-                        ZenboNurseHelperProtobuf::ReportAndCommand::OpenPosePose *pPose = report_data.add_pose();
+//                        ZenboNurseHelperProtobuf::ReportAndCommand::OpenPosePose *pPose = report_data.add_pose();
                         //This line should be modified.
 //                        pPose->set_score(static_cast<long>(pose.score * 2147483647));
 /*
@@ -290,18 +294,6 @@ node {
                         }
 */
                     }
-                    pSendCommandThread->AddMessage(report_data);
-
-//                    long byteSize = report_data.ByteSizeLong();
-//                    if( byteSize <= 4096)
-//                    {
-//                        pSendCommandThread->str_results_len = byteSize;
-//                        report_data.SerializeToArray(pSendCommandThread->str_results,byteSize);
-//                    }else
-//                        throw( "report_data too large.");
-
-//                    b_frame_buffer1_unused = false;
-//                    pSendCommandThread->cond_var_report_result.notify_one();
                 }
                 else
                 {
@@ -312,8 +304,8 @@ node {
         else
         {
             //wait until being notified
-            std::unique_lock<std::mutex> lk(mtx);
-            cond_var_process_image.wait(lk);
+            //std::unique_lock<std::mutex> lk(mtx);
+            //cond_var_process_image.wait(lk);
         }
     }
     cout << "Exit while loop." << std::endl;

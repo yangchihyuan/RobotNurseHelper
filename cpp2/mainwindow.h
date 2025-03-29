@@ -76,8 +76,8 @@ private:
 
     QString QString_SentCommands;
     void send_move_body_command(float x, float y, int degree, int speed);
-    int m_iyaw = 0;
-    int m_ipitch = 30;
+//    int m_iyaw = 0;
+//    int m_ipitch = 30;
     void send_move_head_command(int yaw, int pitch, int speed);
 
     int buffer_size = 500000;

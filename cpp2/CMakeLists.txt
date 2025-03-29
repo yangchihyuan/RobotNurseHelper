@@ -9,25 +9,58 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
+function(my_protobuf_generate_cpp PROTO_SRCS PROTO_HDRS PROTO_FILES)
+  foreach(PROTO_FILE ${PROTO_FILES})
+    # Extract the base name of the .proto file
+    get_filename_component(PROTO_BASE ${PROTO_FILE} NAME_WE)
+
+    # Define the output .pb.cc and .pb.h files
+    set(PROTO_CC "${CMAKE_CURRENT_BINARY_DIR}/${PROTO_BASE}.pb.cc")
+    set(PROTO_HH "${CMAKE_CURRENT_BINARY_DIR}/${PROTO_BASE}.pb.h")
+
+    # Run protoc to generate the C++ files
+    add_custom_command(
+      OUTPUT ${PROTO_CC} ${PROTO_HH}
+      COMMAND protoc --cpp_out=${CMAKE_CURRENT_BINARY_DIR} --proto_path=${CMAKE_CURRENT_SOURCE_DIR} ${PROTO_FILE}
+      DEPENDS ${PROTO_FILE}
+      COMMENT "Generating C++ protobuf files from ${PROTO_FILE}"
+      VERBATIM
+    )
+
+    # Add the generated files to the output lists
+    list(APPEND ${PROTO_SRCS} ${PROTO_CC})
+    list(APPEND ${PROTO_HDRS} ${PROTO_HH})
+  endforeach()
+
+  # Set the output lists as variables in the parent scope
+  set(${PROTO_SRCS} ${${PROTO_SRCS}} PARENT_SCOPE)
+  set(${PROTO_HDRS} ${${PROTO_HDRS}} PARENT_SCOPE)
+endfunction()
+
+
 #set the custom path for the find_package
 list(APPEND CMAKE_PREFIX_PATH "usr/local")
-#find_package(Protobuf REQUIRED) #It will use the deb installed protobuf 3.21.12-8.2. Does it cause a problem?
-#try to use mediapipe's protobuf
-# Protobuf
-# use Protobuf bundled with LibMP
+
+# use Mediapipe's Protobuf
 set(MEDIAPIPE_DIR "$ENV{HOME}/mediapipe")
 get_filename_component(MEDIAPIPE_DIRNAME "${MEDIAPIPE_DIR}" NAME)
+
 #The version is 3.19.1
+#The variable protobuf_source_dir is used in the libprotobuf.cmake file
+#The protobuf_source_dir is used to find the protobuf source code
 set(protobuf_source_dir "${MEDIAPIPE_DIR}/bazel-${MEDIAPIPE_DIRNAME}/external/com_google_protobuf")
-include("${CMAKE_CURRENT_SOURCE_DIR}/libprotobuf.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/libprotobuf.cmake")     #this is modified cmake file provided by LibMP's author
+set(PROTO_FILE ServerSend.proto)
+#protobuf_generate_cpp(PROTO_SRC PROTO_HDR ${PROTO_FILE})     #where are the generated files?  
+my_protobuf_generate_cpp(PROTO_SRC PROTO_HDR ${PROTO_FILE})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 find_package(OpenCV REQUIRED COMPONENTS core highgui videoio imgproc imgcodecs)
 #There are both Qt5 and Qt6 in the system, but I use Qt6.
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Network Multimedia)   
 #find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network Multimedia)
 
-set(PROTO_FILE ServerSend.proto)
-#protobuf_generate_cpp(PROTO_SRC PROTO_HDR ${PROTO_FILE})     #where are the generated files?
+
 file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
 file(GLOB LIBMP_Header HEADERS $ENV{HOME}/chihyuan/mediapipe/mediapipe/examples/desktop/libmp/libmp.h)
 
@@ -41,6 +74,11 @@ set_target_properties(LIBMP PROPERTIES
 IMPORTED_LOCATION "${LIBMP_SHARED_LIBRARY}"
 INTERFACE_INCLUDE_DIRECTORIES "${LIBMP_SOURCE_DIR}"
 )
+
+# whisper.cpp v1.7.4
+add_library(LIBWHISPER SHARED IMPORTED)
+set_target_properties(LIBWHISPER PROPERTIES
+  IMPORTED_LOCATION "$ENV{HOME}/whisper.cpp/build/src/libwhisper.so")
 
 # MediaPipe Formats
 file(GLOB_RECURSE MP_FORMATS_SRC "${MEDIAPIPE_DIR}/bazel-bin/mediapipe/framework/formats/*.cc")
@@ -61,9 +99,7 @@ set(SOURCES JPEG.cpp
             utility_string.cpp
             utility_csv.cpp
             main.cpp
-#            human_pose_estimator.cpp
-#            Pose.cpp
-#            ${PROTO_SRC}
+            ${PROTO_SRC}
             ServerSend.pb.cc
             ServerSend.pb.h
             mainwindow.cpp
@@ -74,19 +110,21 @@ set(SOURCES JPEG.cpp
             ProcessAudioThread.cpp
             SocketHandler.cpp
             ThreadTablet.cpp
+            GetLandmarks.cpp
+            FaceLandmarkToZenboAction.cpp
     )
 
-add_executable(ZenboNurseHelper ${SOURCES} ${HEADERS} ${LIBMP_Header})
+add_executable(ZenboNurseHelper ${SOURCES} ${HEADERS} ${LIBMP_Header}
+    icon.qrc)
 target_link_libraries(ZenboNurseHelper MP_FORMATS)
 target_link_libraries(ZenboNurseHelper LIBMP)
+target_link_libraries(ZenboNurseHelper LIBWHISPER)
 
-#enable debug information
+#if you want to debug, enable the following line
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")   
 
 
 include_directories(${PROTOBUF_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
-#get_filename_component(PROTO_HDR_DIRECTORY ${PROTO_HDR} DIRECTORY)
-#include_directories(${PROTO_HDR_DIRECTORY})
 
 set_target_properties(${TARGET_NAME} PROPERTIES "CMAKE_CXX_FLAGS" "${CMAKE_CXX_FLAGS}")
 
