@@ -11,7 +11,8 @@
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <QScrollBar>
-
+#include "RobotStatus.hpp"
+#include "ActionOption.hpp"
 
 extern std::mutex gMutex_audio_buffer;
 extern std::queue<short> AudioBuffer;
@@ -20,7 +21,8 @@ extern bool bNewoutFrame;
 extern cv::Mat outFrame;
 extern int PortAudio_stop_and_terminate();
 extern bool gbPlayAudio;
-
+extern RobotStatus robot_status;
+extern ActionOption action_option;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -215,7 +217,9 @@ MainWindow::MainWindow(QWidget *parent)
     //add move mode items
     QStringList strList_MoveMode;
 
-    ui->comboBox_MoveMode->addItems({"Manual","Look for people"});
+    ui->comboBox_MoveMode->addItems({"Manual",
+                                     "Look for faces - move body",
+                                     "Look for faces - move head"});
     connect(ui->comboBox_MoveMode,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),this,&MainWindow::comboBox_MoveMode_changed);
 
     //Get keyboard press event
@@ -238,7 +242,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // initial whisper.cpp
     //2024/8/21 disable whisper.cpp
-    /*
+    /*    
     whisper_context_params cparams = whisper_context_default_params();
     cparams.use_gpu = true;
     //language is not set in the cparams
@@ -388,6 +392,7 @@ void MainWindow::readSocket()
     unique_ptr<char[]> pReadData = std::make_unique<char[]>(byteAvailable);
     qint64 readlength = socketStream.readRawData(pReadData.get(), byteAvailable);
     socketHandler1.add_data(pReadData.get(), byteAvailable);
+    //If there is no image in the queue, I don't want the thread run.
     thread_process_image.cond_var_process_image.notify_one();
 }
 
@@ -611,9 +616,12 @@ void MainWindow::on_pushButton_movehead_clicked()
     QString yaw = ui->lineEdit_yaw->text();
     QString pitch = ui->lineEdit_pitch->text();
     QString headspeed = ui->lineEdit_headspeed->text();
-    m_iyaw = yaw.toInt();
-    m_ipitch = pitch.toInt();
-    send_move_head_command(m_iyaw, m_ipitch, headspeed.toInt());
+//    m_iyaw = yaw.toInt();
+//    m_ipitch = pitch.toInt();
+    robot_status.yaw_degree = yaw.toInt();
+    robot_status.pitch_degree = pitch.toInt();
+//    send_move_head_command(m_iyaw, m_ipitch, headspeed.toInt());
+    send_move_head_command(robot_status.yaw_degree, robot_status.pitch_degree, headspeed.toInt());
 }
 
 void MainWindow::send_move_head_command(int yaw, int pitch, int speed)
@@ -624,8 +632,8 @@ void MainWindow::send_move_head_command(int yaw, int pitch, int speed)
     report_data.set_headspeed(speed);
     thread_send_command.AddMessage(report_data);
 
-    ui->lineEdit_yaw_now->setText(QString::number(m_iyaw));
-    ui->lineEdit_pitch_now->setText(QString::number(m_ipitch));
+    ui->lineEdit_yaw_now->setText(QString::number(robot_status.yaw_degree));
+    ui->lineEdit_pitch_now->setText(QString::number(robot_status.pitch_degree));
 }
 
 void MainWindow::on_listView_FacialExpressions_doubleClicked(const QModelIndex &index)
@@ -677,7 +685,6 @@ void MainWindow::on_listView_Sentence3_clicked(const QModelIndex &index)
 
 void MainWindow::timer_event()
 {
-//    cout << "timer_event 1." << std::endl;
     if(bNewoutFrame )
     {
         //2024/12/30, the bug is here. I use a timer to update the frame. On some low-end PC, 
@@ -688,8 +695,10 @@ void MainWindow::timer_event()
         cv::imshow("Image", outFrame);
         cv::waitKey(1);    //I miss this line so that Ubuntu does not update the window.
         bNewoutFrame = false;
-//        cout << "timer_event." << std::endl;
 
+        //update pitch and yaw
+        ui->lineEdit_yaw_now->setText(QString::number(robot_status.yaw_degree));
+        ui->lineEdit_pitch_now->setText(QString::number(robot_status.pitch_degree));
     }
 }
 
@@ -699,14 +708,19 @@ void MainWindow::comboBox_MoveMode_changed()
     switch(ui->comboBox_MoveMode->currentIndex())
     {
         case 0:
-            report_data.set_movemode(ZenboNurseHelperProtobuf::ReportAndCommand_MoveModeEnum_Manual);
+//            report_data.set_movemode(ZenboNurseHelperProtobuf::ReportAndCommand_MoveModeEnum_Manual);
             thread_process_image.b_HumanPoseEstimation = false;
             break;
-        case 1:
-            //25/03/12 Temporary disable the move mode "Look for people"
-            report_data.set_movemode(ZenboNurseHelperProtobuf::ReportAndCommand_MoveModeEnum_Manual);
+        case 1:     //Look for faces - move body
+//            report_data.set_movemode(ZenboNurseHelperProtobuf::ReportAndCommand_MoveModeEnum_Manual);
         //    report_data.set_movemode(ZenboNurseHelperProtobuf::ReportAndCommand_MoveModeEnum_LookForPeople);
             thread_process_image.b_HumanPoseEstimation = true;
+            action_option.move_mode = ActionOption::MOVE_BODY;
+            break;
+        case 2:     //Look for faces - move head
+//            report_data.set_movemode(ZenboNurseHelperProtobuf::ReportAndCommand_MoveModeEnum_LookForPeople);
+            thread_process_image.b_HumanPoseEstimation = true;
+            action_option.move_mode = ActionOption::MOVE_HEAD;
             break;
     }
     thread_send_command.AddMessage(report_data);
@@ -741,31 +755,31 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             break;
         case 16777235:  //up
             action = "up";
-            m_ipitch += 5;
-            if( m_ipitch > 55)
-                m_ipitch = 55;
-            send_move_head_command(m_iyaw, m_ipitch, 3);
+            robot_status.pitch_degree += 5;
+            if( robot_status.pitch_degree > 55)
+                robot_status.pitch_degree = 55;
+            send_move_head_command(robot_status.yaw_degree, robot_status.pitch_degree, 3);
             break;
         case 16777237:  //down
             action = "down";
-            m_ipitch -= 5;
-            if( m_ipitch < -15)
-                m_ipitch = -15;
-            send_move_head_command(m_iyaw, m_ipitch, 3);
+            robot_status.pitch_degree -= 5;
+            if( robot_status.pitch_degree < -15)
+                robot_status.pitch_degree = -15;
+            send_move_head_command(robot_status.yaw_degree, robot_status.pitch_degree, 3);
             break;
         case 16777234:  //left
             action = "left";
-            m_iyaw += 5;
-            if( m_iyaw > 45)
-                m_iyaw = 45;
-            send_move_head_command(m_iyaw, m_ipitch, 3);
+            robot_status.yaw_degree += 5;
+            if( robot_status.yaw_degree > 45)
+                robot_status.yaw_degree = 45;
+            send_move_head_command(robot_status.yaw_degree, robot_status.pitch_degree, 3);
             break;
         case 16777236:  //right
             action = "right";
-            m_iyaw -= 5;
-            if( m_iyaw < -45)
-                m_iyaw = -45;
-            send_move_head_command(m_iyaw, m_ipitch, 3);
+            robot_status.yaw_degree -= 5;
+            if( robot_status.yaw_degree < -45)
+                robot_status.yaw_degree = -45;
+            send_move_head_command(robot_status.yaw_degree, robot_status.pitch_degree, 3);
             break;
         case 16777264:  //F1
             on_pushButton_speak_clicked();

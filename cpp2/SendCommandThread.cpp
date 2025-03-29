@@ -12,7 +12,14 @@ void SendCommandThread::run()
     mutex m;
     unique_lock<mutex> lock(m);
 
-    //supress the SIGPIPE signal
+    //supress the SIGPIPE signal, sometimes the socket may be closed by the robot
+    //and the write command will cause a SIGPIPE signal.
+    //This signal will cause the program to exit.
+    //The only way to ignore this signal is to set the signal handler to SIG_IGN.
+    //This is a global signal handler, so it will affect all threads.
+    //It is not a good idea to set the signal handler in a thread.
+    //It is better to set it in the main thread.
+    //But in this case, we have to set it here.
     ::signal(SIGPIPE, SIG_IGN);
     
     while(b_KeepLoop)

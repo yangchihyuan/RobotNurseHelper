@@ -18,7 +18,7 @@ sudo apt -y install zip
 #install libgtk2.0-dev, which is used in OpenCV to show images
 sudo apt -y install libgtk2.0-dev 
 
-#install OpenCV 3.11, which is required by MediaPipe
+#install OpenCV 4.11, which is required by MediaPipe
 sudo apt -y install cmake
 wget -O opencv4.11.zip https://github.com/opencv/opencv/archive/refs/tags/4.11.0.zip
 wget -O opencv_contrib4.11.zip https://github.com/opencv/opencv_contrib/archive/refs/tags/4.11.0.zip
@@ -37,6 +37,18 @@ cd ~
 git clone https://github.com/google-ai-edge/mediapipe.git
 cd mediapipe
 git checkout v0.10.22
+
+#intall protobuf 3.19.1
+cd ~/Downloads
+wget -O protobuf-all-3.19.1.zip https://github.com/protocolbuffers/protobuf/releases/download/v3.19.1/protobuf-all-3.19.1.zip
+unzip protobuf-all-3.19.1.zip
+cd ~/Downloads/protobuf-3.19.1
+./configure
+make
+make check
+sudo make install
+sudo ldconfig # refresh shared library cache.
+
 
 #Install Our Files
 #Suppose your Open Model Zoo is installed in ~/open_model_zoo. Please git clone this repository into the demos directory.
@@ -96,8 +108,7 @@ git clone https://github.com/ggerganov/whisper.cpp.git
 #We need a Whisper model. In out program, we use the base model for Mandarin.
 cd ~/whisper.cpp
 bash ./models/download-ggml-model.sh base
-#It will download ggml-base.bin from the HuggingFace website. We need its compiled .o files, which will be used in our server-side program.
-
+#It will download ggml-base.bin from the HuggingFace website.
 make
 
 #Run the OpenVINO's build_demos.sh in ~/open_model_zoo/demos to build this project, and an executable file 9_NurseHelper should be created at ~/omz_demos_build/intel64/Release/ To make it easy, we make s build_demos.sh in the directory ~/open_model_zoo/demos/ZenboNurseHelper/cpp
