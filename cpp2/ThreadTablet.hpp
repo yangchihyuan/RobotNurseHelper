@@ -6,7 +6,7 @@
 #include <mutex>
 #include <thread>
 #include <condition_variable>
-#include "SendCommandThread.hpp"
+#include "ThreadSendCommand.hpp"
 #include "SocketHandler.hpp"
 
 #ifndef ThreadTablet_hpp
@@ -25,7 +25,7 @@ public:
     string raw_images_directory;
     condition_variable cond_var_process_image;
 
-    SendCommandThread *pSendCommandThread;
+    ThreadSendCommand *pThreadSendCommand;
     SocketHandler *pSocketHandler;
 
 protected:

@@ -1,4 +1,4 @@
-#include "ProcessAudioThread.hpp"
+#include "ThreadProcessAudio.hpp"
 #include "portaudio.h"
 
 std::mutex gMutex_audio_buffer;
@@ -119,11 +119,11 @@ error:
     return err;
 }
 
-ProcessAudioThread::ProcessAudioThread()
+ThreadProcessAudio::ThreadProcessAudio()
 {
 }
 
-void ProcessAudioThread::run()
+void ThreadProcessAudio::run()
 {
     PortAudio_initialize();
 

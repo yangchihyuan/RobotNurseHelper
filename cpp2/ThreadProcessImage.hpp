@@ -6,20 +6,20 @@
 #include <mutex>
 #include <thread>
 #include <condition_variable>
-#include "SendCommandThread.hpp"
+#include "ThreadSendCommand.hpp"
 #include "SocketHandler.hpp"
 
-#ifndef ProcessImageThread_hpp
-#define ProcessImageThread_hpp
+#ifndef ThreadProcessImage_hpp
+#define ThreadProcessImage_hpp
 
 using namespace std;
 
-class ProcessImageThread: public QThread
+class ThreadProcessImage: public QThread
 {
     Q_OBJECT
 
 public:
-    ProcessImageThread();
+    ThreadProcessImage();
 
     bool b_HumanPoseEstimation = false;
     bool b_WhileLoop = true;
@@ -27,7 +27,7 @@ public:
     string raw_images_directory;
     condition_variable cond_var_process_image;
 
-    SendCommandThread *pSendCommandThread;
+    ThreadSendCommand *pThreadSendCommand;
     SocketHandler *pSocketHandler;
 
 protected:

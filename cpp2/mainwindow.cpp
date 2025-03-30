@@ -160,11 +160,12 @@ MainWindow::MainWindow(QWidget *parent)
     //run threads
     thread_process_image.start();
     thread_send_command.start();
-    thread_process_image.pSendCommandThread = &thread_send_command;
+    thread_process_image.pThreadSendCommand = &thread_send_command;
     thread_process_image.pSocketHandler = &socketHandler1;
     thread_process_audio.start();
     thread_tablet.start();
     thread_tablet.pSocketHandler = &socketHandler4;    
+    thread_whisper.start();
 
     //sockets
     m_server_receive_image = new QTcpServer();
@@ -231,7 +232,7 @@ MainWindow::MainWindow(QWidget *parent)
     // setup audio format
     QAudioFormat format;
     //2024/8/21 disable whisper.cpp
-//    format.setSampleRate(WHISPER_SAMPLE_RATE);
+    format.setSampleRate(WHISPER_SAMPLE_RATE);
     format.setChannelCount(1);
     format.setSampleFormat(QAudioFormat::Float);
 
@@ -239,21 +240,13 @@ MainWindow::MainWindow(QWidget *parent)
     {
         audioSrc = new QAudioSource(devAudio, format);
     }
+    else
+    {
+        std::cout << "Audio format not supported" << std::endl;
+    }
 
-    // initial whisper.cpp
-    //2024/8/21 disable whisper.cpp
-    /*    
-    whisper_context_params cparams = whisper_context_default_params();
-    cparams.use_gpu = true;
-    //language is not set in the cparams
-    ctx = whisper_init_from_file_with_params(
-//      R"(/home/chihyuan/whisper.cpp/models/ggml-small.bin)", cparams);        
-      R"(/home/chihyuan/whisper.cpp/models/ggml-base.bin)", cparams);
-//      R"(/home/chihyuan/whisper.cpp/models/ggml-medium.bin)", cparams);    //waiting time too long
-
-    //connect message and SendCommandThread
-    */
-    connect( this, &MainWindow::addSendCommandMessage, &thread_send_command, &SendCommandThread::AddMessage);
+    //connect message and ThreadSendCommand
+    connect( this, &MainWindow::addSendCommandMessage, &thread_send_command, &ThreadSendCommand::AddMessage);
 }
 
 MainWindow::~MainWindow()
@@ -296,9 +289,6 @@ MainWindow::~MainWindow()
     m_server_receive_audio->close();
     m_server_receive_audio->deleteLater();
 
-    if (audioSrc != nullptr)
-      delete audioSrc;
- 
     thread_tablet.b_WhileLoop = false;
     thread_tablet.cond_var_process_image.notify_one();
     thread_tablet.wait();
@@ -310,9 +300,11 @@ MainWindow::~MainWindow()
     m_server_Tablet->close();
     m_server_Tablet->deleteLater();
   
-
-    //2024/8/21 disable whisper.cpp
-//    whisper_free(ctx);
+    thread_whisper.b_WhileLoop = false;
+    thread_whisper.cond_var_whisper.notify_one();
+    thread_whisper.wait();
+    if (audioSrc != nullptr)
+      delete audioSrc;
 
     delete ui;
 }
@@ -383,8 +375,6 @@ void MainWindow::readSocket()
     //sender() is a function of Qt to get the data source of this function.
     QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
 
-    QByteArray buffer;
-
     QDataStream socketStream(socket);
     qint64 byteAvailable = socket->bytesAvailable();
 
@@ -399,8 +389,6 @@ void MainWindow::readSocket()
 void MainWindow::readSocket3()
 {
     QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
-
-    QByteArray buffer;
 
     QDataStream socketStream(socket);
     socketStream.setVersion(QDataStream::Qt_DefaultCompiledVersion);
@@ -436,8 +424,6 @@ void MainWindow::readSocket3()
 void MainWindow::readSocket4()
 {
     QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
-
-    QByteArray buffer;
 
     QDataStream socketStream(socket);
     qint64 byteAvailable = socket->bytesAvailable();
@@ -558,32 +544,16 @@ void MainWindow::on_pushButton_voice_to_text_clicked()
     {
         bListening = true;
         ui->pushButton_voice_to_text->setText("Stop(F2)");
-        buffer.reset();
-        buffer.open(QBuffer::WriteOnly);
-        audioSrc->start(&buffer);
+        thread_whisper.buffer.open(QBuffer::WriteOnly);
+        thread_whisper.buffer.reset();
+        audioSrc->start(&thread_whisper.buffer);
     }
     else
     {
         bListening = false;
         audioSrc->stop();
-        buffer.close();
-    //2024/8/21 disable whisper.cpp
-/*
-        whisper_full_params wparams = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
-        wparams.translate = false;
-        wparams.language = "zh";
-        wparams.n_threads = 4;
-        wparams.no_context = true;
-        if (whisper_full(ctx, wparams, (float*)buffer.buffer().constData(), buffer.size() / 4) == 0)
-        {
-            std::string text = "";
-            const int n_segments = whisper_full_n_segments(ctx);
-            for (int i = 0; i < n_segments; ++i)
-            text += whisper_full_get_segment_text(ctx, i);
-
-            ui->plainTextEdit_speak->setPlainText(QString::fromStdString(text));
-        }
-        */
+        thread_whisper.buffer.close();
+        thread_whisper.cond_var_whisper.notify_one();
         ui->pushButton_voice_to_text->setText("Voice to Text(F2)");
     }
 }
@@ -699,6 +669,12 @@ void MainWindow::timer_event()
         //update pitch and yaw
         ui->lineEdit_yaw_now->setText(QString::number(robot_status.yaw_degree));
         ui->lineEdit_pitch_now->setText(QString::number(robot_status.pitch_degree));
+    }
+
+    if( thread_whisper.b_new_result )
+    {
+        thread_whisper.b_new_result = false;
+        ui->plainTextEdit_speak->setPlainText(QString::fromStdString(thread_whisper.result));
     }
 }
 

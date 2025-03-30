@@ -11,21 +11,17 @@
 #include <QStandardPaths>
 #include <QTcpServer>
 #include <QTcpSocket>
-#include "ProcessImageThread.hpp"
-#include <queue>
-#include "ProcessAudioThread.hpp"
+#include "ThreadProcessImage.hpp"
+#include "ThreadProcessAudio.hpp"
 #include "ThreadTablet.hpp"
+#include "ThreadWhisper.hpp"
+#include <queue>
 #include <QMediaDevices>
 #include <QAudioDevice>
 #include <QAudioSource>
-#include <QBuffer>
 #include "utility_directory.hpp"
 #include "SocketHandler.hpp"
  
-//2024/8/21 disable whisper.cpp 
-//#include <whisper.h>
-
-
 using namespace std;
 
 
@@ -44,43 +40,36 @@ public:
     ~MainWindow();
 
 protected:
-  QAudioDevice  devAudio;
-  QAudioSource* audioSrc = nullptr;
-  QBuffer       buffer;
-  bool bListening = false;
-  //2024/8/21 disable whisper.cpp
-//  whisper_context* ctx = nullptr;
-
+    QAudioDevice  devAudio;
+    QAudioSource* audioSrc = nullptr;
+    bool bListening = false;
 
 private:
     Ui::MainWindow *ui;
 
     QTcpServer* m_server_receive_image;
     QSet<QTcpSocket*> connection_set;
-    ProcessImageThread thread_process_image;
+    ThreadProcessImage thread_process_image;
     SocketHandler socketHandler1;
 
     QTcpServer* m_server_send_command;
     QSet<QTcpSocket*> connection_set2;   //for send back command
-    SendCommandThread thread_send_command;
+    ThreadSendCommand thread_send_command;
 
     QTcpServer* m_server_receive_audio;
     QSet<QTcpSocket*> connection_set3;   //for receive audio
-    ProcessAudioThread thread_process_audio;
+    ThreadProcessAudio thread_process_audio;
 
     QTcpServer* m_server_Tablet;
     QSet<QTcpSocket*> connection_set4;   //for Tablet
     SocketHandler socketHandler4;
     ThreadTablet thread_tablet;
 
+    ThreadWhisper thread_whisper;
 
     QString QString_SentCommands;
     void send_move_body_command(float x, float y, int degree, int speed);
-//    int m_iyaw = 0;
-//    int m_ipitch = 30;
     void send_move_head_command(int yaw, int pitch, int speed);
-
-    int buffer_size = 500000;
 
 signals:
     void newMessage(QString);   //where is the connect for this signal?

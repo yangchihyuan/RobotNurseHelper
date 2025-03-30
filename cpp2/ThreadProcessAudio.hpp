@@ -8,17 +8,17 @@
 #include <condition_variable>
 #include <queue>
 
-#ifndef ProcessAudioThread_hpp
-#define ProcessAudioThread_hpp
+#ifndef ThreadProcessAudio_hpp
+#define ThreadProcessAudio_hpp
 
 using namespace std;
 
-class ProcessAudioThread: public QThread
+class ThreadProcessAudio: public QThread
 {
     Q_OBJECT
 
 public:
-    ProcessAudioThread();
+    ThreadProcessAudio();
 
     bool b_RunProcessAudio;
     mutex mutex_audio_buffer;

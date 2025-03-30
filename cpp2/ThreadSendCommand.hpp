@@ -9,17 +9,17 @@
 #include <queue>
 #include "ServerSend.pb.h"
 
-#ifndef SendCommandThread_hpp
-#define SendCommandThread_hpp
+#ifndef ThreadSendCommand_hpp
+#define ThreadSendCommand_hpp
 
 using namespace std;
 
-class SendCommandThread: public QThread
+class ThreadSendCommand: public QThread
 {
     Q_OBJECT
 
 public:
-    SendCommandThread();
+    ThreadSendCommand();
 
     bool b_KeepLoop;
     QTcpSocket *pSocket = NULL;

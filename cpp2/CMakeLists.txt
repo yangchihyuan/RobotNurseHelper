@@ -78,7 +78,8 @@ INTERFACE_INCLUDE_DIRECTORIES "${LIBMP_SOURCE_DIR}"
 # whisper.cpp v1.7.4
 add_library(LIBWHISPER SHARED IMPORTED)
 set_target_properties(LIBWHISPER PROPERTIES
-  IMPORTED_LOCATION "$ENV{HOME}/whisper.cpp/build/src/libwhisper.so")
+  IMPORTED_LOCATION "$ENV{HOME}/whisper.cpp/build/src/libwhisper.so"
+  INTERFACE_INCLUDE_DIRECTORIES "$ENV{HOME}/whisper.cpp/spm-headers")
 
 # MediaPipe Formats
 file(GLOB_RECURSE MP_FORMATS_SRC "${MEDIAPIPE_DIR}/bazel-bin/mediapipe/framework/formats/*.cc")
@@ -105,11 +106,12 @@ set(SOURCES JPEG.cpp
             mainwindow.cpp
             mainwindow.h
             mainwindow.ui
-            ProcessImageThread.cpp
-            SendCommandThread.cpp
-            ProcessAudioThread.cpp
-            SocketHandler.cpp
+            ThreadProcessAudio.cpp
+            ThreadProcessImage.cpp
+            ThreadSendCommand.cpp
             ThreadTablet.cpp
+            ThreadWhisper.cpp
+            SocketHandler.cpp
             GetLandmarks.cpp
             FaceLandmarkToZenboAction.cpp
     )
