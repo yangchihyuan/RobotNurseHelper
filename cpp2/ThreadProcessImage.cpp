@@ -1,4 +1,4 @@
-#include "ProcessImageThread.hpp"
+#include "ThreadProcessImage.hpp"
 //#include "human_pose_estimator.hpp"
 #include "utility_TimeRecorder.hpp"
 #include "utility_directory.hpp"
@@ -33,11 +33,11 @@ ActionOption action_option;
 cv::Mat outFrame;
 bool bNewoutFrame;
 
-ProcessImageThread::ProcessImageThread()
+ThreadProcessImage::ThreadProcessImage()
 {
 }
 
-void ProcessImageThread::run()
+void ThreadProcessImage::run()
 {
     std::string str_home_path(getenv("HOME"));
 
@@ -258,41 +258,14 @@ const char* graph = R"(
                             ZenboNurseHelperProtobuf::ReportAndCommand message;
                             FaceLandmarks_to_ZenboAction(normalized_landmarks, robot_status, action_option, message);
                             previous_time = current_time;
-                            pSendCommandThread->AddMessage(message);
-                            pSendCommandThread->cond_var_report_result.notify_one();
+                            pThreadSendCommand->AddMessage(message);
+                            pThreadSendCommand->cond_var_report_result.notify_one();
                             std::string str_out;
                             google::protobuf::TextFormat::PrintToString(message, &str_out);
                             std::cout << str_out << std::endl;
                             std::cout << "Yaw degree " << robot_status.yaw_degree << std::endl;
                             std::cout << "Pitch degree " << robot_status.pitch_degree << std::endl;
                         }
-                    }
-
-
-                    for( unsigned int idx = 0; idx < 0; idx++ )
-                    {
-//                        HumanPose pose = poses[idx];
-//                        ZenboNurseHelperProtobuf::ReportAndCommand::OpenPosePose *pPose = report_data.add_pose();
-                        //This line should be modified.
-//                        pPose->set_score(static_cast<long>(pose.score * 2147483647));
-/*
-                        for( auto keypoint : pose.keypoints)
-                        {
-                            ZenboNurseHelperProtobuf::ReportAndCommand::OpenPosePose::OpenPoseCoordinate *pCoord = pPose->add_coord();
-                            if(keypoint.x == -1 && keypoint.y == -1)
-                            {
-                                pCoord->set_x(0);
-                                pCoord->set_y(0);
-                                pCoord->set_valid(0);
-                            }
-                            else
-                            {
-                                pCoord->set_x(static_cast<long>(keypoint.x));
-                                pCoord->set_y(static_cast<long>(keypoint.y));
-                                pCoord->set_valid(1);
-                            }
-                        }
-*/
                     }
                 }
                 else
@@ -304,8 +277,8 @@ const char* graph = R"(
         else
         {
             //wait until being notified
-            //std::unique_lock<std::mutex> lk(mtx);
-            //cond_var_process_image.wait(lk);
+            std::unique_lock<std::mutex> lk(mtx);
+            cond_var_process_image.wait(lk);
         }
     }
     cout << "Exit while loop." << std::endl;

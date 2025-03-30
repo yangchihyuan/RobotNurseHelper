@@ -1,5 +1,5 @@
 #include "SocketHandler.hpp"
-#define _DEFAULT_BUFFER_SIZE 500000
+#define _DEFAULT_BUFFER_SIZE 5000000
 #include <iostream>  // for cout and endl
 #include <string>  // for string
 #include <memory>  // for unique_ptr
@@ -42,8 +42,18 @@ void SocketHandler::add_data(char* data_, size_t length)
     size_t buffer_length_old = buffer_length;
 
     //copy data_ to buffer
-    copy(data_, data_+length, buffer.get()+buffer_length);
-    buffer_length += length;
+    //whisper.cpp pauses the thread, as a result, the length may exceed the buffer size.
+    if( buffer_length + length > buffer_size)
+    {
+        cout << "Buffer size is not enough. Drop out the old data." << endl;
+        //2025/3/30, I need to handle here later
+        buffer_length = 0;
+    }
+    else
+    {
+        copy(data_, data_+length, buffer.get()+buffer_length);
+        buffer_length += length;
+    }
 
     //find delimiter_tail in buffer
     int delimiter_tail_length = delimiter_tail.length();

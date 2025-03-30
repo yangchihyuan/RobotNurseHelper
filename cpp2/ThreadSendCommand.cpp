@@ -1,13 +1,13 @@
-#include "SendCommandThread.hpp"
+#include "ThreadSendCommand.hpp"
 #include <iostream>
 #include <signal.h>
 
-SendCommandThread::SendCommandThread()
+ThreadSendCommand::ThreadSendCommand()
 {
     b_KeepLoop = true;
 }
 
-void SendCommandThread::run()
+void ThreadSendCommand::run()
 {
     mutex m;
     unique_lock<mutex> lock(m);
@@ -52,7 +52,7 @@ void SendCommandThread::run()
     }
 }
 
-void SendCommandThread::AddMessage(ZenboNurseHelperProtobuf::ReportAndCommand message)
+void ThreadSendCommand::AddMessage(ZenboNurseHelperProtobuf::ReportAndCommand message)
 {
     mutex_message_buffer.lock();
     mQueue.push(message);
