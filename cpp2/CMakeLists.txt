@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 project(ZenboNurseHelper_MP)
 
+option(USE_GPU "USE GPU" OFF)
+
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -51,29 +54,32 @@ get_filename_component(MEDIAPIPE_DIRNAME "${MEDIAPIPE_DIR}" NAME)
 set(protobuf_source_dir "${MEDIAPIPE_DIR}/bazel-${MEDIAPIPE_DIRNAME}/external/com_google_protobuf")
 include("${CMAKE_CURRENT_SOURCE_DIR}/libprotobuf.cmake")     #this is modified cmake file provided by LibMP's author
 set(PROTO_FILE ServerSend.proto)
-#protobuf_generate_cpp(PROTO_SRC PROTO_HDR ${PROTO_FILE})     #where are the generated files?  
+#Because I don't use the pre-built opencv, I don't have the protobuf_generate_cpp function, I need to define it by myself 
 my_protobuf_generate_cpp(PROTO_SRC PROTO_HDR ${PROTO_FILE})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 find_package(OpenCV REQUIRED COMPONENTS core highgui videoio imgproc imgcodecs)
-#There are both Qt5 and Qt6 in the system, but I use Qt6.
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Network Multimedia)   
-#find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network Multimedia)
-
 
 file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
-file(GLOB LIBMP_Header HEADERS $ENV{HOME}/chihyuan/mediapipe/mediapipe/examples/desktop/libmp/libmp.h)
 
 # LibMP
 add_library(LIBMP SHARED IMPORTED)
 set(LIBMP_TARGET_NAME "libmp")
-set(LIBMP_SOURCE_DIR "${MEDIAPIPE_DIR}/mediapipe/examples/desktop/${LIBMP_TARGET_NAME}")
 set(LIBMP_BIN_DIR "${MEDIAPIPE_DIR}/bazel-bin/mediapipe/examples/desktop/${LIBMP_TARGET_NAME}")
-set(LIBMP_SHARED_LIBRARY "${LIBMP_BIN_DIR}/${LIBMP_TARGET_NAME}.so")
+message(STATUS "USE_GPU: ${USE_GPU}")
+if(USE_GPU)
+  set(LIBMP_SHARED_LIBRARY "${LIBMP_BIN_DIR}/${LIBMP_TARGET_NAME}_gpu.so")
+  message(STATUS "Enter USE GPU")
+else()
+  set(LIBMP_SHARED_LIBRARY "${LIBMP_BIN_DIR}/${LIBMP_TARGET_NAME}.so")
+  message(STATUS "Enter USE CPU")
+endif()
 set_target_properties(LIBMP PROPERTIES
-IMPORTED_LOCATION "${LIBMP_SHARED_LIBRARY}"
-INTERFACE_INCLUDE_DIRECTORIES "${LIBMP_SOURCE_DIR}"
+  IMPORTED_LOCATION "${LIBMP_SHARED_LIBRARY}"
 )
+set(LIBMP_HEADER_DIR ${MEDIAPIPE_DIR}/mediapipe/examples/desktop/libmp)
+include_directories(${LIBMP_HEADER_DIR})
 
 # whisper.cpp v1.7.4
 add_library(LIBWHISPER SHARED IMPORTED)
@@ -91,8 +97,6 @@ add_library(MP_FORMATS STATIC ${MP_FORMATS_SRC})
 target_include_directories(MP_FORMATS PUBLIC "${MEDIAPIPE_DIR}/bazel-bin")
 target_link_libraries(MP_FORMATS libprotobuf)
 
-#file(GLOB GGML_OBJECT $ENV{HOME}/whisper.cpp/ggml/src/*.o)
-#file(GLOB EXAMPLES_OBJECT $ENV{HOME}/whisper.cpp/examples/*.o)
 set(SOURCES JPEG.cpp
             utility_directory.cpp
             utility_TimeRecorder.cpp
@@ -116,7 +120,7 @@ set(SOURCES JPEG.cpp
             FaceLandmarkToZenboAction.cpp
     )
 
-add_executable(ZenboNurseHelper ${SOURCES} ${HEADERS} ${LIBMP_Header}
+add_executable(ZenboNurseHelper ${SOURCES} ${HEADERS} 
     icon.qrc)
 target_link_libraries(ZenboNurseHelper MP_FORMATS)
 target_link_libraries(ZenboNurseHelper LIBMP)
@@ -127,12 +131,7 @@ set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 
 
 include_directories(${PROTOBUF_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
-
 set_target_properties(${TARGET_NAME} PROPERTIES "CMAKE_CXX_FLAGS" "${CMAKE_CXX_FLAGS}")
-
-#target_link_libraries(ZenboNurseHelper PRIVATE ${PROTOBUF_LIBRARIES}
-#    Qt::Widgets Qt::Network
-#    Qt::Multimedia ${OpenCV_LIBS} portaudio LIBMP)
 
 target_link_libraries(ZenboNurseHelper
     Qt::Widgets Qt::Network

@@ -44,8 +44,8 @@ int FaceLandmarks_to_ZenboAction(std::vector<std::vector<std::array<float, 3>>> 
         if (action_option.move_mode == action_option.MOVE_BODY)
         {
             float theta = -(x-0.5)*62.5;
-            float pitch_shift = (y-0.5)*48.9;
-            message.set_degree(theta);
+            float pitch_shift = -(y-0.5)*48.9;
+            message.set_degree(static_cast<int>(theta));
             message.set_yaw(0);
             status.yaw_degree = 0;
 
@@ -58,7 +58,7 @@ int FaceLandmarks_to_ZenboAction(std::vector<std::vector<std::array<float, 3>>> 
         else  //move head
         {
             float yaw_shift = -(x-0.5)*62.5;
-            float pitch_shift = (y-0.5)*48.9;
+            float pitch_shift = -(y-0.5)*48.9;
             //I need to know current yaw
             int yaw = status.yaw_degree + static_cast<int>(yaw_shift);
             if( yaw < -45) y = -45;
@@ -72,15 +72,64 @@ int FaceLandmarks_to_ZenboAction(std::vector<std::vector<std::array<float, 3>>> 
             message.set_pitch(pitch);
             status.pitch_degree = pitch;
         }
+    }
 
-//        float eye_distance = sqrt(pow(right_eye_x - left_eye_x, 2) + pow(right_eye_y - left_eye_y, 2));
+    return 1;
+}
 
-        //The coordinate system is Cardinal.
-        //The left bottom of the image is (0,0), and the right top corner is (1,1).
+int PoseLandmarks_to_ZenboAction(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
+    RobotStatus &status, 
+    ActionOption action_option,
+    ZenboNurseHelperProtobuf::ReportAndCommand &message)
+{
+    //If there are multiple faces, find the largest one.
+    int num_poses = normalized_landmarks.size();
 
-        // Convert to Zenbo's coordinate system
+    std::array<int, 9> left_eye{{  33 , 133, 246, 161, 160, 159, 158, 157, 173 }};
+    std::array<int, 9> right_eye{{ 362, 263, 390, 389, 388, 387, 386, 385, 384 }};
+ 
+    for(int i=0; i<num_poses; i++)
+    {
+        std::vector<std::array<float, 3>> pose_landmarks = normalized_landmarks[i];
 
-        // Check if the distance is within a certain threshold
+        //index 0 is the nose
+        float x = pose_landmarks[0][0];
+        float y = pose_landmarks[0][1];
+
+        std::cout << "center_of_two_eyes: (" << x << ", " << y << ")" << std::endl;
+        // Calculate the distance between the eyes
+
+        if (action_option.move_mode == action_option.MOVE_BODY)
+        {
+            float theta = -(x-0.5)*62.5;
+            float pitch_shift = -(y-0.5)*48.9;
+            message.set_degree(static_cast<int>(theta));
+            message.set_yaw(0);
+            status.yaw_degree = 0;
+
+            int pitch = status.pitch_degree + static_cast<int>(pitch_shift);
+            if( pitch < -15 ) pitch = -15;
+            if( pitch > 55 ) pitch = 55;
+            message.set_pitch(pitch);
+            status.pitch_degree = pitch;
+        }
+        else  //move head
+        {
+            float yaw_shift = -(x-0.5)*62.5;
+            float pitch_shift = -(y-0.5)*48.9;
+            //I need to know current yaw
+            int yaw = status.yaw_degree + static_cast<int>(yaw_shift);
+            if( yaw < -45) y = -45;
+            if( yaw > 45) y = 45;
+            message.set_yaw(yaw);
+            status.yaw_degree = yaw;
+
+            int pitch = status.pitch_degree + static_cast<int>(pitch_shift);
+            if( pitch < -15 ) pitch = -15;
+            if( pitch > 55 ) pitch = 55;
+            message.set_pitch(pitch);
+            status.pitch_degree = pitch;
+        }
     }
 
     return 1;

@@ -7,7 +7,7 @@
 #include "mediapipe/framework/port/parse_text_proto.h"
 #include "mediapipe/framework/port/status.h"
 #include "mediapipe/framework/formats/image_frame.h"
-#include <opencv2/opencv.hpp>    //for cv::getTickCount() and cv::getTickFrequency()
+#include <opencv2/opencv.hpp>
 
 namespace mediapipe {
 
@@ -30,6 +30,9 @@ namespace mediapipe {
 		MP_RETURN_IF_ERROR(m_graph.Initialize(config));
 		m_input_stream.assign(inputStream);
 		LOG(INFO) << "Successfully initialized LibMP graph";
+
+		gpu_helper.InitializeForTest(m_graph.GetGpuResources().get());
+
 		return absl::OkStatus();
 	}
 
@@ -68,12 +71,83 @@ namespace mediapipe {
 		//2025/4/2 Debug information: The author of LibMP uses an incorrect timestamp so that pose tracking and holistic tracking become very slow.
 		size_t frame_timestamp_us = (double)cv::getTickCount() / (double)cv::getTickFrequency() * 1e6;
 		auto status = m_graph.AddPacketToInputStream(m_input_stream, mediapipe::Adopt(input_frame_for_input.release()).At(mediapipe::Timestamp(frame_timestamp_us)));
-		
+
+
 		if (!status.ok()){
 			LOG(INFO) << "Failed to add packet to input stream. Call m_graph.WaitUntilDone() to see error (or destroy LibMP object)";
 			LOG(INFO) << "Status: " << status.ToString() << std::endl;
 			return false;
 		}
+		return true;
+	}
+
+	bool LibMPImpl::Process_GPU(uint8_t* data, int width, int height, int image_format)
+	{
+		if (data == nullptr){
+			LOG(INFO) << __FUNCTION__ << " input data is nullptr!";
+			return false;
+		}
+		if (!mediapipe::ImageFormat::Format_IsValid(image_format)){
+			LOG(INFO) << __FUNCTION__ << " input image format (" << image_format << ") is invalid!";
+			return false;
+		}
+
+		// copy input data to ImgFrame
+		auto input_frame = std::make_unique<ImageFrame>();
+		auto mp_image_format = static_cast<mediapipe::ImageFormat::Format>(image_format);
+		input_frame->CopyPixelData(mp_image_format, width, height, data, mediapipe::ImageFrame::kDefaultAlignmentBoundary);
+
+		//2025/4/2 Debug information: The author of LibMP uses an incorrect timestamp so that pose tracking and holistic tracking become very slow.
+		size_t frame_timestamp_us = (double)cv::getTickCount() / (double)cv::getTickFrequency() * 1e6;
+
+    	// Prepare and add graph input packet.
+			gpu_helper.RunInGlContext([&input_frame, &frame_timestamp_us, this]() -> absl::Status {
+			  // Convert ImageFrame to GpuBuffer.
+			  auto texture = this->gpu_helper.CreateSourceTexture(*input_frame.get());
+			  auto gpu_frame = texture.GetFrame<mediapipe::GpuBuffer>();
+			  glFlush();
+			  texture.Release();
+			  // Send GPU image packet into the graph.
+			  MP_RETURN_IF_ERROR(this->m_graph.AddPacketToInputStream(
+				this->m_input_stream, mediapipe::Adopt(gpu_frame.release())
+									.At(mediapipe::Timestamp(frame_timestamp_us))));
+			  return absl::OkStatus();
+			});
+			auto status = m_graph.AddPacketToInputStream(m_input_stream, mediapipe::Adopt(input_frame.release()).At(mediapipe::Timestamp(frame_timestamp_us)));
+
+
+		if (!status.ok()){
+			LOG(INFO) << "Failed to add packet to input stream. Call m_graph.WaitUntilDone() to see error (or destroy LibMP object)";
+			LOG(INFO) << "Status: " << status.ToString() << std::endl;
+			return false;
+		}
+		return true;
+	}
+
+	bool LibMPImpl::WriteOutputImage_GPU(uint8_t* dst, const void* outputPacketVoid){
+		auto packet = reinterpret_cast<const mediapipe::Packet*>(outputPacketVoid);
+		std::unique_ptr<mediapipe::ImageFrame> output_frame;
+
+		gpu_helper.RunInGlContext(
+			[packet, &output_frame, this]() -> absl::Status {
+			  auto& gpu_frame = packet->Get<mediapipe::GpuBuffer>();
+			  auto texture = this->gpu_helper.CreateSourceTexture(gpu_frame);
+			  output_frame = absl::make_unique<mediapipe::ImageFrame>(
+				  mediapipe::ImageFormatForGpuBufferFormat(gpu_frame.format()),
+				  gpu_frame.width(), gpu_frame.height(),
+				  mediapipe::ImageFrame::kGlDefaultAlignmentBoundary);
+			  this->gpu_helper.BindFramebuffer(texture);
+			  const auto info = mediapipe::GlTextureInfoForGpuBufferFormat(
+				  gpu_frame.format(), 0, this->gpu_helper.GetGlVersion());
+			  glReadPixels(0, 0, texture.width(), texture.height(), info.gl_format,
+						   info.gl_type, output_frame->MutablePixelData());
+			  glFlush();
+			  texture.Release();
+			  return absl::OkStatus();
+			});		
+		size_t output_bytes = output_frame->PixelDataSizeStoredContiguously();
+
+		output_frame->CopyToBuffer(dst, output_bytes);
 		return true;
 	}
 

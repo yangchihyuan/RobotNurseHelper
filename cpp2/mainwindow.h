@@ -118,6 +118,8 @@ private slots:
     void timer_event();
 
     void comboBox_MoveMode_changed();
+    void comboBox_DetectionMode_changed();
+    void comboBox_Processor_changed();
 
     void keyPressEvent(QKeyEvent *event);
 };

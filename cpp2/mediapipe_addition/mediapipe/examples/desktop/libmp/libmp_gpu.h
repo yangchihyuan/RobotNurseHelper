@@ -24,6 +24,7 @@ namespace mediapipe {
 	struct MP_CPP_API LibMP {
 		// Create a MP graph with the specified input stream
 		// Returns nullptr if initialization failed
+		LibMP(){}
 		static LibMP* Create(const char* graph, const char* inputStream);
 		virtual ~LibMP(){}
 
@@ -43,6 +44,7 @@ namespace mediapipe {
 		// Function copies (i.e., DOES NOT take ownership of) input data
 		// Returns true if succeeded; false if failed
 		virtual bool Process(uint8_t* data, int width, int height, int image_format) = 0;
+		virtual bool Process_GPU(uint8_t* data, int width, int height, int image_format) = 0;
 
 		// Blocks until graph is idle
 		virtual bool WaitUntilIdle() = 0;
@@ -64,6 +66,7 @@ namespace mediapipe {
 		// Format is the same as that passed to Process() (ImageFormat::SRGB)
 		// Returns true if succeeded; false if failed
 		static bool WriteOutputImage(uint8_t* dst, const void* outputPacketVoid);
+		virtual bool WriteOutputImage_GPU(uint8_t* dst, const void* outputPacketVoid) = 0;
 
 		// Returns true if packet is empty, false otherwise
 		static bool PacketIsEmpty(const void* outputPacketVoid);
