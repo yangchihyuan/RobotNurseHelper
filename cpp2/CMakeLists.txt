@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 project(ZenboNurseHelper_MP)
 
 option(USE_GPU "USE GPU" OFF)
+option(COMPILE_WITH_G_FLAG "COMPILE WITH G FLAG" ON)
 
 
 set(CMAKE_CXX_STANDARD 17)
@@ -89,10 +90,6 @@ set_target_properties(LIBWHISPER PROPERTIES
 
 # MediaPipe Formats
 file(GLOB_RECURSE MP_FORMATS_SRC "${MEDIAPIPE_DIR}/bazel-bin/mediapipe/framework/formats/*.cc")
-if(MSVC)
-  # MSVC warning suppressions
-  add_definitions(${MSVC_WARNINGS})
-endif(MSVC)
 add_library(MP_FORMATS STATIC ${MP_FORMATS_SRC})
 target_include_directories(MP_FORMATS PUBLIC "${MEDIAPIPE_DIR}/bazel-bin")
 target_link_libraries(MP_FORMATS libprotobuf)
@@ -127,7 +124,9 @@ target_link_libraries(ZenboNurseHelper LIBMP)
 target_link_libraries(ZenboNurseHelper LIBWHISPER)
 
 #if you want to debug, enable the following line
-set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")   
+if(COMPILE_WITH_G_FLAG)
+  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")   
+endif()
 
 
 include_directories(${PROTOBUF_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
