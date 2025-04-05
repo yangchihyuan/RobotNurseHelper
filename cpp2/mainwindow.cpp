@@ -157,16 +157,6 @@ MainWindow::MainWindow(QWidget *parent)
         }
     } 
 
-    //run threads
-    thread_process_image.start();
-    thread_send_command.start();
-    thread_process_image.pThreadSendCommand = &thread_send_command;
-    thread_process_image.pSocketHandler = &socketHandler1;
-    thread_process_audio.start();
-    thread_tablet.start();
-    thread_tablet.pSocketHandler = &socketHandler4;    
-    thread_whisper.start();
-
     //sockets
     m_server_receive_image = new QTcpServer();
     //2024/12/27 The port number is also hard-coded. I need to modify it in the future.
@@ -219,9 +209,18 @@ MainWindow::MainWindow(QWidget *parent)
     QStringList strList_MoveMode;
 
     ui->comboBox_MoveMode->addItems({"Manual",
-                                     "Look for faces - move body",
-                                     "Look for faces - move head"});
+                                     "Move body",
+                                     "Move head"});
     connect(ui->comboBox_MoveMode,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),this,&MainWindow::comboBox_MoveMode_changed);
+
+    ui->comboBox_DetectionMode->addItems({"None",
+        "Face",
+        "Pose"});
+    connect(ui->comboBox_DetectionMode,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),this,&MainWindow::comboBox_DetectionMode_changed);
+
+    ui->comboBox_Processor->addItems({"CPU",
+        "GPU"});
+    connect(ui->comboBox_Processor,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),this,&MainWindow::comboBox_Processor_changed);
 
     //Get keyboard press event
     setFocusPolicy(Qt::StrongFocus);
@@ -247,6 +246,16 @@ MainWindow::MainWindow(QWidget *parent)
 
     //connect message and ThreadSendCommand
     connect( this, &MainWindow::addSendCommandMessage, &thread_send_command, &ThreadSendCommand::AddMessage);
+
+    //run threads
+    thread_process_image.pThreadSendCommand = &thread_send_command;
+    thread_process_image.pSocketHandler = &socketHandler1;
+    thread_process_image.start();
+    thread_send_command.start();
+    thread_process_audio.start();
+    thread_tablet.pSocketHandler = &socketHandler4;    
+    thread_tablet.start();
+    thread_whisper.start();
 }
 
 MainWindow::~MainWindow()
@@ -586,11 +595,8 @@ void MainWindow::on_pushButton_movehead_clicked()
     QString yaw = ui->lineEdit_yaw->text();
     QString pitch = ui->lineEdit_pitch->text();
     QString headspeed = ui->lineEdit_headspeed->text();
-//    m_iyaw = yaw.toInt();
-//    m_ipitch = pitch.toInt();
     robot_status.yaw_degree = yaw.toInt();
     robot_status.pitch_degree = pitch.toInt();
-//    send_move_head_command(m_iyaw, m_ipitch, headspeed.toInt());
     send_move_head_command(robot_status.yaw_degree, robot_status.pitch_degree, headspeed.toInt());
 }
 
@@ -680,27 +686,51 @@ void MainWindow::timer_event()
 
 void MainWindow::comboBox_MoveMode_changed()
 {
-    ZenboNurseHelperProtobuf::ReportAndCommand report_data;
     switch(ui->comboBox_MoveMode->currentIndex())
     {
         case 0:
-//            report_data.set_movemode(ZenboNurseHelperProtobuf::ReportAndCommand_MoveModeEnum_Manual);
-            thread_process_image.b_HumanPoseEstimation = false;
             break;
-        case 1:     //Look for faces - move body
-//            report_data.set_movemode(ZenboNurseHelperProtobuf::ReportAndCommand_MoveModeEnum_Manual);
-        //    report_data.set_movemode(ZenboNurseHelperProtobuf::ReportAndCommand_MoveModeEnum_LookForPeople);
-            thread_process_image.b_HumanPoseEstimation = true;
+        case 1:     //move body
             action_option.move_mode = ActionOption::MOVE_BODY;
             break;
-        case 2:     //Look for faces - move head
-//            report_data.set_movemode(ZenboNurseHelperProtobuf::ReportAndCommand_MoveModeEnum_LookForPeople);
-            thread_process_image.b_HumanPoseEstimation = true;
+        case 2:     //move head
             action_option.move_mode = ActionOption::MOVE_HEAD;
             break;
     }
-    thread_send_command.AddMessage(report_data);
 }
+
+void MainWindow::comboBox_DetectionMode_changed()
+{
+    switch(ui->comboBox_DetectionMode->currentIndex())
+    {
+        case 0:
+            thread_process_image.b_HumanPoseEstimation = false;
+            thread_process_image.setTask("None");
+            break;
+        case 1:     //Face
+            thread_process_image.setTask("Face");
+            thread_process_image.b_HumanPoseEstimation = true;
+            break;
+        case 2:     //Pose
+            thread_process_image.setTask("Pose");
+            thread_process_image.b_HumanPoseEstimation = true;
+            break;
+    }
+}
+
+void MainWindow::comboBox_Processor_changed()
+{
+    switch(ui->comboBox_Processor->currentIndex())
+    {
+        case 0:     //CPU
+            thread_process_image.setProcessor("CPU");
+            break;
+        case 1:     //GPU
+            thread_process_image.setProcessor("GPU");
+            break;
+    }
+}
+
 
 void MainWindow::on_pushButton_stop_action_clicked()
 {

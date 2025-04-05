@@ -123,6 +123,60 @@ LIB_DEPS = [
     "//mediapipe/graphs/pose_tracking:pose_tracking_cpu_deps",
 ]
 
+LIB_DEPS_GPU = [
+    # Deps for libmp_impl.cpp
+    "//mediapipe/framework/port:parse_text_proto",
+    "@com_google_absl//absl/flags:parse",
+
+    # Remove any of these if you need to build only one example
+    # Selfie segmentation
+    "//mediapipe/graphs/selfie_segmentation:selfie_segmentation_cpu_deps",
+
+    # Hand tracking
+    "//mediapipe/modules/hand_landmark:hand_landmark_tracking_cpu",
+    "//mediapipe/calculators/util:annotation_overlay_calculator",
+    "//mediapipe/calculators/util:detections_to_render_data_calculator",
+
+    # Face detection
+    "//mediapipe/graphs/face_detection:face_detection_full_range_desktop_live_deps",
+
+    # Face mesh
+    "//mediapipe/graphs/face_mesh:desktop_live_calculators",
+
+    # Face geometry (thanks, @oUp2Uo!)
+    # - Fixes from https://github.com/google/mediapipe/issues/2867 have been applied,
+    #   allowing for use of face mesh with attention (discards the 10 iris landmarks)
+    # - See https://github.com/google/mediapipe/issues/1162#issuecomment-1434268379 for details
+    "//mediapipe/modules/face_geometry:face_geometry_from_detection",
+    "//mediapipe/modules/face_geometry:env_generator_calculator",
+    "//mediapipe/modules/face_geometry:geometry_pipeline_calculator",
+
+    # Hair segmentation
+    "//mediapipe/graphs/hair_segmentation:desktop_calculators",
+
+    # Holistic tracking
+    "//mediapipe/graphs/holistic_tracking:holistic_tracking_cpu_graph_deps",
+
+    # Iris tracking
+    "//mediapipe/graphs/iris_tracking:iris_tracking_cpu_deps",
+
+    # Object detection
+    "//mediapipe/calculators/core:concatenate_vector_calculator",
+    "//mediapipe/calculators/core:flow_limiter_calculator",
+    "//mediapipe/calculators/core:previous_loopback_calculator",
+    "//mediapipe/calculators/core:split_vector_calculator",
+    "//mediapipe/calculators/image:image_transformation_calculator",
+    "//mediapipe/calculators/tflite:ssd_anchors_calculator",
+    "//mediapipe/calculators/tflite:tflite_converter_calculator",
+    "//mediapipe/calculators/tflite:tflite_inference_calculator",
+    "//mediapipe/calculators/tflite:tflite_tensors_to_detections_calculator",
+    "//mediapipe/calculators/util:detection_label_id_to_text_calculator",
+    "//mediapipe/calculators/util:non_max_suppression_calculator",
+
+    # Pose tracking
+    "//mediapipe/graphs/pose_tracking:pose_tracking_gpu_deps",
+]
+
 cc_binary(
     target_compatible_with = [
         "@platforms//os:linux",
@@ -133,6 +187,20 @@ cc_binary(
     linkopts = ["-Wl,-soname,libmp.so -L /usr/local/lib"],
     linkshared = 1, ## Very important
 )
+
+#How to compile a gpu version of libmp.so?
+cc_binary(
+    target_compatible_with = [
+        "@platforms//os:linux",
+    ],
+    name = "libmp_gpu.so",
+    deps = [":libmp_linux_gpu"],
+    data = BIN_DATA,
+    linkopts = ["-Wl,-soname,libmp_gpu.so -L /usr/local/lib"],
+    linkshared = 1, ## Very important
+)
+
+
 cc_binary(
     target_compatible_with = [
         "@platforms//os:windows",
@@ -154,6 +222,19 @@ cc_library(
     deps = LIB_DEPS,
     alwayslink = 1,
 )
+
+cc_library(
+    target_compatible_with = [
+        "@platforms//os:linux",
+    ],
+    name = "libmp_linux_gpu",
+    srcs = ["libmp.cpp", "libmp_impl.cpp"],
+    hdrs = ["libmp.h", "libmp_impl.h"],
+    visibility = ["//visibility:public"],
+    deps = LIB_DEPS_GPU,
+    alwayslink = 1,
+)
+
 cc_library(
     target_compatible_with = [
         "@platforms//os:windows",

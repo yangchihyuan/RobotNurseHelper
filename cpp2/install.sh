@@ -6,7 +6,6 @@
 
 
 #Install the compiler
-#Your Ubuntu system may be too clear to have the compiler. Please install it by
 sudo apt -y install build-essential
 
 #install git
@@ -61,6 +60,10 @@ cp -r ~/ZenboNurseHelper/cpp2/mediapipe_addition/* ~/mediapipe/
 #Install bazelisk
 wget https://github.com/bazelbuild/bazelisk/releases/download/v1.25.0/bazelisk-amd64.deb
 sudo dpkg -i bazelisk-amd64.deb
+
+#install OpenGL libraries, which will be used in MediaPipe for compiling GPU-related code.
+#This is MediaPipe's requirement
+sudo apt-get install mesa-common-dev libegl1-mesa-dev libgles2-mesa-dev
 
 #build libmp library
 cd ~/mediapipe

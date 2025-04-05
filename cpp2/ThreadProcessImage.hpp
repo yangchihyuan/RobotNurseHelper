@@ -1,3 +1,6 @@
+#ifndef ThreadProcessImage_hpp
+#define ThreadProcessImage_hpp
+
 #include <QThread>
 #include <QTcpServer>
 #include <QTcpSocket>
@@ -8,9 +11,8 @@
 #include <condition_variable>
 #include "ThreadSendCommand.hpp"
 #include "SocketHandler.hpp"
+#include "libmp.h"
 
-#ifndef ThreadProcessImage_hpp
-#define ThreadProcessImage_hpp
 
 using namespace std;
 
@@ -30,10 +32,17 @@ public:
     ThreadSendCommand *pThreadSendCommand;
     SocketHandler *pSocketHandler;
 
+    void setTask(std::string task);
+    void setProcessor(std::string processor);
+
 protected:
     void run();
-
-private:
+    void reloadGraph();
+    std::string Task;
+    std::string graph_string;
+    std::shared_ptr<mediapipe::LibMP> libmp;
+    std::string Processor;
+    mutex mtx_Task;
     mutex mtx;
 };
 

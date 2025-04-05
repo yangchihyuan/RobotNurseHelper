@@ -459,13 +459,7 @@ public class MainActivity extends Activity {
         inputView = (InputView) findViewById(R.id.inputview);
         editText_Port = (EditText) findViewById(R.id.editText_Port);
         editText_Server = (EditText) findViewById(R.id.editText_Server);
-//        CheckBox checkBox_keep_alert = (CheckBox) findViewById(R.id.checkBox_keepalert);
         checkBox_enable_connection = (CheckBox) findViewById(R.id.checkBox_connect);
-//        checkBox_show_face = (CheckBox) findViewById(R.id.checkBox_ShowFace);
-//        checkBox_dont_move = (CheckBox) findViewById(R.id.checkBox_DontMove);
-//        checkBox_dont_rotate = (CheckBox) findViewById(R.id.checkBox_DontRotate);
-//        mMessageView_Detection = (MessageView) findViewById(R.id.MessageView_Detection);
-//        mMessageView_Timestamp = (MessageView) findViewById(R.id.MessageView_Timestamp);
         Button button_close = (Button) findViewById(R.id.button_close);
 
         //get the default ServerURL
@@ -574,6 +568,12 @@ public class MainActivity extends Activity {
                                                                         if (report.hasX()) {
                                                                             Log.d("move body", report.toString());
                                                                             int serial = mRobotAPI.motion.moveBody(((float) report.getX()) / 100.0f, ((float) report.getY()) / 100.0f, report.getDegree());
+                                                                            //The serial number will appear in the callback function.
+                                                                        }
+                                                                        //rotate only
+                                                                        if (!report.hasX() && !report.hasY() && report.hasDegree()) {
+                                                                            Log.d("rotate body", report.toString());
+                                                                            int serial = mRobotAPI.motion.moveBody(0.0f, 0.0f, report.getDegree());
                                                                             //The serial number will appear in the callback function.
                                                                         }
                                                                         if (report.hasYaw()) {
