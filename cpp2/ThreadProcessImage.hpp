@@ -39,8 +39,7 @@ protected:
     void run();
     void reloadGraph();
     std::string Task;
-    std::string m_graph_string;
-    std::unique_ptr<mediapipe::LibMP> libmp;
+    std::shared_ptr<mediapipe::LibMP> libmp;
     std::string Processor;
     mutex mtx_Task;
     mutex mtx;

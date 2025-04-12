@@ -15,7 +15,6 @@
 #include "mediapipe/framework/formats/landmark.pb.h"
 #include "mediapipe/framework/formats/image_format.pb.h"
 
-
 #include <google/protobuf/text_format.h>
 
 #include "GetLandmarks.hpp"
@@ -127,11 +126,12 @@ void ThreadProcessImage::setTask(std::string task)
 
 void ThreadProcessImage::reloadGraph()
 {
+    std::string graph_string;
     if( Processor == "CPU" )
     {
         if( Task == "Pose" )
         {
-            m_graph_string = R"(
+            graph_string = R"(
                 # MediaPipe graph that performs pose tracking with TensorFlow Lite on CPU.
 
                 # CPU buffer. (ImageFrame)
@@ -200,7 +200,7 @@ void ThreadProcessImage::reloadGraph()
         }
         else if( Task == "Face")
         {
-            m_graph_string = R"(
+            graph_string = R"(
                 # MediaPipe graph that performs face mesh with TensorFlow Lite on CPU.
         
         
@@ -277,14 +277,17 @@ void ThreadProcessImage::reloadGraph()
         }
         else if (Task == "Holistic")
         {
-            m_graph_string = R"(
+            graph_string = R"(
                 # Tracks and renders pose + hands + face landmarks.
 
                 # CPU image. (ImageFrame)
                 input_stream: "input_video"
 
                 # CPU image with rendered results. (ImageFrame)
-                output_stream: "output_video"
+                output_stream: "face_landmarks"
+                output_stream: "pose_landmarks"
+                output_stream: "left_hand_landmarks"
+                output_stream: "right_hand_landmarks"
 
                 # Throttles the images flowing downstream for flow control. It passes through
                 # the very first incoming image unaltered, and waits for downstream nodes
@@ -364,7 +367,7 @@ void ThreadProcessImage::reloadGraph()
     {
         if( Task == "Pose" )
         {
-            m_graph_string = R"(
+            graph_string = R"(
                 # MediaPipe graph that performs pose tracking with TensorFlow Lite on GPU.
 
                 # GPU buffer. (GpuBuffer)
@@ -433,24 +436,28 @@ void ThreadProcessImage::reloadGraph()
         }
     }
 
-    mediapipe::LibMP* pointer = libmp.get();
-    if( pointer != nullptr )
-    {
-        delete pointer;
-    }
-    libmp.reset(mediapipe::LibMP::Create(m_graph_string.c_str(), "input_video"));   //this is not the reason of memory leak
-	libmp->AddOutputStream("output_video");
-    libmp->SetOutputStreamMaxQueueSize("output_video",1);     //this is not the reason of memory leak
-    libmp->SetInputStreamMaxQueueSize("input_video",1);     //this is not the reason of memory leak
+    libmp.reset(mediapipe::LibMP::Create(graph_string.c_str(), "input_video"));
     if(Task == "Face")
     {
         libmp->AddOutputStream("multi_face_landmarks");
-        libmp->SetOutputStreamMaxQueueSize("multi_face_landmarks",1);
+    	libmp->AddOutputStream("output_video");
     }
     else if(Task == "Pose")
     {
         libmp->AddOutputStream("pose_landmarks");
-        libmp->SetOutputStreamMaxQueueSize("pose_landmarks",1);
+    	libmp->AddOutputStream("output_video");
+    }
+    else if(Task == "Holistic")
+    {
+        libmp->AddOutputStream("pose_landmarks");
+        libmp->AddOutputStream("left_hand_landmarks");
+        libmp->AddOutputStream("right_hand_landmarks");
+        libmp->AddOutputStream("face_landmarks");
+    	libmp->AddOutputStream("output_video");
+    }
+    else
+    {
+        cout << "Task is not supported." << endl;
     }
     libmp->Start();
 
@@ -557,7 +564,6 @@ void ThreadProcessImage::run()
                     //2025/1/7 How to change the timestamp to a meaningful filename?
                     string filename = raw_images_directory + "/" + str_timestamp + ".jpg";
                     save_image_JPEG(data_ + shift_length, iJPEG_length , filename);
-//                    std::cout << filename << std::endl;
                 }
 
                 bool bShowTransmittedImage = false;
@@ -576,7 +582,6 @@ void ThreadProcessImage::run()
                     //This Process function only works for the CPU mode because the GPU mode uses the GpuBuffer.
                     if( Processor == "CPU" )
                     {
-                        //debug: this function keeps increasing the memory usage.
 //                        if( !libmp->Process(inputImage.data, inputImage.cols, inputImage.rows, mediapipe::ImageFormat::SRGB) )
                         if( !libmp->Process2(inputImage) )
                         {
@@ -602,16 +607,14 @@ void ThreadProcessImage::run()
 
                     if( Processor == "CPU" )
                     {
-                        //This matters. If I don't have this piece of code, memory will be released when I change to the None mode.                        
-                        //And very slow.
-/*                        if( libmp->WriteOutputImage(outFrame.data, libmp->GetOutputPacket("output_video")) )
+                        if( libmp->WriteOutputImage(outFrame.data, libmp->GetOutputPacket("output_video") ) )
                         {
                         }
                         else
                         {
                             cout << "WriteOutputImage fails." << std::endl;
                         }
-*/                        
+                        
                     }
                     else if( Processor == "GPU" )
                     {
@@ -638,19 +641,48 @@ void ThreadProcessImage::run()
                     if( Task == "Face" ) 
                     {
                         normalized_landmarks = get_landmarks(libmp);      //This is not the reason of memory leak
+
+                        // For each face, draw a circle at each landmark's position
+                        bool bDrawImageByOurOwn = false;
+                        if( bDrawImageByOurOwn )
+                        {
+                            size_t num_faces = normalized_landmarks.size();
+                            for (int face_num = 0; face_num < num_faces; face_num++) {
+                                for (const std::array<float, 3>& norm_xyz : normalized_landmarks[face_num]) {
+                                    int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
+                                    int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
+                                    cv::circle(inputImage, cv::Point(x, y), 1, cv::Scalar(0, 255, 0), -1);
+                                }
+                            }
+                            // Display the image with landmarks                    
+                            inputImage.copyTo(outFrame);
+                        }
                     }
                     else if( Task == "Pose" )
                     {
                         normalized_landmarks = get_landmarks_pose(libmp);
+
+                        bool bDrawImageByOurOwn = false;
+                        if( bDrawImageByOurOwn )
+                        {
+                            size_t num_poses = normalized_landmarks.size();
+                            for (int pose_num = 0; pose_num < num_poses; pose_num++) {
+                                for (const std::array<float, 3>& norm_xyz : normalized_landmarks[pose_num]) {
+                                    int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
+                                    int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
+                                    cv::circle(inputImage, cv::Point(x, y), 5, cv::Scalar(0, 255, 0), 1);
+                                }
+                            }
+                            inputImage.copyTo(outFrame);
+                        }
                     }
                     else if( Task == "Holistic" )
                     {
-                        //normalized_landmarks = get_landmarks_holistic(libmp);
+                        normalized_landmarks = get_landmarks_holistic(libmp);
                     }
                     else
                     {
                         cout << "Task is not supported." << endl;
-//                        continue;
                     }
 
                     if (normalized_landmarks.empty()) {
