@@ -81,7 +81,6 @@ set_target_properties(LIBMP PROPERTIES
 )
 set(LIBMP_HEADER_DIR ${MEDIAPIPE_DIR}/mediapipe/examples/desktop/libmp)
 include_directories(${LIBMP_HEADER_DIR})
-#include_directories(${MEDIAPIPE_DIR})   #If I want to skip LibMP
 
 # whisper.cpp v1.7.4
 add_library(LIBWHISPER SHARED IMPORTED)

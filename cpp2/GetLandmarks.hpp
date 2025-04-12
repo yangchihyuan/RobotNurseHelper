@@ -10,3 +10,4 @@
 
 std::vector<std::vector<std::array<float, 3>>> get_landmarks(const std::shared_ptr<mediapipe::LibMP>& libmp);
 std::vector<std::vector<std::array<float, 3>>> get_landmarks_pose(const std::shared_ptr<mediapipe::LibMP>& libmp);
+std::vector<std::vector<std::array<float, 3>>> get_landmarks_holistic(const std::shared_ptr<mediapipe::LibMP>& libmp);
