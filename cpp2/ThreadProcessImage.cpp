@@ -14,6 +14,8 @@
 // Compiled protobuf headers for MediaPipe types used
 #include "mediapipe/framework/formats/landmark.pb.h"
 #include "mediapipe/framework/formats/image_format.pb.h"
+
+
 #include <google/protobuf/text_format.h>
 
 #include "GetLandmarks.hpp"
@@ -129,7 +131,7 @@ void ThreadProcessImage::reloadGraph()
     {
         if( Task == "Pose" )
         {
-            graph_string = R"(
+            m_graph_string = R"(
                 # MediaPipe graph that performs pose tracking with TensorFlow Lite on CPU.
 
                 # CPU buffer. (ImageFrame)
@@ -198,7 +200,7 @@ void ThreadProcessImage::reloadGraph()
         }
         else if( Task == "Face")
         {
-            graph_string = R"(
+            m_graph_string = R"(
                 # MediaPipe graph that performs face mesh with TensorFlow Lite on CPU.
         
         
@@ -275,7 +277,7 @@ void ThreadProcessImage::reloadGraph()
         }
         else if (Task == "Holistic")
         {
-            graph_string = R"(
+            m_graph_string = R"(
                 # Tracks and renders pose + hands + face landmarks.
 
                 # CPU image. (ImageFrame)
@@ -362,7 +364,7 @@ void ThreadProcessImage::reloadGraph()
     {
         if( Task == "Pose" )
         {
-            graph_string = R"(
+            m_graph_string = R"(
                 # MediaPipe graph that performs pose tracking with TensorFlow Lite on GPU.
 
                 # GPU buffer. (GpuBuffer)
@@ -430,13 +432,28 @@ void ThreadProcessImage::reloadGraph()
             )";
         }
     }
-    libmp.reset(mediapipe::LibMP::Create(graph_string.c_str(), "input_video"));
+
+    mediapipe::LibMP* pointer = libmp.get();
+    if( pointer != nullptr )
+    {
+        delete pointer;
+    }
+    libmp.reset(mediapipe::LibMP::Create(m_graph_string.c_str(), "input_video"));   //this is not the reason of memory leak
 	libmp->AddOutputStream("output_video");
+    libmp->SetOutputStreamMaxQueueSize("output_video",1);     //this is not the reason of memory leak
+    libmp->SetInputStreamMaxQueueSize("input_video",1);     //this is not the reason of memory leak
     if(Task == "Face")
-        libmp->AddOutputStream("multi_face_landmarks");    //Maybe this function is not a real-time function
+    {
+        libmp->AddOutputStream("multi_face_landmarks");
+        libmp->SetOutputStreamMaxQueueSize("multi_face_landmarks",1);
+    }
     else if(Task == "Pose")
+    {
         libmp->AddOutputStream("pose_landmarks");
+        libmp->SetOutputStreamMaxQueueSize("pose_landmarks",1);
+    }
     libmp->Start();
+
 }
 
 void ThreadProcessImage::run()
@@ -543,9 +560,13 @@ void ThreadProcessImage::run()
 //                    std::cout << filename << std::endl;
                 }
 
-                auto stop = std::chrono::high_resolution_clock::now();
-                auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-                std::cout << "Elapsed time: " << duration_ms.count() << " milliseconds" << std::endl;
+                bool bShowTransmittedImage = false;
+                if( bShowTransmittedImage )
+                {
+                    auto stop = std::chrono::high_resolution_clock::now();
+                    auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+                    std::cout << "Elapsed time: " << duration_ms.count() << " milliseconds" << std::endl;
+                }
 
                 if( b_HumanPoseEstimation)
                 {
@@ -555,7 +576,9 @@ void ThreadProcessImage::run()
                     //This Process function only works for the CPU mode because the GPU mode uses the GpuBuffer.
                     if( Processor == "CPU" )
                     {
-                        if( !libmp->Process(inputImage.data, inputImage.cols, inputImage.rows, mediapipe::ImageFormat::SRGB) )
+                        //debug: this function keeps increasing the memory usage.
+//                        if( !libmp->Process(inputImage.data, inputImage.cols, inputImage.rows, mediapipe::ImageFormat::SRGB) )
+                        if( !libmp->Process2(inputImage) )
                         {
                             std::cerr << "Process() failed!" << std::endl;
                             break;
@@ -579,13 +602,16 @@ void ThreadProcessImage::run()
 
                     if( Processor == "CPU" )
                     {
-                        if( libmp->WriteOutputImage(outFrame.data, libmp->GetOutputPacket("output_video")) )
+                        //This matters. If I don't have this piece of code, memory will be released when I change to the None mode.                        
+                        //And very slow.
+/*                        if( libmp->WriteOutputImage(outFrame.data, libmp->GetOutputPacket("output_video")) )
                         {
                         }
                         else
                         {
                             cout << "WriteOutputImage fails." << std::endl;
                         }
+*/                        
                     }
                     else if( Processor == "GPU" )
                     {
@@ -600,14 +626,18 @@ void ThreadProcessImage::run()
                         */
                     }
 
-                    stop = std::chrono::high_resolution_clock::now();                    
-                    duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-                    std::cout << "Process time: " << duration_ms.count() << " milliseconds" << std::endl;
+                    bool bShowProcessTime = false;
+                    if( bShowProcessTime )
+                    {
+                        auto stop = std::chrono::high_resolution_clock::now();
+                        auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+                        std::cout << "Process time: " << duration_ms.count() << " milliseconds" << std::endl;
+                    }
                         
                     std::vector<std::vector<std::array<float, 3>>> normalized_landmarks;
                     if( Task == "Face" ) 
                     {
-                        normalized_landmarks = get_landmarks(libmp);
+                        normalized_landmarks = get_landmarks(libmp);      //This is not the reason of memory leak
                     }
                     else if( Task == "Pose" )
                     {
@@ -632,27 +662,32 @@ void ThreadProcessImage::run()
                         //use time control first, wait for 5 seconds
                         auto current_time = std::chrono::high_resolution_clock::now();
                         auto duration = std::chrono::duration_cast<std::chrono::seconds>(current_time - previous_time);
+                        cout << "duration " << duration.count() << endl;
                         if (duration.count() >= 5) {
-                            ZenboNurseHelperProtobuf::ReportAndCommand message;
-                            if( Task == "Face" )
-                                FaceLandmarks_to_ZenboAction(normalized_landmarks, robot_status, action_option, message);
-                            else if( Task == "Pose" )
+                            if( action_option.move_mode != action_option.MOVE_MANUAL)
                             {
-                                PoseLandmarks_to_ZenboAction(normalized_landmarks, robot_status, action_option, message);
+                                ZenboNurseHelperProtobuf::ReportAndCommand message;
+                                if( Task == "Face" )
+                                {
+                                    FaceLandmarks_to_ZenboAction(normalized_landmarks, robot_status, action_option, message);
+                                }
+                                else if( Task == "Pose" )
+                                {
+                                    PoseLandmarks_to_ZenboAction(normalized_landmarks, robot_status, action_option, message);
+                                }
+                                else if( Task == "Holistic" )
+                                {
+                                    //HolisticLandmarks_to_ZenboAction(normalized_landmarks, robot_status, action_option, message);
+                                }
+                                else
+                                {
+                                    cout << "Task is not supported." << endl;
+    //                                continue;
+                                }
+                                previous_time = current_time;
+                                pThreadSendCommand->AddMessage(message);
+                                pThreadSendCommand->cond_var_report_result.notify_one();
                             }
-                            else if( Task == "Holistic" )
-                            {
-                                //HolisticLandmarks_to_ZenboAction(normalized_landmarks, robot_status, action_option, message);
-                            }
-                            else
-                            {
-                                cout << "Task is not supported." << endl;
-//                                continue;
-                            }
-//                            FaceLandmarks_to_ZenboAction(normalized_landmarks, robot_status, action_option, message);
-                            previous_time = current_time;
-                            pThreadSendCommand->AddMessage(message);
-                            pThreadSendCommand->cond_var_report_result.notify_one();
                         }
                     }
                     mtx_Task.unlock();    
