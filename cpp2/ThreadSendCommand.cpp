@@ -41,6 +41,8 @@ void ThreadSendCommand::run()
                     pSocket->write("BeginOfAMessage");
                     socketStream.writeRawData(str_results, str_results_len);
                     pSocket->write("EndOfAMessage");
+                    cout << "send a message " << endl;
+
                     //The robot may close the connection suddenly.
                     //pSocket->isValid cannot prevent it.
                     //The only way is to igoore the SIGPIPE signal.

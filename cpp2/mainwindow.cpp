@@ -690,6 +690,7 @@ void MainWindow::comboBox_MoveMode_changed()
     switch(ui->comboBox_MoveMode->currentIndex())
     {
         case 0:
+            action_option.move_mode = ActionOption::MOVE_MANUAL;
             break;
         case 1:     //move body
             action_option.move_mode = ActionOption::MOVE_BODY;

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 project(ZenboNurseHelper_MP)
 
 option(USE_GPU "USE GPU" OFF)
-option(COMPILE_WITH_G_FLAG "COMPILE WITH G FLAG" ON)
+option(COMPILE_WITH_G_FLAG "COMPILE WITH G FLAG" OFF)
 
 
 set(CMAKE_CXX_STANDARD 17)
@@ -53,7 +53,7 @@ get_filename_component(MEDIAPIPE_DIRNAME "${MEDIAPIPE_DIR}" NAME)
 #The variable protobuf_source_dir is used in the libprotobuf.cmake file
 #The protobuf_source_dir is used to find the protobuf source code
 set(protobuf_source_dir "${MEDIAPIPE_DIR}/bazel-${MEDIAPIPE_DIRNAME}/external/com_google_protobuf")
-include("${CMAKE_CURRENT_SOURCE_DIR}/libprotobuf.cmake")     #this is modified cmake file provided by LibMP's author
+include("${CMAKE_CURRENT_SOURCE_DIR}/libprotobuf.cmake")     #this is the modified cmake file provided by LibMP's author
 set(PROTO_FILE ServerSend.proto)
 #Because I don't use the pre-built opencv, I don't have the protobuf_generate_cpp function, I need to define it by myself 
 my_protobuf_generate_cpp(PROTO_SRC PROTO_HDR ${PROTO_FILE})
@@ -81,6 +81,7 @@ set_target_properties(LIBMP PROPERTIES
 )
 set(LIBMP_HEADER_DIR ${MEDIAPIPE_DIR}/mediapipe/examples/desktop/libmp)
 include_directories(${LIBMP_HEADER_DIR})
+#include_directories(${MEDIAPIPE_DIR})   #If I want to skip LibMP
 
 # whisper.cpp v1.7.4
 add_library(LIBWHISPER SHARED IMPORTED)
