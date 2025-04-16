@@ -67,11 +67,7 @@ sudo apt-get -y install mesa-common-dev libegl1-mesa-dev libgles2-mesa-dev
 
 #build libmp library
 cd ~/mediapipe
-bazel build -c opt --define MEDIAPIPE_DISABLE_GPU=1 mediapipe/examples/desktop/libmp:libmp.so
-
-#copy the .so file to our folder
-mkdir ~/ZenboNurseHelper/cpp2/build
-cp ~/mediapipe/bazel-bin/mediapipe/examples/desktop/libmp/libmp.so ~/ZenboNurseHelper/cpp2/build
+bazel build -c opt mediapipe/examples/desktop/libmp:libmp_gpu.so
 
 #Qt
 #We use it to create our GUI
