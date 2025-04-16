@@ -212,35 +212,11 @@ public class MainActivity extends Activity {
         Button button_close = (Button) findViewById(R.id.button_close);
 
         //get the default ServerURL
-        socketManager.mServerURL = editText_Server.getText().toString();
         SharedPreferences sharedPref = getSharedPreferences("ZenboNurseHelper_Preference", Context.MODE_PRIVATE);
         String ServerURL = sharedPref.getString("ServerURL", "");
         if( !ServerURL.isEmpty() ){
             editText_Server.setText(ServerURL);
-            socketManager.mServerURL = ServerURL;
         }
-
-        //What is the purpose of this function?
-        editText_Server.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {   // 按下完成按钮，这里和上面imeOptions对应
-                    socketManager.mServerURL = v.getText().toString();;
-                }
-                return false;//返回true，保留软键盘。false，隐藏软键盘
-            }
-        });
-
-        socketManager.mPortNumber = Integer.parseInt(editText_Port.getText().toString());
-        editText_Port.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {   // 按下完成按钮，这里和上面imeOptions对应
-                    socketManager.mPortNumber = Integer.parseInt(v.getText().toString());
-                }
-                return false;//返回true，保留软键盘。false，隐藏软键盘
-            }
-        });
 
         checkBox_enable_connection.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -254,7 +230,10 @@ public class MainActivity extends Activity {
 
                     recorder.startRecording();    //The recorder means the audio recorder
                     socketManager.startReceiveCommands();
+                    socketManager.mServerURL = editText_Server.getText().toString();
+                    socketManager.mPortNumber = Integer.parseInt(editText_Port.getText().toString());
                     socketManager.connectSockets();
+                    socketManager.enableAutoReconnection();
                 }
                 else {
                     //2025/1/3 the recorder should stop in onPause()

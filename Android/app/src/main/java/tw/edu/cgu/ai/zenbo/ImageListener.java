@@ -60,16 +60,15 @@ class ImageListener implements OnImageAvailableListener {
     private int[] argbBytes = null;
     private Bitmap argbFrameBitmap = null;
     private InputView inputView;
-//    private ActionRunnable mActionRunnable;
     public SocketManager socketManager;
-//    private long timestamp_prevous_processed_image = 0; //initial value
+
+    private Converter converter;
 
     public void initialize(SocketManager socketManager, InputView inputView) {
         argbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Config.ARGB_8888);
         argbBytes = new int[previewWidth * previewHeight];
         this.socketManager = socketManager;
         this.inputView = inputView;
-//        mActionRunnable = ActionRunnable;
     }
 
     @Override
@@ -121,6 +120,10 @@ class ImageListener implements OnImageAvailableListener {
                 return;
             }
             argbFrameBitmap.setPixels(argbBytes, 0, previewWidth, 0, 0, previewWidth, previewHeight);
+
+            //my laptop's webcam generates upside down images to the simulator. Thus, I need to flip the image.
+            argbFrameBitmap = converter.RotateImage180Degree(argbFrameBitmap);
+
             inputView.setBitmap(argbFrameBitmap);
             inputView.postInvalidate();
 

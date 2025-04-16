@@ -85,8 +85,8 @@ int PoseLandmarks_to_ZenboAction(std::vector<std::vector<std::array<float, 3>>> 
     //If there are multiple faces, find the largest one.
     int num_poses = normalized_landmarks.size();
 
-    std::array<int, 9> left_eye{{  33 , 133, 246, 161, 160, 159, 158, 157, 173 }};
-    std::array<int, 9> right_eye{{ 362, 263, 390, 389, 388, 387, 386, 385, 384 }};
+//    std::array<int, 9> left_eye{{  33 , 133, 246, 161, 160, 159, 158, 157, 173 }};
+//    std::array<int, 9> right_eye{{ 362, 263, 390, 389, 388, 387, 386, 385, 384 }};
  
     for(int i=0; i<num_poses; i++)
     {
@@ -96,7 +96,7 @@ int PoseLandmarks_to_ZenboAction(std::vector<std::vector<std::array<float, 3>>> 
         float x = pose_landmarks[0][0];
         float y = pose_landmarks[0][1];
 
-        std::cout << "center_of_two_eyes: (" << x << ", " << y << ")" << std::endl;
+        std::cout << "Pose node 0 Normalized position: (" << x << ", " << y << ")" << std::endl;
         // Calculate the distance between the eyes
 
         if (action_option.move_mode == action_option.MOVE_BODY)
