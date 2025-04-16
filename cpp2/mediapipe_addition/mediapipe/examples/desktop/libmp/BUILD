@@ -130,10 +130,10 @@ LIB_DEPS_GPU = [
 
     # Remove any of these if you need to build only one example
     # Selfie segmentation
-    "//mediapipe/graphs/selfie_segmentation:selfie_segmentation_cpu_deps",
+    "//mediapipe/graphs/selfie_segmentation:selfie_segmentation_gpu_deps",
 
     # Hand tracking
-    "//mediapipe/modules/hand_landmark:hand_landmark_tracking_cpu",
+    "//mediapipe/modules/hand_landmark:hand_landmark_tracking_gpu",
     "//mediapipe/calculators/util:annotation_overlay_calculator",
     "//mediapipe/calculators/util:detections_to_render_data_calculator",
 
@@ -156,9 +156,10 @@ LIB_DEPS_GPU = [
 
     # Holistic tracking
     "//mediapipe/graphs/holistic_tracking:holistic_tracking_cpu_graph_deps",
+    "//mediapipe/graphs/holistic_tracking:holistic_tracking_gpu_deps",
 
     # Iris tracking
-    "//mediapipe/graphs/iris_tracking:iris_tracking_cpu_deps",
+    "//mediapipe/graphs/iris_tracking:iris_tracking_gpu_deps",
 
     # Object detection
     "//mediapipe/calculators/core:concatenate_vector_calculator",
@@ -175,6 +176,7 @@ LIB_DEPS_GPU = [
 
     # Pose tracking
     "//mediapipe/graphs/pose_tracking:pose_tracking_gpu_deps",
+    "//mediapipe/graphs/pose_tracking:pose_tracking_cpu_deps",
 ]
 
 cc_binary(
@@ -228,8 +230,8 @@ cc_library(
         "@platforms//os:linux",
     ],
     name = "libmp_linux_gpu",
-    srcs = ["libmp.cpp", "libmp_impl.cpp"],
-    hdrs = ["libmp.h", "libmp_impl.h"],
+    srcs = ["libmp_gpu.cpp", "libmp_impl_gpu.cpp"],
+    hdrs = ["libmp_gpu.h", "libmp_impl_gpu.h"],
     visibility = ["//visibility:public"],
     deps = LIB_DEPS_GPU,
     alwayslink = 1,

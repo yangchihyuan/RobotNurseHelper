@@ -1,5 +1,5 @@
-#include "libmp.h"
-#include "libmp_impl.h"
+#include "libmp_gpu.h"
+#include "libmp_impl_gpu.h"
 #include "mediapipe/framework/formats/image_frame.h"
 
 namespace mediapipe {
@@ -8,6 +8,20 @@ namespace mediapipe {
 	{
 		LibMPImpl* libMP = new LibMPImpl();
 		absl::Status status = libMP->Init(graph, inputStream);
+		if (status.ok()){
+			return libMP;
+		}
+		else{
+			LOG(INFO) << "Error initializing graph. Input text:\n" << graph << "\nStatus:\n" << status.ToString();
+			delete libMP;
+			return nullptr;
+		}
+	}
+
+	MP_CPP_EXPORT LibMP* LibMP::Create_gpu(const char* graph, const char* inputStream) 
+	{
+		LibMPImpl* libMP = new LibMPImpl();
+		absl::Status status = libMP->Init_gpu(graph, inputStream);
 		if (status.ok()){
 			return libMP;
 		}
@@ -31,6 +45,7 @@ namespace mediapipe {
 		size_t output_bytes = output_frame.PixelDataSizeStoredContiguously();
 
 		output_frame.CopyToBuffer(dst, output_bytes);
+		delete outputPacket;
 		return true;
 	}
 

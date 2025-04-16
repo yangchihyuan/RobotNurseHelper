@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-
+#include <opencv2/opencv.hpp>
 // Windows DLL
 #if _WIN32
 	#define MP_CPP_EXPORT __declspec(dllexport)  // DLL Export
@@ -36,6 +36,9 @@ namespace mediapipe {
 		// i.e., AddOutputStream must have been called beforehand with outputStream
 		virtual void SetOutputStreamMaxQueueSize(const char* outputStream, int queue_size) = 0;
 
+		// My added function
+		virtual void SetInputStreamMaxQueueSize(const char* inputStream, int queue_size) = 0;
+
 		// Start the MP graph
 		virtual bool Start() = 0;
 
@@ -43,6 +46,7 @@ namespace mediapipe {
 		// Function copies (i.e., DOES NOT take ownership of) input data
 		// Returns true if succeeded; false if failed
 		virtual bool Process(uint8_t* data, int width, int height, int image_format) = 0;
+		virtual bool Process2(cv::Mat camera_frame) = 0;
 
 		// Blocks until graph is idle
 		virtual bool WaitUntilIdle() = 0;

@@ -81,24 +81,15 @@ public class SocketManager {
 
                                     ServerSend.ReportAndCommand report = ServerSend.ReportAndCommand.parseFrom(slice);
                                     //Do I need a mutex here to protect the ArrayList?
-                                    ArrayListCommand.add(report);       //add to ArrayList
+//                                    ArrayListCommand.add(report);       //add to ArrayList
                                     //Post a Runnable here to execute the command?
                                     //Do I need a new thread here?
-                                    mHandlerExecuteCommand.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if (!ArrayListCommand.isEmpty()) {
-                                                ServerSend.ReportAndCommand report = ArrayListCommand.get(0);
-                                                ArrayListCommand.remove(0);
-                                                /*
-                                                if (report.hasTimeStamp()) {
-                                                    if (bMoveMode_LookForPeople) {
-                                                        //                                    Log.d("report", report.toString());
-                                                        m_DataBuffer.AddNewFrame(report);
-                                                        mHandlerAction.post(mActionRunnable);
-                                                    }
-                                                }
-                                                */
+//                                    mHandlerExecuteCommand.post(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            if (!ArrayListCommand.isEmpty()) {
+//                                                ServerSend.ReportAndCommand report = ArrayListCommand.get(0);
+//                                                ArrayListCommand.remove(0);
                                                 if (report.hasX()) {
                                                     Log.d("move body", report.toString());
                                                     int serial = mRobotAPI.motion.moveBody(((float) report.getX()) / 100.0f, ((float) report.getY()) / 100.0f, report.getDegree());
@@ -147,9 +138,9 @@ public class SocketManager {
                                                     //it will still return a serial, but for loop action, will the onResult() in the CallBack be called?
                                                     int serial = mRobotAPI.utility.playAction(converter.PredefinedActionIndexToPlayAction(report.getPredefinedAction()));
                                                 }
-                                            }
-                                        }
-                                    });
+//                                            }
+//                                        }
+//                                    });
                                 }
                             } else {
                                 //sleep 30 msecs;
@@ -223,22 +214,9 @@ public class SocketManager {
             @Override
             public void run() {
                 try {
-                    if(mSocketSendImages == null )
-                        mSocketSendImages = new Socket();
-
-                    SocketAddress socketAddress = new InetSocketAddress(mServerURL, mPortNumber);
-                    mSocketSendImages.connect(socketAddress);
-
-                    if( mSocketReceiveResults == null)
-                        mSocketReceiveResults = new Socket();
-
-                    SocketAddress socketAddress2 = new InetSocketAddress(mServerURL, mPortNumber+1);
-                    mSocketReceiveResults.connect(socketAddress2);
-
-                    if( mSocketSendAudio == null)
-                        mSocketSendAudio =  new Socket();
-                    SocketAddress socketAddress3 = new InetSocketAddress(mServerURL, mPortNumber+2);
-                    mSocketSendAudio.connect(socketAddress3);
+                    mSocketSendImages = new Socket(mServerURL, mPortNumber);
+                    mSocketReceiveResults = new Socket(mServerURL, mPortNumber+1);
+                    mSocketSendAudio =  new Socket(mServerURL, mPortNumber+2);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -263,23 +241,9 @@ public class SocketManager {
     public void disconnectSockets()
     {
         try {
-            if( mSocketSendImages != null) {
-                mSocketSendImages.close();
-                if (mSocketSendImages.isClosed())
-                    mSocketSendImages = null;
-            }
-
-            if( mSocketReceiveResults != null) {
-                mSocketReceiveResults.close();
-                if (mSocketReceiveResults.isClosed())
-                    mSocketReceiveResults = null;
-            }
-
-            if( mSocketSendAudio != null) {
-                mSocketSendAudio.close();
-                if (mSocketSendAudio.isClosed())
-                    mSocketSendAudio = null;
-            }
+            mSocketSendImages.close();
+            mSocketReceiveResults.close();
+            mSocketSendAudio.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

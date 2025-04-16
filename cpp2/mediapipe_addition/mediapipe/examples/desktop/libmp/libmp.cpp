@@ -31,6 +31,7 @@ namespace mediapipe {
 		size_t output_bytes = output_frame.PixelDataSizeStoredContiguously();
 
 		output_frame.CopyToBuffer(dst, output_bytes);
+		delete outputPacket;
 		return true;
 	}
 

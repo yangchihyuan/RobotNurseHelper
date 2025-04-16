@@ -6,8 +6,8 @@
 #include "mediapipe/framework/port/file_helpers.h"
 #include "mediapipe/framework/port/parse_text_proto.h"
 #include "mediapipe/framework/port/status.h"
-#include "mediapipe/framework/formats/image_frame.h"
-#include <opencv2/opencv.hpp>    //for cv::getTickCount() and cv::getTickFrequency()
+#include "mediapipe/framework/formats/image_frame_opencv.h"
+
 
 namespace mediapipe {
 
@@ -42,6 +42,12 @@ namespace mediapipe {
 		m_pollers.at(outputStream)->SetMaxQueueSize(queue_size);
 	}
 
+	void LibMPImpl::SetInputStreamMaxQueueSize(const char* inputStream, int queue_size)
+	{
+		m_graph.SetInputStreamMaxQueueSize(inputStream, queue_size);
+	}
+	
+
 	bool LibMPImpl::Start(){
 		const std::map<std::string, mediapipe::Packet>& extra_side_packets = {};
 		bool ok = m_graph.StartRun(extra_side_packets).ok();
@@ -69,6 +75,26 @@ namespace mediapipe {
 		size_t frame_timestamp_us = (double)cv::getTickCount() / (double)cv::getTickFrequency() * 1e6;
 		auto status = m_graph.AddPacketToInputStream(m_input_stream, mediapipe::Adopt(input_frame_for_input.release()).At(mediapipe::Timestamp(frame_timestamp_us)));
 		
+		if (!status.ok()){
+			LOG(INFO) << "Failed to add packet to input stream. Call m_graph.WaitUntilDone() to see error (or destroy LibMP object)";
+			LOG(INFO) << "Status: " << status.ToString() << std::endl;
+			return false;
+		}
+
+		return true;
+	}
+
+	bool LibMPImpl::Process2(cv::Mat camera_frame)
+	{
+		auto input_frame = absl::make_unique<mediapipe::ImageFrame>(
+			mediapipe::ImageFormat::SRGB, camera_frame.cols, camera_frame.rows,
+			mediapipe::ImageFrame::kDefaultAlignmentBoundary);
+		cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
+		camera_frame.copyTo(input_frame_mat);
+		size_t frame_timestamp_us =
+        (double)cv::getTickCount() / (double)cv::getTickFrequency() * 1e6;
+		auto status = m_graph.AddPacketToInputStream(m_input_stream, mediapipe::Adopt(input_frame.release()).At(mediapipe::Timestamp(frame_timestamp_us)));
+			
 		if (!status.ok()){
 			LOG(INFO) << "Failed to add packet to input stream. Call m_graph.WaitUntilDone() to see error (or destroy LibMP object)";
 			LOG(INFO) << "Status: " << status.ToString() << std::endl;

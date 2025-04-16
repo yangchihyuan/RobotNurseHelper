@@ -3,9 +3,10 @@
 
 #include <map>
 #include <unordered_map>
-#include "libmp.h"
+#include "libmp_gpu.h"
 #include "absl/status/status.h"
 #include "mediapipe/framework/calculator_framework.h"
+#include <opencv2/opencv.hpp>    //for cv::getTickCount() and cv::getTickFrequency()
 #include "mediapipe/gpu/gl_calculator_helper.h"
 #include "mediapipe/gpu/gpu_buffer.h"
 #include "mediapipe/gpu/gpu_shared_data_internal.h"
@@ -20,11 +21,13 @@ namespace mediapipe {
 		~LibMPImpl();
 
 		absl::Status Init(const char* graph, const char* inputStream);
+		absl::Status Init_gpu(const char* graph, const char* inputStream);
 		bool AddOutputStream(const char* outputStream);
 		void SetOutputStreamMaxQueueSize(const char* outputStream, int queue_size);
 		bool Start();
 
 		bool Process(uint8_t* data, int width, int height, int image_format);
+		bool Process2(cv::Mat camera_frame);
 		bool Process_GPU(uint8_t* data, int width, int height, int image_format);
 		bool WriteOutputImage_GPU(uint8_t* dst, const void* outputPacketVoid);
 
