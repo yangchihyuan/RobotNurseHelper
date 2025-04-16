@@ -11,7 +11,11 @@
 #include <condition_variable>
 #include "ThreadSendCommand.hpp"
 #include "SocketHandler.hpp"
-#include "libmp.h"
+#ifdef USE_GPU
+    #include "libmp_gpu.h"
+#else
+    #include "libmp.h"
+#endif
 
 
 using namespace std;
