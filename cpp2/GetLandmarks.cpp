@@ -5,7 +5,7 @@
 // dimensions = (# faces) x (# landmarks/face) x 3
 // i.e., each landmark is a 3-float array (X,Y,Z), so the middle vector contains 468 or 478 of these
 // and the outermost vector is for each detected face in the frame
-std::vector<std::vector<std::array<float, 3>>> get_landmarks(const std::shared_ptr<mediapipe::LibMP>& libmp) {
+std::vector<std::vector<std::array<float, 3>>> get_landmarks_face(const std::shared_ptr<mediapipe::LibMP>& libmp) {
 	std::vector<std::vector<std::array<float, 3>>> normalized_landmarks;
 
 	// I use a unique_ptr for convenience, so that DeletePacket is called automatically

@@ -20,8 +20,6 @@
 
 package tw.edu.cgu.ai.zenbo;
 
-import static java.lang.Thread.sleep;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -57,21 +55,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.asus.robotframework.API.ExpressionConfig;
-import com.asus.robotframework.API.MotionControl;
 import com.asus.robotframework.API.RobotAPI;     //How to release this resource in OnDestroy()
 import com.asus.robotframework.API.RobotFace;
-import com.asus.robotframework.API.SpeakConfig;
-import com.asus.robotframework.API.Utility.PlayAction;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -83,9 +70,6 @@ import android.util.Log;
 import android.widget.Button;
 
 import tw.edu.cgu.ai.zenbo.env.Logger; //Where do I use the Logger?
-import ZenboNurseHelperProtobuf.ServerSend.ReportAndCommand;
-import ZenboNurseHelperProtobuf.ServerSend.ReportAndCommand.MoveModeEnum;
-
 
 public class MainActivity extends Activity {
     private static final int PERMISSIONS_REQUEST = 1;
@@ -100,36 +84,20 @@ public class MainActivity extends Activity {
 
     private InputView inputView;     //2024/6/25 Chih-Yuan Yang: The purpose of the inputView is to get a frame from camera's preview.
     //Thus, I can send the frame to a server.
-    private ActionRunnable mActionRunnable = new ActionRunnable();
+//    private ActionRunnable mActionRunnable = new ActionRunnable();
     private CheckBox checkBox_enable_connection;
-//    private CheckBox checkBox_show_face;
-//    private CheckBox checkBox_dont_move;
-//    private CheckBox checkBox_dont_rotate;
-//    private MessageView mMessageView_Detection;
-//    private MessageView mMessageView_Timestamp;
     private EditText editText_Server;
     private EditText editText_Port;
-    private DataBuffer m_DataBuffer;
-    private String mVideoAbsolutePath;
+//    private DataBuffer m_DataBuffer;
     //Zenbo supports 1920x1080
     //Emulator only supports up to 1280x960
     private Size mPreviewSize = new Size(640, 480);
-//        private Size mPreviewSize = new Size(1280, 960);
-//    private Size mPreviewSize = new Size(1920, 1080);
     private CameraDevice mCameraDevice;
     private HandlerThread threadImageListener;
     private Handler handlerImageListener;
-    private HandlerThread threadSendToServer;
-    private Handler handlerSendToServer;
-    private HandlerThread mThreadAction;    //This thread is used by ActionRunable
-    private Handler mHandlerAction;
     private HandlerThread mThreadSendAudio;
     private Handler mHandlerSendAudio;
-    private HandlerThread mThreadReceiveCommand;
-    private Handler mHandlerReceiveCommand;
     private boolean mbReceiveCommand;
-    private HandlerThread mThreadExecuteCommand;
-    private Handler mHandlerExecuteCommand;
 
     private ImageReader mPreviewReader;
     private CaptureRequest.Builder mPreviewBuilder;
@@ -137,229 +105,10 @@ public class MainActivity extends Activity {
     private CameraCaptureSession mPreviewSession;
     private final ImageListener mPreviewListener = new ImageListener();
     private final SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss.SSS");
-    Socket mSocketReceiveResults;
-    Socket mSocketSendImages;
-    Socket mSocketSendAudio;
-    private String mServerURL;
-    private Integer mPortNumber;
 
-    byte[] mMessagePool = new byte[8192];
-    int effective_length = 0;
-    String beginString = new String("BeginOfAMessage");
-    String endString = new String("EndOfAMessage");
+    private SocketManager socketManager = new SocketManager();
 
-    boolean bMoveMode_LookForPeople = true;
-
-    ArrayList<ReportAndCommand> ArrayListCommand = new ArrayList<ReportAndCommand>();
-
-    private RobotFace FaceIndexToRobotFace(int FaceIndex)
-    {
-        RobotFace newFace = RobotFace.DEFAULT;
-        switch(FaceIndex) {
-            case 0:
-                newFace = RobotFace.ACTIVE;
-                break;
-            case 1:
-                newFace = RobotFace.AWARE_LEFT;
-                break;
-            case 2:
-                newFace = RobotFace.AWARE_RIGHT;
-                break;
-            case 3:
-                newFace = RobotFace.CONFIDENT;
-                break;
-            case 4:
-                newFace = RobotFace.DEFAULT;
-                break;
-            case 5:
-                newFace = RobotFace.DEFAULT_STILL;
-                break;
-            case 6:
-                newFace = RobotFace.DOUBTING;
-                break;
-            case 7:
-                newFace = RobotFace.EXPECTING;
-                break;
-            case 8:
-                newFace = RobotFace.HAPPY;
-                break;
-            case 9:
-                newFace = RobotFace.HELPLESS;
-                break;
-            case 10:
-                newFace = RobotFace.HIDEFACE;
-                break;
-            case 11:
-                newFace = RobotFace.IMPATIENT;
-                break;
-            case 12:
-                newFace = RobotFace.INNOCENT;
-                break;
-            case 13:
-                newFace = RobotFace.INTERESTED;
-                break;
-            case 14:
-                newFace = RobotFace.LAZY;
-                break;
-            case 15:
-                newFace = RobotFace.PLEASED;
-                break;
-            case 16:
-                newFace = RobotFace.PRETENDING;
-                break;
-            case 17:
-                newFace = RobotFace.PROUD;
-                break;
-            case 18:
-                newFace = RobotFace.QUESTIONING;
-                break;
-            case 19:
-                newFace = RobotFace.SERIOUS;
-                break;
-            case 20:
-                newFace = RobotFace.SHOCKED;
-                break;
-            case 21:
-                newFace = RobotFace.SHY;
-                break;
-            case 22:
-                newFace = RobotFace.SINGING;
-                break;
-            case 23:
-                newFace = RobotFace.TIRED;
-                break;
-            case 24:
-                newFace = RobotFace.WORRIED;
-                break;
-        }
-        return newFace;
-    };
-
-    private int PredefinedActionIndexToPlayAction(int PredefinedActionIndex)
-    {
-
-        int theAction = PlayAction.Default_1;
-        switch(PredefinedActionIndex) {
-            case 0:
-                theAction = PlayAction.Body_twist_1;
-                break;
-            case 1:
-                theAction = PlayAction.Body_twist_2;
-                break;
-            case 2:
-                theAction = PlayAction.Dance_2_loop;
-                break;
-            case 3:
-                theAction = PlayAction.Dance_3_loop;
-                break;
-            case 4:
-                theAction = PlayAction.Dance_b_1_loop;
-                break;
-            case 5:
-                theAction = PlayAction.Dance_s_1_loop;
-                break;
-            case 6:
-                theAction = PlayAction.Default_1;
-                break;
-            case 7:
-                theAction = PlayAction.Default_2;
-                break;
-            case 8:
-                theAction = PlayAction.Find_face;
-                break;
-            case 9:
-                theAction = PlayAction.Head_down_1;
-                break;
-            case 10:
-                theAction = PlayAction.Head_down_2;
-                break;
-            case 11:
-                theAction = PlayAction.Head_down_3;
-                break;
-            case 12:
-                theAction = PlayAction.Head_down_4;
-                break;
-            case 13:
-                theAction = PlayAction.Head_down_5;
-                break;
-            case 14:
-                theAction = PlayAction.Head_down_7;
-                break;
-            case 15:
-                theAction = PlayAction.Head_twist_1_loop;
-                break;
-            case 16:
-                theAction = PlayAction.Head_up_1;
-                break;
-            case 17:
-                theAction = PlayAction.Head_up_2;
-                break;
-            case 18:
-                theAction = PlayAction.Head_up_3;
-                break;
-            case 19:
-                theAction = PlayAction.Head_up_4;
-                break;
-            case 20:
-                theAction = PlayAction.Head_up_5;
-                break;
-            case 21:
-                theAction = PlayAction.Head_up_6;
-                break;
-            case 22:
-                theAction = PlayAction.Head_up_7;
-                break;
-            case 23:
-                theAction = PlayAction.Music_1_loop;
-                break;
-            case 24:
-                theAction = PlayAction.Nod_1;
-                break;
-            case 25:
-                theAction = PlayAction.Shake_head_1;
-                break;
-            case 26:
-                theAction = PlayAction.Shake_head_2;
-                break;
-            case 27:
-                theAction = PlayAction.Shake_head_3;
-                break;
-            case 28:
-                theAction = PlayAction.Shake_head_4_loop;
-                break;
-            case 29:
-                theAction = PlayAction.Shake_head_5;
-                break;
-            case 30:
-                theAction = PlayAction.Shake_head_6;
-                break;
-            case 32:
-                theAction = PlayAction.Turn_left_1;
-                break;
-            case 33:
-                theAction = PlayAction.Turn_left_2;
-                break;
-            case 34:
-                theAction = PlayAction.Turn_left_reverse_1;
-                break;
-            case 35:
-                theAction = PlayAction.Turn_left_reverse_2;
-                break;
-            case 36:
-                theAction = PlayAction.Turn_right_1;
-                break;
-            case 37:
-                theAction = PlayAction.Turn_right_2;
-                break;
-            case 38:
-                theAction = PlayAction.Turn_right_reverse_1;
-                break;
-            case 39:
-                theAction = PlayAction.Turn_right_reverse_2;
-                break;
-        }
-        return theAction;
-    }
+    private Converter converter;
 
     /**
      * {@link android.view.TextureView.SurfaceTextureListener} handles several lifecycle events on a
@@ -453,8 +202,8 @@ public class MainActivity extends Activity {
 
         robotCallback = new ZenboCallback();
         mRobotAPI = new RobotAPI(this, robotCallback);
-        mActionRunnable.ZenboAPI = mRobotAPI;
-        mActionRunnable.robotCallback = robotCallback;     //I have several variables in the ZenboCallback class, so I need to pass the object to the ActionRunnable object
+        socketManager.mRobotAPI = mRobotAPI;
+        socketManager.startThreads();
 
         inputView = (InputView) findViewById(R.id.inputview);
         editText_Port = (EditText) findViewById(R.id.editText_Port);
@@ -463,32 +212,31 @@ public class MainActivity extends Activity {
         Button button_close = (Button) findViewById(R.id.button_close);
 
         //get the default ServerURL
-        mServerURL = editText_Server.getText().toString();
+        socketManager.mServerURL = editText_Server.getText().toString();
         SharedPreferences sharedPref = getSharedPreferences("ZenboNurseHelper_Preference", Context.MODE_PRIVATE);
         String ServerURL = sharedPref.getString("ServerURL", "");
         if( !ServerURL.isEmpty() ){
             editText_Server.setText(ServerURL);
-            mServerURL = ServerURL;
+            socketManager.mServerURL = ServerURL;
         }
 
-
+        //What is the purpose of this function?
         editText_Server.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {   // 按下完成按钮，这里和上面imeOptions对应
-                    mServerURL = v.getText().toString();;
+                    socketManager.mServerURL = v.getText().toString();;
                 }
                 return false;//返回true，保留软键盘。false，隐藏软键盘
             }
         });
 
-
-        mPortNumber = Integer.parseInt(editText_Port.getText().toString());
+        socketManager.mPortNumber = Integer.parseInt(editText_Port.getText().toString());
         editText_Port.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {   // 按下完成按钮，这里和上面imeOptions对应
-                    mPortNumber = Integer.parseInt(v.getText().toString());
+                    socketManager.mPortNumber = Integer.parseInt(v.getText().toString());
                 }
                 return false;//返回true，保留软键盘。false，隐藏软键盘
             }
@@ -497,9 +245,6 @@ public class MainActivity extends Activity {
         checkBox_enable_connection.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                HandlerThread thread = new HandlerThread("SocketProcess");
-                thread.start();
-                Handler handler = new Handler(thread.getLooper());
                 if (isChecked) {
                     //Save the IP address to SharedPreferences
                     SharedPreferences sharedPref = getSharedPreferences("ZenboNurseHelper_Preference", Context.MODE_PRIVATE);
@@ -507,217 +252,19 @@ public class MainActivity extends Activity {
                     editor.putString("ServerURL", editText_Server.getText().toString());
                     editor.apply();
 
-                    recorder.startRecording();
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                mSocketSendImages = new Socket(mServerURL, mPortNumber);
-                                if( mSocketSendImages.isConnected()) {
-                                    mPreviewListener.set_socket(mSocketSendImages);
-                                }
-                                mSocketReceiveResults = new Socket(mServerURL, mPortNumber + 1);
-                                if( mSocketReceiveResults.isConnected())
-                                {
-                                    //Enable the receive thread
-                                    mHandlerReceiveCommand.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            mbReceiveCommand = true;
-                                            while(mbReceiveCommand) {      //turn the boolean off when I need to turn off the thread
-//                    if (mSocketReceiveResults != null && mSocketReceiveResults.isConnected()) {
-                                                try {
-                                                    BufferedInputStream dIn = new BufferedInputStream(mSocketReceiveResults.getInputStream());
-                                                    int length = 4096;
-                                                    byte[] message = new byte[length];
-                                                    int bytesRead = dIn.read(message, 0, length);
-                                                    if (bytesRead != -1) {
-                                                        System.arraycopy(message, 0, mMessagePool, effective_length, bytesRead);
-                                                        effective_length += bytesRead;
-                                                        String string = new String(mMessagePool, 0, effective_length, StandardCharsets.US_ASCII);
-
-                                                        int iBegin = string.indexOf(beginString);
-                                                        int iEnd = string.indexOf(endString);
-                                                        if (iBegin != -1 && iEnd != -1) {
-                                                            byte[] slice = Arrays.copyOfRange(mMessagePool, iBegin + beginString.length(), iEnd);
-                                                            int remaining = effective_length - (iEnd + endString.length());
-                                                            if (remaining > 0) {
-                                                                System.arraycopy(mMessagePool, (iEnd + endString.length()), mMessagePool, 0, remaining);
-                                                            }
-                                                            effective_length = remaining;
-
-                                                            ReportAndCommand report = ReportAndCommand.parseFrom(slice);
-                                                            //Do I need a mutex here to protect the ArrayList?
-                                                            ArrayListCommand.add(report);       //add to ArrayList
-                                                            //Post a Runnable here to execute the command?
-                                                            mHandlerExecuteCommand.post(new Runnable() {
-                                                                @Override
-                                                                public void run() {
-                                                                    if( !ArrayListCommand.isEmpty())
-                                                                    {
-                                                                        ReportAndCommand report = ArrayListCommand.get(0);
-                                                                        ArrayListCommand.remove(0);
-
-                                                                        if (report.hasTimeStamp()) {
-                                                                            if (bMoveMode_LookForPeople) {
-                                                                                //                                    Log.d("report", report.toString());
-                                                                                m_DataBuffer.AddNewFrame(report);
-                                                                                mHandlerAction.post(mActionRunnable);
-                                                                            }
-                                                                        }
-                                                                        if (report.hasX()) {
-                                                                            Log.d("move body", report.toString());
-                                                                            int serial = mRobotAPI.motion.moveBody(((float) report.getX()) / 100.0f, ((float) report.getY()) / 100.0f, report.getDegree());
-                                                                            //The serial number will appear in the callback function.
-                                                                        }
-                                                                        //rotate only
-                                                                        if (!report.hasX() && !report.hasY() && report.hasDegree()) {
-                                                                            Log.d("rotate body", report.toString());
-                                                                            int serial = mRobotAPI.motion.moveBody(0.0f, 0.0f, report.getDegree());
-                                                                            //The serial number will appear in the callback function.
-                                                                        }
-                                                                        if (report.hasYaw()) {
-                                                                            MotionControl.SpeedLevel.Head speed;
-                                                                            switch (report.getHeadspeed()) {
-                                                                                case 1:
-                                                                                    speed = MotionControl.SpeedLevel.Head.L1;
-                                                                                    break;
-                                                                                case 2:
-                                                                                    speed = MotionControl.SpeedLevel.Head.L2;
-                                                                                    break;
-                                                                                default:
-                                                                                    speed = MotionControl.SpeedLevel.Head.L3;
-                                                                            }
-                                                                            mRobotAPI.motion.moveHead(report.getYaw(), report.getPitch(), speed);
-                                                                        }
-                                                                        if (report.hasFace() && report.hasSpeakSentence()) {
-                                                                            Log.d("report", report.toString());
-                                                                            RobotFace newFace = FaceIndexToRobotFace(report.getFace());
-                                                                            ExpressionConfig config = new ExpressionConfig();
-                                                                            config.volume(report.getVolume()).speed(report.getSpeed()).pitch(report.getSpeakPitch());
-                                                                            mRobotAPI.robot.setExpression(newFace, report.getSpeakSentence(), config);
-                                                                        } else if (report.hasSpeakSentence()) {
-                                                                            Log.d("Speak Sentence", report.getSpeakSentence());
-                                                                            SpeakConfig config = new SpeakConfig();
-                                                                            config.volume(report.getVolume()).speed(report.getSpeed()).pitch(report.getSpeakPitch());
-                                                                            mRobotAPI.robot.speak(report.getSpeakSentence(), config);
-                                                                        } else if (report.hasFace()) {
-                                                                            RobotFace newFace = FaceIndexToRobotFace(report.getFace());
-                                                                            mRobotAPI.robot.setExpression(newFace);
-                                                                        }
-                                                                        if (report.hasMovemode()) {
-                                                                            if (report.getMovemode() == MoveModeEnum.Manual) {
-                                                                                bMoveMode_LookForPeople = false;
-                                                                            } else if (report.getMovemode() == MoveModeEnum.LookForPeople) {
-                                                                                bMoveMode_LookForPeople = true;
-                                                                            }
-                                                                        }
-                                                                        if (report.hasStopmove()) {
-                                                                            mRobotAPI.motion.stopMoving();   //this function does not work.
-                                                                        }
-                                                                        if (report.hasPredefinedAction()) {
-                                                                            //it will still return a serial, but for loop action, will the onResult() in the CallBack be called?
-                                                                            int serial = mRobotAPI.utility.playAction(PredefinedActionIndexToPlayAction(report.getPredefinedAction()));
-                                                                        }
-                                                                    }
-                                                                }
-                                                            });
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        //sleep 30 msecs;
-                                                        sleep(30);
-                                                    }
-                                                } catch (Exception e) {
-                                                    Log.e("Exception", e.getMessage());
-                                                }
-                                                //}
-                                            }
-                                        }
-                                    });
-                                }
-                                mSocketSendAudio = new Socket(mServerURL, mPortNumber + 2);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-                            if( mSocketSendAudio != null) {
-                                //I need to move this piece of code somewhere else
-
-                                status = true;
-                                mHandlerSendAudio.post(
-                                    new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            try {
-                                                short[] buffer = new short[minBufSize];   //minBufSize = 5376
-                                                Log.d("VS", "Buffer created of size " + minBufSize);           // every 5 second, the log message occurs. It does not make sense.
-
-                                                OutputStream os = mSocketSendAudio.getOutputStream();
-                                                int readSize;
-                                                while (status) {
-                                                    //reading data from MIC into buffer
-                                                    readSize = recorder.read(buffer, 0, buffer.length);
-                                                    if( readSize >= 0) {
-                                                        byte[] byteBuffer = ShortToByte_Twiddle_Method(buffer);
-                                                        os.write(byteBuffer, 0, readSize * 2);
-                                                    }
-                                                    else
-                                                    {
-                                                        Log.e("recorder","recorder.read() error");
-                                                    }
-                                                }
-                                            } catch (UnknownHostException e) {
-                                                Log.e("VS", "UnknownHostException");
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                                Log.e("VS", "IOException");
-                                            }
-                                        }
-                                    }
-                                );
-                            }
-
-                        }
-                    });
+                    recorder.startRecording();    //The recorder means the audio recorder
+                    socketManager.startReceiveCommands();
+                    socketManager.connectSockets();
                 }
                 else {
                     //2025/1/3 the recorder should stop in onPause()
                     mbReceiveCommand = false;   //the app should not mSocketReceiveResults.getInputStream()
                     recorder.stop();
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            disconnectSockets();
-                        }
-                    });
+                    socketManager.disconnectSockets();
                 }
             }
         });
 
-/*
-        checkBox_show_face.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mActionRunnable.mShowRobotFace = isChecked;
-            }
-        });
-
-        checkBox_dont_move.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mActionRunnable.bDontMove = isChecked;
-            }
-        });
-
-        checkBox_dont_rotate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mActionRunnable.bDontRotateBody = isChecked;
-            }
-        });
-*/
         button_close.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
@@ -726,21 +273,9 @@ public class MainActivity extends Activity {
                                         }
         );
 
-/*
-        checkBox_keep_alert.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView,
-                                         boolean isChecked) {
-                mActionRunnable.bKeepAlert = isChecked;
-            }
-
-        });
-
- */
-
-//        mActionRunnable.setMessageView(mMessageView_Detection, mMessageView_Timestamp);
-        m_DataBuffer = new DataBuffer(100);
-        mActionRunnable.setDataBuffer(m_DataBuffer);
+        mRobotAPI.robot.setExpression(RobotFace.HIDEFACE);
+        mRobotAPI.robot.setPressOnHeadAction(false);
+        mRobotAPI.robot.setVoiceTrigger(false);     //disable the voice trigger
 
         mRobotAPI.robot.speak("哈囉，你好。");
     }  //end of onCreate
@@ -768,10 +303,6 @@ public class MainActivity extends Activity {
         super.onResume();
         startThreads();
 
-        mRobotAPI.robot.setExpression(RobotFace.HIDEFACE);
-        mRobotAPI.robot.setPressOnHeadAction(false);
-        mRobotAPI.robot.setVoiceTrigger(false);     //disable the voice trigger
-
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
         decorView.setSystemUiVisibility(uiOptions);
@@ -782,6 +313,36 @@ public class MainActivity extends Activity {
         }
         if( checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED )
             openCamera();
+
+        StartAudioRecorder();
+    }
+
+    private void StartAudioRecorder()
+    {
+        //Start audio recorder
+        mHandlerSendAudio.post(
+            new Runnable() {
+                @Override
+                public void run() {
+                    short[] buffer = new short[minBufSize];   //minBufSize = 5376
+                    Log.d("VS", "Buffer created of size " + minBufSize);           // every 5 second, the log message occurs. It does not make sense.
+
+                    int readSize;
+                    while (status) {
+                        //reading data from MIC into buffer
+                        readSize = recorder.read(buffer, 0, buffer.length);
+                        if( readSize >= 0) {
+                            byte[] byteBuffer = converter.ShortToByte_Twiddle_Method(buffer);
+                            socketManager.sendAudio(byteBuffer);
+                        }
+                        else
+                        {
+                            Log.e("recorder","recorder.read() error");
+                        }
+                    }
+                }
+            }
+        );
     }
 
     private boolean hasPermission() {
@@ -808,15 +369,13 @@ public class MainActivity extends Activity {
     @Override
     protected void onPause() {
         closeCamera();
-        stopThreads();
-        disconnectSockets();
+        socketManager.disconnectSockets();
         status = false;
         if( recorder != null) {
             recorder.release();     //It causes an exception. Why?
             recorder = null;
         }
         Log.d("VS","Recorder released");
-
 
         super.onPause();
     }
@@ -825,6 +384,8 @@ public class MainActivity extends Activity {
     protected void onStop()
     {
         super.onStop();
+        stopThreads();      //Which is better? onPause() or onStop()?
+        socketManager.stopThreads();
     }
 
     @Override
@@ -928,25 +489,9 @@ public class MainActivity extends Activity {
         threadImageListener.start();
         handlerImageListener = new Handler(threadImageListener.getLooper());
 
-        threadSendToServer = new HandlerThread("threadSendToServer");
-        threadSendToServer.start();
-        handlerSendToServer = new Handler(threadSendToServer.getLooper());
-
-        mThreadAction = new HandlerThread("ActionThread");
-        mThreadAction.start();
-        mHandlerAction = new Handler(mThreadAction.getLooper());
-
         mThreadSendAudio = new HandlerThread(("threadSendAudio"));
         mThreadSendAudio.start();
         mHandlerSendAudio = new Handler(mThreadSendAudio.getLooper());
-
-        mThreadReceiveCommand = new HandlerThread(("threadReceiveCommand"));
-        mThreadReceiveCommand.start();
-        mHandlerReceiveCommand = new Handler(mThreadReceiveCommand.getLooper());
-
-        mThreadExecuteCommand = new HandlerThread(("threadExecuteCommand"));
-        mThreadExecuteCommand.start();
-        mHandlerExecuteCommand = new Handler(mThreadExecuteCommand.getLooper(), new ExecuteCommandCallback());
     }
 
     /**
@@ -954,66 +499,21 @@ public class MainActivity extends Activity {
      */
     private void stopThreads() {
         threadImageListener.quitSafely();
-        threadSendToServer.quitSafely();
-        mThreadAction.quitSafely();
         mThreadSendAudio.quitSafely();
-        mThreadReceiveCommand.quitSafely();
-        mThreadExecuteCommand.quitSafely();
 
         try {
             threadImageListener.join();
             threadImageListener = null;
             handlerImageListener = null;
 
-            threadSendToServer.join();
-            threadSendToServer = null;
-            handlerSendToServer = null;
-
-            mThreadAction.join();
-            mThreadAction = null;
-            mHandlerAction = null;
-
             mThreadSendAudio.join();
             mThreadSendAudio = null;
             mHandlerSendAudio = null;
-
-            mThreadReceiveCommand.join();
-            mThreadReceiveCommand = null;
-            mHandlerReceiveCommand = null;
-
-            mThreadExecuteCommand.join();
-            mThreadExecuteCommand = null;
-            mHandlerExecuteCommand = null;
-
         } catch (final InterruptedException e) {
             LOGGER.e(e, "Exception!");
         }
     }
 
-    private void disconnectSockets()
-    {
-        try {
-            if( mSocketSendImages != null) {
-                mSocketSendImages.close();
-                if (mSocketSendImages.isClosed())
-                    mSocketSendImages = null;
-            }
-
-            if( mSocketReceiveResults != null) {
-                mSocketReceiveResults.close();
-                if (mSocketReceiveResults.isClosed())
-                    mSocketReceiveResults = null;
-            }
-
-            if( mSocketSendAudio != null) {
-                mSocketSendAudio.close();
-                if (mSocketSendAudio.isClosed())
-                    mSocketSendAudio = null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     private void closePreviewSession() {
         if (mPreviewSession != null) {
@@ -1075,27 +575,7 @@ public class MainActivity extends Activity {
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
-        mPreviewListener.initialize(handlerSendToServer, inputView, mActionRunnable);
+        mPreviewListener.initialize(socketManager, inputView);
     }
 
-    private byte [] ShortToByte_Twiddle_Method(short [] input)
-    {
-        int short_index, byte_index;
-        int iterations = input.length;
-
-        byte [] buffer = new byte[input.length * 2];
-
-        short_index = byte_index = 0;
-
-        for(/*NOP*/; short_index != iterations; /*NOP*/)
-        {
-            //if input[short_index] is 10000 = 0x2710. The buffer[0] = 0x10, buffer[1] = 0x27;
-            buffer[byte_index]     = (byte) (input[short_index] & 0x00FF);
-            buffer[byte_index + 1] = (byte) ((input[short_index] & 0xFF00) >> 8);
-
-            ++short_index; byte_index += 2;
-        }
-
-        return buffer;
-    }
 }

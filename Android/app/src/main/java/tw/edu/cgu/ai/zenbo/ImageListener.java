@@ -26,7 +26,7 @@ import android.media.Image.Plane;
 import android.media.ImageReader;
 import android.media.ImageReader.OnImageAvailableListener;
 import android.os.Handler;
-import android.os.Trace;
+//import android.os.Trace;
 import android.util.Log;
 
 import tw.edu.cgu.ai.zenbo.env.ImageUtils;
@@ -59,26 +59,17 @@ class ImageListener implements OnImageAvailableListener {
     private byte[][] yuvBytes;
     private int[] argbBytes = null;
     private Bitmap argbFrameBitmap = null;
-    private Handler handlerSendToServer;
     private InputView inputView;
-    private ActionRunnable mActionRunnable;
-    Socket socket;
-    private long timestamp_prevous_processed_image = 0; //initial value
-    //2026/1/7 This variable is no longer used.
-//    public boolean mbSendSuccessfully = true;
+//    private ActionRunnable mActionRunnable;
+    public SocketManager socketManager;
+//    private long timestamp_prevous_processed_image = 0; //initial value
 
-    public void initialize(Handler handlerSendToServer, InputView inputView,
-                           ActionRunnable ActionRunnable) {
+    public void initialize(SocketManager socketManager, InputView inputView) {
         argbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Config.ARGB_8888);
         argbBytes = new int[previewWidth * previewHeight];
-        this.handlerSendToServer = handlerSendToServer;
+        this.socketManager = socketManager;
         this.inputView = inputView;
-        mActionRunnable = ActionRunnable;
-    }
-
-    public void set_socket(Socket socket_in)
-    {
-        socket = socket_in;
+//        mActionRunnable = ActionRunnable;
     }
 
     @Override
@@ -89,11 +80,11 @@ class ImageListener implements OnImageAvailableListener {
             return; //such a case happens.
 
         final long timestamp_image = System.currentTimeMillis();
-        //2025/1/6 Do I need this?
+        //2025/1/6 Do I need this? unless there is l
         //long frame_send_postpone = 100; //in millisecond
-        long frame_send_postpone = 0; //in millisecond
-        if (timestamp_image - timestamp_prevous_processed_image > frame_send_postpone) {
-            timestamp_prevous_processed_image = timestamp_image;
+//        long frame_send_postpone = 0; //in millisecond
+//        if (timestamp_image - timestamp_prevous_processed_image > frame_send_postpone) {
+//            timestamp_prevous_processed_image = timestamp_image;
 
             final Plane[] planes = image.getPlanes();
 
@@ -127,72 +118,54 @@ class ImageListener implements OnImageAvailableListener {
                     image.close();
                 }
                 LOGGER.e(e, "Exception!");
-                Trace.endSection();
                 return;
             }
             argbFrameBitmap.setPixels(argbBytes, 0, previewWidth, 0, 0, previewWidth, previewHeight);
             inputView.setBitmap(argbFrameBitmap);
             inputView.postInvalidate();
 
-            if(socket != null )
-            if(socket.isConnected()) {
-                final boolean post = handlerSendToServer.post(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                    argbFrameBitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+            //Prepare buffer
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            argbFrameBitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
 
-                                    byte[] array_JPEG = baos.toByteArray();
+            String Timestamp = Long.toString(timestamp_image);
+            byte[] array_JPEG = baos.toByteArray();
+            String JPEG_length = String.format("%05d", array_JPEG.length);
 
-                                    String Timestamp = Long.toString(timestamp_image);
-                                    String PitchDegree;
-                                    if (mActionRunnable.pitchDegree >= 0)
-                                        PitchDegree = String.format("%03d", mActionRunnable.pitchDegree);
-                                    else
-                                        PitchDegree = String.format("%02d", Math.abs(mActionRunnable.pitchDegree));
+            int message_length = (int) (Timestamp.length() + 1 + 3 + 1 + JPEG_length.length() + 1 + array_JPEG.length);
+            int buffer_length = message_length + 25;     //"Begin:" and messagelength (8 bytes) and "EndOfAFrame"
+            String PitchDegree;
+            /*
+            if (mActionRunnable.pitchDegree >= 0)
+                PitchDegree = String.format("%03d", mActionRunnable.pitchDegree);
+            else
+                PitchDegree = String.format("%02d", Math.abs(mActionRunnable.pitchDegree));
+            */
+            //I no longer need this.
+            PitchDegree = String.format("%03d", 0);
 
-                                    String JPEG_length = String.format("%05d", array_JPEG.length);
-                                    OutputStream os = socket.getOutputStream();
-                                    os.write("Begin:".getBytes());
-                                    Long message_length = (long) (Timestamp.length() + 1 + 3 + 1 + JPEG_length.length() + 1 + array_JPEG.length);
-                                    Log.d("message_length", Long.toString(message_length));
-                                    ByteBuffer buffer = ByteBuffer.allocate(8);
-                                    buffer.order(ByteOrder.LITTLE_ENDIAN); // Ubuntu byte order
-                                    buffer.putLong(message_length);
-                                    byte[] byteArray = buffer.array();
+            ByteBuffer buffer = ByteBuffer.allocate(buffer_length);
+            buffer.order(ByteOrder.LITTLE_ENDIAN); // Ubuntu byte order
 
-                                    os.write(byteArray);
-                                    os.write(Timestamp.getBytes());
-                                    os.write("_".getBytes());
-                                    os.write(PitchDegree.getBytes());
-                                    String Null = "\0";
-                                    os.write(Null.getBytes());
-                                    os.write(JPEG_length.getBytes());
-                                    os.write(Null.getBytes());
-                                    os.write(array_JPEG);
-                                    os.write("EndOfAFrame".getBytes());
-                                } catch (Exception e) {
-                                    Log.d("Exception Send to Server fails", e.getMessage()); //sendto failed: EPIPE (Broken pipe)
-//                                    if( e.getMessage().contains("EPIPE"))
-//                                    {
-//                                        mbSendSuccessfully = false;
-//                                    }
-                                } finally {
-                                }
-                            }//end of run
-                        }
-                );
-                //the post is always true
-            }
-            Trace.endSection();
-        }
-        else {
+            buffer.put("Begin:".getBytes());
+            buffer.putLong(message_length);
+            buffer.put(Timestamp.getBytes());
+            buffer.put("_".getBytes());
+            buffer.put(PitchDegree.getBytes());
+            String Null = "\0";
+            buffer.put(Null.getBytes());
+            buffer.put(JPEG_length.getBytes());
+            buffer.put(Null.getBytes());
+            buffer.put(array_JPEG);
+            buffer.put("EndOfAFrame".getBytes());
+
+            socketManager.sendImage(buffer);
+//        }
+//        else {
             // skip this frame
-            if (image != null) {
-                image.close();
-            }
-        }
+//            if (image != null) {
+//                image.close();
+//            }
+//        }
     }
 }

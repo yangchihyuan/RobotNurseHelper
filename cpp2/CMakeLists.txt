@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(ZenboNurseHelper_MP)
 
-option(USE_GPU "USE GPU" OFF)
+option(USE_GPU "USE GPU" ON)
 option(COMPILE_WITH_G_FLAG "COMPILE WITH G FLAG" OFF)
 
 
@@ -63,37 +63,6 @@ find_package(OpenCV REQUIRED COMPONENTS core highgui videoio imgproc imgcodecs)
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Network Multimedia)   
 
 file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
-
-# LibMP
-add_library(LIBMP SHARED IMPORTED)
-set(LIBMP_TARGET_NAME "libmp")
-set(LIBMP_BIN_DIR "${MEDIAPIPE_DIR}/bazel-bin/mediapipe/examples/desktop/${LIBMP_TARGET_NAME}")
-message(STATUS "USE_GPU: ${USE_GPU}")
-if(USE_GPU)
-  set(LIBMP_SHARED_LIBRARY "${LIBMP_BIN_DIR}/${LIBMP_TARGET_NAME}_gpu.so")
-  message(STATUS "Enter USE GPU")
-else()
-  set(LIBMP_SHARED_LIBRARY "${LIBMP_BIN_DIR}/${LIBMP_TARGET_NAME}.so")
-  message(STATUS "Enter USE CPU")
-endif()
-set_target_properties(LIBMP PROPERTIES
-  IMPORTED_LOCATION "${LIBMP_SHARED_LIBRARY}"
-)
-set(LIBMP_HEADER_DIR ${MEDIAPIPE_DIR}/mediapipe/examples/desktop/libmp)
-include_directories(${LIBMP_HEADER_DIR})
-
-# whisper.cpp v1.7.4
-add_library(LIBWHISPER SHARED IMPORTED)
-set_target_properties(LIBWHISPER PROPERTIES
-  IMPORTED_LOCATION "$ENV{HOME}/whisper.cpp/build/src/libwhisper.so"
-  INTERFACE_INCLUDE_DIRECTORIES "$ENV{HOME}/whisper.cpp/spm-headers")
-
-# MediaPipe Formats
-file(GLOB_RECURSE MP_FORMATS_SRC "${MEDIAPIPE_DIR}/bazel-bin/mediapipe/framework/formats/*.cc")
-add_library(MP_FORMATS STATIC ${MP_FORMATS_SRC})
-target_include_directories(MP_FORMATS PUBLIC "${MEDIAPIPE_DIR}/bazel-bin")
-target_link_libraries(MP_FORMATS libprotobuf)
-
 set(SOURCES JPEG.cpp
             utility_directory.cpp
             utility_TimeRecorder.cpp
@@ -119,6 +88,42 @@ set(SOURCES JPEG.cpp
 
 add_executable(ZenboNurseHelper ${SOURCES} ${HEADERS} 
     icon.qrc)
+
+
+
+# LibMP
+add_library(LIBMP SHARED IMPORTED)
+set(LIBMP_TARGET_NAME "libmp")
+set(LIBMP_BIN_DIR "${MEDIAPIPE_DIR}/bazel-bin/mediapipe/examples/desktop/${LIBMP_TARGET_NAME}")
+message(STATUS "USE_GPU: ${USE_GPU}")
+if(USE_GPU)
+  set(LIBMP_SHARED_LIBRARY "${LIBMP_BIN_DIR}/${LIBMP_TARGET_NAME}_gpu.so")
+  target_compile_definitions(ZenboNurseHelper
+  PRIVATE
+    USE_GPU
+  )
+else()
+  set(LIBMP_SHARED_LIBRARY "${LIBMP_BIN_DIR}/${LIBMP_TARGET_NAME}.so")
+  message(STATUS "Enter USE CPU")
+endif()
+set_target_properties(LIBMP PROPERTIES
+  IMPORTED_LOCATION "${LIBMP_SHARED_LIBRARY}"
+)
+set(LIBMP_HEADER_DIR ${MEDIAPIPE_DIR}/mediapipe/examples/desktop/libmp)
+include_directories(${LIBMP_HEADER_DIR})
+
+# whisper.cpp v1.7.4
+add_library(LIBWHISPER SHARED IMPORTED)
+set_target_properties(LIBWHISPER PROPERTIES
+  IMPORTED_LOCATION "$ENV{HOME}/whisper.cpp/build/src/libwhisper.so"
+  INTERFACE_INCLUDE_DIRECTORIES "$ENV{HOME}/whisper.cpp/spm-headers")
+
+# MediaPipe Formats
+file(GLOB_RECURSE MP_FORMATS_SRC "${MEDIAPIPE_DIR}/bazel-bin/mediapipe/framework/formats/*.cc")
+add_library(MP_FORMATS STATIC ${MP_FORMATS_SRC})
+target_include_directories(MP_FORMATS PUBLIC "${MEDIAPIPE_DIR}/bazel-bin")
+target_link_libraries(MP_FORMATS libprotobuf)
+
 target_link_libraries(ZenboNurseHelper MP_FORMATS)
 target_link_libraries(ZenboNurseHelper LIBMP)
 target_link_libraries(ZenboNurseHelper LIBWHISPER)

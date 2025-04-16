@@ -126,6 +126,7 @@ void ThreadProcessImage::setTask(std::string task)
 
 void ThreadProcessImage::reloadGraph()
 {
+    bool bChange = false;
     std::string graph_string;
     if( Processor == "CPU" )
     {
@@ -197,6 +198,7 @@ void ThreadProcessImage::reloadGraph()
                     output_stream: "IMAGE:output_video"
                 }
             )";
+            bChange = true;
         }
         else if( Task == "Face")
         {
@@ -274,6 +276,7 @@ void ThreadProcessImage::reloadGraph()
                     output_stream: "IMAGE:output_video"
                 }
             )";
+            bChange = true;
         }
         else if (Task == "Holistic")
         {
@@ -357,6 +360,7 @@ void ThreadProcessImage::reloadGraph()
                 output_stream: "IMAGE:output_video"
                 }
             )";
+            bChange = true;
         }
         else
         {
@@ -433,34 +437,127 @@ void ThreadProcessImage::reloadGraph()
                 output_stream: "IMAGE:output_video"
                 }
             )";
+            bChange = true;
+        }
+        else if (Task == "Holistic")
+        {
+            graph_string = R"(
+                # Tracks and renders pose + hands + face landmarks.
+
+                # GPU buffer. (GpuBuffer)
+                input_stream: "input_video"
+
+                # GPU image with rendered results. (GpuBuffer)
+                output_stream: "output_video"
+                output_stream: "face_landmarks"
+                output_stream: "pose_landmarks"
+                output_stream: "left_hand_landmarks"
+                output_stream: "right_hand_landmarks"
+
+                # Throttles the images flowing downstream for flow control. It passes through
+                # the very first incoming image unaltered, and waits for downstream nodes
+                # (calculators and subgraphs) in the graph to finish their tasks before it
+                # passes through another image. All images that come in while waiting are
+                # dropped, limiting the number of in-flight images in most part of the graph to
+                # 1. This prevents the downstream nodes from queuing up incoming images and data
+                # excessively, which leads to increased latency and memory usage, unwanted in
+                # real-time mobile applications. It also eliminates unnecessarily computation,
+                # e.g., the output produced by a node may get dropped downstream if the
+                # subsequent nodes are still busy processing previous inputs.
+                node {
+                    calculator: "FlowLimiterCalculator"
+                    input_stream: "input_video"
+                    input_stream: "FINISHED:output_video"
+                    input_stream_info: {
+                        tag_index: "FINISHED"
+                        back_edge: true
+                    }
+                    output_stream: "throttled_input_video"
+                    node_options: {
+                        [type.googleapis.com/mediapipe.FlowLimiterCalculatorOptions] {
+                        max_in_flight: 1
+                        max_in_queue: 1
+                        # Timeout is disabled (set to 0) as first frame processing can take more
+                        # than 1 second.
+                        in_flight_timeout: 0
+                        }
+                    }
+                }
+
+                node {
+                calculator: "HolisticLandmarkGpu"
+                input_stream: "IMAGE:throttled_input_video"
+                output_stream: "POSE_LANDMARKS:pose_landmarks"
+                output_stream: "POSE_ROI:pose_roi"
+                output_stream: "POSE_DETECTION:pose_detection"
+                output_stream: "FACE_LANDMARKS:face_landmarks"
+                output_stream: "LEFT_HAND_LANDMARKS:left_hand_landmarks"
+                output_stream: "RIGHT_HAND_LANDMARKS:right_hand_landmarks"
+                }
+
+                # Gets image size.
+                node {
+                calculator: "ImagePropertiesCalculator"
+                input_stream: "IMAGE_GPU:throttled_input_video"
+                output_stream: "SIZE:image_size"
+                }
+
+                # Converts pose, hands and face landmarks to a render data vector.
+                node {
+                calculator: "HolisticTrackingToRenderData"
+                input_stream: "IMAGE_SIZE:image_size"
+                input_stream: "POSE_LANDMARKS:pose_landmarks"
+                input_stream: "POSE_ROI:pose_roi"
+                input_stream: "LEFT_HAND_LANDMARKS:left_hand_landmarks"
+                input_stream: "RIGHT_HAND_LANDMARKS:right_hand_landmarks"
+                input_stream: "FACE_LANDMARKS:face_landmarks"
+                output_stream: "RENDER_DATA_VECTOR:render_data_vector"
+                }
+
+                # Draws annotations and overlays them on top of the input images.
+                node {
+                calculator: "AnnotationOverlayCalculator"
+                input_stream: "IMAGE_GPU:throttled_input_video"
+                input_stream: "VECTOR:render_data_vector"
+                output_stream: "IMAGE_GPU:output_video"
+                }
+            )";
+            bChange = true;
+        }
+        else
+        {
+            cout << "Task is not supported." << endl;
         }
     }
 
-    libmp.reset(mediapipe::LibMP::Create(graph_string.c_str(), "input_video"));
-    if(Task == "Face")
+    if( bChange)
     {
-        libmp->AddOutputStream("multi_face_landmarks");
-    	libmp->AddOutputStream("output_video");
-    }
-    else if(Task == "Pose")
-    {
-        libmp->AddOutputStream("pose_landmarks");
-    	libmp->AddOutputStream("output_video");
-    }
-    else if(Task == "Holistic")
-    {
-        libmp->AddOutputStream("pose_landmarks");
-        libmp->AddOutputStream("left_hand_landmarks");
-        libmp->AddOutputStream("right_hand_landmarks");
-        libmp->AddOutputStream("face_landmarks");
-    	libmp->AddOutputStream("output_video");
-    }
-    else
-    {
-        cout << "Task is not supported." << endl;
-    }
-    libmp->Start();
+        if(Processor == "GPU")
+            libmp.reset(mediapipe::LibMP::Create_gpu(graph_string.c_str(), "input_video"));
+        else if(Processor == "CPU")
+            libmp.reset(mediapipe::LibMP::Create(graph_string.c_str(), "input_video"));
 
+        if(Task == "Face")
+        {
+            libmp->AddOutputStream("multi_face_landmarks");
+            libmp->AddOutputStream("output_video");
+        }
+        else if(Task == "Pose")
+        {
+            libmp->AddOutputStream("pose_landmarks");
+            libmp->AddOutputStream("output_video");
+        }
+        else if(Task == "Holistic")
+        {
+            libmp->AddOutputStream("pose_landmarks");
+            libmp->AddOutputStream("left_hand_landmarks");
+            libmp->AddOutputStream("right_hand_landmarks");
+            libmp->AddOutputStream("face_landmarks");
+            libmp->AddOutputStream("output_video");
+        }
+        
+        libmp->Start();
+    }
 }
 
 void ThreadProcessImage::run()
@@ -469,15 +566,21 @@ void ThreadProcessImage::run()
 
     auto previous_time = std::chrono::high_resolution_clock::now();
 
+    std::vector<std::vector<std::array<float, 3>>> last_landmarks;
+    bool bLastLandmarksEffective = false;
     while(b_WhileLoop)
     {
         if( pSocketHandler->get_queue_length() > 0 )    //here is an infinite loop
         {
-
             auto start = std::chrono::high_resolution_clock::now();
             //Get message from the queue
-            Message message = pSocketHandler->get_head();
-            pSocketHandler->pop_head();
+            //Only need the latest message
+            Message message;
+            while (pSocketHandler->get_queue_length() > 0)
+            {
+                message = pSocketHandler->get_head();
+                pSocketHandler->pop_head();    
+            }
             char *data_ = message.data.get();
             string heading(data_);
 
@@ -591,14 +694,11 @@ void ThreadProcessImage::run()
                     }
                     else if( Processor == "GPU" )
                     {
-                        //2025/1/7 Bug note: the GPU mode uses GpuBuffer, so the Process function is not needed.
-                        /*
                         if( !libmp->Process_GPU(inputImage.data, inputImage.cols, inputImage.rows, mediapipe::ImageFormat::SRGB) )
                         {
                             std::cerr << "Process_GPU() failed!" << std::endl;
                             break;
                         }
-                        */
                     }
                     else
                     {
@@ -618,7 +718,6 @@ void ThreadProcessImage::run()
                     }
                     else if( Processor == "GPU" )
                     {
-                        /*
                         if( libmp->WriteOutputImage_GPU(outFrame.data, libmp->GetOutputPacket("output_video")) )
                         {
                         }
@@ -626,7 +725,6 @@ void ThreadProcessImage::run()
                         {
                             cout << "WriteOutputImage fails." << std::endl;
                         }
-                        */
                     }
 
                     bool bShowProcessTime = false;
@@ -640,7 +738,7 @@ void ThreadProcessImage::run()
                     std::vector<std::vector<std::array<float, 3>>> normalized_landmarks;
                     if( Task == "Face" ) 
                     {
-                        normalized_landmarks = get_landmarks(libmp);      //This is not the reason of memory leak
+                        normalized_landmarks = get_landmarks_face(libmp);      //This is not the reason of memory leak
 
                         // For each face, draw a circle at each landmark's position
                         bool bDrawImageByOurOwn = false;
@@ -686,16 +784,50 @@ void ThreadProcessImage::run()
                     }
 
                     if (normalized_landmarks.empty()) {
-//                        std::cerr << "No landmarks detected!" << std::endl;
-//                        continue;
+                        auto current_time = std::chrono::high_resolution_clock::now();
+                        auto duration = std::chrono::duration_cast<std::chrono::seconds>(current_time - previous_time);
+                        cout << "duration empty" << duration.count() << endl;
+                        if (duration.count() >= 3 && bLastLandmarksEffective) {
+                            bLastLandmarksEffective = false;
+                            if( action_option.move_mode != action_option.MOVE_MANUAL)
+                            {
+                                ZenboNurseHelperProtobuf::ReportAndCommand message;
+                                if( Task == "Face" )
+                                {
+                                    FaceLandmarks_to_ZenboAction(last_landmarks, robot_status, action_option, message);
+                                }
+                                else if( Task == "Pose" )
+                                {
+                                    PoseLandmarks_to_ZenboAction(last_landmarks, robot_status, action_option, message);
+                                }
+                                else if( Task == "Holistic" )
+                                {
+                                    //I use Pose, I haven't develop a new function for Holistic.
+                                    PoseLandmarks_to_ZenboAction(last_landmarks, robot_status, action_option, message);
+                                }
+                                else
+                                {
+                                    cout << "Task is not supported." << endl;
+    //                                continue;
+                                }
+                                previous_time = current_time;
+                                pThreadSendCommand->AddMessage(message);
+                                pThreadSendCommand->cond_var_report_result.notify_one();
+                            }
+
+                        }
                     }
                     else
                     {
-                        //use time control first, wait for 5 seconds
+                        //update the last landmarks
+                        last_landmarks = normalized_landmarks;
+                        bLastLandmarksEffective = true;
+
+                        //use time control first, wait for 3 seconds
                         auto current_time = std::chrono::high_resolution_clock::now();
                         auto duration = std::chrono::duration_cast<std::chrono::seconds>(current_time - previous_time);
                         cout << "duration " << duration.count() << endl;
-                        if (duration.count() >= 5) {
+                        if (duration.count() >= 3) {
                             if( action_option.move_mode != action_option.MOVE_MANUAL)
                             {
                                 ZenboNurseHelperProtobuf::ReportAndCommand message;
@@ -709,7 +841,8 @@ void ThreadProcessImage::run()
                                 }
                                 else if( Task == "Holistic" )
                                 {
-                                    //HolisticLandmarks_to_ZenboAction(normalized_landmarks, robot_status, action_option, message);
+                                    //I use Pose, I haven't develop a new function for Holistic.
+                                    PoseLandmarks_to_ZenboAction(normalized_landmarks, robot_status, action_option, message);
                                 }
                                 else
                                 {
