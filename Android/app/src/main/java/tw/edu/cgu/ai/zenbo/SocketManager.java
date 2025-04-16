@@ -14,16 +14,14 @@ import com.asus.robotframework.API.SpeakConfig;
 
 import java.io.BufferedInputStream;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import ZenboNurseHelperProtobuf.ServerSend;
-import tw.edu.cgu.ai.zenbo.env.Logger;
+//import tw.edu.cgu.ai.zenbo.env.Logger;
 
 public class SocketManager {
     public String mServerURL;
@@ -41,6 +39,9 @@ public class SocketManager {
     private Handler mHandlerExecuteCommand;
     private boolean mbReceiveCommand;
 
+    private HandlerThread threadCheckDiconnection;
+    private Handler handlerCheckDiconnection;
+
     byte[] mMessagePool = new byte[8192];
     int effective_length = 0;
     String beginString = new String("BeginOfAMessage");
@@ -49,8 +50,9 @@ public class SocketManager {
     public RobotAPI mRobotAPI;
     ArrayList<ServerSend.ReportAndCommand> ArrayListCommand = new ArrayList<ServerSend.ReportAndCommand>();
     Converter converter;
-    private static final Logger LOGGER = new Logger();
+//    private static final Logger LOGGER = new Logger();
 
+    public boolean bAutoReconnection = true;
     public void startReceiveCommands()
     {
         handlerReceiveCommand.post(new Runnable() {
@@ -80,6 +82,7 @@ public class SocketManager {
                                     effective_length = remaining;
 
                                     ServerSend.ReportAndCommand report = ServerSend.ReportAndCommand.parseFrom(slice);
+                                    Log.d("Debug", "Receive a message");
                                     //Do I need a mutex here to protect the ArrayList?
 //                                    ArrayListCommand.add(report);       //add to ArrayList
                                     //Post a Runnable here to execute the command?
@@ -177,21 +180,6 @@ public class SocketManager {
 
     void sendAudio(byte[] audioData)
     {
-/*        final boolean post = mHandlerSendAudio.post(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            OutputStream os = mSocketSendAudio.getOutputStream();
-                            os.write(audioData.array());
-
-                        } catch (Exception e) {
-                            Log.d("Exception Send to Server fails", e.getMessage()); //sendto failed: EPIPE (Broken pipe)
-                        }
-                    }
-                }
-        );
-*/
         if( mSocketSendAudio != null && mSocketSendAudio.isConnected()) {
             try {
                 OutputStream os = mSocketSendAudio.getOutputStream();
@@ -219,6 +207,7 @@ public class SocketManager {
                     mSocketSendAudio =  new Socket(mServerURL, mPortNumber+2);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Log.e("Exception", e.getMessage());
                 }
             }
         });
@@ -236,16 +225,42 @@ public class SocketManager {
         mThreadExecuteCommand = new HandlerThread(("threadExecuteCommand"));
         mThreadExecuteCommand.start();
         mHandlerExecuteCommand = new Handler(mThreadExecuteCommand.getLooper(), new ExecuteCommandCallback());
+
+        threadCheckDiconnection = new HandlerThread(("threadCheckDisconnection"));
+        threadCheckDiconnection.start();
+        handlerCheckDiconnection = new Handler(threadCheckDiconnection.getLooper());
+    }
+
+    public void enableAutoReconnection()
+    {
+        bAutoReconnection = true;
+        handlerCheckDiconnection.post(new Runnable() {
+            @Override
+            public void run() {
+                while(bAutoReconnection) {
+                    if( mSocketSendImages != null && mSocketSendImages.isClosed())
+                        connectSockets();
+                    else {
+                        try {
+                            sleep(500);
+                        } catch (Exception e) {
+                            Log.e("Exception", e.getMessage());
+                        }
+                    }
+                }
+            }
+        });
     }
 
     public void disconnectSockets()
     {
+        bAutoReconnection = false;
         try {
             mSocketSendImages.close();
             mSocketReceiveResults.close();
             mSocketSendAudio.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("Exception", e.getMessage());
         }
     }
 
@@ -253,6 +268,7 @@ public class SocketManager {
         threadSendToServer.quitSafely();
         threadReceiveCommand.quitSafely();
         mThreadExecuteCommand.quitSafely();
+        threadCheckDiconnection.quitSafely();
         try {
             threadSendToServer.join();
             threadSendToServer = null;
@@ -266,8 +282,11 @@ public class SocketManager {
             mThreadExecuteCommand = null;
             mHandlerExecuteCommand = null;
 
+            threadCheckDiconnection.join();
+            threadCheckDiconnection = null;
+            handlerCheckDiconnection = null;
         } catch (final InterruptedException e) {
-            LOGGER.e(e, "Exception!");
+            Log.e("Exception!", e.getMessage());
         }
 
     }

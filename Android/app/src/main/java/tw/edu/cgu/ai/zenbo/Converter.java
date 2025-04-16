@@ -2,6 +2,8 @@ package tw.edu.cgu.ai.zenbo;
 
 import com.asus.robotframework.API.RobotFace;
 import com.asus.robotframework.API.Utility;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
 
 public class Converter {
     static public RobotFace FaceIndexToRobotFace(int FaceIndex)
@@ -234,5 +236,9 @@ public class Converter {
         return buffer;
     }
 
-
+    static public Bitmap RotateImage180Degree(Bitmap source) {
+        Matrix matrix = new Matrix();
+        matrix.postScale(-1, -1, source.getWidth() / 2f, source.getHeight() / 2f);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+    }
 }

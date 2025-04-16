@@ -38,6 +38,11 @@ ThreadProcessImage::ThreadProcessImage()
 void ThreadProcessImage::setProcessor(std::string processor)
 {
     bool ChangeProcessor = false;
+    //2025/4/16 Debug info: This function also needs protection from mtx_Task. Otherwise, there will be an error terminate called after throwing an instance of 'std::out_of_range'
+    //what():  [Thread 0x7ffd92fee000 (LWP 9345) exited]
+    //unordered_map::at
+    //Because the graph is still running
+    mtx_Task.lock();
     if( processor == "CPU" )
     {
         if( Processor != "CPU" )
@@ -67,6 +72,7 @@ void ThreadProcessImage::setProcessor(std::string processor)
     {
         cout << "Processor is not changed." << endl;
     }
+    mtx_Task.unlock();
 }
 
 void ThreadProcessImage::setTask(std::string task)
@@ -786,7 +792,7 @@ void ThreadProcessImage::run()
                     if (normalized_landmarks.empty()) {
                         auto current_time = std::chrono::high_resolution_clock::now();
                         auto duration = std::chrono::duration_cast<std::chrono::seconds>(current_time - previous_time);
-                        cout << "duration empty" << duration.count() << endl;
+//                        cout << "duration empty" << duration.count() << endl;
                         if (duration.count() >= 3 && bLastLandmarksEffective) {
                             bLastLandmarksEffective = false;
                             if( action_option.move_mode != action_option.MOVE_MANUAL)
@@ -826,7 +832,7 @@ void ThreadProcessImage::run()
                         //use time control first, wait for 3 seconds
                         auto current_time = std::chrono::high_resolution_clock::now();
                         auto duration = std::chrono::duration_cast<std::chrono::seconds>(current_time - previous_time);
-                        cout << "duration " << duration.count() << endl;
+//                        cout << "duration " << duration.count() << endl;
                         if (duration.count() >= 3) {
                             if( action_option.move_mode != action_option.MOVE_MANUAL)
                             {

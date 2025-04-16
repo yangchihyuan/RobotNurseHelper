@@ -57,6 +57,7 @@ void ThreadSendCommand::run()
 void ThreadSendCommand::AddMessage(ZenboNurseHelperProtobuf::ReportAndCommand message)
 {
     mutex_message_buffer.lock();
+    cout << "Add a Message to mQueue" << endl;
     mQueue.push(message);
     mutex_message_buffer.unlock();
     cond_var_report_result.notify_one();
