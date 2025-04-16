@@ -1,4 +1,4 @@
-#include "libmp_impl.h"
+#include "libmp_impl_gpu.h"
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
 #include "google/protobuf/message_lite.h"
@@ -7,6 +7,7 @@
 #include "mediapipe/framework/port/parse_text_proto.h"
 #include "mediapipe/framework/port/status.h"
 #include "mediapipe/framework/formats/image_frame.h"
+#include "mediapipe/framework/formats/image_frame_opencv.h"
 #include <opencv2/opencv.hpp>
 
 namespace mediapipe {
@@ -31,8 +32,20 @@ namespace mediapipe {
 		m_input_stream.assign(inputStream);
 		LOG(INFO) << "Successfully initialized LibMP graph";
 
+		return absl::OkStatus();
+	}
+
+	absl::Status LibMPImpl::Init_gpu(const char* graph, const char* inputStream){
+		mediapipe::CalculatorGraphConfig config = mediapipe::ParseTextProtoOrDie<mediapipe::CalculatorGraphConfig>(graph);
+		MP_RETURN_IF_ERROR(m_graph.Initialize(config));
+		ABSL_LOG(INFO) << "Initialize the GPU.";
+		MP_ASSIGN_OR_RETURN(auto gpu_resources, mediapipe::GpuResources::Create());
+		MP_RETURN_IF_ERROR(m_graph.SetGpuResources(std::move(gpu_resources)));
+		m_input_stream.assign(inputStream);
+
 		gpu_helper.InitializeForTest(m_graph.GetGpuResources().get());
 
+		LOG(INFO) << "Successfully initialized LibMP graph";
 		return absl::OkStatus();
 	}
 
@@ -81,6 +94,25 @@ namespace mediapipe {
 		return true;
 	}
 
+	bool LibMPImpl::Process2(cv::Mat camera_frame)
+	{
+		auto input_frame = absl::make_unique<mediapipe::ImageFrame>(
+			mediapipe::ImageFormat::SRGB, camera_frame.cols, camera_frame.rows,
+			mediapipe::ImageFrame::kDefaultAlignmentBoundary);
+		cv::Mat input_frame_mat = mediapipe::formats::MatView(input_frame.get());
+		camera_frame.copyTo(input_frame_mat);
+		size_t frame_timestamp_us =
+        (double)cv::getTickCount() / (double)cv::getTickFrequency() * 1e6;
+		auto status = m_graph.AddPacketToInputStream(m_input_stream, mediapipe::Adopt(input_frame.release()).At(mediapipe::Timestamp(frame_timestamp_us)));
+			
+		if (!status.ok()){
+			LOG(INFO) << "Failed to add packet to input stream. Call m_graph.WaitUntilDone() to see error (or destroy LibMP object)";
+			LOG(INFO) << "Status: " << status.ToString() << std::endl;
+			return false;
+		}
+		return true;
+	}
+
 	bool LibMPImpl::Process_GPU(uint8_t* data, int width, int height, int image_format)
 	{
 		if (data == nullptr){
@@ -113,14 +145,15 @@ namespace mediapipe {
 									.At(mediapipe::Timestamp(frame_timestamp_us))));
 			  return absl::OkStatus();
 			});
-			auto status = m_graph.AddPacketToInputStream(m_input_stream, mediapipe::Adopt(input_frame.release()).At(mediapipe::Timestamp(frame_timestamp_us)));
+//			auto status = m_graph.AddPacketToInputStream(m_input_stream, mediapipe::Adopt(input_frame.release()).At(mediapipe::Timestamp(frame_timestamp_us)));
 
-
+/*
 		if (!status.ok()){
 			LOG(INFO) << "Failed to add packet to input stream. Call m_graph.WaitUntilDone() to see error (or destroy LibMP object)";
 			LOG(INFO) << "Status: " << status.ToString() << std::endl;
 			return false;
 		}
+			*/
 		return true;
 	}
 
@@ -144,10 +177,24 @@ namespace mediapipe {
 			  glFlush();
 			  texture.Release();
 			  return absl::OkStatus();
-			});		
-		size_t output_bytes = output_frame->PixelDataSizeStoredContiguously();
+			});
 
-		output_frame->CopyToBuffer(dst, output_bytes);
+		// Convert back to opencv for display or saving.
+		cv::Mat output_frame_mat = mediapipe::formats::MatView(output_frame.get());
+		if (output_frame_mat.channels() == 4)
+//			cv::cvtColor(output_frame_mat, output_frame_mat, cv::COLOR_RGBA2BGR);
+			cv::cvtColor(output_frame_mat, output_frame_mat, cv::COLOR_RGBA2RGB);      //This line takes effect
+//		else
+//			cv::cvtColor(output_frame_mat, output_frame_mat, cv::COLOR_RGB2BGR);
+
+
+		//The number is too large. Maybe it does not work for the GPU case.
+//		size_t output_bytes = output_frame->PixelDataSizeStoredContiguously();
+		//This line fails.
+//		output_frame->CopyToBuffer(dst, output_bytes);
+		memcpy(dst, output_frame_mat.data, output_frame_mat.total() * output_frame_mat.elemSize());
+
+		delete packet;
 		return true;
 	}
 

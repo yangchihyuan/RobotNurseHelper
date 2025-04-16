@@ -37,3 +37,4 @@ Zenbo's Android version is 6, which is too old to be supported by the newly rele
 # Change log
 v2 (2025.03.17) change the transmittion protocol
 v3 (2025.03.31) add the rotation only command
+v4 (2025.04.16) enable socket auto-reconnection

@@ -9,7 +9,7 @@ We create a script file to install our code and all required libraries MediaPipe
 The easiest way to install our program is to execute the following script.
 ```sh
 cd ~
-wget https://raw.githubusercontent.com/yangchihyuan/ZenboNurseHelper/refs/heads/master/cpp2/install.sh
+wget -O install.sh https://raw.githubusercontent.com/yangchihyuan/ZenboNurseHelper/refs/heads/master/cpp2/install.sh
 chmod +x install.sh
 ./install.sh
 ```

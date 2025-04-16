@@ -1,4 +1,4 @@
-#2025/3/20
+#2025/4/16
 #Install Zenbo Nurse Helper cpp2 to Ubuntu 24.04
 #Author: Chih-Yuan Yang
 #Project: Zenbo Nurse Helper
@@ -43,7 +43,7 @@ wget -O protobuf-all-3.19.1.zip https://github.com/protocolbuffers/protobuf/rele
 unzip protobuf-all-3.19.1.zip
 cd ~/Downloads/protobuf-3.19.1
 ./configure
-make
+make -j $(nproc)
 make check
 sudo make install
 sudo ldconfig # refresh shared library cache.
@@ -63,7 +63,7 @@ sudo dpkg -i bazelisk-amd64.deb
 
 #install OpenGL libraries, which will be used in MediaPipe for compiling GPU-related code.
 #This is MediaPipe's requirement
-sudo apt-get install mesa-common-dev libegl1-mesa-dev libgles2-mesa-dev
+sudo apt-get -y install mesa-common-dev libegl1-mesa-dev libgles2-mesa-dev
 
 #build libmp library
 cd ~/mediapipe
