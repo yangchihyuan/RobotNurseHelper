@@ -59,8 +59,8 @@ set(PROTO_FILE ServerSend.proto)
 my_protobuf_generate_cpp(PROTO_SRC PROTO_HDR ${PROTO_FILE})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-find_package(OpenCV REQUIRED COMPONENTS core highgui videoio imgproc imgcodecs)
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets Network Multimedia)   
+find_package(OpenCV COMPONENTS core highgui videoio imgproc imgcodecs REQUIRED)
+find_package(Qt6 COMPONENTS Core Widgets Network Multimedia REQUIRED)   
 
 file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
 set(SOURCES JPEG.cpp
@@ -86,8 +86,7 @@ set(SOURCES JPEG.cpp
             FaceLandmarkToZenboAction.cpp
     )
 
-add_executable(ZenboNurseHelper ${SOURCES} ${HEADERS} 
-    icon.qrc)
+add_executable(ZenboNurseHelper ${SOURCES} ${HEADERS} )
 
 
 
@@ -112,11 +111,12 @@ set_target_properties(LIBMP PROPERTIES
 set(LIBMP_HEADER_DIR ${MEDIAPIPE_DIR}/mediapipe/examples/desktop/libmp)
 include_directories(${LIBMP_HEADER_DIR})
 
-# whisper.cpp v1.7.4
+# whisper.cpp v1.7.5
+#Debug info 25/3/18,whisper.cpp v1.7.5 changes its file structure so I need to update my CMake instructions.
 add_library(LIBWHISPER SHARED IMPORTED)
 set_target_properties(LIBWHISPER PROPERTIES
-  IMPORTED_LOCATION "$ENV{HOME}/whisper.cpp/build/src/libwhisper.so"
-  INTERFACE_INCLUDE_DIRECTORIES "$ENV{HOME}/whisper.cpp/spm-headers")
+  IMPORTED_LOCATION "$ENV{HOME}/whisper.cpp/build/src/libwhisper.so")
+target_include_directories(LIBWHISPER INTERFACE "$ENV{HOME}/whisper.cpp/include" "$ENV{HOME}/whisper.cpp/ggml/include")
 
 # MediaPipe Formats
 file(GLOB_RECURSE MP_FORMATS_SRC "${MEDIAPIPE_DIR}/bazel-bin/mediapipe/framework/formats/*.cc")
@@ -138,5 +138,5 @@ include_directories(${PROTOBUF_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
 set_target_properties(${TARGET_NAME} PROPERTIES "CMAKE_CXX_FLAGS" "${CMAKE_CXX_FLAGS}")
 
 target_link_libraries(ZenboNurseHelper
-    Qt::Widgets Qt::Network
+    Qt::Core Qt::Widgets Qt::Network
     Qt::Multimedia ${OpenCV_LIBS} portaudio)
