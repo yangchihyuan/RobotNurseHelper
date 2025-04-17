@@ -1,9 +1,9 @@
-#2025/4/16
+#2025/4/18
 #Install Zenbo Nurse Helper cpp2 to Ubuntu 24.04
 #Author: Chih-Yuan Yang
 #Project: Zenbo Nurse Helper
 
-
+read -p "Does your PC have a Nvidia GPU 40 serial? [y/n]" GPU40available
 
 #Install the compiler
 sudo apt -y install build-essential
