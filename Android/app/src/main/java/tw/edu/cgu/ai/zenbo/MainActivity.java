@@ -97,7 +97,7 @@ public class MainActivity extends Activity {
     private Handler handlerImageListener;
     private HandlerThread mThreadSendAudio;
     private Handler mHandlerSendAudio;
-    private boolean mbReceiveCommand;
+//    private boolean mbReceiveCommand;
 
     private ImageReader mPreviewReader;
     private CaptureRequest.Builder mPreviewBuilder;
@@ -229,16 +229,18 @@ public class MainActivity extends Activity {
                     editor.apply();
 
                     recorder.startRecording();    //The recorder means the audio recorder
-                    socketManager.startReceiveCommands();
                     socketManager.mServerURL = editText_Server.getText().toString();
                     socketManager.mPortNumber = Integer.parseInt(editText_Port.getText().toString());
+                    Log.d("Record", "Before call connectSockets");
                     socketManager.connectSockets();
+                    socketManager.startReceiveCommands();
                     socketManager.enableAutoReconnection();
                 }
                 else {
                     //2025/1/3 the recorder should stop in onPause()
-                    mbReceiveCommand = false;   //the app should not mSocketReceiveResults.getInputStream()
+//                    mbReceiveCommand = false;   //the app should not mSocketReceiveResults.getInputStream()
                     recorder.stop();
+                    socketManager.stopReceiveCommands();
                     socketManager.disconnectSockets();
                 }
             }
