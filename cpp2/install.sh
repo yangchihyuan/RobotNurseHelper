@@ -92,7 +92,7 @@ git clone https://github.com/PortAudio/portaudio.git
 sudo apt-get -y install libasound2-dev
 cd ~/portaudio
 ./configure
-make
+make -j $(nproc)
 sudo make install
 
 #On some Linux systems, we need to reload the system to make the library visible.
@@ -108,9 +108,9 @@ git clone https://github.com/ggerganov/whisper.cpp.git
 cd ~/whisper.cpp
 bash ./models/download-ggml-model.sh base
 #It will download ggml-base.bin from the HuggingFace website.
-make
+makes -j $(nproc)
 
-#Run the OpenVINO's build_demos.sh in ~/open_model_zoo/demos to build this project, and an executable file 9_NurseHelper should be created at ~/omz_demos_build/intel64/Release/ To make it easy, we make s build_demos.sh in the directory ~/open_model_zoo/demos/ZenboNurseHelper/cpp
+#Build our own program
 cd ~/ZenboNurseHelper/cpp2/build
 cmake ..
 cmake --build . -j $(nproc)
