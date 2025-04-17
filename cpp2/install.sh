@@ -48,10 +48,7 @@ make check
 sudo make install
 sudo ldconfig # refresh shared library cache.
 
-
-#Install Our Files
-#Suppose your Open Model Zoo is installed in ~/open_model_zoo. Please git clone this repository into the demos directory.
-
+#download our files
 cd ~ 
 git clone https://github.com/yangchihyuan/ZenboNurseHelper.git
 #copy our code to the mediapipe folder
@@ -73,7 +70,6 @@ bazel build -c opt mediapipe/examples/desktop/libmp:libmp_gpu.so
 #We use it to create our GUI
 sudo apt -y install qt6-base-dev    
 sudo apt -y install qt6-multimedia-dev
-#sudo apt-get -y install qtmultimedia5-dev
 #It will install Qt version 6.4.2.
 
 #Hint
@@ -83,7 +79,6 @@ sudo apt -y install qtcreator
 
 #PortAudio
 #We use it to play voice on the server transmitted from the Android app and received from the robot's microphone. There is no package made for the Ubuntu system, and we need to compile it from downloaded source files, which are available on its GitHub page
-
 cd ~
 git clone https://github.com/PortAudio/portaudio.git
 
@@ -101,6 +96,7 @@ sudo ldconfig
 #whisper.cpp
 #It is voice-to-text library and we utilize it on our server-side program to quickly generate sentences spoken by an operator, which will be sent to the Zenbo robot to speak out. There is no package make for the Ubuntu system, and we need to compile it from it source file downloaded from its GitHub repository
 
+#Debug info 25/3/18,whisper.cpp v1.7.5 changes its install commands
 cd ~
 git clone https://github.com/ggerganov/whisper.cpp.git
 
@@ -108,12 +104,14 @@ git clone https://github.com/ggerganov/whisper.cpp.git
 cd ~/whisper.cpp
 bash ./models/download-ggml-model.sh base
 #It will download ggml-base.bin from the HuggingFace website.
-makes -j $(nproc)
+#This is the CPU mode
+cmake -B build
+cmake --build build --config Release
+#This is the NVidia 4070 mode
+#cmake -B build -DGGML_CUDA=1
+#cmake --build build -j --config Release
 
 #Build our own program
-cd ~/ZenboNurseHelper/cpp2/build
-cmake ..
-cmake --build . -j $(nproc)
-cd ..
-
+cd ~/ZenboNurseHelper/cpp2
+./build_project
 
