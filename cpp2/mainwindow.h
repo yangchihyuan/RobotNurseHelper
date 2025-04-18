@@ -38,6 +38,8 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void setWhisperModelFile( QString filePath);
+    void startThreads();
 
 protected:
     QAudioDevice  devAudio;
