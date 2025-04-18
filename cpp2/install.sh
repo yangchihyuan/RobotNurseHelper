@@ -113,5 +113,5 @@ cmake --build build --config Release
 
 #Build our own program
 cd ~/ZenboNurseHelper/cpp2
-./build_project
+./build_project.sh fresh
 
