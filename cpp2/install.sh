@@ -113,10 +113,9 @@ sudo ldconfig
 #Debug info 25/3/18,whisper.cpp v1.7.5 changes its install commands
 cd ~
 git clone https://github.com/ggerganov/whisper.cpp.git
-
-#We need a Whisper model. In out program, we use the base model for Mandarin.
 cd ~/whisper.cpp
-if [ "$GPU40available" == "y" ]; then
+git checkout v1.7.5
+if [ "$GPU40available" == "n" ]; then
     bash ./models/download-ggml-model.sh base
     #It will download ggml-base.bin from the HuggingFace website.
     #This is the CPU mode
