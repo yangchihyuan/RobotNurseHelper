@@ -248,16 +248,21 @@ MainWindow::MainWindow(QWidget *parent)
     //connect message and ThreadSendCommand
     connect( this, &MainWindow::addSendCommandMessage, &thread_send_command, &ThreadSendCommand::AddMessage);
 
-    //run threads
     thread_process_image.pThreadSendCommand = &thread_send_command;
     thread_process_image.pSocketHandler = &socketHandler1;
+    thread_tablet.pSocketHandler = &socketHandler4;
+}
+
+void MainWindow::startThreads()
+{
+    //run threads
     thread_process_image.start();
     thread_send_command.start();
     thread_process_audio.start();
-    thread_tablet.pSocketHandler = &socketHandler4;    
     thread_tablet.start();
     thread_whisper.start();
 }
+
 
 MainWindow::~MainWindow()
 {
@@ -318,6 +323,12 @@ MainWindow::~MainWindow()
 
     delete ui;
 }
+
+void MainWindow::setWhisperModelFile( QString filePath)
+{
+    thread_whisper.model_file_path = filePath;
+}
+
 
 //This funciton is called when socket is connected.
 void MainWindow::newConnection()

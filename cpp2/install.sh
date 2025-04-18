@@ -3,7 +3,21 @@
 #Author: Chih-Yuan Yang
 #Project: Zenbo Nurse Helper
 
-read -p "Does your PC have a Nvidia GPU 40 serial? [y/n]" GPU40available
+read -p "Does your PC have a Nvidia GPU 40 serial? [y/n]" response
+if [ "$GPU40available" = "y" ] || [ "GPU40available" = "Y" ] || [ "$GPU40available" = "n" ] || [ "GPU40available" = "N" ]; then
+
+fi
+
+if [[ "$response" =~ ^[yYnN]$ ]]; then
+  if [[ "$response" =~ ^[yY]$ ]]; then
+    GPU40available = "y"
+  else
+    GPU40available = "n"
+  fi
+else
+  echo "Invalid response. Please enter y, Y, n, or N."
+  exit
+fi
 
 #Install the compiler
 sudo apt -y install build-essential
@@ -102,14 +116,18 @@ git clone https://github.com/ggerganov/whisper.cpp.git
 
 #We need a Whisper model. In out program, we use the base model for Mandarin.
 cd ~/whisper.cpp
-bash ./models/download-ggml-model.sh base
-#It will download ggml-base.bin from the HuggingFace website.
-#This is the CPU mode
-cmake -B build
-cmake --build build --config Release
-#This is the NVidia 4070 mode
-#cmake -B build -DGGML_CUDA=1
-#cmake --build build -j --config Release
+if [ "$GPU40available" == "y" ]; then
+    bash ./models/download-ggml-model.sh base
+    #It will download ggml-base.bin from the HuggingFace website.
+    #This is the CPU mode
+    cmake -B build
+    cmake --build build --config Release
+else
+    #This is the NVidia 4070 mode
+    bash ./models/download-ggml-model.sh large-v3-turbo
+    cmake -B build -DGGML_CUDA=1
+    cmake --build build -j --config Release
+fi
 
 #Build our own program
 cd ~/ZenboNurseHelper/cpp2

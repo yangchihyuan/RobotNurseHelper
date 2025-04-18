@@ -24,6 +24,7 @@ public:
     QBuffer buffer;
     string result;
     bool b_new_result = false;
+    QString model_file_path;
 
 protected:
     void run();

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 project(ZenboNurseHelper_MP)
 
 option(USE_GPU "USE GPU" ON)
-option(COMPILE_WITH_G_FLAG "COMPILE WITH G FLAG" OFF)
+option(COMPILE_WITH_G_FLAG "COMPILE WITH G FLAG" ON)
 
 
 set(CMAKE_CXX_STANDARD 17)
