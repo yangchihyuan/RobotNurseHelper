@@ -124,7 +124,11 @@ class ImageListener implements OnImageAvailableListener {
             Bitmaptemp.setPixels(argbBytes, 0, previewWidth, 0, 0, previewWidth, previewHeight);
 
             //my laptop's webcam generates upside down images to the simulator. Thus, I need to flip the image.
-            argbFrameBitmap = converter.RotateImage180Degree(Bitmaptemp);
+            boolean rotateImage = false;
+            if( EmulatorDetector.isEmulator())
+                argbFrameBitmap = converter.RotateImage180Degree(Bitmaptemp);
+            else
+                argbFrameBitmap = Bitmaptemp;
 
             inputView.setBitmap(argbFrameBitmap);
             inputView.postInvalidate();
