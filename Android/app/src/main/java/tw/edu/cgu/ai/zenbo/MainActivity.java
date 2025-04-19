@@ -44,15 +44,12 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.util.Size;
-import android.view.KeyEvent;
 import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.asus.robotframework.API.RobotAPI;     //How to release this resource in OnDestroy()
@@ -234,7 +231,7 @@ public class MainActivity extends Activity {
                     Log.d("Record", "Before call connectSockets");
                     socketManager.connectSockets();
                     socketManager.startReceiveCommands();
-                    socketManager.enableAutoReconnection();
+                    socketManager.startDisconnectionChecker();
                 }
                 else {
                     //2025/1/3 the recorder should stop in onPause()

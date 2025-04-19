@@ -116,9 +116,9 @@ git clone https://github.com/ggerganov/whisper.cpp.git
 cd ~/whisper.cpp
 git checkout v1.7.5
 if [ "$GPU40available" == "n" ]; then
-    bash ./models/download-ggml-model.sh base
-    #It will download ggml-base.bin from the HuggingFace website.
     #This is the CPU mode
+    #It will download ggml-base.bin from the HuggingFace website.
+    bash ./models/download-ggml-model.sh base
     cmake -B build
     cmake --build build --config Release
 else
