@@ -260,7 +260,7 @@ public class SocketManager {
         handlerCheckDiconnection = new Handler(threadCheckDiconnection.getLooper());
     }
 
-    public void enableAutoReconnection()
+    public void startDisconnectionChecker()
     {
         bAutoReconnection = true;
         handlerCheckDiconnection.post(new Runnable() {
@@ -269,7 +269,23 @@ public class SocketManager {
                 while(bAutoReconnection) {
                     Log.d("autoReconnection", "enableAutoReconnection");
                     if( mSocketSendImages == null)
-                        connectSockets();
+                        //launch anther thread to connect sockets
+                        for( int i=0; i<200; i++) {
+                            connectSockets();
+                            if(mSocketSendImages != null)
+                            {
+                                break;
+                            }
+                            else{
+                                try {
+                                    int sleeptime = (int) Math.pow(2.0, i);
+                                    sleep(sleeptime);
+                                    Log.e("SocketManager", Integer.toString(i) + " sleep " + Integer.toString(sleeptime) + " ms");
+                                } catch (Exception e) {
+                                    Log.e("SocketManager", "sleep fails " + e.getMessage());
+                                }
+                            }
+                        }
                     else {
                         try {
                             sleep(500);
