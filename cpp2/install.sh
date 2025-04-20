@@ -1,18 +1,17 @@
+#!/bin/bash
+
 #2025/4/18
 #Install Zenbo Nurse Helper cpp2 to Ubuntu 24.04
 #Author: Chih-Yuan Yang
 #Project: Zenbo Nurse Helper
 
-read -p "Does your PC have a Nvidia GPU 40 serial? [y/n]" response
-if [ "$GPU40available" = "y" ] || [ "GPU40available" = "Y" ] || [ "$GPU40available" = "n" ] || [ "GPU40available" = "N" ]; then
-
-fi
+read -p "Does your PC have an Nvidia GPU 40 serial? [y/n]" response
 
 if [[ "$response" =~ ^[yYnN]$ ]]; then
   if [[ "$response" =~ ^[yY]$ ]]; then
-    GPU40available = "y"
+    GPU40available="y"
   else
-    GPU40available = "n"
+    GPU40available="n"
   fi
 else
   echo "Invalid response. Please enter y, Y, n, or N."
