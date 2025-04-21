@@ -25,16 +25,11 @@ import android.media.Image;
 import android.media.Image.Plane;
 import android.media.ImageReader;
 import android.media.ImageReader.OnImageAvailableListener;
-import android.os.Handler;
-//import android.os.Trace;
-import android.util.Log;
 
 import tw.edu.cgu.ai.zenbo.env.ImageUtils;
 import tw.edu.cgu.ai.zenbo.env.Logger;
 
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.net.Socket;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

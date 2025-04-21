@@ -251,6 +251,7 @@ MainWindow::MainWindow(QWidget *parent)
     thread_process_image.pThreadSendCommand = &thread_send_command;
     thread_process_image.pSocketHandler = &socketHandler1;
     thread_tablet.pSocketHandler = &socketHandler4;
+    thread_tablet.pThreadSendCommand = &thread_send_command;
 }
 
 void MainWindow::startThreads()

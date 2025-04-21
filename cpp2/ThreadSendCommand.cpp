@@ -48,6 +48,14 @@ void ThreadSendCommand::run()
                     //The only way is to igoore the SIGPIPE signal.
                     pSocket->flush();       //This command is required to send out data in the buffer.
                 }
+                else
+                {
+                    cout << "Socket is not valid" << endl;
+                }
+            }
+            else
+            {
+                cout << "Socket is NULL" << endl;
             }
         }
         mutex_message_buffer.unlock();
