@@ -78,7 +78,6 @@ void SocketHandler::add_data(char* data_, size_t length)
         {
             //length1 means the length between two delimiter_tail, including the delimiter_tail.
             int length1 = begin_pos + n + delimiter_tail.length();
-//            cout << "length1: " <<  length1 << endl;
 
             //check the delimiter_head
             string buffer_section_head(buffer.get(), delimiter_head.length());
@@ -92,14 +91,15 @@ void SocketHandler::add_data(char* data_, size_t length)
                 //check the message length
                 long message_length;
                 memcpy(&message_length, buffer.get() + delimiter_head.length(), sizeof(long));
-//                cout << "message_length: " <<  message_length << endl;
-                //length2 means the length of a serialized protocol buffer message.
                 int length2 = length1 - delimiter_head.length() - delimiter_tail.length();
-//                cout << "length2: " <<  length2 << endl;
                 if( message_length != length2 - sizeof(long))
                 {
                     cout << "message_length is incorrect. Drop out this message" << endl;
-                    continue;
+                    cout << "length1: " <<  length1 << endl;
+                    cout << "length2: " <<  length2 << endl;
+                    cout << "message_length: " <<  message_length << endl;
+                    //On an emulator, there will no WiFi error. But on a real robot, there will be WiFi error.
+                    //I need to skip this frame.
                 }
                 else
                 {
