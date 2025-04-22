@@ -38,9 +38,11 @@ void ThreadSendCommand::run()
                     str_results_len = message.ByteSizeLong();
                     message.SerializeToArray(str_results,message.ByteSizeLong());
 
-                    pSocket->write("BeginOfAMessage");
+//                    pSocket->write("BeginOfAMessage");
+                    socketStream.writeRawData("BeginOfAMessage",16);
                     socketStream.writeRawData(str_results, str_results_len);
-                    pSocket->write("EndOfAMessage");
+                    socketStream.writeRawData("EndOfAMessage",14);
+//                    pSocket->write("EndOfAMessage");
                     cout << "send a message " << endl;
 
                     //The robot may close the connection suddenly.

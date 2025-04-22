@@ -334,7 +334,7 @@ void MainWindow::setWhisperModelFile( QString filePath)
 //This funciton is called when socket is connected.
 void MainWindow::newConnection()
 {
-    std::cout << "newConnction()" << std::endl;
+    std::cout << "newConnction() 8895" << std::endl;
     //Because of the loop, it always waits for new connections.
     while (m_server_receive_image->hasPendingConnections())
         appendToSocketList(m_server_receive_image->nextPendingConnection());
@@ -342,18 +342,21 @@ void MainWindow::newConnection()
 
 void MainWindow::newConnection_send_command()
 {
+    std::cout << "newConnction() 8896" << std::endl;
     while (m_server_send_command->hasPendingConnections())
-        appendToSocketList2(m_server_send_command->nextPendingConnection());
+        appendToSocketList2(m_server_send_command->nextPendingConnection());    //the nextPendingConnection() will retrieve a socket
 }
 
 void MainWindow::newConnection_receive_audio()
 {
+    std::cout << "newConnction() 8897" << std::endl;
     while (m_server_receive_audio->hasPendingConnections())
         appendToSocketList3(m_server_receive_audio->nextPendingConnection());
 }
 
 void MainWindow::newConnection_Tablet()
 {
+    std::cout << "newConnction() 8898" << std::endl;
     while (m_server_Tablet->hasPendingConnections())
         appendToSocketList4(m_server_Tablet->nextPendingConnection());
 }
@@ -461,7 +464,7 @@ void MainWindow::discardSocket()
     QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
     QSet<QTcpSocket*>::iterator it = connection_set.find(socket);
     if (it != connection_set.end()){
-        displayMessage(QString("INFO :: A client has just left the room").arg(socket->socketDescriptor()));
+        displayMessage(QString("INFO :: A client has just left the room 8895").arg(socket->socketDescriptor()));
         connection_set.remove(*it);
     }
     
@@ -473,9 +476,9 @@ void MainWindow::discardSocket2()
     QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
     QSet<QTcpSocket*>::iterator it = connection_set2.find(socket);
     if (it != connection_set2.end()){
-        displayMessage(QString("INFO :: A client has just left the room").arg(socket->socketDescriptor()));
+        displayMessage(QString("INFO :: A client has just left the room 8896").arg(socket->socketDescriptor()));
         connection_set2.remove(*it);
-        thread_send_command.pSocket = NULL;
+        thread_send_command.pSocket = NULL;    //I have such a line because socket 8896 is the only socket sending packages.
     }
     
     socket->deleteLater();
@@ -486,7 +489,7 @@ void MainWindow::discardSocket3()
     QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
     QSet<QTcpSocket*>::iterator it = connection_set3.find(socket);
     if (it != connection_set3.end()){
-        displayMessage(QString("INFO :: A client has just left the room").arg(socket->socketDescriptor()));
+        displayMessage(QString("INFO :: A client has just left the room 8897").arg(socket->socketDescriptor()));
         connection_set3.remove(*it);
     }
     
@@ -498,7 +501,7 @@ void MainWindow::discardSocket4()
     QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
     QSet<QTcpSocket*>::iterator it = connection_set4.find(socket);
     if (it != connection_set4.end()){
-        displayMessage(QString("INFO :: A client has just left the room").arg(socket->socketDescriptor()));
+        displayMessage(QString("INFO :: A client has just left the room 8898").arg(socket->socketDescriptor()));
         connection_set4.remove(*it);
     }
     
