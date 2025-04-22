@@ -18,6 +18,19 @@ else
   exit
 fi
 
+read -p "Use less memory? [y/n]" response
+if [[ "$response" =~ ^[yYnN]$ ]]; then
+  if [[ "$response" =~ ^[yY]$ ]]; then
+    UseLessMemory="y"
+  else
+    UseLessMemory="n"
+  fi
+else
+  echo "Invalid response. Please enter y, Y, n, or N."
+  exit
+fi
+
+
 #Install the compiler
 sudo apt -y install build-essential
 
@@ -29,6 +42,22 @@ sudo apt -y install zip
 
 #install libgtk2.0-dev, which is used in OpenCV to show images
 sudo apt -y install libgtk2.0-dev 
+
+#intall protobuf 3.19.1
+cd ~/Downloads
+wget -O protobuf-all-3.19.1.zip https://github.com/protocolbuffers/protobuf/releases/download/v3.19.1/protobuf-all-3.19.1.zip
+unzip protobuf-all-3.19.1.zip
+cd ~/Downloads/protobuf-3.19.1
+./configure
+if [ "$UseLessMemory" == "n" ]; then
+  make -j $(nproc)
+  make check
+else
+  make
+fi
+sudo make install
+sudo ldconfig # refresh shared library cache.
+
 
 #install OpenCV 4.11, which is required by MediaPipe
 sudo apt -y install cmake
@@ -49,17 +78,6 @@ cd ~
 git clone https://github.com/google-ai-edge/mediapipe.git
 cd mediapipe
 git checkout v0.10.22
-
-#intall protobuf 3.19.1
-cd ~/Downloads
-wget -O protobuf-all-3.19.1.zip https://github.com/protocolbuffers/protobuf/releases/download/v3.19.1/protobuf-all-3.19.1.zip
-unzip protobuf-all-3.19.1.zip
-cd ~/Downloads/protobuf-3.19.1
-./configure
-make -j $(nproc)
-make check
-sudo make install
-sudo ldconfig # refresh shared library cache.
 
 #download our files
 cd ~ 
