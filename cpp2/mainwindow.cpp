@@ -464,7 +464,7 @@ void MainWindow::discardSocket()
     QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
     QSet<QTcpSocket*>::iterator it = connection_set.find(socket);
     if (it != connection_set.end()){
-        displayMessage(QString("INFO :: A client has just left the room 8895").arg(socket->socketDescriptor()));
+        cout << "INFO :: A client has just left the room 8895" << endl;
         connection_set.remove(*it);
     }
     
@@ -476,11 +476,11 @@ void MainWindow::discardSocket2()
     QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
     QSet<QTcpSocket*>::iterator it = connection_set2.find(socket);
     if (it != connection_set2.end()){
-        displayMessage(QString("INFO :: A client has just left the room 8896").arg(socket->socketDescriptor()));
+        cout << "INFO :: A client has just left the room 8896" << endl;
         connection_set2.remove(*it);
         thread_send_command.pSocket = NULL;    //I have such a line because socket 8896 is the only socket sending packages.
     }
-    
+//    cout << "connection_set2.size() " << connection_set2.size() << endl;
     socket->deleteLater();
 }
 
@@ -489,7 +489,7 @@ void MainWindow::discardSocket3()
     QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
     QSet<QTcpSocket*>::iterator it = connection_set3.find(socket);
     if (it != connection_set3.end()){
-        displayMessage(QString("INFO :: A client has just left the room 8897").arg(socket->socketDescriptor()));
+        cout << "INFO :: A client has just left the room 8897" << endl;
         connection_set3.remove(*it);
     }
     
@@ -501,7 +501,7 @@ void MainWindow::discardSocket4()
     QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
     QSet<QTcpSocket*>::iterator it = connection_set4.find(socket);
     if (it != connection_set4.end()){
-        displayMessage(QString("INFO :: A client has just left the room 8898").arg(socket->socketDescriptor()));
+        cout << "INFO :: A client has just left the room 8898" << endl;
         connection_set4.remove(*it);
     }
     
@@ -524,13 +524,6 @@ void MainWindow::displayError(QAbstractSocket::SocketError socketError)
             QMessageBox::information(this, "QTCPServer", QString("The following error occurred: %1.").arg(socket->errorString()));
         break;
     }
-}
-
-//This function is used by the automatically generated moc.
-//What does moc mean?
-void MainWindow::displayMessage(const QString& str)
-{
-//    ui->textBrowser_receivedMessages->append(str);
 }
 
 void MainWindow::on_pushButton_speak_clicked()

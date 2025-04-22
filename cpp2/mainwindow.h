@@ -94,8 +94,6 @@ private slots:
     void discardSocket4();
     void displayError(QAbstractSocket::SocketError socketError);
 
-    void displayMessage(const QString& str);
- 
     void newConnection_send_command();
     void newConnection_receive_audio();
     void newConnection_Tablet();
