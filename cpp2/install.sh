@@ -18,19 +18,6 @@ else
   exit
 fi
 
-read -p "Use less memory? [y/n]" response
-if [[ "$response" =~ ^[yYnN]$ ]]; then
-  if [[ "$response" =~ ^[yY]$ ]]; then
-    UseLessMemory="y"
-  else
-    UseLessMemory="n"
-  fi
-else
-  echo "Invalid response. Please enter y, Y, n, or N."
-  exit
-fi
-
-
 #Install the compiler
 sudo apt -y install build-essential
 
@@ -49,12 +36,8 @@ wget -O protobuf-all-3.19.1.zip https://github.com/protocolbuffers/protobuf/rele
 unzip protobuf-all-3.19.1.zip
 cd ~/Downloads/protobuf-3.19.1
 ./configure
-if [ "$UseLessMemory" == "n" ]; then
-  make -j $(nproc)
-  make check
-else
-  make
-fi
+make -j $(nproc)
+make check     # this command will generate a peak memory usage
 sudo make install
 sudo ldconfig # refresh shared library cache.
 
