@@ -118,12 +118,12 @@ git checkout v1.7.5
 if [ "$GPU40available" == "n" ]; then
     #This is the CPU mode
     #It will download ggml-base.bin from the HuggingFace website.
-    bash ./models/download-ggml-model.sh base
+    bash ./models/download-ggml-model.sh base &
     cmake -B build
     cmake --build build --config Release
 else
     #This is the NVidia 4070 mode
-    bash ./models/download-ggml-model.sh large-v3-turbo
+    bash ./models/download-ggml-model.sh large-v3-turbo &
     cmake -B build -DGGML_CUDA=1
     cmake --build build -j --config Release
 fi

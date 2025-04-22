@@ -266,24 +266,34 @@ public class SocketManager {
         handlerCheckDiconnection.post(new Runnable() {
             @Override
             public void run() {
+                try {
+                    //Debug Info 25/4/22: This sleep is necenssary. Otherwise, this thread will send another set of connection request.
+                    //The establishment of socket connection takes time.
+                    sleep(3000);
+                } catch (Exception e) {
+                    Log.e("SocketManager", "sleep fails " + e.getMessage());
+                }
+
                 while(bAutoReconnection) {
                     Log.d("autoReconnection", "enableAutoReconnection");
                     if( mSocketSendImages == null)
                         //launch anther thread to connect sockets
                         for( int i=0; i<200; i++) {
                             connectSockets();
+                            //wait at least for 3 second
+                            int sleeptime = (int) Math.pow(2.0, i);
+                            if( sleeptime < 3000)
+                                sleeptime = 3000;
+                            Log.e("SocketManager", Integer.toString(i) + " sleep " + Integer.toString(sleeptime) + " ms");
+
+                            try {
+                                sleep(sleeptime);
+                            } catch (Exception e) {
+                                Log.e("SocketManager", "sleep fails " + e.getMessage());
+                            }
                             if(mSocketSendImages != null)
                             {
                                 break;
-                            }
-                            else{
-                                try {
-                                    int sleeptime = (int) Math.pow(2.0, i);
-                                    sleep(sleeptime);
-                                    Log.e("SocketManager", Integer.toString(i) + " sleep " + Integer.toString(sleeptime) + " ms");
-                                } catch (Exception e) {
-                                    Log.e("SocketManager", "sleep fails " + e.getMessage());
-                                }
                             }
                         }
                     else {
