@@ -625,8 +625,6 @@ void ThreadProcessImage::run()
                 continue;
             }
 
-            //2024/6/8 Report result back to Zenbo so it can take actions.
-//            ZenboNurseHelperProtobuf::ReportAndCommand report_data;
             string header(data_);
             string str_timestamp = header.substr(0,13);
             string str_pitch_degree = header.substr(14,3);
@@ -817,8 +815,7 @@ void ThreadProcessImage::run()
     //                                continue;
                                 }
                                 previous_time = current_time;
-                                pThreadSendCommand->AddMessage(message);
-                                pThreadSendCommand->cond_var_report_result.notify_one();
+                                pSendMessageManager->AddMessage(message);
                             }
 
                         }
@@ -856,8 +853,7 @@ void ThreadProcessImage::run()
     //                                continue;
                                 }
                                 previous_time = current_time;
-                                pThreadSendCommand->AddMessage(message);
-                                pThreadSendCommand->cond_var_report_result.notify_one();
+                                pSendMessageManager->AddMessage(message);
                             }
                         }
                     }

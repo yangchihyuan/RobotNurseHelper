@@ -78,10 +78,10 @@ set(SOURCES JPEG.cpp
             mainwindow.ui
             ThreadProcessAudio.cpp
             ThreadProcessImage.cpp
-            ThreadSendCommand.cpp
             ThreadTablet.cpp
             ThreadWhisper.cpp
             SocketHandler.cpp
+            SendMessageManager.cpp
             GetLandmarks.cpp
             FaceLandmarkToZenboAction.cpp
     )

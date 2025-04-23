@@ -68,7 +68,7 @@ void ThreadTablet::run()
             report_data.set_volume(volume);
             report_data.set_speak_pitch(100);
             report_data.set_face(ZenboExpressionIndex) ;
-            pThreadSendCommand->AddMessage(report_data);        
+            pSendMessageManager->AddMessage(report_data);
         }
         else
         {

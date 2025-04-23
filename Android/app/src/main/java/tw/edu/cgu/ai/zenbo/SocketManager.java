@@ -279,6 +279,8 @@ public class SocketManager {
                     if( mSocketSendImages == null)
                         //launch anther thread to connect sockets
                         for( int i=0; i<200; i++) {
+                            if( bAutoReconnection == false)   //The user may cancel the connection while the for loop is running.
+                                break;
                             connectSockets();
                             //wait at least for 3 second
                             int sleeptime = (int) Math.pow(2.0, i);
@@ -313,11 +315,24 @@ public class SocketManager {
         bAutoReconnection = false;
         try {
             mSocketSendImages.close();
+        } catch (Exception e) {
+            Log.e("disconnectSockets SendImages", e.getMessage());
+        }
+
+        //Debug Info 25/4/23: The socketRecieveCommand may be broken by the server-side program's error. Thus, I need to close the three sockets separately.
+        //Other, the process will jump out of the try when running this command and skip the mSocketSendAudio.close()
+        try {
             socketReceiveCommand.close();
+        } catch (Exception e) {
+            Log.e("disconnectSockets ReceiveCommand", e.getMessage());
+        }
+
+        try {
             mSocketSendAudio.close();
         } catch (Exception e) {
-            Log.e("disconnectSockets Exception", e.getMessage());
+            Log.e("disconnectSockets SendAudio", e.getMessage());
         }
+
     }
 
     public void stopThreads() {

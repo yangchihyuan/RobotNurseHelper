@@ -11,7 +11,7 @@ android {
         minSdk 23
         targetSdkVersion 23
         versionCode 4
-        versionName 'v4 25.04.19'
+        versionName 'v4 25.04.22'
         externalNativeBuild {
             cmake {
                 cppFlags ""

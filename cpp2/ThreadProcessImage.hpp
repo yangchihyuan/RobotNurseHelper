@@ -9,8 +9,8 @@
 #include <mutex>
 #include <thread>
 #include <condition_variable>
-#include "ThreadSendCommand.hpp"
 #include "SocketHandler.hpp"
+#include "SendMessageManager.hpp"
 #ifdef USE_GPU
     #include "libmp_gpu.h"
 #else
@@ -33,7 +33,7 @@ public:
     string raw_images_directory;
     condition_variable cond_var_process_image;
 
-    ThreadSendCommand *pThreadSendCommand;
+    SendMessageManager *pSendMessageManager;
     SocketHandler *pSocketHandler;
 
     void setTask(std::string task);
