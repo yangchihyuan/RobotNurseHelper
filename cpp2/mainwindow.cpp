@@ -231,7 +231,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     // setup audio format
     QAudioFormat format;
-    //2024/8/21 disable whisper.cpp
     format.setSampleRate(WHISPER_SAMPLE_RATE);
     format.setChannelCount(1);
     format.setSampleFormat(QAudioFormat::Float);
@@ -245,20 +244,16 @@ MainWindow::MainWindow(QWidget *parent)
         std::cout << "Audio format not supported" << std::endl;
     }
 
-    //connect message and ThreadSendCommand
-    connect( this, &MainWindow::addSendCommandMessage, &thread_send_command, &ThreadSendCommand::AddMessage);
-
-    thread_process_image.pThreadSendCommand = &thread_send_command;
+    thread_process_image.pSendMessageManager = &sendMessageManager;
     thread_process_image.pSocketHandler = &socketHandler1;
     thread_tablet.pSocketHandler = &socketHandler4;
-    thread_tablet.pThreadSendCommand = &thread_send_command;
+    thread_tablet.pSendMessageManager = &sendMessageManager;
 }
 
 void MainWindow::startThreads()
 {
     //run threads
     thread_process_image.start();
-    thread_send_command.start();
     thread_process_audio.start();
     thread_tablet.start();
     thread_whisper.start();
@@ -279,19 +274,11 @@ MainWindow::~MainWindow()
     m_server_receive_image->close();
     m_server_receive_image->deleteLater();
 
-
-    //order: close the thread --> close the socket --> close the server
-    thread_send_command.b_KeepLoop = false;
-    thread_send_command.cond_var_report_result.notify_one();
-    thread_send_command.wait();
     foreach (QTcpSocket* socket, connection_set2)
     {
         socket->close();
         socket->deleteLater();
     }
-    m_server_send_command->close();
-    m_server_send_command->deleteLater();
-
 
     gbPlayAudio = false;
     cond_var_audio.notify_one();      //I need to resume this thread.
@@ -374,7 +361,7 @@ void MainWindow::appendToSocketList(QTcpSocket* socket)
 void MainWindow::appendToSocketList2(QTcpSocket* socket)
 {
     connection_set2.insert(socket);
-    thread_send_command.pSocket = socket;
+    sendMessageManager.pSocket = socket;
     connect(socket, &QTcpSocket::disconnected, this, &MainWindow::discardSocket2);
     connect(socket, &QAbstractSocket::errorOccurred, this, &MainWindow::displayError);
 }
@@ -478,9 +465,7 @@ void MainWindow::discardSocket2()
     if (it != connection_set2.end()){
         cout << "INFO :: A client has just left the room 8896" << endl;
         connection_set2.remove(*it);
-        thread_send_command.pSocket = NULL;    //I have such a line because socket 8896 is the only socket sending packages.
     }
-//    cout << "connection_set2.size() " << connection_set2.size() << endl;
     socket->deleteLater();
 }
 
@@ -512,7 +497,7 @@ void MainWindow::displayError(QAbstractSocket::SocketError socketError)
 {
     switch (socketError) {
         case QAbstractSocket::RemoteHostClosedError:
-        break;
+        break;  
         case QAbstractSocket::HostNotFoundError:
             QMessageBox::information(this, "QTCPServer", "The host was not found. Please check the host name and port settings.");
         break;
@@ -543,11 +528,8 @@ void MainWindow::on_pushButton_speak_clicked()
         QModelIndex index = ui->listView_FacialExpressions->currentIndex();
         report_data.set_face(index.row());
     }
-    //The segmentation fault only occurs when sockets are connected. Why?
-    //Something wrong in the thread?
-//    emit addSendCommandMessage(report_data);
 
-    thread_send_command.AddMessage(report_data);
+    sendMessageManager.AddMessage(report_data);
 
     QString action;
     action = "speak " + ui->plainTextEdit_speak->toPlainText();
@@ -596,7 +578,7 @@ void MainWindow::send_move_body_command(float x, float y, int degree, int speed)
     report_data.set_y(static_cast<int>(y));
     report_data.set_degree(degree);
     report_data.set_bodyspeed(speed);
-    thread_send_command.AddMessage(report_data);
+    sendMessageManager.AddMessage(report_data);
 }
 
 void MainWindow::on_pushButton_movehead_clicked()
@@ -615,7 +597,7 @@ void MainWindow::send_move_head_command(int yaw, int pitch, int speed)
     report_data.set_yaw(yaw);
     report_data.set_pitch(pitch);
     report_data.set_headspeed(speed);
-    thread_send_command.AddMessage(report_data);
+    sendMessageManager.AddMessage(report_data);
 
     ui->lineEdit_yaw_now->setText(QString::number(robot_status.yaw_degree));
     ui->lineEdit_pitch_now->setText(QString::number(robot_status.pitch_degree));
@@ -625,14 +607,14 @@ void MainWindow::on_listView_FacialExpressions_doubleClicked(const QModelIndex &
 {
     ZenboNurseHelperProtobuf::ReportAndCommand report_data;
     report_data.set_face(index.row());
-    thread_send_command.AddMessage(report_data);
+    sendMessageManager.AddMessage(report_data);
 }
 
 void MainWindow::on_listView_PredefinedAction_doubleClicked(const QModelIndex &index)
 {
     ZenboNurseHelperProtobuf::ReportAndCommand report_data;
     report_data.set_predefined_action(index.row());
-    thread_send_command.AddMessage(report_data);
+    sendMessageManager.AddMessage(report_data);
 }
 
 void MainWindow::on_listView_Sentence1_doubleClicked(const QModelIndex &index)
@@ -672,7 +654,7 @@ void MainWindow::timer_event()
 {
     if(bNewoutFrame )
     {
-        //2024/12/30, the bug is here. I use a timer to update the frame. On some low-end PC, 
+        //2024/12/30, Debug info: I use a timer to update the frame. On some low-end PC, 
         //although I call imshow, the window does not refresh unless there is a signal sent
         //to the window such as mouse hovering. It seems caused by the hardward driver.
         //imshow is a high-level GUI. There is no extra argument for this function.
@@ -691,6 +673,8 @@ void MainWindow::timer_event()
         thread_whisper.b_new_result = false;
         ui->plainTextEdit_speak->setPlainText(QString::fromStdString(thread_whisper.result));
     }
+
+    sendMessageManager.Send();
 }
 
 void MainWindow::comboBox_MoveMode_changed()
@@ -750,7 +734,7 @@ void MainWindow::on_pushButton_stop_action_clicked()
 {
     ZenboNurseHelperProtobuf::ReportAndCommand report_data;
     report_data.set_stopmove(1);
-    thread_send_command.AddMessage(report_data);
+    sendMessageManager.AddMessage(report_data);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)

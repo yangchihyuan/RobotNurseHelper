@@ -21,6 +21,7 @@
 #include <QAudioSource>
 #include "utility_directory.hpp"
 #include "SocketHandler.hpp"
+#include "SendMessageManager.hpp"
  
 using namespace std;
 
@@ -56,7 +57,6 @@ private:
 
     QTcpServer* m_server_send_command;
     QSet<QTcpSocket*> connection_set2;   //for send back command
-    ThreadSendCommand thread_send_command;
 
     QTcpServer* m_server_receive_audio;
     QSet<QTcpSocket*> connection_set3;   //for receive audio
@@ -72,6 +72,8 @@ private:
     QString QString_SentCommands;
     void send_move_body_command(float x, float y, int degree, int speed);
     void send_move_head_command(int yaw, int pitch, int speed);
+
+    SendMessageManager sendMessageManager;
 
 signals:
     void newMessage(QString);   //where is the connect for this signal?

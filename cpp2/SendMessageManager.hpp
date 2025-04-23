@@ -9,32 +9,23 @@
 #include <queue>
 #include "ServerSend.pb.h"
 
-#ifndef ThreadSendCommand_hpp
-#define ThreadSendCommand_hpp
+#ifndef __SendMessageManager_hpp__
+#define __SendMessageManager_hpp__
 
 using namespace std;
 
-class ThreadSendCommand: public QThread
+class SendMessageManager
 {
-    Q_OBJECT
-
 public:
-    ThreadSendCommand();
-
-    bool b_KeepLoop;
     QTcpSocket *pSocket = NULL;
-    condition_variable cond_var_report_result;    
-
-public slots:
     void AddMessage(ZenboNurseHelperProtobuf::ReportAndCommand);
+    void Send();
 
 protected:
-    void run();
     char str_results[4096];
     int str_results_len;
     mutex mutex_message_buffer;
     queue<ZenboNurseHelperProtobuf::ReportAndCommand> mQueue;
-
 };
 
 #endif
