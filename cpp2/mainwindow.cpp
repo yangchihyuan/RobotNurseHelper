@@ -702,6 +702,9 @@ void MainWindow::comboBox_DetectionMode_changed()
             thread_process_image.setTask("None");
             break;
         case 1:     //Face
+            //change the Processor mode to CPU, because the face detection model is not supported by GPU
+            ui->comboBox_Processor->setCurrentIndex(0);
+            thread_process_image.setProcessor("CPU");
             thread_process_image.setTask("Face");
             thread_process_image.b_HumanPoseEstimation = true;
             break;
@@ -724,6 +727,12 @@ void MainWindow::comboBox_Processor_changed()
             thread_process_image.setProcessor("CPU");
             break;
         case 1:     //GPU
+            if( ui->comboBox_DetectionMode->currentIndex() == 1 )
+            {
+                QMessageBox::warning(this, "Warning", "The Face detection model is not supported by GPU. Please select CPU.");
+                ui->comboBox_Processor->setCurrentIndex(0);
+                return;
+            }
             thread_process_image.setProcessor("GPU");
             break;
     }
