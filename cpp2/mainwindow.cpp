@@ -169,10 +169,12 @@ MainWindow::MainWindow(QWidget *parent)
         exit(EXIT_FAILURE);
     }
 
-    m_server_send_command = new QTcpServer();
-    if(m_server_send_command->listen(QHostAddress::Any, 8896))
+//    m_server_send_command = new QTcpServer();
+//    if(m_server_send_command->listen(QHostAddress::Any, 8896))
+    if(m_server_receive_image->listen(QHostAddress::Any, 8896))
     {
-       connect(m_server_send_command, &QTcpServer::newConnection, this, &MainWindow::newConnection_send_command);
+//       connect(m_server_send_command, &QTcpServer::newConnection, this, &MainWindow::newConnection_send_command);
+        connect(m_server_send_command, &QTcpServer::newConnection, this, &MainWindow::newConnection_send_command);
     }
     else
     {

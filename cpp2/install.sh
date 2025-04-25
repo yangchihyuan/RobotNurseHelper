@@ -30,11 +30,18 @@ sudo apt -y install zip
 #install libgtk2.0-dev, which is used in OpenCV to show images
 sudo apt -y install libgtk2.0-dev 
 
+#create an empty workding directory
+if [ -d "ZenboNurseHelper_build" ]; then
+    rm -rf ZenboNurseHelper_build
+fi
+mkdir ZenboNurseHelper_build
+
+
 #intall protobuf 3.19.1
-cd ~/Downloads
+cd ~/ZenboNurseHelper_build
 wget -O protobuf-all-3.19.1.zip https://github.com/protocolbuffers/protobuf/releases/download/v3.19.1/protobuf-all-3.19.1.zip
 unzip protobuf-all-3.19.1.zip
-cd ~/Downloads/protobuf-3.19.1
+cd ~/ZenboNurseHelper_build/protobuf-3.19.1
 ./configure
 make -j $(nproc)
 make check     # this command will generate a peak memory usage
@@ -58,18 +65,25 @@ sudo ldconfig
 
 #install MediaPipe v0.10.22
 cd ~
+if [ -d "mediapipe" ]; then
+    rm -rf mediapipe
+fi
 git clone https://github.com/google-ai-edge/mediapipe.git
 cd mediapipe
 git checkout v0.10.22
 
 #download our files
 cd ~ 
+if [ -d "ZenboNurseHelper" ]; then
+    rm -rf ZenboNurseHelper
+fi
 git clone https://github.com/yangchihyuan/ZenboNurseHelper.git
 #copy our code to the mediapipe folder
 cp -r ~/ZenboNurseHelper/cpp2/mediapipe_addition/* ~/mediapipe/
 
 #Install bazelisk
-wget https://github.com/bazelbuild/bazelisk/releases/download/v1.25.0/bazelisk-amd64.deb
+cd ~/ZenboNurseHelper_build
+wget -O bazelisk-amd64.deb https://github.com/bazelbuild/bazelisk/releases/download/v1.25.0/bazelisk-amd64.deb
 sudo dpkg -i bazelisk-amd64.deb
 
 #install OpenGL libraries, which will be used in MediaPipe for compiling GPU-related code.
@@ -85,7 +99,6 @@ bazel build -c opt mediapipe/examples/desktop/libmp:libmp_gpu.so
 sudo apt -y install qt6-base-dev    
 sudo apt -y install qt6-multimedia-dev
 #It will install Qt version 6.4.2.
-
 #Hint
 #The two commands to install Qt base and multimedia libraries allow you to compile this project. However, they do not install Qt Designer, a convenient tool to the GUI file mainwindow.ui. If you want to install Qt Designer, you need to use this command
 sudo apt -y install qtcreator
@@ -93,13 +106,16 @@ sudo apt -y install qtcreator
 
 #PortAudio
 #We use it to play voice on the server transmitted from the Android app and received from the robot's microphone. There is no package made for the Ubuntu system, and we need to compile it from downloaded source files, which are available on its GitHub page
-cd ~
+cd ~/ZenboNurseHelper_build
+if [ -d "portaudio" ]; then
+    rm -rf portaudio
+fi
 git clone https://github.com/PortAudio/portaudio.git
 
 #There is an instruction page teaching how to compile and install PortAudio (Link) However, as the page claims it is not reviewed, we modified its commands to
 
 sudo apt-get -y install libasound2-dev
-cd ~/portaudio
+cd ~/ZenboNurseHelper_build/portaudio
 ./configure
 make -j $(nproc)
 sudo make install
@@ -111,9 +127,12 @@ sudo ldconfig
 #It is voice-to-text library and we utilize it on our server-side program to quickly generate sentences spoken by an operator, which will be sent to the Zenbo robot to speak out. There is no package make for the Ubuntu system, and we need to compile it from it source file downloaded from its GitHub repository
 
 #Debug info 25/3/18,whisper.cpp v1.7.5 changes its install commands
-cd ~
+cd ~/ZenboNurseHelper_build
+if [ -d "whisper.cpp" ]; then
+    rm -rf whisper.cpp
+fi
 git clone https://github.com/ggerganov/whisper.cpp.git
-cd ~/whisper.cpp
+cd ~/ZenboNurseHelper_build/whisper.cpp
 git checkout v1.7.5
 if [ "$GPU40available" == "n" ]; then
     #This is the CPU mode
