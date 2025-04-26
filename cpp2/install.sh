@@ -43,7 +43,7 @@ wget -O protobuf-all-3.19.1.zip https://github.com/protocolbuffers/protobuf/rele
 unzip protobuf-all-3.19.1.zip
 cd ~/ZenboNurseHelper_build/protobuf-3.19.1
 ./configure
-make -j $(nproc)
+make -j $(nproc)   #why only 1 core is used?
 make check     # this command will generate a peak memory usage
 sudo make install
 sudo ldconfig # refresh shared library cache.

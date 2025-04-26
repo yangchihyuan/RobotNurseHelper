@@ -6,16 +6,11 @@ ThreadWhisper::ThreadWhisper()
 
 void ThreadWhisper::run()
 {
-//    std::string str_home_path(getenv("HOME"));
-//    std::string file_path = str_home_path + "/whisper.cpp/models/ggml-base.bin";
-//    std::string file_path = str_home_path + "/whisper.cpp/models/ggml-medium.bin";
-//    std::string file_path = str_home_path + "/whisper.cpp/models/ggml-large-v3-turbo.bin";
     // initial whisper.cpp
     whisper_context_params cparams = whisper_context_default_params();
-    cparams.use_gpu = true;
-    //language is not set in the cparams
-//    ctx = whisper_init_from_file_with_params(file_path.c_str(), cparams);
 
+    //Here, if there is no GPU, whisper.cpp will use CPU.
+    cparams.use_gpu = true;
     ctx = whisper_init_from_file_with_params(model_file_path.toUtf8().constData(), cparams);
     if (ctx == NULL) {
         std::cerr << "Failed to initialize whisper context" << std::endl;
@@ -24,7 +19,7 @@ void ThreadWhisper::run()
 
     whisper_full_params wparams = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
     wparams.translate = false;
-    wparams.language = "zh";
+    wparams.language = "zh";        // "zh" for Chinese, "en" for English
     wparams.n_threads = 4;
     wparams.no_context = true;
 

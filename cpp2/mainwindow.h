@@ -55,15 +55,15 @@ private:
     ThreadProcessImage thread_process_image;
     SocketHandler socketHandler1;
 
-//    QTcpServer* m_server_send_command;
-//    QSet<QTcpSocket*> connection_set2;   //for send back command
+    QTcpServer* m_server_send_command;
+    QSet<QTcpSocket*> connection_set2;   //for send back command
 
-//    QTcpServer* m_server_receive_audio;
-//    QSet<QTcpSocket*> connection_set3;   //for receive audio
+    QTcpServer* m_server_receive_audio;
+    QSet<QTcpSocket*> connection_set3;   //for receive audio
     ThreadProcessAudio thread_process_audio;
 
-//    QTcpServer* m_server_Tablet;
-//    QSet<QTcpSocket*> connection_set4;   //for Tablet
+    QTcpServer* m_server_Tablet;
+    QSet<QTcpSocket*> connection_set4;   //for Tablet
     SocketHandler socketHandler4;
     ThreadTablet thread_tablet;
 
