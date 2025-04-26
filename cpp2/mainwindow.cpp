@@ -157,7 +157,7 @@ MainWindow::MainWindow(QWidget *parent)
         }
     } 
 
-    //sockets
+    //One QTcpServer only listens to one port. If you want to listen to multiple ports, you need to create multiple QTcpServer objects.
     m_server_receive_image = new QTcpServer();
     //2024/12/27 The port number is also hard-coded. I need to modify it in the future.
     if(m_server_receive_image->listen(QHostAddress::Any, 8895))
@@ -169,11 +169,9 @@ MainWindow::MainWindow(QWidget *parent)
         exit(EXIT_FAILURE);
     }
 
-//    m_server_send_command = new QTcpServer();
-//    if(m_server_send_command->listen(QHostAddress::Any, 8896))
-    if(m_server_receive_image->listen(QHostAddress::Any, 8896))
+    m_server_send_command = new QTcpServer();
+    if(m_server_send_command->listen(QHostAddress::Any, 8896))
     {
-//       connect(m_server_send_command, &QTcpServer::newConnection, this, &MainWindow::newConnection_send_command);
         connect(m_server_send_command, &QTcpServer::newConnection, this, &MainWindow::newConnection_send_command);
     }
     else
