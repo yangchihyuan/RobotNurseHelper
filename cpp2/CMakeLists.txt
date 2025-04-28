@@ -49,13 +49,13 @@ list(APPEND CMAKE_PREFIX_PATH "usr/local")
 set(MEDIAPIPE_DIR "$ENV{HOME}/mediapipe")
 get_filename_component(MEDIAPIPE_DIRNAME "${MEDIAPIPE_DIR}" NAME)
 
-#The version is 3.19.1
+#protocol buffer v3.19.1 is used by mediapipe
 #The variable protobuf_source_dir is used in the libprotobuf.cmake file
 #The protobuf_source_dir is used to find the protobuf source code
 set(protobuf_source_dir "${MEDIAPIPE_DIR}/bazel-${MEDIAPIPE_DIRNAME}/external/com_google_protobuf")
 include("${CMAKE_CURRENT_SOURCE_DIR}/libprotobuf.cmake")     #this is the modified cmake file provided by LibMP's author
 set(PROTO_FILE ServerSend.proto)
-#Because I don't use the pre-built opencv, I don't have the protobuf_generate_cpp function, I need to define it by myself 
+#Because I don't use the pre-built opencv, I don't have the protobuf_generate_cpp function. I need to define it by myself.
 my_protobuf_generate_cpp(PROTO_SRC PROTO_HDR ${PROTO_FILE})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
@@ -112,7 +112,6 @@ set(LIBMP_HEADER_DIR ${MEDIAPIPE_DIR}/mediapipe/examples/desktop/libmp)
 include_directories(${LIBMP_HEADER_DIR})
 
 # whisper.cpp v1.7.5
-#Debug info 25/3/18,whisper.cpp v1.7.5 changes its file structure so I need to update my CMake instructions.
 add_library(LIBWHISPER SHARED IMPORTED)
 set_target_properties(LIBWHISPER PROPERTIES
   IMPORTED_LOCATION "$ENV{HOME}/whisper.cpp/build/src/libwhisper.so")
@@ -128,7 +127,7 @@ target_link_libraries(ZenboNurseHelper MP_FORMATS)
 target_link_libraries(ZenboNurseHelper LIBMP)
 target_link_libraries(ZenboNurseHelper LIBWHISPER)
 
-#if you want to debug, enable the following line
+#Enalbe the debug mode
 if(COMPILE_WITH_G_FLAG)
   set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")   
 endif()

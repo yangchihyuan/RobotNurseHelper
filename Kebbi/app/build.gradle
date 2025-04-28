@@ -8,11 +8,12 @@ android {
     //follow new gradle version's suggestion.
 
     defaultConfig {
-        applicationId 'tw.edu.cgu.ai.zenbo'
-        minSdk 23
-        targetSdkVersion 23
-        versionCode 4
-        versionName 'v4 25.04.22'
+        applicationId 'tw.edu.cgu.ai.kebbi'
+        minSdk 28
+    //    targetSdkVersion 28     //Chih-Yuan Yang: this targetSdkVersion item is used for Android 6 SDK.
+        //   Android 9 no longer needs it.
+        versionCode 5
+        versionName 'v5 25.04.27'
         externalNativeBuild {
             cmake {
                 cppFlags ""
@@ -33,7 +34,7 @@ android {
             path "CMakeLists.txt"
         }
     }
-    namespace 'tw.edu.cgu.ai.zenbo'
+    namespace 'tw.edu.cgu.ai.kebbi'
 
     sourceSets{
         main{
@@ -67,7 +68,12 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
     implementation 'com.android.support:appcompat-v7:23.1.1'
-    implementation project(':ZenboSDK')
+    implementation (name:'NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7', ext:'aar')
     implementation 'com.google.protobuf:protobuf-javalite:3.8.0'
 }
 
+repositories {
+    flatDir {
+        dirs'libs'
+    }
+}

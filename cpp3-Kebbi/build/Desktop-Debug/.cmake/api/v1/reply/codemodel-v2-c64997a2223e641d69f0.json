@@ -1,0 +1,132 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "RobotNurseHelper_Kebbi",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "MP_FORMATS::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-MP_FORMATS-Debug-d7d5f7470a14bd95ff23.json",
+					"name" : "MP_FORMATS",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "MP_FORMATS_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-MP_FORMATS_autogen-Debug-220dbd659f986b77ccb9.json",
+					"name" : "MP_FORMATS_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "MP_FORMATS_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-MP_FORMATS_autogen_timestamp_deps-Debug-52b8ae3c7ff112886bd5.json",
+					"name" : "MP_FORMATS_autogen_timestamp_deps",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "RobotNurseHelper::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-RobotNurseHelper-Debug-a68a567354ff5146f01a.json",
+					"name" : "RobotNurseHelper",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "RobotNurseHelper_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-RobotNurseHelper_autogen-Debug-662c5f5e1c24984bd0a3.json",
+					"name" : "RobotNurseHelper_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "RobotNurseHelper_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-RobotNurseHelper_autogen_timestamp_deps-Debug-58706270b37220794d0c.json",
+					"name" : "RobotNurseHelper_autogen_timestamp_deps",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "libprotobuf::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-libprotobuf-Debug-ceb4eb789b11ef06d1e2.json",
+					"name" : "libprotobuf",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "libprotobuf_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-libprotobuf_autogen-Debug-d3eb4aed076f5207f1c6.json",
+					"name" : "libprotobuf_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "libprotobuf_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-libprotobuf_autogen_timestamp_deps-Debug-c39d0dc0bbd95bf632d5.json",
+					"name" : "libprotobuf_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/chihyuan/ZenboNurseHelper/cpp3-Kebbi/build/Desktop-Debug",
+		"source" : "/home/chihyuan/ZenboNurseHelper/Server3-Kebbi"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}

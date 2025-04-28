@@ -31,7 +31,7 @@ limitations under the License.
 //#define IMAGEUTILS_METHOD(METHOD_NAME) \
   Java_org_iox_zenbo_env_ImageUtils_##METHOD_NAME  // NOLINT
 #define IMAGEUTILS_METHOD(METHOD_NAME) \
-  Java_tw_edu_cgu_ai_zenbo_env_ImageUtils_##METHOD_NAME  // NOLINT
+  Java_tw_edu_cgu_ai_kebbi_env_ImageUtils_##METHOD_NAME  // NOLINT
 
 //using namespace tensorflow;
 
