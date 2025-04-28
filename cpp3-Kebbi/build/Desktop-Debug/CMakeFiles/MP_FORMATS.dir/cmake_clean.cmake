@@ -1,0 +1,42 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/MP_FORMATS_autogen.dir/AutogenUsed.txt"
+  "CMakeFiles/MP_FORMATS_autogen.dir/ParseCache.txt"
+  "MP_FORMATS_autogen"
+  "CMakeFiles/MP_FORMATS.dir/MP_FORMATS_autogen/mocs_compilation.cpp.o"
+  "CMakeFiles/MP_FORMATS.dir/MP_FORMATS_autogen/mocs_compilation.cpp.o.d"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/annotation/locus.pb.cc.o"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/annotation/locus.pb.cc.o.d"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/annotation/rasterization.pb.cc.o"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/annotation/rasterization.pb.cc.o.d"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/body_rig.pb.cc.o"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/body_rig.pb.cc.o.d"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/classification.pb.cc.o"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/classification.pb.cc.o.d"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/detection.pb.cc.o"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/detection.pb.cc.o.d"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/image_file_properties.pb.cc.o"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/image_file_properties.pb.cc.o.d"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/image_format.pb.cc.o"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/image_format.pb.cc.o.d"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/landmark.pb.cc.o"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/landmark.pb.cc.o.d"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/location_data.pb.cc.o"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/location_data.pb.cc.o.d"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/matrix_data.pb.cc.o"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/matrix_data.pb.cc.o.d"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/object_detection/anchor.pb.cc.o"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/object_detection/anchor.pb.cc.o.d"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/rect.pb.cc.o"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/rect.pb.cc.o.d"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/time_series_header.pb.cc.o"
+  "CMakeFiles/MP_FORMATS.dir/home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats/time_series_header.pb.cc.o.d"
+  "MP_FORMATS_autogen/mocs_compilation.cpp"
+  "MP_FORMATS_autogen/timestamp"
+  "libMP_FORMATS.a"
+  "libMP_FORMATS.pdb"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/MP_FORMATS.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

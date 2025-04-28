@@ -76,7 +76,7 @@
         android:selectAllOnFocus="false"
         android:text="@string/server_url" />
 
-    <tw.edu.cgu.ai.zenbo.InputView
+    <tw.edu.cgu.ai.kebbi.InputView
         android:id="@+id/inputview"
         android:layout_width="640dp"
         android:layout_height="480dp"

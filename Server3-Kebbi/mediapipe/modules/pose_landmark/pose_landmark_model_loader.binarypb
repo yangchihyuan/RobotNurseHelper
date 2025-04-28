@@ -1,0 +1,8 @@
+
+ùSwitchContainer*SELECT:model_complexity2PACKET:model_path:¹’Öá§
+²cConstantSidePacketCalculator:CªÐòÖ=
+;"9mediapipe/modules/pose_landmark/pose_landmark_lite.tflitecConstantSidePacketCalculator:CªÐòÖ=
+;"9mediapipe/modules/pose_landmark/pose_landmark_full.tflitedConstantSidePacketCalculator:DªÐòÖ>
+<":mediapipe/modules/pose_landmark/pose_landmark_heavy.tflite
+MResourceProviderCalculator*RESOURCE_ID:model_path2RESOURCE:model_resource
+CTfLiteModelCalculator*MODEL_RESOURCE:model_resource2MODEL:model‚!MODEL_COMPLEXITY:model_complexityŠMODEL:model¢PoseLandmarkModelLoader

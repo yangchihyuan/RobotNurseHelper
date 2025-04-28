@@ -1,0 +1,1 @@
+/home/chihyuan/ZenboNurseHelper/Kebbi/app/build/intermediates/cxx/RelWithDebInfo/43456542/obj/x86

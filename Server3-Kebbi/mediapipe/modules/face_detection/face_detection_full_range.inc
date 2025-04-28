@@ -1,0 +1,8 @@
+"\n\210\002\022\rFaceDetection\032\013IMAGE:image\032\007ROI:roi\"\025DETECTION"
+"S:detectionsB\267\001\n2type.googleapis.com/mediapipe.FaceDetectionOptions\022"
+"\200\001\nHmediapipe/modules/face_detection/face_detection_full_range_sparse.t"
+"flite\250\001\300\001\260\001\300\001\270\001\001\300\001\004\315\001\000\000"
+"\000\000\370\001\200\022\205\002\000\000@C\215\002\000\000@C\225\002\000\000@C"
+"\235\002\000\000@C\245\002\232\231\031?\212\001\017OPTIONS:optionsR\013IMAGE:i"
+"mageR\007ROI:roiz\025DETECTIONS:detections\242\001\026FaceDetectionFullRange"
+"\322>4\n2type.googleapis.com/mediapipe.FaceDetectionOptions"

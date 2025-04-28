@@ -31,7 +31,7 @@
         android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher"
         android:theme="@style/MaterialTheme">
-        <activity android:name="tw.edu.cgu.ai.zenbo.MainActivity"
+        <activity android:name="tw.edu.cgu.ai.kebbi.MainActivity"
                   android:screenOrientation="landscape"
                   android:label="@string/app_name">
             <intent-filter>
