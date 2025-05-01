@@ -5,13 +5,17 @@
 #Author: Chih-Yuan Yang
 #Project: Zenbo Nurse Helper
 
-read -p "Does your PC have an Nvidia GPU 40 serial? [y/n]" response
+read -p "Does your PC have an Nvidia GPU RTX 30 or 40 serial? [y/n]" response
 
 if [[ "$response" =~ ^[yYnN]$ ]]; then
   if [[ "$response" =~ ^[yY]$ ]]; then
-    GPU40available="y"
+    NVidiaGPURTXavailable="y"
+    echo "We will detect the GPU driver. If there is no driver, we will install the driver for you. But you need to restart your PC after the installation."
+    #Check if the GPU driver is installed
+    ubuntu-drivers devices
+    sudo ubuntu-drivers autoinstall
   else
-    GPU40available="n"
+    NVidiaGPURTXavailable="n"
   fi
 else
   echo "Invalid response. Please enter y, Y, n, or N."
@@ -134,10 +138,10 @@ fi
 git clone https://github.com/ggerganov/whisper.cpp.git
 cd ~/ZenboNurseHelper_build/whisper.cpp
 git checkout v1.7.5
-if [ "$GPU40available" == "n" ]; then
+bash ./models/download-ggml-model.sh base &
+if [ "$NVidiaGPURTXavailable" == "n" ]; then
     #This is the CPU mode
     #It will download ggml-base.bin from the HuggingFace website.
-    bash ./models/download-ggml-model.sh base &
     cmake -B build
     cmake --build build --config Release
 else
@@ -150,4 +154,5 @@ fi
 #Build our own program
 cd ~/ZenboNurseHelper/cpp2
 ./build_project.sh fresh
-
+#create the symbolic link to the mediapipe because we need its tensorflow light files.
+ln -s ~/mediapipe/bazel-bin/mediapipe mediapipe

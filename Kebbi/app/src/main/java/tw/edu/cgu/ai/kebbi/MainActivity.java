@@ -180,8 +180,12 @@ public class MainActivity extends Activity {
 
     AudioRecord recorder;
 
-    private int sampleRate = 44100 ; // 44100 for music
-    private int channelConfig = AudioFormat.CHANNEL_IN_STEREO;
+//    private int audioSouce = MediaRecorder.AudioSource.MIC;
+    private int audioSouce = MediaRecorder.AudioSource.VOICE_RECOGNITION;
+//    private int sampleRate = 44100 ; // 44100 for music, however, for whisper, the sample rate is 16000
+    private int sampleRate = 16000;
+//    private int channelConfig = AudioFormat.CHANNEL_IN_STEREO;  //for whisper, the channel is mono
+    private int channelConfig = AudioFormat.CHANNEL_IN_MONO;  //for whisper, the channel is mono
     private int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
     int minBufSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);   //minBufSize = 5376, but larger is better.
     private boolean status = true;
@@ -475,7 +479,7 @@ public class MainActivity extends Activity {
         decorView.setSystemUiVisibility(uiOptions);
 
         if(recorder == null) {
-            recorder = new AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, channelConfig, audioFormat, minBufSize * 10);   //5376* 10
+            recorder = new AudioRecord(audioSouce, sampleRate, channelConfig, audioFormat, minBufSize * 10);   //5376* 10
             Log.d("VS", "Recorder initialized");
         }
         if( checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED )

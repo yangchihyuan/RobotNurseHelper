@@ -142,6 +142,7 @@ if [ "$GPU40available" == "n" ]; then
     cmake --build build --config Release
 else
     #This is the NVidia 4070 mode
+    sudo apt -y install nvidia-cuda-toolkit    #for nvcc
     bash ./models/download-ggml-model.sh large-v3-turbo &
     cmake -B build -DGGML_CUDA=1
     cmake --build build -j --config Release

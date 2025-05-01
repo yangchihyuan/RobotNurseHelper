@@ -71,12 +71,10 @@ set(SOURCES JPEG.cpp
             utility_csv.cpp
             main.cpp
             ${PROTO_SRC}
-#            RobotCommand.pb.cc
-#            RobotCommand.pb.h
             mainwindow.cpp
             mainwindow.h
             mainwindow.ui
-            ThreadProcessAudio.cpp
+            ThreadPortAudio.cpp
             ThreadProcessImage.cpp
             ThreadTablet.cpp
             ThreadWhisper.cpp
