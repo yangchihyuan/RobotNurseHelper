@@ -102,11 +102,21 @@ public class SocketManager {
                                     }
                                     if (report.hasPitch()) {
                                         Log.d("Pitch degree", "Pitch degree " + Integer.toString( report.getPitch()));
-                                        mRobotAPI.ctlMotor(1,(float)report.getPitch(), 40f);
+                                        float neckspeed = 40f;      //default
+                                        if( report.hasHeadspeed())
+                                        {
+                                            neckspeed = (float) report.getHeadspeed();
+                                        }
+                                        mRobotAPI.ctlMotor(1,(float)report.getPitch(), neckspeed);
                                     }
                                     if (report.hasYaw()) {
                                         Log.d("Yaw degree", "Yaw degree " + Integer.toString( report.getYaw()));
-                                        mRobotAPI.ctlMotor(2, (float) report.getYaw(), 40f);
+                                        float neckspeed = 40f;          //default
+                                        if( report.hasHeadspeed())
+                                        {
+                                            neckspeed = (float) report.getHeadspeed();
+                                        }
+                                        mRobotAPI.ctlMotor(2, (float) report.getYaw(), neckspeed);
                                     }
 
                                     if (report.hasFace() && report.hasSpeakSentence()) {

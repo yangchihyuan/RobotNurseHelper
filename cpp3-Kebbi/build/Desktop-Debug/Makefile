@@ -233,30 +233,6 @@ MP_FORMATS_autogen/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MP_FORMATS_autogen.dir/build.make CMakeFiles/MP_FORMATS_autogen.dir/build
 .PHONY : MP_FORMATS_autogen/fast
 
-FaceLandmarkToZenboAction.o: FaceLandmarkToZenboAction.cpp.o
-.PHONY : FaceLandmarkToZenboAction.o
-
-# target to build an object file
-FaceLandmarkToZenboAction.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/FaceLandmarkToZenboAction.cpp.o
-.PHONY : FaceLandmarkToZenboAction.cpp.o
-
-FaceLandmarkToZenboAction.i: FaceLandmarkToZenboAction.cpp.i
-.PHONY : FaceLandmarkToZenboAction.i
-
-# target to preprocess a source file
-FaceLandmarkToZenboAction.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/FaceLandmarkToZenboAction.cpp.i
-.PHONY : FaceLandmarkToZenboAction.cpp.i
-
-FaceLandmarkToZenboAction.s: FaceLandmarkToZenboAction.cpp.s
-.PHONY : FaceLandmarkToZenboAction.s
-
-# target to generate assembly for a file
-FaceLandmarkToZenboAction.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/FaceLandmarkToZenboAction.cpp.s
-.PHONY : FaceLandmarkToZenboAction.cpp.s
-
 GetLandmarks.o: GetLandmarks.cpp.o
 .PHONY : GetLandmarks.o
 
@@ -305,6 +281,30 @@ JPEG.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/JPEG.cpp.s
 .PHONY : JPEG.cpp.s
 
+LandmarkToRobotAction.o: LandmarkToRobotAction.cpp.o
+.PHONY : LandmarkToRobotAction.o
+
+# target to build an object file
+LandmarkToRobotAction.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/LandmarkToRobotAction.cpp.o
+.PHONY : LandmarkToRobotAction.cpp.o
+
+LandmarkToRobotAction.i: LandmarkToRobotAction.cpp.i
+.PHONY : LandmarkToRobotAction.i
+
+# target to preprocess a source file
+LandmarkToRobotAction.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/LandmarkToRobotAction.cpp.i
+.PHONY : LandmarkToRobotAction.cpp.i
+
+LandmarkToRobotAction.s: LandmarkToRobotAction.cpp.s
+.PHONY : LandmarkToRobotAction.s
+
+# target to generate assembly for a file
+LandmarkToRobotAction.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/LandmarkToRobotAction.cpp.s
+.PHONY : LandmarkToRobotAction.cpp.s
+
 MP_FORMATS_autogen/mocs_compilation.o: MP_FORMATS_autogen/mocs_compilation.cpp.o
 .PHONY : MP_FORMATS_autogen/mocs_compilation.o
 
@@ -328,6 +328,30 @@ MP_FORMATS_autogen/mocs_compilation.s: MP_FORMATS_autogen/mocs_compilation.cpp.s
 MP_FORMATS_autogen/mocs_compilation.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MP_FORMATS.dir/build.make CMakeFiles/MP_FORMATS.dir/MP_FORMATS_autogen/mocs_compilation.cpp.s
 .PHONY : MP_FORMATS_autogen/mocs_compilation.cpp.s
+
+RobotCommand.pb.o: RobotCommand.pb.cc.o
+.PHONY : RobotCommand.pb.o
+
+# target to build an object file
+RobotCommand.pb.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/RobotCommand.pb.cc.o
+.PHONY : RobotCommand.pb.cc.o
+
+RobotCommand.pb.i: RobotCommand.pb.cc.i
+.PHONY : RobotCommand.pb.i
+
+# target to preprocess a source file
+RobotCommand.pb.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/RobotCommand.pb.cc.i
+.PHONY : RobotCommand.pb.cc.i
+
+RobotCommand.pb.s: RobotCommand.pb.cc.s
+.PHONY : RobotCommand.pb.s
+
+# target to generate assembly for a file
+RobotCommand.pb.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/RobotCommand.pb.cc.s
+.PHONY : RobotCommand.pb.cc.s
 
 RobotNurseHelper_autogen/mocs_compilation.o: RobotNurseHelper_autogen/mocs_compilation.cpp.o
 .PHONY : RobotNurseHelper_autogen/mocs_compilation.o
@@ -377,30 +401,6 @@ SendMessageManager.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/SendMessageManager.cpp.s
 .PHONY : SendMessageManager.cpp.s
 
-ServerSend.pb.o: ServerSend.pb.cc.o
-.PHONY : ServerSend.pb.o
-
-# target to build an object file
-ServerSend.pb.cc.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/ServerSend.pb.cc.o
-.PHONY : ServerSend.pb.cc.o
-
-ServerSend.pb.i: ServerSend.pb.cc.i
-.PHONY : ServerSend.pb.i
-
-# target to preprocess a source file
-ServerSend.pb.cc.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/ServerSend.pb.cc.i
-.PHONY : ServerSend.pb.cc.i
-
-ServerSend.pb.s: ServerSend.pb.cc.s
-.PHONY : ServerSend.pb.s
-
-# target to generate assembly for a file
-ServerSend.pb.cc.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/ServerSend.pb.cc.s
-.PHONY : ServerSend.pb.cc.s
-
 SocketHandler.o: SocketHandler.cpp.o
 .PHONY : SocketHandler.o
 
@@ -425,29 +425,29 @@ SocketHandler.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/SocketHandler.cpp.s
 .PHONY : SocketHandler.cpp.s
 
-ThreadProcessAudio.o: ThreadProcessAudio.cpp.o
-.PHONY : ThreadProcessAudio.o
+ThreadPortAudio.o: ThreadPortAudio.cpp.o
+.PHONY : ThreadPortAudio.o
 
 # target to build an object file
-ThreadProcessAudio.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/ThreadProcessAudio.cpp.o
-.PHONY : ThreadProcessAudio.cpp.o
+ThreadPortAudio.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/ThreadPortAudio.cpp.o
+.PHONY : ThreadPortAudio.cpp.o
 
-ThreadProcessAudio.i: ThreadProcessAudio.cpp.i
-.PHONY : ThreadProcessAudio.i
+ThreadPortAudio.i: ThreadPortAudio.cpp.i
+.PHONY : ThreadPortAudio.i
 
 # target to preprocess a source file
-ThreadProcessAudio.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/ThreadProcessAudio.cpp.i
-.PHONY : ThreadProcessAudio.cpp.i
+ThreadPortAudio.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/ThreadPortAudio.cpp.i
+.PHONY : ThreadPortAudio.cpp.i
 
-ThreadProcessAudio.s: ThreadProcessAudio.cpp.s
-.PHONY : ThreadProcessAudio.s
+ThreadPortAudio.s: ThreadPortAudio.cpp.s
+.PHONY : ThreadPortAudio.s
 
 # target to generate assembly for a file
-ThreadProcessAudio.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/ThreadProcessAudio.cpp.s
-.PHONY : ThreadProcessAudio.cpp.s
+ThreadPortAudio.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/ThreadPortAudio.cpp.s
+.PHONY : ThreadPortAudio.cpp.s
 
 ThreadProcessImage.o: ThreadProcessImage.cpp.o
 .PHONY : ThreadProcessImage.o
@@ -3082,33 +3082,33 @@ help:
 	@echo "... MP_FORMATS"
 	@echo "... RobotNurseHelper"
 	@echo "... libprotobuf"
-	@echo "... FaceLandmarkToZenboAction.o"
-	@echo "... FaceLandmarkToZenboAction.i"
-	@echo "... FaceLandmarkToZenboAction.s"
 	@echo "... GetLandmarks.o"
 	@echo "... GetLandmarks.i"
 	@echo "... GetLandmarks.s"
 	@echo "... JPEG.o"
 	@echo "... JPEG.i"
 	@echo "... JPEG.s"
+	@echo "... LandmarkToRobotAction.o"
+	@echo "... LandmarkToRobotAction.i"
+	@echo "... LandmarkToRobotAction.s"
 	@echo "... MP_FORMATS_autogen/mocs_compilation.o"
 	@echo "... MP_FORMATS_autogen/mocs_compilation.i"
 	@echo "... MP_FORMATS_autogen/mocs_compilation.s"
+	@echo "... RobotCommand.pb.o"
+	@echo "... RobotCommand.pb.i"
+	@echo "... RobotCommand.pb.s"
 	@echo "... RobotNurseHelper_autogen/mocs_compilation.o"
 	@echo "... RobotNurseHelper_autogen/mocs_compilation.i"
 	@echo "... RobotNurseHelper_autogen/mocs_compilation.s"
 	@echo "... SendMessageManager.o"
 	@echo "... SendMessageManager.i"
 	@echo "... SendMessageManager.s"
-	@echo "... ServerSend.pb.o"
-	@echo "... ServerSend.pb.i"
-	@echo "... ServerSend.pb.s"
 	@echo "... SocketHandler.o"
 	@echo "... SocketHandler.i"
 	@echo "... SocketHandler.s"
-	@echo "... ThreadProcessAudio.o"
-	@echo "... ThreadProcessAudio.i"
-	@echo "... ThreadProcessAudio.s"
+	@echo "... ThreadPortAudio.o"
+	@echo "... ThreadPortAudio.i"
+	@echo "... ThreadPortAudio.s"
 	@echo "... ThreadProcessImage.o"
 	@echo "... ThreadProcessImage.i"
 	@echo "... ThreadProcessImage.s"

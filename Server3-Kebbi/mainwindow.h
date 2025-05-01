@@ -12,7 +12,7 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include "ThreadProcessImage.hpp"
-#include "ThreadProcessAudio.hpp"
+#include "ThreadPortAudio.hpp"
 #include "ThreadTablet.hpp"
 #include "ThreadWhisper.hpp"
 #include <queue>
@@ -74,6 +74,7 @@ private:
     void send_move_head_command(int yaw, int pitch, int speed);
 
     SendMessageManager sendMessageManager;
+    bool bstream_recognition = false;
 
 signals:
     void newMessage(QString);   //where is the connect for this signal?
@@ -124,5 +125,6 @@ private slots:
     void comboBox_Processor_changed();
 
     void keyPressEvent(QKeyEvent *event);
+    void on_checkBox_stream_clicked(bool checked);
 };
 #endif // MAINWINDOW_H

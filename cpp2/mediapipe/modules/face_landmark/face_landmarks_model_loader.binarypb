@@ -1,7 +1,0 @@
-
-”SwitchContainer*ENABLE:with_attention2PACKET:model_path:Ö’Öá§
-Ï^ConstantSidePacketCalculator:>ªÐòÖ8
-6"4mediapipe/modules/face_landmark/face_landmark.tflitemConstantSidePacketCalculator:MªÐòÖG
-E"Cmediapipe/modules/face_landmark/face_landmark_with_attention.tflite
-MResourceProviderCalculator*RESOURCE_ID:model_path2RESOURCE:model_resource
-CTfLiteModelCalculator*MODEL_RESOURCE:model_resource2MODEL:model‚WITH_ATTENTION:with_attentionŠMODEL:model¢FaceLandmarksModelLoader

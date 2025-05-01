@@ -66,14 +66,14 @@ include CMakeFiles/RobotNurseHelper_autogen_timestamp_deps.dir/compiler_depend.m
 # Include the progress variables for this target.
 include CMakeFiles/RobotNurseHelper_autogen_timestamp_deps.dir/progress.make
 
-CMakeFiles/RobotNurseHelper_autogen_timestamp_deps: /home/chihyuan/mediapipe/bazel-bin/mediapipe/examples/desktop/libmp/libmp_gpu.so
+CMakeFiles/RobotNurseHelper_autogen_timestamp_deps: /home/chihyuan/whisper.cpp/build/src/libwhisper.so
 CMakeFiles/RobotNurseHelper_autogen_timestamp_deps: libMP_FORMATS.a
 CMakeFiles/RobotNurseHelper_autogen_timestamp_deps: /usr/local/lib/libopencv_imgproc.so.4.11.0
 CMakeFiles/RobotNurseHelper_autogen_timestamp_deps: /usr/local/lib/libopencv_core.so.4.11.0
 CMakeFiles/RobotNurseHelper_autogen_timestamp_deps: /usr/local/lib/libopencv_imgcodecs.so.4.11.0
 CMakeFiles/RobotNurseHelper_autogen_timestamp_deps: /usr/local/lib/libopencv_videoio.so.4.11.0
 CMakeFiles/RobotNurseHelper_autogen_timestamp_deps: /usr/local/lib/libopencv_highgui.so.4.11.0
-CMakeFiles/RobotNurseHelper_autogen_timestamp_deps: /home/chihyuan/whisper.cpp/build/src/libwhisper.so
+CMakeFiles/RobotNurseHelper_autogen_timestamp_deps: /home/chihyuan/mediapipe/bazel-bin/mediapipe/examples/desktop/libmp/libmp_gpu.so
 CMakeFiles/RobotNurseHelper_autogen_timestamp_deps: /usr/lib/qt6/libexec/moc
 CMakeFiles/RobotNurseHelper_autogen_timestamp_deps: /usr/lib/qt6/libexec/uic
 

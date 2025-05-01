@@ -416,9 +416,20 @@ void MainWindow::readSocket3()
     for( long long i = 0; i<length/2 ; i++)
     {
         short value = *(pShort + i);
-        AudioBuffer.push(value);
+        AudioBuffer.push(value);       //This AudioBuffer is used to play audio on the server
     }
     gMutex_audio_buffer.unlock();
+
+    if( bstream_recognition)
+    {
+        thread_whisper.mtx_whisper_buffer.lock();
+        for( long long i = 0; i<length/2 ; i++)
+        {
+            short value = *(pShort + i);
+            thread_whisper.pcmf32_new.push_back((float)value / 32768.0f);
+        }
+        thread_whisper.mtx_whisper_buffer.unlock();            
+    }
 
 //    std::cout << "AudioBuffer.size()" << AudioBuffer.size() << std::endl;
     if( AudioBuffer.size() >= 1024)
@@ -544,15 +555,15 @@ void MainWindow::on_pushButton_voice_to_text_clicked()
     {
         bListening = true;
         ui->pushButton_voice_to_text->setText("Stop(F2)");
-        thread_whisper.buffer.open(QBuffer::WriteOnly);
-        thread_whisper.buffer.reset();
-        audioSrc->start(&thread_whisper.buffer);
+        thread_whisper.OperatorBuffer.open(QBuffer::WriteOnly);
+        thread_whisper.OperatorBuffer.reset();
+        audioSrc->start(&thread_whisper.OperatorBuffer);
     }
     else
     {
         bListening = false;
         audioSrc->stop();
-        thread_whisper.buffer.close();
+        thread_whisper.OperatorBuffer.close();
         thread_whisper.cond_var_whisper.notify_one();
         ui->pushButton_voice_to_text->setText("Voice to Text(F2)");
     }
@@ -837,3 +848,16 @@ void MainWindow::on_checkBox_SaveImages_clicked()
     }
 
 }
+
+void MainWindow::on_checkBox_stream_clicked(bool checked)
+{
+    if( checked)
+    {
+        bstream_recognition = true;
+    }
+    else
+    {
+        bstream_recognition = false;
+    }
+}
+
