@@ -138,7 +138,7 @@ fi
 git clone https://github.com/ggerganov/whisper.cpp.git
 cd ~/ZenboNurseHelper_build/whisper.cpp
 git checkout v1.7.5
-bash ./models/download-ggml-model.sh base &
+bash ./models/download-ggml-model.sh base
 if [ "$NVidiaGPURTXavailable" == "n" ]; then
     #This is the CPU mode
     #It will download ggml-base.bin from the HuggingFace website.
@@ -146,9 +146,10 @@ if [ "$NVidiaGPURTXavailable" == "n" ]; then
     cmake --build build --config Release
 else
     #This is the NVidia 4070 mode
-    bash ./models/download-ggml-model.sh large-v3-turbo &
+    bash ./models/download-ggml-model.sh large-v3-turbo
+    sudo apt -y install nvidia-cuda-toolkit
     cmake -B build -DGGML_CUDA=1
-    cmake --build build -j --config Release
+    cmake --build build --config Release
 fi
 
 #Build our own program

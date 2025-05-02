@@ -426,12 +426,14 @@ void MainWindow::readSocket3()
         for( long long i = 0; i<length/2 ; i++)
         {
             short value = *(pShort + i);
-            thread_whisper.pcmf32_new.push_back((float)value / 32768.0f);
+            thread_whisper.pcmf32_new[i+thread_whisper.bufferlength] = ((float)value / 32768.0f);
         }
-        thread_whisper.mtx_whisper_buffer.unlock();            
+        thread_whisper.bufferlength += length/2;
+        thread_whisper.mtx_whisper_buffer.unlock();
+//        std::cout << "thread_whisper.pcmf32_queue size: " << thread_whisper.pcmf32_queue.size() << std::endl;  
     }
 
-//    std::cout << "AudioBuffer.size()" << AudioBuffer.size() << std::endl;
+
     if( AudioBuffer.size() >= 1024)
         cond_var_audio.notify_one();
 
@@ -859,5 +861,7 @@ void MainWindow::on_checkBox_stream_clicked(bool checked)
     {
         bstream_recognition = false;
     }
+
+    cout<< "bstream_recognition: " << bstream_recognition << endl;
 }
 
