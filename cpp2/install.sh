@@ -138,7 +138,7 @@ fi
 git clone https://github.com/ggerganov/whisper.cpp.git
 cd ~/ZenboNurseHelper_build/whisper.cpp
 git checkout v1.7.5
-bash ./models/download-ggml-model.sh base &
+bash ./models/download-ggml-model.sh base
 if [ "$NVidiaGPURTXavailable" == "n" ]; then
     #This is the CPU mode
     #It will download ggml-base.bin from the HuggingFace website.
@@ -146,13 +146,22 @@ if [ "$NVidiaGPURTXavailable" == "n" ]; then
     cmake --build build --config Release
 else
     #This is the NVidia 4070 mode
-    bash ./models/download-ggml-model.sh large-v3-turbo &
+    bash ./models/download-ggml-model.sh large-v3-turbo
+    sudo apt -y install nvidia-cuda-toolkit
     cmake -B build -DGGML_CUDA=1
-    cmake --build build -j --config Release
+    cmake --build build --config Release    # I cannot use -j here. It will run out my 16G RAM + 4G Swap and cause errors.
 fi
 
 #Build our own program
 cd ~/ZenboNurseHelper/cpp2
 ./build_project.sh fresh
-#create the symbolic link to the mediapipe because we need its tensorflow light files.
-ln -s ~/mediapipe/bazel-bin/mediapipe mediapipe
+#copy the required mediapipe files to cpp2
+cp -r ~/mediapipe/bazel-bin/mediapipe/examples/desktop/libmp/libmp_gpu.so.runfiles/mediapipe/mediapipe .
+if [ -d "temp" ]; then
+    rm -rf temp
+fi
+mkdir temp
+# this file mediapipe/modules/hand_landmark/handedness.txt is required to run holistic trackiing
+find ~/mediapipe/mediapipe -type f \( -name "*.txt" \) -exec cp --parents {} temp \;
+cp -r temp/home/$USER/mediapipe/mediapipe .
+rm -rf temp
