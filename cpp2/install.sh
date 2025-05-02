@@ -149,7 +149,7 @@ else
     bash ./models/download-ggml-model.sh large-v3-turbo
     sudo apt -y install nvidia-cuda-toolkit
     cmake -B build -DGGML_CUDA=1
-    cmake --build build --config Release    # I cannot use -j here. It will run out my 16G RAM + 4G Swap and cause errors.
+    cmake --build build -j --config Release
 fi
 
 #Build our own program
