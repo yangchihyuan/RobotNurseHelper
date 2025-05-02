@@ -115,7 +115,7 @@ include_directories(${LIBMP_HEADER_DIR})
 add_library(LIBWHISPER SHARED IMPORTED)
 set_target_properties(LIBWHISPER PROPERTIES
   IMPORTED_LOCATION "$ENV{HOME}/ZenboNurseHelper_build/whisper.cpp/build/src/libwhisper.so")
-target_include_directories(LIBWHISPER INTERFACE "$ENV{HOME}/ZenboNurseHelper_build/whisper.cpp/include" "$ENV{HOME}/whisper.cpp/ggml/include")
+target_include_directories(LIBWHISPER INTERFACE "$ENV{HOME}/ZenboNurseHelper_build/whisper.cpp/include" "$ENV{HOME}/ZenboNurseHelper_build/whisper.cpp/ggml/include")
 
 # MediaPipe Formats
 file(GLOB_RECURSE MP_FORMATS_SRC "${MEDIAPIPE_DIR}/bazel-bin/mediapipe/framework/formats/*.cc")
