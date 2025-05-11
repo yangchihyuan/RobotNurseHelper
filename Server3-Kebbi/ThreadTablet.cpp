@@ -74,8 +74,8 @@ void ThreadTablet::run()
         {
             //wait until being notified
             std::unique_lock<std::mutex> lk(mtx);
-            cond_var_process_image.wait(lk);
+            cond_var_tablet.wait(lk);
         }
     }
-    cout << "Exit while loop." << std::endl;
+    cout << "Exit tablet while loop." << std::endl;
 }

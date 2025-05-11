@@ -9,18 +9,19 @@
 #include <condition_variable>
 #include <whisper.h>
 #include <queue>
-
+#include <chrono>
 
 using namespace std;
 
 struct whisper_params {
     int32_t n_threads  = std::min(4, (int32_t) std::thread::hardware_concurrency());    //this does not matter because I need to use GPU to run it.
     int32_t step_ms    = 500;
+//    int32_t step_ms    = -1; // -1 means sliding window mode
     int32_t length_ms  = 5000;
-    int32_t keep_ms    = 200;
+    int32_t keep_ms    = 1000;  //whisper.cpp requests at least 1 second to recognize the audio
     int32_t max_tokens = 32;
     int32_t audio_ctx  = 0;
-    int32_t beam_size  = -1;
+    int32_t beam_size  = 8;
 
     float vad_thold    = 0.6f;  
     float freq_thold   = 100.0f;
@@ -28,12 +29,12 @@ struct whisper_params {
     bool translate     = false;
     bool no_fallback   = false;
     bool print_special = false;
-    bool no_context    = true;
+    bool no_context    = false;
     bool no_timestamps = false;
     bool tinydiarize   = false;
     bool save_audio    = false; // save audio to wav file
     bool use_gpu       = true;
-    bool flash_attn    = false;
+    bool flash_attn    = true;
 
     std::string fname_out;
 };
@@ -44,20 +45,30 @@ class ThreadWhisper: public QThread
 
 public:
     ThreadWhisper();
+    ~ThreadWhisper();
 
     bool b_WhileLoop = true;
-    condition_variable cond_var_whisper;
-    QBuffer OperatorBuffer;             //This buffer is used by operator.
-    std::vector<float> pcmf32;//    (n_samples_30s, 0.0f);
+    QBuffer *pOperatorBuffer = NULL;             //This buffer is used by operator.
+    bool bOperatorBuffer_open = false;
+    std::vector<float> pcmf32;
     std::vector<float> pcmf32_old;
     std::vector<float> pcmf32_new;
     int bufferlength = 0;
+    std::vector<float> pcmf32_detect;
 
     std::vector<whisper_token> prompt_tokens;
     mutex mtx_whisper_buffer;
-    string result;
-    bool b_new_result = false;
+    string strOperatorSentence;
+    bool b_new_OperatorSentence = false;
+    string strRobotSentence;
+    string strTemp;
+    string strFixed;
+    bool b_new_RobotSentence = false;
+    bool b_RobotSentence_End = false;    
     QString model_file_path;
+
+    void setStartTime();
+    void ClearBuffer();
 
 protected:
     void run();
@@ -65,15 +76,13 @@ protected:
 
     whisper_params params;
 
-    int n_samples_step;// = (1e-3*params.step_ms  )*WHISPER_SAMPLE_RATE;
-    int n_samples_len;//  = (1e-3*params.length_ms)*WHISPER_SAMPLE_RATE;
-    int n_samples_keep;// = (1e-3*params.keep_ms  )*WHISPER_SAMPLE_RATE;
-    int n_samples_30s;
-
-private:
+    int n_samples_step;
+    int n_samples_len;
+    int n_samples_keep;
     mutex mtx;
 
-    vector<float> QueueToVector(queue<float>& queue);    
+    std::chrono::high_resolution_clock::time_point t_last;
+    std::chrono::high_resolution_clock::time_point t_start;
 };
 
 #endif

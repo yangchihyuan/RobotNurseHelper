@@ -63,6 +63,10 @@ find_package(OpenCV COMPONENTS core highgui videoio imgproc imgcodecs REQUIRED)
 find_package(Qt6 COMPONENTS Core Widgets Network Multimedia REQUIRED)   
 
 file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
+set(ZENBONURSEHELPER_BUILD_DIR "$ENV{HOME}/ZenboNurseHelper_build")
+set(OLLAMA_HPP_INCLUDE_DIR "${ZENBONURSEHELPER_BUILD_DIR}/ollama-hpp/include")
+#file(GLOB OLLAMA_HPP ${ZENBONURSEHELPER_BUILD_DIR}/ollama-hpp/include/*.hpp)
+#message(STATUS "OLLAMA_HPP: ${OLLAMA_HPP}")
 set(SOURCES JPEG.cpp
             utility_directory.cpp
             utility_TimeRecorder.cpp
@@ -78,13 +82,22 @@ set(SOURCES JPEG.cpp
             ThreadProcessImage.cpp
             ThreadTablet.cpp
             ThreadWhisper.cpp
+            ThreadOllama.cpp
             SocketHandler.cpp
             SendMessageManager.cpp
             GetLandmarks.cpp
             LandmarkToRobotAction.cpp
     )
 
-add_executable(RobotNurseHelper ${SOURCES} ${HEADERS} )
+# whisper.cpp v1.7.5
+add_library(LIBWHISPER SHARED IMPORTED)
+set(WHISPER_DIR $ENV{HOME}/whisper.cpp)
+set_target_properties(LIBWHISPER PROPERTIES
+  IMPORTED_LOCATION "${WHISPER_DIR}/build/src/libwhisper.so")
+target_include_directories(LIBWHISPER INTERFACE "${WHISPER_DIR}/include" "${WHISPER_DIR}/ggml/include" ${WHISPER_DIR}/examples)
+set(WHISPER_EXAMPLE_SOURCES ${WHISPER_DIR}/examples/common.cpp)
+
+add_executable(RobotNurseHelper ${SOURCES} ${HEADERS} ${WHISPER_EXAMPLE_SOURCES})
 
 
 
@@ -109,12 +122,6 @@ set_target_properties(LIBMP PROPERTIES
 set(LIBMP_HEADER_DIR ${MEDIAPIPE_DIR}/mediapipe/examples/desktop/libmp)
 include_directories(${LIBMP_HEADER_DIR})
 
-# whisper.cpp v1.7.5
-add_library(LIBWHISPER SHARED IMPORTED)
-set_target_properties(LIBWHISPER PROPERTIES
-  IMPORTED_LOCATION "$ENV{HOME}/whisper.cpp/build/src/libwhisper.so")
-target_include_directories(LIBWHISPER INTERFACE "$ENV{HOME}/whisper.cpp/include" "$ENV{HOME}/whisper.cpp/ggml/include")
-
 # MediaPipe Formats
 file(GLOB_RECURSE MP_FORMATS_SRC "${MEDIAPIPE_DIR}/bazel-bin/mediapipe/framework/formats/*.cc")
 add_library(MP_FORMATS STATIC ${MP_FORMATS_SRC})
@@ -131,7 +138,7 @@ if(COMPILE_WITH_G_FLAG)
 endif()
 
 
-include_directories(${PROTOBUF_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
+include_directories(${PROTOBUF_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} ${OLLAMA_HPP_INCLUDE_DIR})
 set_target_properties(${TARGET_NAME} PROPERTIES "CMAKE_CXX_FLAGS" "${CMAKE_CXX_FLAGS}")
 
 target_link_libraries(RobotNurseHelper

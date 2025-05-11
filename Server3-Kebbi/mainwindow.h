@@ -15,6 +15,7 @@
 #include "ThreadPortAudio.hpp"
 #include "ThreadTablet.hpp"
 #include "ThreadWhisper.hpp"
+#include "ThreadOllama.hpp"
 #include <queue>
 #include <QMediaDevices>
 #include <QAudioDevice>
@@ -68,6 +69,8 @@ private:
     ThreadTablet thread_tablet;
 
     ThreadWhisper thread_whisper;
+
+    ThreadOllama thread_ollama;
 
     QString QString_SentCommands;
     void send_move_body_command(float x, float y, int degree, int speed);
@@ -126,5 +129,7 @@ private slots:
 
     void keyPressEvent(QKeyEvent *event);
     void on_checkBox_stream_clicked(bool checked);
+    void on_pushButton_generate_response_clicked();
+    void on_pushButton_speak_2_clicked();
 };
 #endif // MAINWINDOW_H

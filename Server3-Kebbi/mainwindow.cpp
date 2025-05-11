@@ -13,11 +13,11 @@
 #include <QScrollBar>
 #include "RobotStatus.hpp"
 #include "ActionOption.hpp"
+#include "ThreadOllama.hpp"
 
 extern std::mutex gMutex_audio_buffer;
 extern std::queue<short> AudioBuffer;
 extern std::condition_variable cond_var_audio;
-extern bool bNewoutFrame;
 extern cv::Mat outFrame;
 extern int PortAudio_stop_and_terminate();
 extern bool gbPlayAudio;
@@ -31,16 +31,16 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     QStringList strList;
-    strList.append("ACTIVE");
-    strList.append("AWARE_LEFT");
-    strList.append("AWARE_RIGHT");
-    strList.append("CONFIDENT");
-    strList.append("DEFAULT");
-    strList.append("DEFAULT_STILL");
-    strList.append("DOUBTING");
-    strList.append("EXPECTING");
-    strList.append("HAPPY");
-    strList.append("HELPLESS");
+    strList.append("TA_DictateL");
+    strList.append("DA_Full");
+    strList.append("EM_Mad02");
+    strList.append("BA_Nodhead");
+    strList.append("SP_Swim02");
+    strList.append("PE_RotateA");
+    strList.append("SP_Karate");
+    strList.append("RE_Cheer");
+    strList.append("SP_Climb");
+    strList.append("DA_Hit");
     strList.append("HIDEFACE");
     strList.append("IMPATIENT");
     strList.append("INNOCENT");
@@ -69,45 +69,55 @@ MainWindow::MainWindow(QWidget *parent)
     ui->listView_FacialExpressions->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     QStringList strList_action;
-    strList_action.append("Body_twist_1 large");
-    strList_action.append("Body_twist_2 small");
-    strList_action.append("Dance_2_loop nect move");
-    strList_action.append("Dance_3_loop nect still");
-    strList_action.append("Dance_b_1_loop nod+turn");
-    strList_action.append("Dance_s_1_loop nod");
-    strList_action.append("Default_1 to 15");
-    strList_action.append("Default_2 no difference");
-    strList_action.append("Find_face");
-    strList_action.append("Head_down_1 slow");
-    strList_action.append("Head_down_2 fast");
-    strList_action.append("Head_down_3 slow");
-    strList_action.append("Head_down_4 very slow");
-    strList_action.append("Head_down_5 very slow");
-    strList_action.append("Head_down_7 slow to 0");
-    strList_action.append("Head_twist_1_loop");
-    strList_action.append("Head_up_1 +10 fast");
-    strList_action.append("Head_up_2 +10 slow");
-    strList_action.append("Head_up_3 to 30 slow");
-    strList_action.append("Head_up_4 to 15 slow");
-    strList_action.append("Head_up_5 +10 very slow");
-    strList_action.append("Head_up_6 +30 normal");
-    strList_action.append("Head_up_7 +10 fast");
-    strList_action.append("Music_1_loop");
-    strList_action.append("Nod_1");
-    strList_action.append("Shake_head_1 +5 slow left");
-    strList_action.append("Shake_head_2 -15 slow left");
-    strList_action.append("Shake_head_3 quick two sides");
-    strList_action.append("Shake_head_4_loop");
-    strList_action.append("Shake_head_5 slow two sides");
-    strList_action.append("Shake_head_6 -10 no shake");
-    strList_action.append("Turn_left_1 neck from + to 0");
-    strList_action.append("Turn_left_2 body 20");
-    strList_action.append("Turn_left_reverse_1 neck +20");
-    strList_action.append("Turn_left_reverse_2 body +15");
-    strList_action.append("Turn_right_1 neck 22.5");
-    strList_action.append("Turn_right_2 body 20");
-    strList_action.append("Turn_right_reverse_1 neck 22.5");
-    strList_action.append("Turn_right_reverse_2 body 20");
+    strList_action.append("TA_DictateL");
+    strList_action.append("DA_Full");
+    strList_action.append("EM_Mad02");
+    strList_action.append("BA_Nodhead");
+    strList_action.append("SP_Swim02");
+    strList_action.append("PE_RotateA");
+    strList_action.append("SP_Karate");
+    strList_action.append("RE_Cheer");
+    strList_action.append("SP_Climb");
+    strList_action.append("DA_Hit");
+    strList_action.append("TA_DictateR");
+    strList_action.append("SP_Bowling");
+    strList_action.append("SP_Walk");
+    strList_action.append("SA_Find");
+    strList_action.append("BA_TurnHead");
+    strList_action.append("SA_Toothache");
+    strList_action.append("SA_Sick");
+    strList_action.append("SA_Shocked");
+    strList_action.append("SP_Dumbbell");
+    strList_action.append("SA_Discover");
+    strList_action.append("RE_Thanks");
+    strList_action.append("PE_Changing");
+    strList_action.append("SP_HorizontalBar");
+    strList_action.append("WO_Traffic");
+    strList_action.append("RE_HiR");
+    strList_action.append("RE_HiL");
+    strList_action.append("DA_Brushteeth");
+    strList_action.append("RE_Encourage");
+    strList_action.append("RE_Request");
+    strList_action.append("PE_Brewing");
+    strList_action.append("RE_Change");
+    strList_action.append("PE_Phubbing");
+    strList_action.append("RE_Baoquan");
+    strList_action.append("SP_Cheer");
+    strList_action.append("RE_Ask");
+    strList_action.append("PE_Triangel");
+    strList_action.append("PE_Sorcery");
+    strList_action.append("PE_Sneak");
+    strList_action.append("PE_Singing");
+    strList_action.append("LE_Yoyo");
+    strList_action.append("SP_Throw");
+    strList_action.append("SP_RaceWalk");
+    strList_action.append("PE_ShakeFart");
+    strList_action.append("PE_RotateC");
+    strList_action.append("PE_RotateB");
+    strList_action.append("EM_Blush");
+    strList_action.append("PE_Puff");
+    strList_action.append("PE_PlayCello");
+    strList_action.append("PE_Pikachu");
 
     QStandardItemModel* ItemModel_action = new QStandardItemModel(this);
     nCount = strList_action.size();
@@ -257,6 +267,7 @@ void MainWindow::startThreads()
     thread_process_audio.start();
     thread_tablet.start();
     thread_whisper.start();
+    thread_ollama.start();
 }
 
 
@@ -293,7 +304,7 @@ MainWindow::~MainWindow()
     m_server_receive_audio->deleteLater();
 
     thread_tablet.b_WhileLoop = false;
-    thread_tablet.cond_var_process_image.notify_one();
+    thread_tablet.cond_var_tablet.notify_one();
     thread_tablet.wait();
     foreach (QTcpSocket* socket, connection_set4)
     {
@@ -304,10 +315,13 @@ MainWindow::~MainWindow()
     m_server_Tablet->deleteLater();
   
     thread_whisper.b_WhileLoop = false;
-    thread_whisper.cond_var_whisper.notify_one();
     thread_whisper.wait();
     if (audioSrc != nullptr)
       delete audioSrc;
+
+    thread_ollama.b_WhileLoop = false;
+    thread_ollama.cond_var_ollama.notify_one();
+    thread_ollama.wait();
 
     delete ui;
 }
@@ -456,7 +470,7 @@ void MainWindow::readSocket4()
     unique_ptr<char[]> pReadData = std::make_unique<char[]>(byteAvailable);
     qint64 readlength = socketStream.readRawData(pReadData.get(), byteAvailable);
     socketHandler4.add_data(pReadData.get(), byteAvailable);
-    thread_tablet.cond_var_process_image.notify_one();
+    thread_tablet.cond_var_tablet.notify_one();
 }
 
 void MainWindow::discardSocket()
@@ -528,14 +542,8 @@ void MainWindow::on_pushButton_speak_clicked()
 {
     //Get the content of the plainTextEdit_speak object, and send it to Robot.
     QString text = ui->plainTextEdit_speak->toPlainText();   //This line causes an exception. Why?
-    QString speed = ui->lineEdit_speed->text();
-    QString volume = ui->lineEdit_volume->text();
-    QString speak_pitch = ui->lineEdit_speak_pitch->text();
     RobotCommandProtobuf::ReportAndCommand report_data;
     report_data.set_speak_sentence(text.toStdString());
-    report_data.set_speed(speed.toInt());
-    report_data.set_volume(volume.toInt());
-    report_data.set_speak_pitch(speak_pitch.toInt());
     if( ui->checkBox_withface->isChecked() )
     {
         QModelIndex index = ui->listView_FacialExpressions->currentIndex();
@@ -556,17 +564,25 @@ void MainWindow::on_pushButton_voice_to_text_clicked()
     if( !bListening)
     {
         bListening = true;
+        if( thread_whisper.pOperatorBuffer != NULL)
+        {
+            thread_whisper.pOperatorBuffer->close();
+            delete thread_whisper.pOperatorBuffer;
+            thread_whisper.pOperatorBuffer = NULL;
+        }
         ui->pushButton_voice_to_text->setText("Stop(F2)");
-        thread_whisper.OperatorBuffer.open(QBuffer::WriteOnly);
-        thread_whisper.OperatorBuffer.reset();
-        audioSrc->start(&thread_whisper.OperatorBuffer);
+        thread_whisper.pOperatorBuffer = new QBuffer();
+        thread_whisper.pOperatorBuffer->open(QBuffer::WriteOnly);
+        thread_whisper.pOperatorBuffer->reset();
+        thread_whisper.bOperatorBuffer_open = true;
+        audioSrc->start(thread_whisper.pOperatorBuffer);
     }
     else
     {
         bListening = false;
         audioSrc->stop();
-        thread_whisper.OperatorBuffer.close();
-        thread_whisper.cond_var_whisper.notify_one();
+        thread_whisper.pOperatorBuffer->close();
+        thread_whisper.bOperatorBuffer_open = false;
         ui->pushButton_voice_to_text->setText("Voice to Text(F2)");
     }
 }
@@ -665,7 +681,7 @@ void MainWindow::on_listView_Sentence3_clicked(const QModelIndex &index)
 
 void MainWindow::timer_event()
 {
-    if(bNewoutFrame )
+    if(thread_process_image.bNewoutFrame )
     {
         //2024/12/30, Debug info: I use a timer to update the frame. On some low-end PC, 
         //although I call imshow, the window does not refresh unless there is a signal sent
@@ -674,19 +690,37 @@ void MainWindow::timer_event()
         //How to force the problem to update the window?
         cv::imshow("Image", outFrame);
         cv::waitKey(1);    //I miss this line so that Ubuntu does not update the window.
-        bNewoutFrame = false;
+        thread_process_image.bNewoutFrame = false;
 
         //update pitch and yaw
         ui->lineEdit_yaw_now->setText(QString::number(robot_status.yaw_degree));
         ui->lineEdit_pitch_now->setText(QString::number(robot_status.pitch_degree));
     }
 
-    if( thread_whisper.b_new_result )
+    if( thread_whisper.b_new_OperatorSentence )
     {
-        thread_whisper.b_new_result = false;
-        ui->plainTextEdit_speak->setPlainText(QString::fromStdString(thread_whisper.result));
+        thread_whisper.b_new_OperatorSentence = false;
+        ui->plainTextEdit_speak->setPlainText(QString::fromStdString(thread_whisper.strOperatorSentence));
     }
 
+    if( thread_whisper.b_new_RobotSentence )
+    {
+        thread_whisper.b_new_RobotSentence = false;
+        ui->plainTextEdit_received->setPlainText(QString::fromStdString(thread_whisper.strRobotSentence));
+    }
+
+    if( thread_whisper.b_RobotSentence_End )
+    {
+        thread_whisper.b_RobotSentence_End = false;
+        //send a command as the push button clicked
+        ui->pushButton_generate_response->click();
+    }
+
+    if( thread_ollama.b_new_LLM_response )
+    {
+        thread_ollama.b_new_LLM_response = false;
+        ui->plainTextEdit_LLM_response->setPlainText(QString::fromStdString(thread_ollama.strResponse));
+    }
     sendMessageManager.Send();
 }
 
@@ -855,13 +889,27 @@ void MainWindow::on_checkBox_stream_clicked(bool checked)
 {
     if( checked)
     {
+        thread_whisper.strFixed = "";
+        thread_whisper.setStartTime();
         bstream_recognition = true;
     }
     else
     {
         bstream_recognition = false;
     }
+}
 
-    cout<< "bstream_recognition: " << bstream_recognition << endl;
+void MainWindow::on_pushButton_generate_response_clicked()
+{
+    QString text = ui->plainTextEdit_received->toPlainText();
+    thread_whisper.ClearBuffer();
+    thread_ollama.strPrompt = text.toStdString();
+    thread_ollama.cond_var_ollama.notify_one();   
+}
+
+
+void MainWindow::on_pushButton_speak_2_clicked()
+{
+
 }
 

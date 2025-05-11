@@ -1,3 +1,0 @@
-file(REMOVE_RECURSE
-  "libMP_FORMATS.a"
-)

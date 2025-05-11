@@ -1,5 +1,5 @@
 {
-    "cmake.sourceDirectory": "/home/chihyuan/open_model_zoo/demos/ZenboNurseHelper/cpp",
+    "cmake.sourceDirectory": "/home/chihyuan/ZenboNurseHelper/Server3-Kebbi",
     "files.associations": {
         "array": "cpp",
         "atomic": "cpp",

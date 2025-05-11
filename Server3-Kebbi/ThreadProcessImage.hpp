@@ -38,6 +38,7 @@ public:
 
     void setTask(std::string task);
     void setProcessor(std::string processor);
+    bool bNewoutFrame = false;
 
 protected:
     void run();

@@ -260,6 +260,7 @@ int PoseLandmarks_to_RobotAction_Kebbi(std::vector<std::vector<std::array<float,
             if( pitch < -20 ) pitch = -20;
             if( pitch > 20 ) pitch = 20;
             message.set_pitch(pitch);
+            message.set_headspeed(100);     //I need to associate with UI later.
             status.pitch_degree = pitch;
         }
     }
