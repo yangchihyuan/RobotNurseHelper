@@ -27,7 +27,6 @@ RobotStatus robot_status;
 ActionOption action_option;
 
 cv::Mat outFrame;
-bool bNewoutFrame;
 
 ThreadProcessImage::ThreadProcessImage()
 {
@@ -664,8 +663,6 @@ void ThreadProcessImage::run()
 
             if( bCorrectlyDecoded)
             {
-                bNewoutFrame = true;
-
                 if(bSaveTransmittedImage)
                 {
                     //2025/1/7 How to change the timestamp to a meaningful filename?
@@ -713,6 +710,7 @@ void ThreadProcessImage::run()
                     {
                         if( libmp->WriteOutputImage(outFrame.data, libmp->GetOutputPacket("output_video") ) )
                         {
+                            bNewoutFrame = true;
                         }
                         else
                         {
@@ -724,6 +722,7 @@ void ThreadProcessImage::run()
                     {
                         if( libmp->WriteOutputImage_GPU(outFrame.data, libmp->GetOutputPacket("output_video")) )
                         {
+                            bNewoutFrame = true;
                         }
                         else
                         {
@@ -758,6 +757,7 @@ void ThreadProcessImage::run()
                             }
                             // Display the image with landmarks                    
                             inputImage.copyTo(outFrame);
+                            bNewoutFrame = true;
                         }
                     }
                     else if( Task == "Pose" )
@@ -776,6 +776,7 @@ void ThreadProcessImage::run()
                                 }
                             }
                             inputImage.copyTo(outFrame);
+                            bNewoutFrame = true;
                         }
                     }
                     else if( Task == "Holistic" )
@@ -862,6 +863,7 @@ void ThreadProcessImage::run()
                 else
                 {
                     inputImage.copyTo(outFrame);
+                    bNewoutFrame = true;
                 }
             }
         }

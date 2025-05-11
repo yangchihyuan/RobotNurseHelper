@@ -1,0 +1,1 @@
+python convert_hf_to_gguf.py ~/ZenboNurseHelper/LLM/Llama-3.1-TAIDE-LX-8B-Chat --outfile ~/ZenboNurseHelper/LLM/Llama-3.1-TAIDE-LX-8B-Chat/llama-3.1-TAIDE-LX-8B-Chat-f16.gguf --outtype f16

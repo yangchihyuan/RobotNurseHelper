@@ -1,17 +1,31 @@
 #include "ThreadWhisper.hpp"
 
+#include "common.h"     //for vad_simple
+
 ThreadWhisper::ThreadWhisper()
 {
-    n_samples_30s = (int)(1e-3*30000.0*WHISPER_SAMPLE_RATE);
     n_samples_keep = (int)(1e-3*params.keep_ms*WHISPER_SAMPLE_RATE);
     n_samples_len = (int)(1e-3*params.length_ms*WHISPER_SAMPLE_RATE);
     n_samples_step = (int) (1e-3*params.step_ms*WHISPER_SAMPLE_RATE);
-    pcmf32_new.resize(n_samples_30s, 0.0f);
+
+    //used for the stream mode
+    if( n_samples_step > 0)
+        pcmf32_new.resize(30 * WHISPER_SAMPLE_RATE, 0.0f);     //allocate a buffer for 30 seceonds
+}
+
+ThreadWhisper::~ThreadWhisper()
+{
+    if( pOperatorBuffer != NULL)
+    {
+        pOperatorBuffer->close();
+        delete pOperatorBuffer;
+        pOperatorBuffer = NULL;
+    }
 }
 
 void ThreadWhisper::run()
 {
-    bool use_vad = false;
+    const bool use_vad = n_samples_step <= 0; // sliding window mode uses VAD
     // initial whisper.cpp
     whisper_context_params cparams = whisper_context_default_params();
 
@@ -47,156 +61,151 @@ void ThreadWhisper::run()
     wparams.prompt_tokens    = params.no_context ? nullptr : prompt_tokens.data();
     wparams.prompt_n_tokens  = params.no_context ? 0       : prompt_tokens.size();
 
-//    whisper_full_params wparams = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
     wparams.translate = false;
     wparams.language = "zh";        // "zh" for Chinese, "en" for English
-//    wparams.n_threads = 4;
-//    wparams.no_context = true;
 
-    auto t_last  = std::chrono::high_resolution_clock::now();
-    const auto t_start = t_last;
     int n_iter = 0;
 
-    const int n_new_line = !use_vad ? std::max(1, params.length_ms / params.step_ms - 1) : 1; // number of steps to print new line
+    const int n_step_in_length = !use_vad ? std::max(1, params.length_ms / params.step_ms) : 1; // number of steps to print new line
 
     while(b_WhileLoop)
     {
-        //wait until being notified
-        std::unique_lock<std::mutex> lk(mtx);
-//        cond_var_whisper.wait(lk);
-
-        if(OperatorBuffer.size() > 0)
+        if(bOperatorBuffer_open && pOperatorBuffer->size() > 0)
         {
             //Why is the length /4? Because the input format is float rather than short.
             //But the recording format is short.
-            if (whisper_full(ctx, wparams, (float*)OperatorBuffer.buffer().constData(), OperatorBuffer.size() / 4) == 0)
+            if (whisper_full(ctx, wparams, (float*)pOperatorBuffer->buffer().constData(), pOperatorBuffer->size() / 4) == 0)
             {
-                result = "";
+                strOperatorSentence = "";
                 const int n_segments = whisper_full_n_segments(ctx);
                 for (int i = 0; i < n_segments; ++i)
-                    result += whisper_full_get_segment_text(ctx, i);
-                b_new_result = true;
+                    strOperatorSentence += whisper_full_get_segment_text(ctx, i);
+                b_new_OperatorSentence = true;
             }
         }
 
-        while (true && b_WhileLoop) {
-            if ((int) bufferlength >= n_samples_step) {
-                break;
-            }
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
-        }
-
-
-        //Get the data
-        mtx_whisper_buffer.lock();
-        int n_samples_new = bufferlength;
-
-        // take up to params.length_ms audio from previous iteration
-        int n_samples_take = std::min((int) pcmf32_old.size(), std::max(0, n_samples_keep + n_samples_len - n_samples_new));
-
-        pcmf32.resize(n_samples_new + n_samples_take);
-
-        for (int i = 0; i < n_samples_take; i++) {
-            pcmf32[i] = pcmf32_old[pcmf32_old.size() - n_samples_take + i];
-        }
-
-        memcpy(pcmf32.data() + n_samples_take, pcmf32_new.data(), n_samples_new*sizeof(float));
-
-        bufferlength = 0;
-        mtx_whisper_buffer.unlock();
-    
-        pcmf32_old = pcmf32;
-
-    // run the inference
-        if (whisper_full(ctx, wparams, pcmf32.data(), pcmf32.size()) != 0) {
-            fprintf(stderr, "failed to process audio\n");
-            return;
-        }
-
-        // print result;
+        if(bufferlength >= n_samples_step)
         {
-            if (!use_vad) {
-                printf("\33[2K\r");
+            //Get the data
+            mtx_whisper_buffer.lock();
+            int n_samples_new = bufferlength;
 
-                // print long empty line to clear the previous line
-                printf("%s", std::string(100, ' ').c_str());
+            //The term "take" means to reserve the old data
+            int n_samples_take = std::min((int) pcmf32_old.size(), std::max(0, n_samples_keep + n_samples_len - n_samples_new));
 
-                printf("\33[2K\r");
-            } else {
-                const int64_t t1 = (t_last - t_start).count()/1000000;
-                const int64_t t0 = std::max(0.0, t1 - pcmf32.size()*1000.0/WHISPER_SAMPLE_RATE);
+            pcmf32.resize(n_samples_new + n_samples_take);
 
-                printf("\n");
-                printf("### Transcription %d START | t0 = %d ms | t1 = %d ms\n", n_iter, (int) t0, (int) t1);
-                printf("\n");
+            //move data from pcmf32_old to pcmf32
+            for (int i = 0; i < n_samples_take; i++) {
+                pcmf32[i] = pcmf32_old[pcmf32_old.size() - n_samples_take + i];
+            }
+
+            memcpy(pcmf32.data() + n_samples_take, pcmf32_new.data(), n_samples_new*sizeof(float));
+
+            bufferlength = 0;
+            mtx_whisper_buffer.unlock();
+        
+            //copy, backup
+            pcmf32_old = pcmf32;
+
+            // run the inference
+            strTemp = "";
+            if (whisper_full(ctx, wparams, pcmf32.data(), pcmf32.size()) != 0) {
+                fprintf(stderr, "failed to process audio\n");
+                return;
             }
 
             const int n_segments = whisper_full_n_segments(ctx);
             for (int i = 0; i < n_segments; ++i) {
                 const char * text = whisper_full_get_segment_text(ctx, i);
-
-                if (params.no_timestamps) {
-                    printf("%s", text);
-                    fflush(stdout);
-
-//                        if (params.fname_out.length() > 0) {
-//                            fout << text;
-//                        }
-                } else {
-                    const int64_t t0 = whisper_full_get_segment_t0(ctx, i);
-                    const int64_t t1 = whisper_full_get_segment_t1(ctx, i);
-
-//                        std::string output = "[" + to_timestamp(t0, false) + " --> " + to_timestamp(t1, false) + "]  " + text;
-                    std::string output = text;
-
-                    if (whisper_full_get_segment_speaker_turn_next(ctx, i)) {
-                        output += " [SPEAKER_TURN]";
-                    }
-
-                    output += "\n";
-
-                    printf("%s", output.c_str());
-                    fflush(stdout);
-
-//                        if (params.fname_out.length() > 0) {
-//                            fout << output;
-//                        }
-                }
+                    strTemp += text;
             }
+            
+            std::cout << strTemp << std::endl;
 
-//                if (params.fname_out.length() > 0) {
-//                    fout << std::endl;
-//                }
+            ++n_iter;
+            
+            if (n_iter % n_step_in_length == 0) {
 
-            if (use_vad) {
-                printf("\n");
-                printf("### Transcription %d END\n", n_iter);
-            }
-        }
+                // keep part of the audio for next iteration to try to mitigate word boundary issues
+                pcmf32_old = std::vector<float>(pcmf32.end() - n_samples_keep, pcmf32.end());
 
-        ++n_iter;
+                // Add tokens of the last full length segment as the prompt
+                if (!params.no_context) {
+                    prompt_tokens.clear();
 
-        if (!use_vad && (n_iter % n_new_line) == 0) {
-            printf("\n");
-
-            // keep part of the audio for next iteration to try to mitigate word boundary issues
-            pcmf32_old = std::vector<float>(pcmf32.end() - n_samples_keep, pcmf32.end());
-
-            // Add tokens of the last full length segment as the prompt
-            if (!params.no_context) {
-                prompt_tokens.clear();
-
-                const int n_segments = whisper_full_n_segments(ctx);
-                for (int i = 0; i < n_segments; ++i) {
-                    const int token_count = whisper_full_n_tokens(ctx, i);
-                    for (int j = 0; j < token_count; ++j) {
-                        prompt_tokens.push_back(whisper_full_get_token_id(ctx, i, j));
+                    const int n_segments = whisper_full_n_segments(ctx);
+                    for (int i = 0; i < n_segments; ++i) {
+                        const int token_count = whisper_full_n_tokens(ctx, i);
+                        for (int j = 0; j < token_count; ++j) {
+                            prompt_tokens.push_back(whisper_full_get_token_id(ctx, i, j));
+                        }
                     }
                 }
+                strFixed += strTemp;
+            }
+            strRobotSentence = strFixed + strTemp;
+            b_new_RobotSentence = true;
+
+            //check whether there is an end of the voice.
+            bool b_vad_detected = ::vad_simple(pcmf32, WHISPER_SAMPLE_RATE, 1000, params.vad_thold, params.freq_thold, false);
+            if( b_vad_detected)
+            {
+                b_RobotSentence_End = true;
+                // send the sentence to the LLM, and reset the buffer
             }
         }
-        fflush(stdout);
+        else if( false )  //temporary disable the VAD
+        {
+            const auto t_now  = std::chrono::high_resolution_clock::now();
+            const auto t_diff = std::chrono::duration_cast<std::chrono::milliseconds>(t_now - t_last).count();
+
+            if (t_diff < 2000) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+                continue;
+            }
+
+            mtx_whisper_buffer.lock();
+            pcmf32_detect.resize(bufferlength);
+            memcpy(pcmf32_detect.data(), pcmf32_new.data(), bufferlength*sizeof(float));
+            bool b_vad_detected = ::vad_simple(pcmf32_detect, WHISPER_SAMPLE_RATE, 1000, params.vad_thold, params.freq_thold, false);
+            if( b_vad_detected)
+            {
+                // copy the new audio to the end of the buffer
+                int copy_length = min(bufferlength, n_samples_len);
+                pcmf32.resize(copy_length);
+                memcpy(pcmf32.data(), pcmf32_new.data()+bufferlength-copy_length, copy_length*sizeof(float));
+                bufferlength = 0;
+            }
+            mtx_whisper_buffer.unlock();
+            if( !b_vad_detected)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                continue;
+            }
+
+            t_last = t_now;
+
+            // run the inference
+            strRobotSentence = "";
+            if (whisper_full(ctx, wparams, pcmf32.data(), pcmf32.size()) != 0) {
+                fprintf(stderr, "failed to process audio\n");
+                return;
+            }
+
+            const int n_segments = whisper_full_n_segments(ctx);
+            for (int i = 0; i < n_segments; ++i) {
+                const char * text = whisper_full_get_segment_text(ctx, i);
+                    strRobotSentence += text;
+            }
+            b_new_RobotSentence = true;
+
+        }
+        else
+              std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+
 
     }
     cout << "Exit thread whisper while loop." << std::endl;
@@ -204,14 +213,21 @@ void ThreadWhisper::run()
 
 }
 
-vector<float> ThreadWhisper::QueueToVector(queue<float>& queue)
+void ThreadWhisper::setStartTime()
 {
-    vector<float> vec;
-    while (!queue.empty())
-    {
-        vec.push_back(queue.front());
-        queue.pop();
-    }
-    return vec;
+    t_last = std::chrono::high_resolution_clock::now();
+    t_start = t_last;
 }
 
+void ThreadWhisper::ClearBuffer()
+{
+    mtx_whisper_buffer.lock();
+    pcmf32.clear();
+    pcmf32_old.clear();
+    pcmf32_new.clear();
+    bufferlength = 0;
+    strRobotSentence = "";
+    strTemp = "";
+    strFixed = "";
+    mtx_whisper_buffer.unlock();
+}
