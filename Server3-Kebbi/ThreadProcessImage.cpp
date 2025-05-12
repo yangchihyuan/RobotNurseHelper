@@ -796,7 +796,7 @@ void ThreadProcessImage::run()
                             bLastLandmarksEffective = false;
                             if( action_option.move_mode != action_option.MOVE_MANUAL)
                             {
-                                RobotCommandProtobuf::ReportAndCommand message;
+                                RobotCommandProtobuf::KebbiCommand message;
                                 if( Task == "Face" )
                                 {
                                     FaceLandmarks_to_RobotAction_Kebbi(last_landmarks, robot_status, action_option, message);
@@ -834,7 +834,7 @@ void ThreadProcessImage::run()
                         if (duration.count() >= 3) {
                             if( action_option.move_mode != action_option.MOVE_MANUAL)
                             {
-                                RobotCommandProtobuf::ReportAndCommand message;
+                                RobotCommandProtobuf::KebbiCommand message;
                                 if( Task == "Face" )
                                 {
                                     FaceLandmarks_to_RobotAction_Kebbi(normalized_landmarks, robot_status, action_option, message);

@@ -63,6 +63,7 @@ void ThreadWhisper::run()
 
     wparams.translate = false;
     wparams.language = "zh";        // "zh" for Chinese, "en" for English
+    wparams.no_speech_thold = 0.6f; // silence threshold for VAD
 
     int n_iter = 0;
 

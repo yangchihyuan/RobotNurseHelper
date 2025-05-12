@@ -31,31 +31,20 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     QStringList strList;
-    strList.append("TA_DictateL");
-    strList.append("DA_Full");
-    strList.append("EM_Mad02");
-    strList.append("BA_Nodhead");
-    strList.append("SP_Swim02");
-    strList.append("PE_RotateA");
-    strList.append("SP_Karate");
-    strList.append("RE_Cheer");
-    strList.append("SP_Climb");
-    strList.append("DA_Hit");
-    strList.append("HIDEFACE");
-    strList.append("IMPATIENT");
-    strList.append("INNOCENT");
-    strList.append("INTERESTED");
-    strList.append("LAZY");
-    strList.append("PLEASED");
-    strList.append("PRETENDING");
-    strList.append("PROUD");
-    strList.append("QUESTIONING");
-    strList.append("SERIOUS");
-    strList.append("SHOCKED");
-    strList.append("SHY");
-    strList.append("SINGING");
-    strList.append("TIRED");
-    strList.append("WORRIED");
+    strList.append("TTS_AngerA");
+    strList.append("TTS_AngerB");
+    strList.append("TTS_Contempt");
+    strList.append("TTS_Disgust");
+    strList.append("TTS_Fear");
+    strList.append("TTS_JoyA");
+    strList.append("TTS_JoyB");
+    strList.append("TTS_JoyC");
+    strList.append("TTS_PeaceA");
+    strList.append("TTS_PeaceB");
+    strList.append("TTS_PeaceC");
+    strList.append("TTS_SadnessA");
+    strList.append("TTS_SadnessB");
+    strList.append("TTS_Surprise");
 
     QStandardItemModel* ItemModel = new QStandardItemModel(this);
     int nCount = strList.size();
@@ -542,15 +531,15 @@ void MainWindow::on_pushButton_speak_clicked()
 {
     //Get the content of the plainTextEdit_speak object, and send it to Robot.
     QString text = ui->plainTextEdit_speak->toPlainText();   //This line causes an exception. Why?
-    RobotCommandProtobuf::ReportAndCommand report_data;
-    report_data.set_speak_sentence(text.toStdString());
+    RobotCommandProtobuf::KebbiCommand command;
+    command.set_speak_sentence(text.toStdString());
     if( ui->checkBox_withface->isChecked() )
     {
         QModelIndex index = ui->listView_FacialExpressions->currentIndex();
-        report_data.set_face(index.row());
+        command.set_face(index.row());
     }
 
-    sendMessageManager.AddMessage(report_data);
+    sendMessageManager.AddMessage(command);
 
     QString action;
     action = "speak " + ui->plainTextEdit_speak->toPlainText();
@@ -600,14 +589,14 @@ void MainWindow::on_pushButton_movebody_clicked()
 
 void MainWindow::send_move_body_command(float x, float y, int degree, int speed)
 {
-    RobotCommandProtobuf::ReportAndCommand report_data;
+    RobotCommandProtobuf::KebbiCommand command;
     x *= 100;
-    report_data.set_x(static_cast<int>(x));
+//    command.set_x(static_cast<int>(x));
     y *= 100;
-    report_data.set_y(static_cast<int>(y));
-    report_data.set_degree(degree);
-    report_data.set_bodyspeed(speed);
-    sendMessageManager.AddMessage(report_data);
+//    command.set_y(static_cast<int>(y));
+//    command.set_degree(degree);
+//    command.set_bodyspeed(speed);
+    sendMessageManager.AddMessage(command);
 }
 
 void MainWindow::on_pushButton_movehead_clicked()
@@ -622,11 +611,11 @@ void MainWindow::on_pushButton_movehead_clicked()
 
 void MainWindow::send_move_head_command(int yaw, int pitch, int speed)
 {
-    RobotCommandProtobuf::ReportAndCommand report_data;
-    report_data.set_yaw(yaw);
-    report_data.set_pitch(pitch);
-    report_data.set_headspeed(speed);
-    sendMessageManager.AddMessage(report_data);
+    RobotCommandProtobuf::KebbiCommand command;
+    command.set_yaw(yaw);
+    command.set_pitch(pitch);
+    command.set_headspeed(speed);
+    sendMessageManager.AddMessage(command);
 
     ui->lineEdit_yaw_now->setText(QString::number(robot_status.yaw_degree));
     ui->lineEdit_pitch_now->setText(QString::number(robot_status.pitch_degree));
@@ -634,16 +623,16 @@ void MainWindow::send_move_head_command(int yaw, int pitch, int speed)
 
 void MainWindow::on_listView_FacialExpressions_doubleClicked(const QModelIndex &index)
 {
-    RobotCommandProtobuf::ReportAndCommand report_data;
-    report_data.set_face(index.row());
-    sendMessageManager.AddMessage(report_data);
+    RobotCommandProtobuf::KebbiCommand command;
+    command.set_face(index.row());
+    sendMessageManager.AddMessage(command);
 }
 
 void MainWindow::on_listView_PredefinedAction_doubleClicked(const QModelIndex &index)
 {
-    RobotCommandProtobuf::ReportAndCommand report_data;
-    report_data.set_predefined_action(index.row());
-    sendMessageManager.AddMessage(report_data);
+    RobotCommandProtobuf::KebbiCommand command;
+    command.set_motion(index.row());
+    sendMessageManager.AddMessage(command);
 }
 
 void MainWindow::on_listView_Sentence1_doubleClicked(const QModelIndex &index)
@@ -788,9 +777,9 @@ void MainWindow::comboBox_Processor_changed()
 
 void MainWindow::on_pushButton_stop_action_clicked()
 {
-    RobotCommandProtobuf::ReportAndCommand report_data;
-    report_data.set_stopmove(1);
-    sendMessageManager.AddMessage(report_data);
+    RobotCommandProtobuf::KebbiCommand command;
+    command.set_stopmove(1);
+    sendMessageManager.AddMessage(command);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
@@ -910,6 +899,17 @@ void MainWindow::on_pushButton_generate_response_clicked()
 
 void MainWindow::on_pushButton_speak_2_clicked()
 {
+    QString text = ui->plainTextEdit_LLM_response->toPlainText();
+    RobotCommandProtobuf::KebbiCommand command;
+    command.set_speak_sentence(text.toStdString());
+    sendMessageManager.AddMessage(command);
+}
 
+
+void MainWindow::on_pushButton_hideface_clicked()
+{
+    RobotCommandProtobuf::KebbiCommand command;
+    command.set_hideface(true);
+    sendMessageManager.AddMessage(command);
 }
 

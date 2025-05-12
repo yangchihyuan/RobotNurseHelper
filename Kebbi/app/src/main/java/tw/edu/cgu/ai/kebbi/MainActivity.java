@@ -215,6 +215,7 @@ public class MainActivity extends Activity {
         mRobot = new NuwaRobotAPI (this, id);
         mRobot.hideWindow(false);
         mRobot.controlAlwaysWakeup(true);
+        mRobot.hideFace();
         socketManager.mRobotAPI = mRobot;
         socketManager.startThreads();
 
@@ -486,6 +487,7 @@ public class MainActivity extends Activity {
             openCamera();
 
         StartAudioRecorder();
+
     }
 
     private void StartAudioRecorder()

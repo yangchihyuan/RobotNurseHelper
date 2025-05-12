@@ -31,12 +31,12 @@ void ThreadOllama::run()
             continue;
         }
         ollama::message message("user", strPrompt );
-        ollama::message system_message("system", "你是一個醫療用機器人，名字叫作Zenbo，回答要很潔短。");
+        ollama::message system_message("system", "你是一個醫療用機器人，名字叫作凱比，回答要很潔短。");
         ollama::messages messages = {system_message, message};
         ollama::response response = ollama::chat("taide", messages, options);
         strResponse = response.as_simple_string();
         b_new_LLM_response = true;
     }
-    cout << "Exit thread Ollama while loop." << std::endl;
+    std::cout << "Exit thread Ollama while loop." << std::endl;
 
 }

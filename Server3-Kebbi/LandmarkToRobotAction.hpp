@@ -8,20 +8,20 @@
 int FaceLandmarks_to_ZenboAction(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
     RobotStatus &status, 
     ActionOption action_option,    
-    RobotCommandProtobuf::ReportAndCommand &message);
+    RobotCommandProtobuf::KebbiCommand &message);
 
 int PoseLandmarks_to_ZenboAction(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
     RobotStatus &status, 
     ActionOption action_option,    
-    RobotCommandProtobuf::ReportAndCommand &message);
+    RobotCommandProtobuf::KebbiCommand &message);
     
 int FaceLandmarks_to_RobotAction_Kebbi(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
     RobotStatus &status, 
     ActionOption action_option,    
-    RobotCommandProtobuf::ReportAndCommand &message);
+    RobotCommandProtobuf::KebbiCommand &message);
 
 int PoseLandmarks_to_RobotAction_Kebbi(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
     RobotStatus &status, 
     ActionOption action_option,    
-    RobotCommandProtobuf::ReportAndCommand &message);
+    RobotCommandProtobuf::KebbiCommand &message);
     

@@ -6,11 +6,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 
-//import com.asus.robotframework.API.ExpressionConfig;
-//import com.asus.robotframework.API.MotionControl;
-//import com.asus.robotframework.API.RobotAPI;
-//import com.asus.robotframework.API.RobotFace;
-//import com.asus.robotframework.API.SpeakConfig;
 import com.nuwarobotics.service.agent.NuwaRobotAPI;
 
 import java.io.BufferedInputStream;
@@ -21,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import ZenboNurseHelperProtobuf.ServerSend;
+import RobotCommandProtobuf.RobotCommand;
 
 public class SocketManager {
     public String mServerURL;
@@ -48,7 +43,7 @@ public class SocketManager {
     String endString = new String("EndOfAMessage");
 
     public NuwaRobotAPI mRobotAPI;
-    ArrayList<ServerSend.ReportAndCommand> ArrayListCommand = new ArrayList<ServerSend.ReportAndCommand>();
+    ArrayList<RobotCommand.KebbiCommand> ArrayListCommand = new ArrayList<RobotCommand.KebbiCommand>();
     Converter converter;
 
     public boolean bAutoReconnection = true;
@@ -87,75 +82,56 @@ public class SocketManager {
                                     }
                                     effective_length = remaining;
 
-                                    ServerSend.ReportAndCommand report = ServerSend.ReportAndCommand.parseFrom(slice);
+                                    RobotCommand.KebbiCommand command = RobotCommand.KebbiCommand.parseFrom(slice);
                                     Log.d("Debug", "Receive a message");
-                                    if (report.hasX()) {
-                                        Log.d("move body", report.toString());
-//                                        int serial = mRobotAPI.motion.moveBody(((float) report.getX()) / 100.0f, ((float) report.getY()) / 100.0f, report.getDegree());
-                                        //The serial number will appear in the callback function.
-                                    }
-                                    //rotate only
-                                    if (!report.hasX() && !report.hasY() && report.hasDegree()) {
-                                        Log.d("rotate body", report.toString());
-//                                        int serial = mRobotAPI.motion.moveBody(0.0f, 0.0f, report.getDegree());
-                                        //The serial number will appear in the callback function.
-                                    }
-                                    if (report.hasPitch()) {
-                                        Log.d("Pitch degree", "Pitch degree " + Integer.toString( report.getPitch()));
+                                    if (command.hasPitch()) {
+                                        Log.d("Pitch degree", "Pitch degree " + Integer.toString( command.getPitch()));
                                         float neckspeed = 40f;      //default
-                                        if( report.hasHeadspeed())
+                                        if( command.hasHeadspeed())
                                         {
-                                            neckspeed = (float) report.getHeadspeed();
+                                            neckspeed = (float) command.getHeadspeed();
                                         }
-                                        mRobotAPI.ctlMotor(1,(float)report.getPitch(), neckspeed);
+                                        mRobotAPI.ctlMotor(1,(float)command.getPitch(), neckspeed);
                                     }
-                                    if (report.hasYaw()) {
-                                        Log.d("Yaw degree", "Yaw degree " + Integer.toString( report.getYaw()));
+                                    if (command.hasYaw()) {
+                                        Log.d("Yaw degree", "Yaw degree " + Integer.toString( command.getYaw()));
                                         float neckspeed = 40f;          //default
-                                        if( report.hasHeadspeed())
+                                        if( command.hasHeadspeed())
                                         {
-                                            neckspeed = (float) report.getHeadspeed();
+                                            neckspeed = (float) command.getHeadspeed();
                                         }
-                                        mRobotAPI.ctlMotor(2, (float) report.getYaw(), neckspeed);
+                                        mRobotAPI.ctlMotor(2, (float) command.getYaw(), neckspeed);
                                     }
 
-                                    if (report.hasFace() && report.hasSpeakSentence()) {
-                                        Log.d("report", report.toString());
-                                        /*
-                                        RobotFace newFace = converter.FaceIndexToRobotFace(report.getFace());
-                                        ExpressionConfig config = new ExpressionConfig();
-                                        config.volume(report.getVolume()).speed(report.getSpeed()).pitch(report.getSpeakPitch());
-                                        mRobotAPI.robot.setExpression(newFace, report.getSpeakSentence(), config);
+                                    if (command.hasSpeakSentence())
+                                        mRobotAPI.startTTS(command.getSpeakSentence());
 
-                                         */
-                                    } else if (report.hasSpeakSentence()) {
-                                        /*
-                                        Log.d("Speak Sentence", report.getSpeakSentence());
-                                        SpeakConfig config = new SpeakConfig();
-                                        config.volume(report.getVolume()).speed(report.getSpeed()).pitch(report.getSpeakPitch());
-                                        mRobotAPI.robot.speak(report.getSpeakSentence(), config);
-                                        */
-                                        mRobotAPI.startTTS(report.getSpeakSentence());
-                                    } else if (report.hasFace()) {
-                                        /*
-                                        RobotFace newFace = converter.FaceIndexToRobotFace(report.getFace());
-                                        mRobotAPI.robot.setExpression(newFace);
-
-                                         */
+                                    if (command.hasFace()) {
+                                        Log.d("Debug", "Receive a face command");
+                                        mRobotAPI.showFace();
+                                        //mRobotAPI.playFaceAnimation(command.getFace());    //it does not work.
+                                        String[] ttsArray = {"TTS_AngerA", "TTS_AngerB", "TTS_Contempt", "TTS_Disgust", "TTS_Fear", "TTS_JoyA", "TTS_JoyB", "TTS_JoyC", "TTS_PeaceA", "TTS_PeaceB", "TTS_PeaceC", "TTS_SadnessA", "TTS_SadnessB", "TTS_Surprise"};
+                                        mRobotAPI.playFaceAnimation(ttsArray[command.getFace()]);     //it works
+                                    }
+                                    if( command.hasHideface() && command.getHideface() == true)
+                                    {
+                                        //I need both commands to hide the face and enable my own activity.
+                                        mRobotAPI.hideFace();
+                                        mRobotAPI.hideWindow(false);
                                     }
 
-                                    if (report.hasStopmove()) {
+                                    if (command.hasStopmove()) {
                                         /*
                                         mRobotAPI.motion.stopMoving();   //this function does not work.
 
                                          */
                                     }
-                                    if (report.hasPredefinedAction()) {
-                                        //it will still return a serial, but for loop action, will the onResult() in the CallBack be called?
-                                        /*
-                                        int serial = mRobotAPI.utility.playAction(converter.PredefinedActionIndexToPlayAction(report.getPredefinedAction()));
-
-                                         */
+                                    if (command.hasMotion()) {
+                                        String[] motionArray = {"666_TA_DictateL", "666_DA_Full", "666_EM_Mad02", "666_BA_Nodhead",
+                                                "666_SP_Swim02", "666_PE_RotateA", "666_SP_Karate", "666_RE_Cheer", "666_SP_Climb", "666_DA_Hit",
+                                                "666_TA_DictateR", "666_SP_Bowling", "666_SP_Walk", "666_SA_Find", "666_BA_TurnHead", "666_SA_Toothache"};
+                                        Log.d("Debug", "Receive an action command");
+                                        mRobotAPI.motionPlay(motionArray[command.getMotion()], true);
                                     }
                                 }
                             } else {

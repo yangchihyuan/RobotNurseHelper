@@ -21,7 +21,7 @@ void SendMessageManager::Send()
             if( pSocket->isValid())
             {
                 QDataStream socketStream(pSocket);
-                RobotCommandProtobuf::ReportAndCommand message = mQueue.front();
+                RobotCommandProtobuf::KebbiCommand message = mQueue.front();
                 mQueue.pop();
                 str_results_len = message.ByteSizeLong();
                 message.SerializeToArray(str_results,message.ByteSizeLong());
@@ -48,7 +48,7 @@ void SendMessageManager::Send()
     }
 }
 
-void SendMessageManager::AddMessage(RobotCommandProtobuf::ReportAndCommand message)
+void SendMessageManager::AddMessage(RobotCommandProtobuf::KebbiCommand message)
 {
     mutex_message_buffer.lock();
     cout << "Add a Message to mQueue" << endl;
