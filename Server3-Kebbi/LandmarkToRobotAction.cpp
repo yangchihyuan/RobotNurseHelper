@@ -6,7 +6,7 @@
 int FaceLandmarks_to_ZenboAction(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
     RobotStatus &status, 
     ActionOption action_option,
-    RobotCommandProtobuf::ReportAndCommand &message)
+    RobotCommandProtobuf::KebbiCommand &message)
 {
     //If there are multiple faces, find the largest one.
     int num_faces = normalized_landmarks.size();
@@ -45,7 +45,8 @@ int FaceLandmarks_to_ZenboAction(std::vector<std::vector<std::array<float, 3>>> 
         {
             float theta = -(x-0.5)*62.5;
             float pitch_shift = -(y-0.5)*48.9;
-            message.set_degree(static_cast<int>(theta));
+            //currently, Kebbi has no degree
+//            message.set_degree(static_cast<int>(theta));
             message.set_yaw(0);
             status.yaw_degree = 0;
 
@@ -80,7 +81,7 @@ int FaceLandmarks_to_ZenboAction(std::vector<std::vector<std::array<float, 3>>> 
 int PoseLandmarks_to_ZenboAction(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
     RobotStatus &status, 
     ActionOption action_option,
-    RobotCommandProtobuf::ReportAndCommand &message)
+    RobotCommandProtobuf::KebbiCommand &message)
 {
     //If there are multiple faces, find the largest one.
     int num_poses = normalized_landmarks.size();
@@ -103,7 +104,7 @@ int PoseLandmarks_to_ZenboAction(std::vector<std::vector<std::array<float, 3>>> 
         {
             float theta = -(x-0.5)*62.5;
             float pitch_shift = -(y-0.5)*48.9;
-            message.set_degree(static_cast<int>(theta));
+//            message.set_degree(static_cast<int>(theta));
             message.set_yaw(0);
             status.yaw_degree = 0;
 
@@ -138,7 +139,7 @@ int PoseLandmarks_to_ZenboAction(std::vector<std::vector<std::array<float, 3>>> 
 int FaceLandmarks_to_RobotAction_Kebbi(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
     RobotStatus &status, 
     ActionOption action_option,
-    RobotCommandProtobuf::ReportAndCommand &message)
+    RobotCommandProtobuf::KebbiCommand &message)
 {
     //If there are multiple faces, find the largest one.
     int num_faces = normalized_landmarks.size();
@@ -177,7 +178,7 @@ int FaceLandmarks_to_RobotAction_Kebbi(std::vector<std::vector<std::array<float,
         {
             float theta = -(x-0.5)*62.5;
             float pitch_shift = (y-0.5)*48.9;         //Kebbi's postive pitch degreee is downward
-            message.set_degree(static_cast<int>(theta));
+//            message.set_degree(static_cast<int>(theta));
             message.set_yaw(0);
             status.yaw_degree = 0;
 
@@ -212,7 +213,7 @@ int FaceLandmarks_to_RobotAction_Kebbi(std::vector<std::vector<std::array<float,
 int PoseLandmarks_to_RobotAction_Kebbi(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
     RobotStatus &status, 
     ActionOption action_option,
-    RobotCommandProtobuf::ReportAndCommand &message)
+    RobotCommandProtobuf::KebbiCommand &message)
 {
     //If there are multiple faces, find the largest one.
     int num_poses = normalized_landmarks.size();
@@ -235,7 +236,7 @@ int PoseLandmarks_to_RobotAction_Kebbi(std::vector<std::vector<std::array<float,
         {
             float theta = -(x-0.5)*62.5;
             float pitch_shift = (y-0.5)*48.9;      //Kebbi's postive pitch degreee is downward
-            message.set_degree(static_cast<int>(theta));
+//            message.set_degree(static_cast<int>(theta));
             message.set_yaw(0);
             status.yaw_degree = 0;
 

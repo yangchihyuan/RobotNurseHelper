@@ -18,14 +18,14 @@ class SendMessageManager
 {
 public:
     QTcpSocket *pSocket = NULL;
-    void AddMessage(RobotCommandProtobuf::ReportAndCommand);
+    void AddMessage(RobotCommandProtobuf::KebbiCommand);
     void Send();
 
 protected:
     char str_results[4096];
     int str_results_len;
     mutex mutex_message_buffer;
-    queue<RobotCommandProtobuf::ReportAndCommand> mQueue;
+    queue<RobotCommandProtobuf::KebbiCommand> mQueue;
 };
 
 #endif

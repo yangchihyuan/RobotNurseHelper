@@ -179,7 +179,7 @@
       <x>340</x>
       <y>30</y>
       <width>121</width>
-      <height>451</height>
+      <height>251</height>
      </rect>
     </property>
    </widget>
@@ -765,6 +765,19 @@
     </property>
     <property name="text">
      <string>Generate</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_hideface">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>290</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Hide face</string>
     </property>
    </widget>
   </widget>

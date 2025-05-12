@@ -16,14 +16,14 @@ using namespace std;
 struct whisper_params {
     int32_t n_threads  = std::min(4, (int32_t) std::thread::hardware_concurrency());    //this does not matter because I need to use GPU to run it.
     int32_t step_ms    = 500;
-//    int32_t step_ms    = -1; // -1 means sliding window mode
     int32_t length_ms  = 5000;
     int32_t keep_ms    = 1000;  //whisper.cpp requests at least 1 second to recognize the audio
     int32_t max_tokens = 32;
     int32_t audio_ctx  = 0;
     int32_t beam_size  = 8;
 
-    float vad_thold    = 0.6f;  
+//    float vad_thold    = 0.6f;  
+    float vad_thold    = 0.8f;  
     float freq_thold   = 100.0f;
 
     bool translate     = false;

@@ -81,7 +81,7 @@ private:
 
 signals:
     void newMessage(QString);   //where is the connect for this signal?
-    void addSendCommandMessage(RobotCommandProtobuf::ReportAndCommand);
+    void addSendCommandMessage(RobotCommandProtobuf::KebbiCommand);
 
 private slots:
     void newConnection();
@@ -131,5 +131,6 @@ private slots:
     void on_checkBox_stream_clicked(bool checked);
     void on_pushButton_generate_response_clicked();
     void on_pushButton_speak_2_clicked();
+    void on_pushButton_hideface_clicked();
 };
 #endif // MAINWINDOW_H

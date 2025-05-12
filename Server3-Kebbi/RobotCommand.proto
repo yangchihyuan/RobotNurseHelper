@@ -2,73 +2,32 @@ syntax = "proto2";
 
 package RobotCommandProtobuf;
 
-message ReportAndCommand {
-  optional uint64 time_stamp = 1;
-  optional int32 pitch_degree = 2;
-
-  message OpenPosePose{
-
-    required int64 score = 1;
-
-    message OpenPoseCoordinate{
-      required int64 x = 1;
-      required int64 y = 2;
-      required int64 valid = 3;
-    }
-
-    repeated OpenPoseCoordinate coord = 2;
-  }
-
-  repeated OpenPosePose pose = 3;
-  optional string speak_sentence = 4;
-  optional int32 x = 5;
-  optional int32 y = 6;
-  optional int32 degree = 7;
-  optional int32 bodyspeed = 8;
-  optional int32 yaw = 9;
-  optional int32 pitch = 10;
-  optional int32 headspeed = 11;
-  optional int32 face = 12;
+message KebbiCommand {
+  optional string speak_sentence = 1;
+  optional int32 yaw = 2;
+  optional int32 pitch = 3;
+  optional int32 headspeed = 4;
+  optional int32 face = 5;
+  optional bool hideface = 6;
 
   enum FaceEnum{
-    ACTIVE = 0;
-    AWARE_LEFT = 1;
-    AWARE_RIGHT = 2;
-    CONFIDENT = 3;
-    DEFAULT = 4;
-    DEFAULT_STILL = 5;
-    DOUBTING = 6;
-    EXPECTING = 7;
-    HAPPY = 8;
-    HELPLESS = 9;
-    HIDEFACE = 10;
-    IMPATIENT = 11;
-    INNOCENT = 12;
-    INTERESTED = 13;
-    LAZY = 14;
-    PLEASED = 15;
-    PRETENDING = 16;
-    PROUD = 17;
-    QUESTIONING = 18;
-    SERIOUS = 19;
-    SHOCKED = 20;
-    SHY = 21;
-    SINGING = 22;
-    TIRED = 23;
-    WORRIED = 24;
+    TTS_AngerA = 0;
+    TTS_AngerB = 1;
+    TTS_Contempt = 2;
+    TTS_Disgust = 3;
+    TTS_Fear = 4;
+    TTS_JoyA = 5;
+    TTS_JoyB = 6;
+    TTS_JoyC = 7;
+    TTS_PeaceA = 8;
+    TTS_PeaceB = 9;
+    TTS_PeaceC = 10;
+    TTS_SadnessA = 11;
+    TTS_SadnessB = 12;
+    TTS_Surprise = 13;
     }
 
-  optional int32 speed = 13;
-  optional int32 volume = 14;
-  optional int32 speak_pitch = 15;
-
-  enum MoveModeEnum{
-        Manual = 0;
-        LookForPeople = 1;
-    }
-
-  optional MoveModeEnum movemode = 16;
-  optional int32 stopmove = 17;
-  optional int32 predefined_action = 18;
+  optional int32 stopmove = 7;
+  optional int32 motion = 8;
 }
 
