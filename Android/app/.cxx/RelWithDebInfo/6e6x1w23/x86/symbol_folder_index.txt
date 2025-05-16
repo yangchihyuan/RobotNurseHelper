@@ -1,1 +1,0 @@
-/home/chihyuan/ZenboNurseHelper/Android/app/build/intermediates/cxx/RelWithDebInfo/6e6x1w23/obj/x86

@@ -55,6 +55,6 @@ message RobotCommand {
   optional MoveModeEnum movemode = 15;
   optional int32 stopmove = 16;
   optional int32 predefined_action = 17;
-  optional bool hideface = 18;
+  optional int32 hideface = 18;
 }
 

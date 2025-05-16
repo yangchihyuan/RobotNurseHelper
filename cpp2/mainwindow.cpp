@@ -248,6 +248,8 @@ MainWindow::MainWindow(QWidget *parent)
     thread_process_image.pSocketHandler = &socketHandler1;
     thread_tablet.pSocketHandler = &socketHandler4;
     thread_tablet.pSendMessageManager = &sendMessageManager;
+
+    thread_ollama.str_system_message = "你是一個醫療用機器人，名字叫作Zenbo，回答要很潔短。";
 }
 
 void MainWindow::startThreads()
@@ -907,8 +909,14 @@ void MainWindow::on_pushButton_generate_response_clicked()
 void MainWindow::on_pushButton_speak_2_clicked()
 {
     QString text = ui->plainTextEdit_LLM_response->toPlainText();
+    QString speed = ui->lineEdit_speed->text();
+    QString volume = ui->lineEdit_volume->text();
+    QString speak_pitch = ui->lineEdit_speak_pitch->text();
     RobotCommandProtobuf::RobotCommand command;
     command.set_speak_sentence(text.toStdString());
+    command.set_speed(speed.toInt());
+    command.set_volume(volume.toInt());
+    command.set_speak_pitch(speak_pitch.toInt());
     sendMessageManager.AddMessage(command);
 }
 
@@ -916,7 +924,7 @@ void MainWindow::on_pushButton_speak_2_clicked()
 void MainWindow::on_pushButton_hideface_clicked()
 {
     RobotCommandProtobuf::RobotCommand command;
-    command.set_hideface(true);
+    command.set_hideface(1);
     sendMessageManager.AddMessage(command);
 }
 
