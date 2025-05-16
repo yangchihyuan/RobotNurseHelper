@@ -258,7 +258,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>30</string>
+     <string>0</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="lineEdit_headspeed">
@@ -404,14 +404,14 @@
    <widget class="QLabel" name="label_22">
     <property name="geometry">
      <rect>
-      <x>510</x>
+      <x>470</x>
       <y>10</y>
       <width>91</width>
       <height>17</height>
      </rect>
     </property>
     <property name="text">
-     <string>Action</string>
+     <string>Motion</string>
     </property>
    </widget>
    <widget class="QPlainTextEdit" name="plainTextEdit_SentCommands">

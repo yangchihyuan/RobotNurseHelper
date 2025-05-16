@@ -21,7 +21,7 @@ void SendMessageManager::Send()
             if( pSocket->isValid())
             {
                 QDataStream socketStream(pSocket);
-                ZenboNurseHelperProtobuf::ReportAndCommand message = mQueue.front();
+                RobotCommandProtobuf::RobotCommand message = mQueue.front();
                 mQueue.pop();
                 str_results_len = message.ByteSizeLong();
                 message.SerializeToArray(str_results,message.ByteSizeLong());
@@ -48,7 +48,7 @@ void SendMessageManager::Send()
     }
 }
 
-void SendMessageManager::AddMessage(ZenboNurseHelperProtobuf::ReportAndCommand message)
+void SendMessageManager::AddMessage(RobotCommandProtobuf::RobotCommand message)
 {
     mutex_message_buffer.lock();
     cout << "Add a Message to mQueue" << endl;

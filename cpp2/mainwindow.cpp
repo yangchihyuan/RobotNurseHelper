@@ -6,18 +6,18 @@
 #include <QModelIndex>
 #include <QAbstractItemView>
 #include <iostream>
-#include "ServerSend.pb.h"
+#include "RobotCommand.pb.h"
 #include <QTimer>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <QScrollBar>
 #include "RobotStatus.hpp"
 #include "ActionOption.hpp"
+#include "ThreadOllama.hpp"
 
 extern std::mutex gMutex_audio_buffer;
 extern std::queue<short> AudioBuffer;
 extern std::condition_variable cond_var_audio;
-extern bool bNewoutFrame;
 extern cv::Mat outFrame;
 extern int PortAudio_stop_and_terminate();
 extern bool gbPlayAudio;
@@ -257,6 +257,7 @@ void MainWindow::startThreads()
     thread_process_audio.start();
     thread_tablet.start();
     thread_whisper.start();
+    thread_ollama.start();
 }
 
 
@@ -293,7 +294,7 @@ MainWindow::~MainWindow()
     m_server_receive_audio->deleteLater();
 
     thread_tablet.b_WhileLoop = false;
-    thread_tablet.cond_var_process_image.notify_one();
+    thread_tablet.cond_var_tablet.notify_one();
     thread_tablet.wait();
     foreach (QTcpSocket* socket, connection_set4)
     {
@@ -304,10 +305,13 @@ MainWindow::~MainWindow()
     m_server_Tablet->deleteLater();
   
     thread_whisper.b_WhileLoop = false;
-    thread_whisper.cond_var_whisper.notify_one();
     thread_whisper.wait();
     if (audioSrc != nullptr)
       delete audioSrc;
+
+    thread_ollama.b_WhileLoop = false;
+    thread_ollama.cond_var_ollama.notify_one();
+    thread_ollama.wait();
 
     delete ui;
 }
@@ -416,11 +420,24 @@ void MainWindow::readSocket3()
     for( long long i = 0; i<length/2 ; i++)
     {
         short value = *(pShort + i);
-        AudioBuffer.push(value);
+        AudioBuffer.push(value);       //This AudioBuffer is used to play audio on the server
     }
     gMutex_audio_buffer.unlock();
 
-//    std::cout << "AudioBuffer.size()" << AudioBuffer.size() << std::endl;
+    if( bstream_recognition)
+    {
+        thread_whisper.mtx_whisper_buffer.lock();
+        for( long long i = 0; i<length/2 ; i++)
+        {
+            short value = *(pShort + i);
+            thread_whisper.pcmf32_new[i+thread_whisper.bufferlength] = ((float)value / 32768.0f);
+        }
+        thread_whisper.bufferlength += length/2;
+        thread_whisper.mtx_whisper_buffer.unlock();
+//        std::cout << "thread_whisper.pcmf32_queue size: " << thread_whisper.pcmf32_queue.size() << std::endl;  
+    }
+
+
     if( AudioBuffer.size() >= 1024)
         cond_var_audio.notify_one();
 
@@ -443,7 +460,7 @@ void MainWindow::readSocket4()
     unique_ptr<char[]> pReadData = std::make_unique<char[]>(byteAvailable);
     qint64 readlength = socketStream.readRawData(pReadData.get(), byteAvailable);
     socketHandler4.add_data(pReadData.get(), byteAvailable);
-    thread_tablet.cond_var_process_image.notify_one();
+    thread_tablet.cond_var_tablet.notify_one();
 }
 
 void MainWindow::discardSocket()
@@ -518,18 +535,18 @@ void MainWindow::on_pushButton_speak_clicked()
     QString speed = ui->lineEdit_speed->text();
     QString volume = ui->lineEdit_volume->text();
     QString speak_pitch = ui->lineEdit_speak_pitch->text();
-    ZenboNurseHelperProtobuf::ReportAndCommand report_data;
-    report_data.set_speak_sentence(text.toStdString());
-    report_data.set_speed(speed.toInt());
-    report_data.set_volume(volume.toInt());
-    report_data.set_speak_pitch(speak_pitch.toInt());
+    RobotCommandProtobuf::RobotCommand command;
+    command.set_speak_sentence(text.toStdString());
+    command.set_speed(speed.toInt());
+    command.set_volume(volume.toInt());
+    command.set_speak_pitch(speak_pitch.toInt());
     if( ui->checkBox_withface->isChecked() )
     {
         QModelIndex index = ui->listView_FacialExpressions->currentIndex();
-        report_data.set_face(index.row());
+        command.set_face(index.row());
     }
 
-    sendMessageManager.AddMessage(report_data);
+    sendMessageManager.AddMessage(command);
 
     QString action;
     action = "speak " + ui->plainTextEdit_speak->toPlainText();
@@ -543,17 +560,25 @@ void MainWindow::on_pushButton_voice_to_text_clicked()
     if( !bListening)
     {
         bListening = true;
+        if( thread_whisper.pOperatorBuffer != NULL)
+        {
+            thread_whisper.pOperatorBuffer->close();
+            delete thread_whisper.pOperatorBuffer;
+            thread_whisper.pOperatorBuffer = NULL;
+        }
         ui->pushButton_voice_to_text->setText("Stop(F2)");
-        thread_whisper.buffer.open(QBuffer::WriteOnly);
-        thread_whisper.buffer.reset();
-        audioSrc->start(&thread_whisper.buffer);
+        thread_whisper.pOperatorBuffer = new QBuffer();
+        thread_whisper.pOperatorBuffer->open(QBuffer::WriteOnly);
+        thread_whisper.pOperatorBuffer->reset();
+        thread_whisper.bOperatorBuffer_open = true;
+        audioSrc->start(thread_whisper.pOperatorBuffer);
     }
     else
     {
         bListening = false;
         audioSrc->stop();
-        thread_whisper.buffer.close();
-        thread_whisper.cond_var_whisper.notify_one();
+        thread_whisper.pOperatorBuffer->close();
+        thread_whisper.bOperatorBuffer_open = false;
         ui->pushButton_voice_to_text->setText("Voice to Text(F2)");
     }
 }
@@ -571,14 +596,14 @@ void MainWindow::on_pushButton_movebody_clicked()
 
 void MainWindow::send_move_body_command(float x, float y, int degree, int speed)
 {
-    ZenboNurseHelperProtobuf::ReportAndCommand report_data;
+    RobotCommandProtobuf::RobotCommand command;
     x *= 100;
-    report_data.set_x(static_cast<int>(x));
+    command.set_x(static_cast<int>(x));
     y *= 100;
-    report_data.set_y(static_cast<int>(y));
-    report_data.set_degree(degree);
-    report_data.set_bodyspeed(speed);
-    sendMessageManager.AddMessage(report_data);
+    command.set_y(static_cast<int>(y));
+    command.set_degree(degree);
+    command.set_bodyspeed(speed);
+    sendMessageManager.AddMessage(command);
 }
 
 void MainWindow::on_pushButton_movehead_clicked()
@@ -593,11 +618,11 @@ void MainWindow::on_pushButton_movehead_clicked()
 
 void MainWindow::send_move_head_command(int yaw, int pitch, int speed)
 {
-    ZenboNurseHelperProtobuf::ReportAndCommand report_data;
-    report_data.set_yaw(yaw);
-    report_data.set_pitch(pitch);
-    report_data.set_headspeed(speed);
-    sendMessageManager.AddMessage(report_data);
+    RobotCommandProtobuf::RobotCommand command;
+    command.set_yaw(yaw);
+    command.set_pitch(pitch);
+    command.set_headspeed(speed);
+    sendMessageManager.AddMessage(command);
 
     ui->lineEdit_yaw_now->setText(QString::number(robot_status.yaw_degree));
     ui->lineEdit_pitch_now->setText(QString::number(robot_status.pitch_degree));
@@ -605,16 +630,16 @@ void MainWindow::send_move_head_command(int yaw, int pitch, int speed)
 
 void MainWindow::on_listView_FacialExpressions_doubleClicked(const QModelIndex &index)
 {
-    ZenboNurseHelperProtobuf::ReportAndCommand report_data;
-    report_data.set_face(index.row());
-    sendMessageManager.AddMessage(report_data);
+    RobotCommandProtobuf::RobotCommand command;
+    command.set_face(index.row());
+    sendMessageManager.AddMessage(command);
 }
 
 void MainWindow::on_listView_PredefinedAction_doubleClicked(const QModelIndex &index)
 {
-    ZenboNurseHelperProtobuf::ReportAndCommand report_data;
-    report_data.set_predefined_action(index.row());
-    sendMessageManager.AddMessage(report_data);
+    RobotCommandProtobuf::RobotCommand command;
+    command.set_predefined_action(index.row());
+    sendMessageManager.AddMessage(command);
 }
 
 void MainWindow::on_listView_Sentence1_doubleClicked(const QModelIndex &index)
@@ -652,7 +677,7 @@ void MainWindow::on_listView_Sentence3_clicked(const QModelIndex &index)
 
 void MainWindow::timer_event()
 {
-    if(bNewoutFrame )
+    if(thread_process_image.bNewoutFrame )
     {
         //2024/12/30, Debug info: I use a timer to update the frame. On some low-end PC, 
         //although I call imshow, the window does not refresh unless there is a signal sent
@@ -661,19 +686,37 @@ void MainWindow::timer_event()
         //How to force the problem to update the window?
         cv::imshow("Image", outFrame);
         cv::waitKey(1);    //I miss this line so that Ubuntu does not update the window.
-        bNewoutFrame = false;
+        thread_process_image.bNewoutFrame = false;
 
         //update pitch and yaw
         ui->lineEdit_yaw_now->setText(QString::number(robot_status.yaw_degree));
         ui->lineEdit_pitch_now->setText(QString::number(robot_status.pitch_degree));
     }
 
-    if( thread_whisper.b_new_result )
+    if( thread_whisper.b_new_OperatorSentence )
     {
-        thread_whisper.b_new_result = false;
-        ui->plainTextEdit_speak->setPlainText(QString::fromStdString(thread_whisper.result));
+        thread_whisper.b_new_OperatorSentence = false;
+        ui->plainTextEdit_speak->setPlainText(QString::fromStdString(thread_whisper.strOperatorSentence));
     }
 
+    if( thread_whisper.b_new_RobotSentence )
+    {
+        thread_whisper.b_new_RobotSentence = false;
+        ui->plainTextEdit_received->setPlainText(QString::fromStdString(thread_whisper.strRobotSentence));
+    }
+
+    if( thread_whisper.b_RobotSentence_End )
+    {
+        thread_whisper.b_RobotSentence_End = false;
+        //send a command as the push button clicked
+        ui->pushButton_generate_response->click();
+    }
+
+    if( thread_ollama.b_new_LLM_response )
+    {
+        thread_ollama.b_new_LLM_response = false;
+        ui->plainTextEdit_LLM_response->setPlainText(QString::fromStdString(thread_ollama.strResponse));
+    }
     sendMessageManager.Send();
 }
 
@@ -741,9 +784,9 @@ void MainWindow::comboBox_Processor_changed()
 
 void MainWindow::on_pushButton_stop_action_clicked()
 {
-    ZenboNurseHelperProtobuf::ReportAndCommand report_data;
-    report_data.set_stopmove(1);
-    sendMessageManager.AddMessage(report_data);
+    RobotCommandProtobuf::RobotCommand command;
+    command.set_stopmove(1);
+    sendMessageManager.AddMessage(command);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
@@ -837,3 +880,43 @@ void MainWindow::on_checkBox_SaveImages_clicked()
     }
 
 }
+
+void MainWindow::on_checkBox_stream_clicked(bool checked)
+{
+    if( checked)
+    {
+        thread_whisper.strFixed = "";
+        thread_whisper.setStartTime();
+        bstream_recognition = true;
+    }
+    else
+    {
+        bstream_recognition = false;
+    }
+}
+
+void MainWindow::on_pushButton_generate_response_clicked()
+{
+    QString text = ui->plainTextEdit_received->toPlainText();
+    thread_whisper.ClearBuffer();
+    thread_ollama.strPrompt = text.toStdString();
+    thread_ollama.cond_var_ollama.notify_one();   
+}
+
+
+void MainWindow::on_pushButton_speak_2_clicked()
+{
+    QString text = ui->plainTextEdit_LLM_response->toPlainText();
+    RobotCommandProtobuf::RobotCommand command;
+    command.set_speak_sentence(text.toStdString());
+    sendMessageManager.AddMessage(command);
+}
+
+
+void MainWindow::on_pushButton_hideface_clicked()
+{
+    RobotCommandProtobuf::RobotCommand command;
+    command.set_hideface(true);
+    sendMessageManager.AddMessage(command);
+}
+

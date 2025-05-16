@@ -7,7 +7,7 @@
 #include <thread>
 #include <condition_variable>
 #include <queue>
-#include "ServerSend.pb.h"
+#include "RobotCommand.pb.h"
 
 #ifndef __SendMessageManager_hpp__
 #define __SendMessageManager_hpp__
@@ -18,14 +18,14 @@ class SendMessageManager
 {
 public:
     QTcpSocket *pSocket = NULL;
-    void AddMessage(ZenboNurseHelperProtobuf::ReportAndCommand);
+    void AddMessage(RobotCommandProtobuf::RobotCommand);
     void Send();
 
 protected:
     char str_results[4096];
     int str_results_len;
     mutex mutex_message_buffer;
-    queue<ZenboNurseHelperProtobuf::ReportAndCommand> mQueue;
+    queue<RobotCommandProtobuf::RobotCommand> mQueue;
 };
 
 #endif
