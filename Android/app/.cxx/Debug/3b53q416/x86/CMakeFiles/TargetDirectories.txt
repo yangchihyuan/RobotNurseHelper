@@ -1,3 +1,0 @@
-/home/chihyuan/ZenboNurseHelper/Android/app/.cxx/Debug/3b53q416/x86/CMakeFiles/native-lib.dir
-/home/chihyuan/ZenboNurseHelper/Android/app/.cxx/Debug/3b53q416/x86/CMakeFiles/edit_cache.dir
-/home/chihyuan/ZenboNurseHelper/Android/app/.cxx/Debug/3b53q416/x86/CMakeFiles/rebuild_cache.dir

@@ -45,8 +45,7 @@ int FaceLandmarks_to_RobotAction_Zenbo(std::vector<std::vector<std::array<float,
         {
             float theta = -(x-0.5)*62.5;
             float pitch_shift = -(y-0.5)*48.9;
-            //currently, Kebbi has no degree
-//            message.set_degree(static_cast<int>(theta));
+            message.set_degree(static_cast<int>(theta));
             message.set_yaw(0);
             status.yaw_degree = 0;
 
@@ -104,7 +103,7 @@ int PoseLandmarks_to_RobotAction_Zenbo(std::vector<std::vector<std::array<float,
         {
             float theta = -(x-0.5)*62.5;
             float pitch_shift = -(y-0.5)*48.9;
-//            message.set_degree(static_cast<int>(theta));
+            message.set_degree(static_cast<int>(theta));
             message.set_yaw(0);
             status.yaw_degree = 0;
 

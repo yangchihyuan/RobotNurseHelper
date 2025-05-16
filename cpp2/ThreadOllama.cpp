@@ -31,7 +31,7 @@ void ThreadOllama::run()
             continue;
         }
         ollama::message message("user", strPrompt );
-        ollama::message system_message("system", "你是一個醫療用機器人，名字叫作凱比，回答要很潔短。");
+        ollama::message system_message("system", str_system_message);
         ollama::messages messages = {system_message, message};
         ollama::response response = ollama::chat("taide", messages, options);
         strResponse = response.as_simple_string();
