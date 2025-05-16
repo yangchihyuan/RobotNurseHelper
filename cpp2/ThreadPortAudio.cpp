@@ -1,4 +1,4 @@
-#include "ThreadProcessAudio.hpp"
+#include "ThreadPortAudio.hpp"
 #include "portaudio.h"
 
 std::mutex gMutex_audio_buffer;
@@ -49,8 +49,9 @@ static int patestCallback( const void *inputBuffer, void *outputBuffer,
 
 int PortAudio_initialize()
 {
-#define SAMPLE_RATE   (44100)
-#define FRAMES_PER_BUFFER  (512)
+//    #define SAMPLE_RATE   (44100)
+    #define SAMPLE_RATE   (16000)       //for whisper.cpp
+    #define FRAMES_PER_BUFFER  (512)
     PaStreamParameters outputParameters;
     PaError err;
     err = Pa_Initialize();
@@ -61,7 +62,8 @@ int PortAudio_initialize()
         fprintf(stderr,"Error: No default output device.\n");
         goto error;
     }
-    outputParameters.channelCount = 2;       /* stereo output */
+//    outputParameters.channelCount = 2;       /* stereo output */
+    outputParameters.channelCount = 1;       /* for whisper.cpp */
     outputParameters.sampleFormat = paInt16;
     outputParameters.suggestedLatency = Pa_GetDeviceInfo( outputParameters.device )->defaultLowOutputLatency;
     outputParameters.hostApiSpecificStreamInfo = NULL;

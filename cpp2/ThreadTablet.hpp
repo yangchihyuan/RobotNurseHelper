@@ -19,11 +19,8 @@ class ThreadTablet: public QThread
     Q_OBJECT
 
 public:
-    bool b_HumanPoseEstimation = false;
     bool b_WhileLoop = true;
-    bool bSaveTransmittedImage = false;
-    string raw_images_directory;
-    condition_variable cond_var_process_image;
+    condition_variable cond_var_tablet;
 
     SendMessageManager *pSendMessageManager;
     SocketHandler *pSocketHandler;

@@ -1,0 +1,42 @@
+#include "ThreadOllama.hpp"
+
+ThreadOllama::ThreadOllama()
+{
+    
+}
+
+ThreadOllama::~ThreadOllama()
+{
+    
+}
+
+void ThreadOllama::run()
+{
+    ollama::options options;
+//    options["seed"] = 1;      //I cannot fix the seed. Otherwise, the result is always the same.
+    //preload the model
+    bool model_loaded = ollama::load_model("taide");
+    if( !model_loaded )
+    {
+        std::cerr << "Failed to load LLM model" << std::endl;
+        return;
+    }
+
+    while(b_WhileLoop)
+    {
+        std::unique_lock<std::mutex> lk(mtx);
+        cond_var_ollama.wait(lk);
+        if( strPrompt == "" )
+        {
+            continue;
+        }
+        ollama::message message("user", strPrompt );
+        ollama::message system_message("system", "你是一個醫療用機器人，名字叫作凱比，回答要很潔短。");
+        ollama::messages messages = {system_message, message};
+        ollama::response response = ollama::chat("taide", messages, options);
+        strResponse = response.as_simple_string();
+        b_new_LLM_response = true;
+    }
+    std::cout << "Exit thread Ollama while loop." << std::endl;
+
+}

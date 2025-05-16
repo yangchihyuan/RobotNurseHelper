@@ -129,7 +129,13 @@ public class SocketManager {
                                     if (command.hasMotion()) {
                                         String[] motionArray = {"666_TA_DictateL", "666_DA_Full", "666_EM_Mad02", "666_BA_Nodhead",
                                                 "666_SP_Swim02", "666_PE_RotateA", "666_SP_Karate", "666_RE_Cheer", "666_SP_Climb", "666_DA_Hit",
-                                                "666_TA_DictateR", "666_SP_Bowling", "666_SP_Walk", "666_SA_Find", "666_BA_TurnHead", "666_SA_Toothache"};
+                                                "666_TA_DictateR", "666_SP_Bowling", "666_SP_Walk", "666_SA_Find", "666_BA_TurnHead", "666_SA_Toothache",
+                                                "666_SA_Sick","666_SA_Shocked","666_SP_Dumbbell","666_SA_Discover","666_RE_Thanks","666_PE_Changing",
+                                                "666_SP_HorizontalBar","666_WO_Traffic","666_RE_HiR","666_RE_HiL","666_DA_Brushteeth","666_RE_Encourage",
+                                                "666_RE_Request","666_PE_Brewing","666_RE_Change","666_PE_Phubbing","666_RE_Baoquan","666_SP_Cheer",
+                                                "666_RE_Ask","666_PE_Triangel","666_PE_Sorcery","666_PE_Sneak","666_PE_Singing","666_LE_Yoyo","666_SP_Throw",
+                                                "666_SP_RaceWalk","666_PE_ShakeFart","666_PE_RotateC","666_PE_RotateB","666_EM_Blush","666_PE_Puff",
+                                                "666_PE_PlayCello","666_PE_Pikachu"};
                                         Log.d("Debug", "Receive an action command");
                                         mRobotAPI.motionPlay(motionArray[command.getMotion()], true);
                                     }

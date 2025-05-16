@@ -5,7 +5,7 @@
 #include "utility_csv.hpp"
 #include <numeric>      // std::iota
 #include "JPEG.hpp"
-#include "ServerSend.pb.h"
+#include "RobotCommand.pb.h"
 #include "utility_directory.hpp"
 #include <opencv2/opencv.hpp>
 #include "RobotStatus.hpp"
@@ -18,7 +18,7 @@
 #include <google/protobuf/text_format.h>
 
 #include "GetLandmarks.hpp"
-#include "FaceLandmarkToZenboAction.hpp"
+#include "LandmarkToRobotAction.hpp"
 
 //using namespace human_pose_estimation;
 using namespace cv;
@@ -27,7 +27,6 @@ RobotStatus robot_status;
 ActionOption action_option;
 
 cv::Mat outFrame;
-bool bNewoutFrame;
 
 ThreadProcessImage::ThreadProcessImage()
 {
@@ -664,8 +663,6 @@ void ThreadProcessImage::run()
 
             if( bCorrectlyDecoded)
             {
-                bNewoutFrame = true;
-
                 if(bSaveTransmittedImage)
                 {
                     //2025/1/7 How to change the timestamp to a meaningful filename?
@@ -713,6 +710,7 @@ void ThreadProcessImage::run()
                     {
                         if( libmp->WriteOutputImage(outFrame.data, libmp->GetOutputPacket("output_video") ) )
                         {
+                            bNewoutFrame = true;
                         }
                         else
                         {
@@ -724,6 +722,7 @@ void ThreadProcessImage::run()
                     {
                         if( libmp->WriteOutputImage_GPU(outFrame.data, libmp->GetOutputPacket("output_video")) )
                         {
+                            bNewoutFrame = true;
                         }
                         else
                         {
@@ -758,6 +757,7 @@ void ThreadProcessImage::run()
                             }
                             // Display the image with landmarks                    
                             inputImage.copyTo(outFrame);
+                            bNewoutFrame = true;
                         }
                     }
                     else if( Task == "Pose" )
@@ -776,6 +776,7 @@ void ThreadProcessImage::run()
                                 }
                             }
                             inputImage.copyTo(outFrame);
+                            bNewoutFrame = true;
                         }
                     }
                     else if( Task == "Holistic" )
@@ -795,19 +796,19 @@ void ThreadProcessImage::run()
                             bLastLandmarksEffective = false;
                             if( action_option.move_mode != action_option.MOVE_MANUAL)
                             {
-                                ZenboNurseHelperProtobuf::ReportAndCommand message;
+                                RobotCommandProtobuf::RobotCommand message;
                                 if( Task == "Face" )
                                 {
-                                    FaceLandmarks_to_ZenboAction(last_landmarks, robot_status, action_option, message);
+                                    FaceLandmarks_to_RobotAction_Zenbo(last_landmarks, robot_status, action_option, message);
                                 }
                                 else if( Task == "Pose" )
                                 {
-                                    PoseLandmarks_to_ZenboAction(last_landmarks, robot_status, action_option, message);
+                                    PoseLandmarks_to_RobotAction_Zenbo(last_landmarks, robot_status, action_option, message);
                                 }
                                 else if( Task == "Holistic" )
                                 {
                                     //I use Pose, I haven't develop a new function for Holistic.
-                                    PoseLandmarks_to_ZenboAction(last_landmarks, robot_status, action_option, message);
+                                    PoseLandmarks_to_RobotAction_Zenbo(last_landmarks, robot_status, action_option, message);
                                 }
                                 else
                                 {
@@ -833,19 +834,19 @@ void ThreadProcessImage::run()
                         if (duration.count() >= 3) {
                             if( action_option.move_mode != action_option.MOVE_MANUAL)
                             {
-                                ZenboNurseHelperProtobuf::ReportAndCommand message;
+                                RobotCommandProtobuf::RobotCommand message;
                                 if( Task == "Face" )
                                 {
-                                    FaceLandmarks_to_ZenboAction(normalized_landmarks, robot_status, action_option, message);
+                                    FaceLandmarks_to_RobotAction_Zenbo(normalized_landmarks, robot_status, action_option, message);
                                 }
                                 else if( Task == "Pose" )
                                 {
-                                    PoseLandmarks_to_ZenboAction(normalized_landmarks, robot_status, action_option, message);
+                                    PoseLandmarks_to_RobotAction_Zenbo(normalized_landmarks, robot_status, action_option, message);
                                 }
                                 else if( Task == "Holistic" )
                                 {
                                     //I use Pose, I haven't develop a new function for Holistic.
-                                    PoseLandmarks_to_ZenboAction(normalized_landmarks, robot_status, action_option, message);
+                                    PoseLandmarks_to_RobotAction_Zenbo(normalized_landmarks, robot_status, action_option, message);
                                 }
                                 else
                                 {
@@ -862,6 +863,7 @@ void ThreadProcessImage::run()
                 else
                 {
                     inputImage.copyTo(outFrame);
+                    bNewoutFrame = true;
                 }
             }
         }

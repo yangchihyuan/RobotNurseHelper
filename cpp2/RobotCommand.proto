@@ -1,0 +1,60 @@
+syntax = "proto2";
+
+package RobotCommandProtobuf;
+
+message RobotCommand {
+  optional uint64 time_stamp = 1;
+  optional int32 pitch_degree = 2;
+  optional string speak_sentence = 3;
+  optional int32 x = 4;
+  optional int32 y = 5;
+  optional int32 degree = 6;
+  optional int32 bodyspeed = 7;
+  optional int32 yaw = 8;
+  optional int32 pitch = 9;
+  optional int32 headspeed = 10;
+  optional int32 face = 11;
+
+  enum FaceEnum{
+    ACTIVE = 0;
+    AWARE_LEFT = 1;
+    AWARE_RIGHT = 2;
+    CONFIDENT = 3;
+    DEFAULT = 4;
+    DEFAULT_STILL = 5;
+    DOUBTING = 6;
+    EXPECTING = 7;
+    HAPPY = 8;
+    HELPLESS = 9;
+    HIDEFACE = 10;
+    IMPATIENT = 11;
+    INNOCENT = 12;
+    INTERESTED = 13;
+    LAZY = 14;
+    PLEASED = 15;
+    PRETENDING = 16;
+    PROUD = 17;
+    QUESTIONING = 18;
+    SERIOUS = 19;
+    SHOCKED = 20;
+    SHY = 21;
+    SINGING = 22;
+    TIRED = 23;
+    WORRIED = 24;
+    }
+
+  optional int32 speed = 12;
+  optional int32 volume = 13;
+  optional int32 speak_pitch = 14;
+
+  enum MoveModeEnum{
+        Manual = 0;
+        LookForPeople = 1;
+    }
+
+  optional MoveModeEnum movemode = 15;
+  optional int32 stopmove = 16;
+  optional int32 predefined_action = 17;
+  optional bool hideface = 18;
+}
+
