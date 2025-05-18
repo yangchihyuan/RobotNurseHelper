@@ -122,7 +122,10 @@ public class SocketManager {
                                     } else if (command.hasSpeakSentence()) {
                                         Log.d("Speak Sentence", command.getSpeakSentence());
                                         SpeakConfig config = new SpeakConfig();
-                                        config.volume(command.getVolume()).speed(command.getSpeed()).pitch(command.getSpeakPitch());
+                                        if( command.hasVolume() && command.hasSpeed() && command.hasPitch())
+                                            config.volume(command.getVolume()).speed(command.getSpeed()).pitch(command.getSpeakPitch());
+                                        else  //use the default values
+                                            config.volume(100).speed(100).pitch(100);
                                         mRobotAPI.robot.speak(command.getSpeakSentence(), config);
                                     } else if (command.hasFace()) {
                                         RobotFace newFace = converter.FaceIndexToRobotFace(command.getFace());

@@ -65,8 +65,8 @@ find_package(Qt6 COMPONENTS Core Widgets Network Multimedia REQUIRED)
 file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
 set(ZENBONURSEHELPER_BUILD_DIR "$ENV{HOME}/ZenboNurseHelper_build")
 set(OLLAMA_HPP_INCLUDE_DIR "${ZENBONURSEHELPER_BUILD_DIR}/ollama-hpp/include")
-#file(GLOB OLLAMA_HPP ${ZENBONURSEHELPER_BUILD_DIR}/ollama-hpp/include/*.hpp)
-#message(STATUS "OLLAMA_HPP: ${OLLAMA_HPP}")
+set(ONNX_HPP_INCLUDE_DIR "${ZENBONURSEHELPER_BUILD_DIR}/onnxruntime-linux-x64-1.12.1/include")
+set(SILERO_HPP_INCLUDE_DIR "${ZENBONURSEHELPER_BUILD_DIR}/silero-vad/examples/cpp")
 set(SOURCES JPEG.cpp
             utility_directory.cpp
             utility_TimeRecorder.cpp
@@ -87,6 +87,7 @@ set(SOURCES JPEG.cpp
             SendMessageManager.cpp
             GetLandmarks.cpp
             LandmarkToRobotAction.cpp
+            silero-vad-onnx.cpp
     )
 
 # whisper.cpp v1.7.5
@@ -133,10 +134,14 @@ file(GLOB_RECURSE MP_FORMATS_SRC "${MEDIAPIPE_DIR}/bazel-bin/mediapipe/framework
 add_library(MP_FORMATS STATIC ${MP_FORMATS_SRC})
 target_include_directories(MP_FORMATS PUBLIC "${MEDIAPIPE_DIR}/bazel-bin")
 target_link_libraries(MP_FORMATS libprotobuf)
-
 target_link_libraries(RobotNurseHelper MP_FORMATS)
 target_link_libraries(RobotNurseHelper LIBMP)
-target_link_libraries(RobotNurseHelper LIBWHISPER)
+
+# ONNX
+add_library(LIBONNX SHARED IMPORTED)
+set(ONNX_DIR $ENV{HOME}/ZenboNurseHelper_build/onnxruntime-linux-x64-1.12.1)
+set_target_properties(LIBONNX PROPERTIES
+  IMPORTED_LOCATION "${ONNX_DIR}/lib/libonnxruntime.so")
 
 #Enalbe the debug mode
 if(COMPILE_WITH_G_FLAG)
@@ -144,9 +149,9 @@ if(COMPILE_WITH_G_FLAG)
 endif()
 
 
-include_directories(${PROTOBUF_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} ${OLLAMA_HPP_INCLUDE_DIR})
+include_directories(${PROTOBUF_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} ${OLLAMA_HPP_INCLUDE_DIR} ${ONNX_HPP_INCLUDE_DIR} ${SILERO_HPP_INCLUDE_DIR})
 set_target_properties(${TARGET_NAME} PROPERTIES "CMAKE_CXX_FLAGS" "${CMAKE_CXX_FLAGS}")
 
-target_link_libraries(RobotNurseHelper
+target_link_libraries(RobotNurseHelper LIBWHISPER
     Qt::Core Qt::Widgets Qt::Network
-    Qt::Multimedia ${OpenCV_LIBS} portaudio)
+    Qt::Multimedia ${OpenCV_LIBS} portaudio LIBONNX)

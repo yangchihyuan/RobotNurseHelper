@@ -249,7 +249,7 @@ MainWindow::MainWindow(QWidget *parent)
     thread_tablet.pSocketHandler = &socketHandler4;
     thread_tablet.pSendMessageManager = &sendMessageManager;
 
-    thread_ollama.str_system_message = "你是一個醫療用機器人，名字叫作Zenbo，回答要很潔短。";
+    thread_ollama.str_system_message = "你是一個醫療用機器人，名字叫作Zenbo，回答要很潔短, 而且要用台灣人習慣的繁體中文回答。";
 }
 
 void MainWindow::startThreads()
