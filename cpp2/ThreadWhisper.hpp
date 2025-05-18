@@ -10,6 +10,7 @@
 #include <whisper.h>
 #include <queue>
 #include <chrono>
+#include "silero-vad-onnx.hpp"
 
 using namespace std;
 
@@ -70,6 +71,8 @@ public:
     void setStartTime();
     void ClearBuffer();
 
+    VadIterator *pVad = NULL;
+
 protected:
     void run();
     whisper_context* ctx = nullptr;
@@ -83,6 +86,8 @@ protected:
 
     std::chrono::high_resolution_clock::time_point t_last;
     std::chrono::high_resolution_clock::time_point t_start;
+
+    float ComputeVolume(const std::vector<float>& pcmf32);
 };
 
 #endif

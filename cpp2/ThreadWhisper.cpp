@@ -11,6 +11,8 @@ ThreadWhisper::ThreadWhisper()
     //used for the stream mode
     if( n_samples_step > 0)
         pcmf32_new.resize(30 * WHISPER_SAMPLE_RATE, 0.0f);     //allocate a buffer for 30 seceonds
+
+    pVad = new VadIterator("/home/chihyuan/ZenboNurseHelper_build/silero-vad/src/silero_vad/data/silero_vad.onnx");
 }
 
 ThreadWhisper::~ThreadWhisper()
@@ -20,6 +22,12 @@ ThreadWhisper::~ThreadWhisper()
         pOperatorBuffer->close();
         delete pOperatorBuffer;
         pOperatorBuffer = NULL;
+    }
+
+    if( pVad != NULL)
+    {
+        delete pVad;
+        pVad = NULL;
     }
 }
 
@@ -109,21 +117,28 @@ void ThreadWhisper::run()
             //copy, backup
             pcmf32_old = pcmf32;
 
-            // run the inference
-            strTemp = "";
-            if (whisper_full(ctx, wparams, pcmf32.data(), pcmf32.size()) != 0) {
-                fprintf(stderr, "failed to process audio\n");
-                return;
-            }
+            //check the volume, if it is too low, skip the inference
+            float volume = ComputeVolume(pcmf32);
+            cout << "Volume: " << volume << std::endl;
 
-            const int n_segments = whisper_full_n_segments(ctx);
-            for (int i = 0; i < n_segments; ++i) {
-                const char * text = whisper_full_get_segment_text(ctx, i);
-                    strTemp += text;
-            }
-            
-            std::cout << strTemp << std::endl;
+            pVad->process(pcmf32);
+            if( pVad->get_speech_timestamps().size() > 0)
+            {
+                // run the inference
+                strTemp = "";
+                if (whisper_full(ctx, wparams, pcmf32.data(), pcmf32.size()) != 0) {
+                    fprintf(stderr, "failed to process audio\n");
+                    return;
+                }
 
+                const int n_segments = whisper_full_n_segments(ctx);
+                for (int i = 0; i < n_segments; ++i) {
+                    const char * text = whisper_full_get_segment_text(ctx, i);
+                        strTemp += text;
+                }
+                
+                std::cout << strTemp << std::endl;
+            }
             ++n_iter;
             
             if (n_iter % n_step_in_length == 0) {
@@ -231,4 +246,15 @@ void ThreadWhisper::ClearBuffer()
     strTemp = "";
     strFixed = "";
     mtx_whisper_buffer.unlock();
+}
+
+// Compute the volume of the audio signal, too simple to take an affect
+float ThreadWhisper::ComputeVolume(const std::vector<float>& pcmf32)
+{
+    float volume = 0.0f;
+    for (size_t i = 0; i < pcmf32.size(); ++i) {
+        volume += pcmf32[i] * pcmf32[i];
+    }
+    volume /= pcmf32.size();
+    return volume;
 }
