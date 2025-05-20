@@ -1,27 +1,21 @@
 #include <vector>
 #include <array>
 
-#include "RobotCommand.pb.h"
+#ifdef USE_KEBBI
+    #include "Kebbi/RobotCommand.pb.h"
+#elif USE_ZENBO
+    #include "Zenbo/RobotCommand.pb.h"
+#endif
 #include "RobotStatus.hpp"
 #include "ActionOption.hpp"
 
-int FaceLandmarks_to_ZenboAction(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
+int FaceLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
     RobotStatus &status, 
     ActionOption action_option,    
-    RobotCommandProtobuf::KebbiCommand &message);
+    RobotCommandProtobuf::RobotCommand &message);
 
-int PoseLandmarks_to_ZenboAction(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
+int PoseLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
     RobotStatus &status, 
     ActionOption action_option,    
-    RobotCommandProtobuf::KebbiCommand &message);
-    
-int FaceLandmarks_to_RobotAction_Kebbi(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
-    RobotStatus &status, 
-    ActionOption action_option,    
-    RobotCommandProtobuf::KebbiCommand &message);
-
-int PoseLandmarks_to_RobotAction_Kebbi(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
-    RobotStatus &status, 
-    ActionOption action_option,    
-    RobotCommandProtobuf::KebbiCommand &message);
-    
+    RobotCommandProtobuf::RobotCommand &message);
+  

@@ -15,7 +15,7 @@ void ThreadOllama::run()
     ollama::options options;
 //    options["seed"] = 1;      //I cannot fix the seed. Otherwise, the result is always the same.
     //preload the model
-    bool model_loaded = ollama::load_model("taide");
+    bool model_loaded = ollama::load_model("gemma3:4b");
     if( !model_loaded )
     {
         std::cerr << "Failed to load LLM model" << std::endl;
@@ -31,9 +31,9 @@ void ThreadOllama::run()
             continue;
         }
         ollama::message message("user", strPrompt );
-        ollama::message system_message("system", "你是一個醫療用機器人，名字叫作凱比，回答要很潔短。");
+        ollama::message system_message("system", str_system_message);
         ollama::messages messages = {system_message, message};
-        ollama::response response = ollama::chat("taide", messages, options);
+        ollama::response response = ollama::chat("gemma3:4b", messages, options);
         strResponse = response.as_simple_string();
         b_new_LLM_response = true;
     }

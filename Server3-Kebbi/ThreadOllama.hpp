@@ -22,7 +22,7 @@ public:
     string strPrompt;
     bool b_new_LLM_response = false;
     string strResponse;
-
+    string str_system_message;
 
 protected:
     void run();
