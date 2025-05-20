@@ -5,7 +5,11 @@
 #include "utility_csv.hpp"
 #include <numeric>      // std::iota
 #include "JPEG.hpp"
-#include "RobotCommand.pb.h"
+#ifdef USE_KEBBI
+    #include "Kebbi/RobotCommand.pb.h"
+#elif USE_ZENBO
+    #include "Zenbo/RobotCommand.pb.h"
+#endif
 #include "utility_directory.hpp"
 #include <opencv2/opencv.hpp>
 #include "RobotStatus.hpp"
@@ -796,19 +800,19 @@ void ThreadProcessImage::run()
                             bLastLandmarksEffective = false;
                             if( action_option.move_mode != action_option.MOVE_MANUAL)
                             {
-                                RobotCommandProtobuf::KebbiCommand message;
+                                RobotCommandProtobuf::RobotCommand message;
                                 if( Task == "Face" )
                                 {
-                                    FaceLandmarks_to_RobotAction_Kebbi(last_landmarks, robot_status, action_option, message);
+                                    FaceLandmarks_to_RobotAction(last_landmarks, robot_status, action_option, message);
                                 }
                                 else if( Task == "Pose" )
                                 {
-                                    PoseLandmarks_to_RobotAction_Kebbi(last_landmarks, robot_status, action_option, message);
+                                    PoseLandmarks_to_RobotAction(last_landmarks, robot_status, action_option, message);
                                 }
                                 else if( Task == "Holistic" )
                                 {
                                     //I use Pose, I haven't develop a new function for Holistic.
-                                    PoseLandmarks_to_RobotAction_Kebbi(last_landmarks, robot_status, action_option, message);
+                                    PoseLandmarks_to_RobotAction(last_landmarks, robot_status, action_option, message);
                                 }
                                 else
                                 {
@@ -834,19 +838,19 @@ void ThreadProcessImage::run()
                         if (duration.count() >= 3) {
                             if( action_option.move_mode != action_option.MOVE_MANUAL)
                             {
-                                RobotCommandProtobuf::KebbiCommand message;
+                                RobotCommandProtobuf::RobotCommand message;
                                 if( Task == "Face" )
                                 {
-                                    FaceLandmarks_to_RobotAction_Kebbi(normalized_landmarks, robot_status, action_option, message);
+                                    FaceLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, message);
                                 }
                                 else if( Task == "Pose" )
                                 {
-                                    PoseLandmarks_to_RobotAction_Kebbi(normalized_landmarks, robot_status, action_option, message);
+                                    PoseLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, message);
                                 }
                                 else if( Task == "Holistic" )
                                 {
                                     //I use Pose, I haven't develop a new function for Holistic.
-                                    PoseLandmarks_to_RobotAction_Kebbi(normalized_landmarks, robot_status, action_option, message);
+                                    PoseLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, message);
                                 }
                                 else
                                 {

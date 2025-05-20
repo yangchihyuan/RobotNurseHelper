@@ -6,7 +6,11 @@
 #include <QModelIndex>
 #include <QAbstractItemView>
 #include <iostream>
-#include "RobotCommand.pb.h"
+#ifdef USE_KEBBI
+    #include "Kebbi/RobotCommand.pb.h"
+#elif USE_ZENBO
+    #include "Zenbo/RobotCommand.pb.h"
+#endif
 #include <QTimer>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>

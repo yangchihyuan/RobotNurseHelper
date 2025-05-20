@@ -81,7 +81,7 @@ private:
 
 signals:
     void newMessage(QString);   //where is the connect for this signal?
-    void addSendCommandMessage(RobotCommandProtobuf::KebbiCommand);
+    void addSendCommandMessage(RobotCommandProtobuf::RobotCommand);
 
 private slots:
     void newConnection();

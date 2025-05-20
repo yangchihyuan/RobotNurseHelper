@@ -6,7 +6,11 @@
 #include <QModelIndex>
 #include <QAbstractItemView>
 #include <iostream>
-#include "RobotCommand.pb.h"
+#ifdef USE_KEBBI
+    #include "Kebbi/RobotCommand.pb.h"
+#elif USE_ZENBO
+    #include "Zenbo/RobotCommand.pb.h"
+#endif
 #include <QTimer>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
@@ -247,6 +251,9 @@ MainWindow::MainWindow(QWidget *parent)
     thread_process_image.pSocketHandler = &socketHandler1;
     thread_tablet.pSocketHandler = &socketHandler4;
     thread_tablet.pSendMessageManager = &sendMessageManager;
+
+    thread_ollama.str_system_message = "你是一個醫療用機器人，名字叫作凱比，是長庚大學作的，回答要很簡短, 而且要用台灣人習慣的繁體中文回答。";
+
 }
 
 void MainWindow::startThreads()
@@ -531,7 +538,7 @@ void MainWindow::on_pushButton_speak_clicked()
 {
     //Get the content of the plainTextEdit_speak object, and send it to Robot.
     QString text = ui->plainTextEdit_speak->toPlainText();   //This line causes an exception. Why?
-    RobotCommandProtobuf::KebbiCommand command;
+    RobotCommandProtobuf::RobotCommand command;
     command.set_speak_sentence(text.toStdString());
     if( ui->checkBox_withface->isChecked() )
     {
@@ -589,7 +596,7 @@ void MainWindow::on_pushButton_movebody_clicked()
 
 void MainWindow::send_move_body_command(float x, float y, int degree, int speed)
 {
-    RobotCommandProtobuf::KebbiCommand command;
+    RobotCommandProtobuf::RobotCommand command;
     x *= 100;
 //    command.set_x(static_cast<int>(x));
     y *= 100;
@@ -611,7 +618,7 @@ void MainWindow::on_pushButton_movehead_clicked()
 
 void MainWindow::send_move_head_command(int yaw, int pitch, int speed)
 {
-    RobotCommandProtobuf::KebbiCommand command;
+    RobotCommandProtobuf::RobotCommand command;
     command.set_yaw(yaw);
     command.set_pitch(pitch);
     command.set_headspeed(speed);
@@ -623,14 +630,14 @@ void MainWindow::send_move_head_command(int yaw, int pitch, int speed)
 
 void MainWindow::on_listView_FacialExpressions_doubleClicked(const QModelIndex &index)
 {
-    RobotCommandProtobuf::KebbiCommand command;
+    RobotCommandProtobuf::RobotCommand command;
     command.set_face(index.row());
     sendMessageManager.AddMessage(command);
 }
 
 void MainWindow::on_listView_PredefinedAction_doubleClicked(const QModelIndex &index)
 {
-    RobotCommandProtobuf::KebbiCommand command;
+    RobotCommandProtobuf::RobotCommand command;
     command.set_motion(index.row());
     sendMessageManager.AddMessage(command);
 }
@@ -709,6 +716,14 @@ void MainWindow::timer_event()
     {
         thread_ollama.b_new_LLM_response = false;
         ui->plainTextEdit_LLM_response->setPlainText(QString::fromStdString(thread_ollama.strResponse));
+        //speak out
+        bool bAutoSpeakOut = true;
+        if( bAutoSpeakOut)
+        {
+            RobotCommandProtobuf::RobotCommand command;
+            command.set_speak_sentence(thread_ollama.strResponse);
+            sendMessageManager.AddMessage(command);
+        }
     }
     sendMessageManager.Send();
 }
@@ -777,7 +792,7 @@ void MainWindow::comboBox_Processor_changed()
 
 void MainWindow::on_pushButton_stop_action_clicked()
 {
-    RobotCommandProtobuf::KebbiCommand command;
+    RobotCommandProtobuf::RobotCommand command;
     command.set_stopmove(1);
     sendMessageManager.AddMessage(command);
 }
@@ -900,7 +915,7 @@ void MainWindow::on_pushButton_generate_response_clicked()
 void MainWindow::on_pushButton_speak_2_clicked()
 {
     QString text = ui->plainTextEdit_LLM_response->toPlainText();
-    RobotCommandProtobuf::KebbiCommand command;
+    RobotCommandProtobuf::RobotCommand command;
     command.set_speak_sentence(text.toStdString());
     sendMessageManager.AddMessage(command);
 }
@@ -908,7 +923,7 @@ void MainWindow::on_pushButton_speak_2_clicked()
 
 void MainWindow::on_pushButton_hideface_clicked()
 {
-    RobotCommandProtobuf::KebbiCommand command;
+    RobotCommandProtobuf::RobotCommand command;
     command.set_hideface(true);
     sendMessageManager.AddMessage(command);
 }

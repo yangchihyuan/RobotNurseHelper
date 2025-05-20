@@ -1,3 +1,6 @@
+#ifndef ThreadTablet_hpp
+#define ThreadTablet_hpp
+
 #include <QThread>
 #include <QTcpServer>
 #include <QTcpSocket>
@@ -8,9 +11,11 @@
 #include <condition_variable>
 #include "SendMessageManager.hpp"
 #include "SocketHandler.hpp"
-
-#ifndef ThreadTablet_hpp
-#define ThreadTablet_hpp
+#ifdef USE_KEBBI
+    #include "Kebbi/RobotCommand.pb.h"
+#elif USE_ZENBO
+    #include "Zenbo/RobotCommand.pb.h"
+#endif
 
 using namespace std;
 
