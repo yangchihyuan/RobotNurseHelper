@@ -153,6 +153,25 @@ else
     cmake --build build -j --config Release
 fi
 
+#onnx
+cd ~/ZenboNurseHelper_build
+wget -O onnxruntime-linux-x64-1.12.1.tgz https://github.com/microsoft/onnxruntime/releases/download/v1.12.1/onnxruntime-linux-x64-1.12.1.tgz
+tar -xvzf onnxruntime-linux-x64-1.12.1.tgz
+
+#silero-vad
+cd ~/ZenboNurseHelper_build
+git clone https://github.com/snakers4/silero-vad.git
+
+#ollama
+sudo snap install curl
+cd ~/ZenboNurseHelper_build/
+curl -fsSL https://ollama.com/install.sh | sh
+ollama pull gemma3:4b
+
+#ollama-hpp
+cd ~/ZenboNurseHelper_build
+git clone https://github.com/jmont-dev/ollama-hpp.git
+
 #Build our own program
 cd ~/ZenboNurseHelper/Server
 ./build_project.sh fresh
