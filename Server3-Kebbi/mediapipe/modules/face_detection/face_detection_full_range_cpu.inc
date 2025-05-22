@@ -1,5 +1,0 @@
-"\n\212\001\022\026FaceDetectionFullRange\032\013IMAGE:image\"\025DETECTIONS:de"
-"tectionsB:\n2type.googleapis.com/mediapipe.FaceDetectionOptions\022\0042\002\""
-"\000\212\001\017OPTIONS:optionsR\013IMAGE:imagez\025DETECTIONS:detections\242"
-"\001\031FaceDetectionFullRangeCpu\322>4\n2type.googleapis.com/mediapipe.FaceDe"
-"tectionOptions"
