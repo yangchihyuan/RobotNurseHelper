@@ -3,7 +3,7 @@ project(RobotNurseHelper)
 
 option(USE_GPU "USE GPU" ON)
 option(COMPILE_WITH_G_FLAG "COMPILE WITH G FLAG" ON)
-set(ROBOT_MODEL Kebbi)
+#set(ROBOT_MODEL Zenbo)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
