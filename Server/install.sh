@@ -12,6 +12,7 @@ if [[ "$response" =~ ^[yYnN]$ ]]; then
     NVidiaGPURTXavailable="y"
     echo "We will detect the GPU driver. If there is no driver, we will install the driver for you. But you need to restart your PC after the installation."
     #Check if the GPU driver is installed
+    sudo apt update   #this command is required because Ubuntu's repositories change URL after its release.
     ubuntu-drivers devices
     sudo ubuntu-drivers autoinstall
   else
