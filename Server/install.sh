@@ -1,17 +1,21 @@
 #!/bin/bash
 
-#2025/4/18
-#Install Zenbo Nurse Helper cpp2 to Ubuntu 24.04
+#2025/5/22
+#Install Robot Nurse Helper to Ubuntu 24.04
 #Author: Chih-Yuan Yang
-#Project: Zenbo Nurse Helper
+#Project: Robot Nurse Helper
 
-read -p "Does your PC have an Nvidia GPU 40 serial? [y/n]" response
+read -p "Does your PC have an Nvidia GPU RTX 30 or 40 serial? [y/n]" response
 
 if [[ "$response" =~ ^[yYnN]$ ]]; then
   if [[ "$response" =~ ^[yY]$ ]]; then
-    GPU40available="y"
+    NVidiaGPURTXavailable="y"
+    echo "We will detect the GPU driver. If there is no driver, we will install the driver for you. But you need to restart your PC after the installation."
+    #Check if the GPU driver is installed
+    ubuntu-drivers devices
+    sudo ubuntu-drivers autoinstall
   else
-    GPU40available="n"
+    NVidiaGPURTXavailable="n"
   fi
 else
   echo "Invalid response. Please enter y, Y, n, or N."
@@ -79,7 +83,7 @@ if [ -d "ZenboNurseHelper" ]; then
 fi
 git clone https://github.com/yangchihyuan/ZenboNurseHelper.git
 #copy our code to the mediapipe folder
-cp -r ~/ZenboNurseHelper/cpp2/mediapipe_addition/* ~/mediapipe/
+cp -r ~/ZenboNurseHelper/Server/mediapipe_addition/* ~/mediapipe/
 
 #Install bazelisk
 cd ~/ZenboNurseHelper_build
@@ -134,21 +138,30 @@ fi
 git clone https://github.com/ggerganov/whisper.cpp.git
 cd ~/ZenboNurseHelper_build/whisper.cpp
 git checkout v1.7.5
-if [ "$GPU40available" == "n" ]; then
+bash ./models/download-ggml-model.sh base
+if [ "$NVidiaGPURTXavailable" == "n" ]; then
     #This is the CPU mode
     #It will download ggml-base.bin from the HuggingFace website.
-    bash ./models/download-ggml-model.sh base &
     cmake -B build
     cmake --build build --config Release
 else
     #This is the NVidia 4070 mode
-    sudo apt -y install nvidia-cuda-toolkit    #for nvcc
-    bash ./models/download-ggml-model.sh large-v3-turbo &
+    bash ./models/download-ggml-model.sh large-v3-turbo
+    sudo apt -y install nvidia-cuda-toolkit
     cmake -B build -DGGML_CUDA=1
     cmake --build build -j --config Release
 fi
 
 #Build our own program
-cd ~/ZenboNurseHelper/cpp2
+cd ~/ZenboNurseHelper/Server
 ./build_project.sh fresh
-
+#copy the required mediapipe files to Server
+cp -r ~/mediapipe/bazel-bin/mediapipe/examples/desktop/libmp/libmp_gpu.so.runfiles/mediapipe/mediapipe .
+if [ -d "temp" ]; then
+    rm -rf temp
+fi
+mkdir temp
+# this file mediapipe/modules/hand_landmark/handedness.txt is required to run holistic trackiing
+find ~/mediapipe/mediapipe -type f \( -name "*.txt" \) -exec cp --parents {} temp \;
+cp -r temp/home/$USER/mediapipe/mediapipe .
+rm -rf temp
