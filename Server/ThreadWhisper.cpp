@@ -118,8 +118,8 @@ void ThreadWhisper::run()
             pcmf32_old = pcmf32;
 
             //check the volume, if it is too low, skip the inference
-            float volume = ComputeVolume(pcmf32);
-            cout << "Volume: " << volume << std::endl;
+//            float volume = ComputeVolume(pcmf32);
+//            cout << "Volume: " << volume << std::endl;
 
             pVad->process(pcmf32);
             if( pVad->get_speech_timestamps().size() > 0)
