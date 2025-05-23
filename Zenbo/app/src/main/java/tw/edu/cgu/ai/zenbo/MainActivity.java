@@ -181,8 +181,8 @@ public class MainActivity extends Activity {
 
     AudioRecord recorder;
 
-    private int sampleRate = 44100 ; // 44100 for music
-    private int channelConfig = AudioFormat.CHANNEL_IN_STEREO;
+    private int sampleRate = 16000 ; // 44100 for music , 16000 for whisper.cpp
+    private int channelConfig = AudioFormat.CHANNEL_IN_MONO;
     private int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
     int minBufSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);   //minBufSize = 5376, but larger is better.
     private boolean status = true;
