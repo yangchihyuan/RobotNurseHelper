@@ -41,20 +41,9 @@ if [ -d "ZenboNurseHelper_build" ]; then
 fi
 mkdir ZenboNurseHelper_build
 
-
-#intall protobuf 3.19.1
-cd ~/ZenboNurseHelper_build
-wget -O protobuf-all-3.19.1.zip https://github.com/protocolbuffers/protobuf/releases/download/v3.19.1/protobuf-all-3.19.1.zip
-unzip protobuf-all-3.19.1.zip
-cd ~/ZenboNurseHelper_build/protobuf-3.19.1
-./configure
-make -j $(nproc)   #why only 1 core is used?
-make check     # this command will generate a peak memory usage
-sudo make install
-sudo ldconfig # refresh shared library cache.
-
-
 #install OpenCV 4.11, which is required by MediaPipe
+#install OpenCV 4.11 first, because it requires to key in sudo password again
+cd ~/ZenboNurseHelper_build
 sudo apt -y install cmake
 wget -O opencv4.11.zip https://github.com/opencv/opencv/archive/refs/tags/4.11.0.zip
 wget -O opencv_contrib4.11.zip https://github.com/opencv/opencv_contrib/archive/refs/tags/4.11.0.zip
@@ -68,6 +57,21 @@ sudo make install
 #to config the loading directories to let /usr/local/lib works
 sudo ldconfig
 
+
+#intall protobuf 3.19.1
+cd ~/ZenboNurseHelper_build
+wget -O protobuf-all-3.19.1.zip https://github.com/protocolbuffers/protobuf/releases/download/v3.19.1/protobuf-all-3.19.1.zip
+unzip protobuf-all-3.19.1.zip
+cd ~/ZenboNurseHelper_build/protobuf-3.19.1
+./configure
+#make -j $(nproc)   #why only 1 core is used?
+make -j 10    #prevent memory peak usage
+make check     # this command will generate a peak memory usage
+sudo make install
+sudo ldconfig # refresh shared library cache.
+
+
+
 #install MediaPipe v0.10.22
 cd ~
 if [ -d "mediapipe" ]; then
@@ -78,7 +82,7 @@ cd mediapipe
 git checkout v0.10.22
 
 #download our files
-cd ~ 
+cd 
 if [ -d "ZenboNurseHelper" ]; then
     rm -rf ZenboNurseHelper
 fi
@@ -146,11 +150,11 @@ if [ "$NVidiaGPURTXavailable" == "n" ]; then
     cmake -B build
     cmake --build build --config Release
 else
-    #This is the NVidia 4070 mode
+    #This is the NVidia GPU mode
     bash ./models/download-ggml-model.sh large-v3-turbo
     sudo apt -y install nvidia-cuda-toolkit
     cmake -B build -DGGML_CUDA=1
-    cmake --build build -j --config Release
+    cmake --build build -j10 --config Release    #Don't use -j, there are 20 cores in my laptop, which will cause a peak memory usage
 fi
 
 #onnx
@@ -166,7 +170,7 @@ git clone https://github.com/snakers4/silero-vad.git
 sudo snap install curl
 cd ~/ZenboNurseHelper_build/
 curl -fsSL https://ollama.com/install.sh | sh
-ollama pull gemma3:4b
+ollama pull gemma3:1b
 
 #ollama-hpp
 cd ~/ZenboNurseHelper_build
@@ -174,7 +178,7 @@ git clone https://github.com/jmont-dev/ollama-hpp.git
 
 #Build our own program
 cd ~/ZenboNurseHelper/Server
-./build_project.sh fresh
+./build_project.sh Zenbo
 #copy the required mediapipe files to Server
 cp -r ~/mediapipe/bazel-bin/mediapipe/examples/desktop/libmp/libmp_gpu.so.runfiles/mediapipe/mediapipe .
 if [ -d "temp" ]; then
@@ -185,3 +189,6 @@ mkdir temp
 find ~/mediapipe/mediapipe -type f \( -name "*.txt" \) -exec cp --parents {} temp \;
 cp -r temp/home/$USER/mediapipe/mediapipe .
 rm -rf temp
+
+#I don't know why this moduel is needed.
+sudo apt-get install libcanberra-gtk-module
