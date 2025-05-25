@@ -190,5 +190,6 @@ find ~/mediapipe/mediapipe -type f \( -name "*.txt" \) -exec cp --parents {} tem
 cp -r temp/home/$USER/mediapipe/mediapipe .
 rm -rf temp
 
-#I don't know why this moduel is needed.
-sudo apt-get install libcanberra-gtk-module
+#copy the file to prevent Nvidia GPU from being unavailable after laptop suspends
+sudo cp ~/ZenboNurseHelper/Server/nvidia-power-management.conf /etc/modprobe.d/
+sudo update-initramfs -u

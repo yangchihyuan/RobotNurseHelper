@@ -327,6 +327,20 @@ void MainWindow::setWhisperModelFile( QString filePath)
     thread_whisper.model_file_path = filePath;
 }
 
+void MainWindow::setLanguageModelName( QString ModelName)
+{
+    thread_ollama.ModelName = ModelName.toStdString();
+}
+
+void MainWindow::setImageSaveEveryNFrame(int N)
+{
+    thread_process_image.image_save_every_N_frame = N;
+    thread_process_image.bSaveTransmittedImage = (N > 0);
+    if( N > 0)
+    {
+        ui->checkBox_SaveImages->setChecked(true);
+    }
+}
 
 //This funciton is called when socket is connected.
 void MainWindow::newConnection()

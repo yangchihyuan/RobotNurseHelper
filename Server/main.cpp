@@ -6,18 +6,26 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     QCoreApplication::setApplicationName("Zenbo Nurse Helper");
-    QCoreApplication::setApplicationVersion("25.4.18");
+    QCoreApplication::setApplicationVersion("25.5.25");
     app.setWindowIcon(QIcon(":/ZenboNurse.png"));
 
     QCommandLineParser parser;
     parser.setApplicationDescription("Zenbo Nurse Helper");
     parser.addHelpOption();
     parser.addVersionOption();
-    QCommandLineOption outputDirectoryOption("d", "output-directory", "Write output to <directory>", "directory");
+    QString home_directory = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+
+    QCommandLineOption outputDirectoryOption({"d","ImageSaveDirectory"}, "image save directory.", "directory", home_directory + "/Downloads");
     parser.addOption(outputDirectoryOption);
 
-    QCommandLineOption languageModelOption("m", "language-model", "language model <file> to be loaded for whipser.cpp", "file");
+    QCommandLineOption whisperModelOption({"wm","WhisperModel"}, "whisper model to be loaded.", "file path", home_directory + "/ZenboNurseHelper_build/whisper.cpp/models/ggml-base.en.bin");
+    parser.addOption(whisperModelOption);
+
+    QCommandLineOption languageModelOption({"lm", "LanguageModel"}, "language model", "string", "gemma3:1b");
     parser.addOption(languageModelOption);
+
+    QCommandLineOption imageSaveEveryNFrameOption({"is","ImageSaveEveryNFrame"}, "1 of <N> frames will be saved", "natural number", "1");
+    parser.addOption(imageSaveEveryNFrameOption);
 
     parser.process(app);
 
@@ -26,14 +34,28 @@ int main(int argc, char *argv[])
         qDebug() << "outputDirectory is:" << outputDirectory;
     }
 
+    QString whisperModel;
+    if (parser.isSet(whisperModelOption)) {
+        whisperModel = parser.value(whisperModelOption);
+        qDebug() << "whisperModel file is:" << whisperModel;
+    }
+
     QString languageModel;
     if (parser.isSet(languageModelOption)) {
         languageModel = parser.value(languageModelOption);
-        qDebug() << "languageModel file is:" << languageModel;
+        qDebug() << "languageModel string is:" << languageModel;
+    }
+
+    QString strimageSaveEveryNFrame;
+    if (parser.isSet(imageSaveEveryNFrameOption)) {
+        strimageSaveEveryNFrame = parser.value(imageSaveEveryNFrameOption);
+        qDebug() << "imageSaveEveryNFrame value is:" << strimageSaveEveryNFrame;
     }
 
     MainWindow w;
-    w.setWhisperModelFile(languageModel);
+    w.setWhisperModelFile(whisperModel);
+    w.setLanguageModelName(languageModel);
+    w.setImageSaveEveryNFrame(strimageSaveEveryNFrame.toInt());
     w.startThreads();
     w.show();
     app.exec();

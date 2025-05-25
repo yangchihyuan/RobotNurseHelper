@@ -571,12 +571,11 @@ void ThreadProcessImage::reloadGraph()
 
 void ThreadProcessImage::run()
 {
-    std::string str_home_path(getenv("HOME"));
-
     auto previous_time = std::chrono::high_resolution_clock::now();
 
     std::vector<std::vector<std::array<float, 3>>> last_landmarks;
     bool bLastLandmarksEffective = false;
+    int iFrameCount = 0;
     while(b_WhileLoop)
     {
         if( pSocketHandler->get_queue_length() > 0 )    //here is an infinite loop
@@ -670,8 +669,16 @@ void ThreadProcessImage::run()
                 if(bSaveTransmittedImage)
                 {
                     //2025/1/7 How to change the timestamp to a meaningful filename?
-                    string filename = raw_images_directory + "/" + str_timestamp + ".jpg";
-                    save_image_JPEG(data_ + shift_length, iJPEG_length , filename);
+                    if(iFrameCount % image_save_every_N_frame == 0 )
+                    {
+                        string filename = raw_images_directory + "/" + str_timestamp + ".jpg";
+                        save_image_JPEG(data_ + shift_length, iJPEG_length , filename);
+                        iFrameCount = 0; //reset the frame count
+                    }
+                    else
+                    {
+                        iFrameCount++;
+                    }
                 }
 
                 bool bShowTransmittedImage = false;

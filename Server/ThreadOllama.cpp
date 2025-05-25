@@ -15,7 +15,8 @@ void ThreadOllama::run()
     ollama::options options;
 //    options["seed"] = 1;      //I cannot fix the seed. Otherwise, the result is always the same.
     //preload the model
-    bool model_loaded = ollama::load_model("gemma3:1b");
+    //How can I check if the model is available?
+    bool model_loaded = ollama::load_model(ModelName);
     if( !model_loaded )
     {
         std::cerr << "Failed to load LLM model" << std::endl;
@@ -33,7 +34,7 @@ void ThreadOllama::run()
         ollama::message message("user", strPrompt );
         ollama::message system_message("system", str_system_message);
         ollama::messages messages = {system_message, message};
-        ollama::response response = ollama::chat("gemma3:1b", messages, options);
+        ollama::response response = ollama::chat(ModelName, messages, options);
         strResponse = response.as_simple_string();
         b_new_LLM_response = true;
     }
