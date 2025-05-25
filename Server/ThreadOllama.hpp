@@ -23,6 +23,7 @@ public:
     bool b_new_LLM_response = false;
     string strResponse;
     string str_system_message;
+    string ModelName = "gemma3:1b";
 
 protected:
     void run();

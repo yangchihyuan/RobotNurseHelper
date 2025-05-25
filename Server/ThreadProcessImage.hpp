@@ -39,6 +39,7 @@ public:
     void setTask(std::string task);
     void setProcessor(std::string processor);
     bool bNewoutFrame = false;
+    int image_save_every_N_frame = 1; //default value is 1, which means every frame will be saved
 
 protected:
     void run();
