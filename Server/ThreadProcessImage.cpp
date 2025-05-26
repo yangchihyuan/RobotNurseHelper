@@ -671,7 +671,7 @@ void ThreadProcessImage::run()
                     //2025/1/7 How to change the timestamp to a meaningful filename?
                     if(iFrameCount % image_save_every_N_frame == 0 )
                     {
-                        string filename = raw_images_directory + "/" + str_timestamp + ".jpg";
+                        string filename = ImageSaveDirectory + "/" + str_timestamp + ".jpg";
                         save_image_JPEG(data_ + shift_length, iJPEG_length , filename);
                         iFrameCount = 0; //reset the frame count
                     }
