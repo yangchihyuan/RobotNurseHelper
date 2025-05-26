@@ -67,6 +67,7 @@ public:
     bool b_new_RobotSentence = false;
     bool b_RobotSentence_End = false;    
     QString model_file_path;
+    string strLanguage = "zh"; // default language is Chinese
 
     void setStartTime();
     void ClearBuffer();

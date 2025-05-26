@@ -15,8 +15,8 @@ int main(int argc, char *argv[])
     parser.addVersionOption();
     QString home_directory = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
-    QCommandLineOption outputDirectoryOption({"d","ImageSaveDirectory"}, "image save directory.", "directory", home_directory + "/Downloads");
-    parser.addOption(outputDirectoryOption);
+    QCommandLineOption ImageSaveDirectoryOption("ImageSaveDirectory", "image save directory.", "directory", home_directory + "/Downloads");
+    parser.addOption(ImageSaveDirectoryOption);
 
     QCommandLineOption whisperModelOption({"wm","WhisperModel"}, "whisper model to be loaded.", "file path", home_directory + "/ZenboNurseHelper_build/whisper.cpp/models/ggml-base.en.bin");
     parser.addOption(whisperModelOption);
@@ -27,11 +27,18 @@ int main(int argc, char *argv[])
     QCommandLineOption imageSaveEveryNFrameOption({"is","ImageSaveEveryNFrame"}, "1 of <N> frames will be saved", "natural number", "1");
     parser.addOption(imageSaveEveryNFrameOption);
 
+    QCommandLineOption languageOption("Language", "Language used", "string", "Chinese");
+    parser.addOption(languageOption);
+
+    QCommandLineOption DefaultSaveImageOption("DefaultSaveImage", "The default value of saving images.", "boolean", "false");
+    parser.addOption(DefaultSaveImageOption);
+
+
     parser.process(app);
 
-    if (parser.isSet(outputDirectoryOption)) {
-        QString outputDirectory = parser.value(outputDirectoryOption);
-        qDebug() << "outputDirectory is:" << outputDirectory;
+    if (parser.isSet(ImageSaveDirectoryOption)) {
+        QString ImageSaveDirectory = parser.value(ImageSaveDirectoryOption);
+        qDebug() << "ImageSaveDirectory is:" << ImageSaveDirectory;
     }
 
     QString whisperModel;
@@ -52,10 +59,27 @@ int main(int argc, char *argv[])
         qDebug() << "imageSaveEveryNFrame value is:" << strimageSaveEveryNFrame;
     }
 
+    QString strLanguage;
+    if (parser.isSet(languageOption)) {
+        strLanguage = parser.value(languageOption);
+        qDebug() << "Language string is:" << strLanguage;
+    }
+
+    QString strDefaultSaveImage;
+    bool bDefaultSaveImage = false;
+    if (parser.isSet(DefaultSaveImageOption)) {
+        bDefaultSaveImage = parser.value(DefaultSaveImageOption).toLower() == "true";
+        qDebug() << "DefaultSaveImage boolean is:" << bDefaultSaveImage;
+    }
+
+
     MainWindow w;
     w.setWhisperModelFile(whisperModel);
     w.setLanguageModelName(languageModel);
     w.setImageSaveEveryNFrame(strimageSaveEveryNFrame.toInt());
+    w.setLanguage(strLanguage);
+    w.setImageSaveDirectory(parser.value(ImageSaveDirectoryOption));
+    w.setDefaultSaveImage(bDefaultSaveImage);
     w.startThreads();
     w.show();
     app.exec();

@@ -72,7 +72,7 @@ void ThreadWhisper::run()
     wparams.prompt_n_tokens  = params.no_context ? 0       : prompt_tokens.size();
 
     wparams.translate = false;
-    wparams.language = "zh";        // "zh" for Chinese, "en" for English
+    wparams.language = strLanguage.c_str();        // "zh" for Chinese, "en" for English, "ar" for Arabic
     wparams.no_speech_thold = 0.6f; // silence threshold for VAD
 
     int n_iter = 0;

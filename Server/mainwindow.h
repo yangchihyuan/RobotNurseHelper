@@ -43,6 +43,9 @@ public:
     void setWhisperModelFile(QString filePath);
     void setLanguageModelName(QString ModelName);
     void setImageSaveEveryNFrame(int N);
+    void setLanguage(QString Language);
+    void setImageSaveDirectory(QString ImageSaveDirectory);
+    void setDefaultSaveImage(bool bDefaultSaveImage);
     void startThreads();
 
 protected:
@@ -128,6 +131,7 @@ private slots:
     void comboBox_MoveMode_changed();
     void comboBox_DetectionMode_changed();
     void comboBox_Processor_changed();
+    void comboBox_Language_changed();
 
     void keyPressEvent(QKeyEvent *event);
     void on_checkBox_stream_clicked(bool checked);

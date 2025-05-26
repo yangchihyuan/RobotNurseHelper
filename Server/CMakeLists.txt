@@ -79,6 +79,7 @@ set(SOURCES JPEG.cpp
             utility_csv.cpp
             main.cpp
             mainwindow.h
+            mainwindow.cpp
             ThreadPortAudio.cpp
             ThreadProcessImage.cpp
             ThreadWhisper.cpp
