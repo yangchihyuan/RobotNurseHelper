@@ -1,0 +1,27 @@
+{
+  "buildFiles": [
+    "/home/chihyuan/StudioProjects/ZenboNurseHelper_RobotSide/app/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/home/chihyuan/Android/Sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/home/chihyuan/StudioProjects/ZenboNurseHelper_RobotSide/app/.cxx/Debug/6r3b6aaf/arm64-v8a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/home/chihyuan/Android/Sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/home/chihyuan/StudioProjects/ZenboNurseHelper_RobotSide/app/.cxx/Debug/6r3b6aaf/arm64-v8a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "native-lib::@6890427a1f51a3e7e1df": {
+      "artifactName": "native-lib",
+      "abi": "arm64-v8a",
+      "output": "/home/chihyuan/StudioProjects/ZenboNurseHelper_RobotSide/app/build/intermediates/cxx/Debug/6r3b6aaf/obj/arm64-v8a/libnative-lib.so",
+      "runtimeFiles": []
+    }
+  }
+}

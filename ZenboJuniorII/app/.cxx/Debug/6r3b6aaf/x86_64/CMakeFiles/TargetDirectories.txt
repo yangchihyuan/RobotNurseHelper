@@ -1,0 +1,3 @@
+/home/chihyuan/StudioProjects/ZenboNurseHelper_RobotSide/app/.cxx/Debug/6r3b6aaf/x86_64/CMakeFiles/native-lib.dir
+/home/chihyuan/StudioProjects/ZenboNurseHelper_RobotSide/app/.cxx/Debug/6r3b6aaf/x86_64/CMakeFiles/edit_cache.dir
+/home/chihyuan/StudioProjects/ZenboNurseHelper_RobotSide/app/.cxx/Debug/6r3b6aaf/x86_64/CMakeFiles/rebuild_cache.dir
