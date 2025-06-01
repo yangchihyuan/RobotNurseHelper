@@ -178,18 +178,19 @@ fi
 git clone https://github.com/ggerganov/whisper.cpp.git
 cd ~/RobotNurseHelper_build/whisper.cpp
 git checkout v1.7.5
-bash ./models/download-ggml-model.sh base
-if [ "$NVidiaGPURTXavailable" == "n" ]; then
-    #This is the CPU mode
-    #It will download ggml-base.bin from the HuggingFace website.
-    cmake -B build
-    cmake --build build --config Release
+if((VRAMSize==0)); then
+  bash ./models/download-ggml-model.sh tiny
+  cmake -B build
+  cmake --build build -j10 --config Release
 else
-    #This is the NVidia GPU mode
+  sudo apt -y install nvidia-cuda-toolkit
+  if ((VRAMSize==2));
+    bash ./models/download-ggml-model.sh small
+  else
     bash ./models/download-ggml-model.sh large-v3-turbo
-    sudo apt -y install nvidia-cuda-toolkit
-    cmake -B build -DGGML_CUDA=1
-    cmake --build build -j10 --config Release    #Don't use -j, there are 20 cores in my laptop, which will cause a peak memory usage
+  fi
+  cmake -B build -DGGML_CUDA=1
+  cmake --build build -j10 --config Release    #Don't use -j, there are 20 cores in my laptop, which will cause a peak memory usage
 fi
 
 #onnx
@@ -205,7 +206,12 @@ git clone https://github.com/snakers4/silero-vad.git
 sudo snap install curl
 cd ~/RobotNurseHelper_build/
 curl -fsSL https://ollama.com/install.sh | sh
-ollama pull gemma3:1b
+if((VRAMSize<=2)); then
+  ollama pull gemma3:1b
+else
+  ollama pull gemma3:4b
+fi
+
 
 #ollama-hpp
 cd ~/RobotNurseHelper_build
