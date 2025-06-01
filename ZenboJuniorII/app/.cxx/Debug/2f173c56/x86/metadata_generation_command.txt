@@ -1,0 +1,18 @@
+                        -H/home/chihyuan/ZenboNurseHelper/ZenboJuniorII/app
+-DCMAKE_SYSTEM_NAME=Android
+-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+-DCMAKE_SYSTEM_VERSION=29
+-DANDROID_PLATFORM=android-29
+-DANDROID_ABI=x86
+-DCMAKE_ANDROID_ARCH_ABI=x86
+-DANDROID_NDK=/home/chihyuan/Android/Sdk/ndk/27.0.12077973
+-DCMAKE_ANDROID_NDK=/home/chihyuan/Android/Sdk/ndk/27.0.12077973
+-DCMAKE_TOOLCHAIN_FILE=/home/chihyuan/Android/Sdk/ndk/27.0.12077973/build/cmake/android.toolchain.cmake
+-DCMAKE_MAKE_PROGRAM=/home/chihyuan/Android/Sdk/cmake/3.22.1/bin/ninja
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/home/chihyuan/ZenboNurseHelper/ZenboJuniorII/app/build/intermediates/cxx/Debug/2f173c56/obj/x86
+-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=/home/chihyuan/ZenboNurseHelper/ZenboJuniorII/app/build/intermediates/cxx/Debug/2f173c56/obj/x86
+-DCMAKE_BUILD_TYPE=Debug
+-B/home/chihyuan/ZenboNurseHelper/ZenboJuniorII/app/.cxx/Debug/2f173c56/x86
+-GNinja
+                        Build command args: []
+                        Version: 2

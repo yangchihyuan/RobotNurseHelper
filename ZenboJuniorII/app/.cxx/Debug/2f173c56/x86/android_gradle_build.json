@@ -1,0 +1,38 @@
+{
+  "buildFiles": [
+    "/home/chihyuan/ZenboNurseHelper/ZenboJuniorII/app/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/home/chihyuan/Android/Sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/home/chihyuan/ZenboNurseHelper/ZenboJuniorII/app/.cxx/Debug/2f173c56/x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/home/chihyuan/Android/Sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/home/chihyuan/ZenboNurseHelper/ZenboJuniorII/app/.cxx/Debug/2f173c56/x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "native-lib::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "x86",
+      "artifactName": "native-lib",
+      "output": "/home/chihyuan/ZenboNurseHelper/ZenboJuniorII/app/build/intermediates/cxx/Debug/2f173c56/obj/x86/libnative-lib.so",
+      "runtimeFiles": []
+    }
+  },
+  "toolchains": {
+    "toolchain": {
+      "cCompilerExecutable": "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/clang.lld",
+      "cppCompilerExecutable": "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++.lld"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": [
+    "cc"
+  ]
+}

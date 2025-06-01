@@ -1,0 +1,38 @@
+{
+  "buildFiles": [
+    "/home/chihyuan/StudioProjects/RobotVideoSummary_RobotSide/app/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/home/chihyuan/Android/Sdk/cmake/3.18.1/bin/ninja",
+      "-C",
+      "/home/chihyuan/StudioProjects/RobotVideoSummary_RobotSide/app/.cxx/Debug/5x20375s/x86_64",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/home/chihyuan/Android/Sdk/cmake/3.18.1/bin/ninja",
+    "-C",
+    "/home/chihyuan/StudioProjects/RobotVideoSummary_RobotSide/app/.cxx/Debug/5x20375s/x86_64",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "native-lib::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "x86_64",
+      "artifactName": "native-lib",
+      "output": "/home/chihyuan/StudioProjects/RobotVideoSummary_RobotSide/app/build/intermediates/cxx/Debug/5x20375s/obj/x86_64/libnative-lib.so",
+      "runtimeFiles": []
+    }
+  },
+  "toolchains": {
+    "toolchain": {
+      "cCompilerExecutable": "/home/chihyuan/Android/Sdk/ndk/21.4.7075529/toolchains/llvm/prebuilt/linux-x86_64/bin/clang",
+      "cppCompilerExecutable": "/home/chihyuan/Android/Sdk/ndk/21.4.7075529/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": [
+    "cc"
+  ]
+}
