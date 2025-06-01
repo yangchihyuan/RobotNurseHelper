@@ -1,26 +1,61 @@
 #!/bin/bash
 
-#2025/5/22
+#2025/6/1
 #Install Robot Nurse Helper to Ubuntu 24.04
 #Author: Chih-Yuan Yang
 #Project: Robot Nurse Helper
 
-read -p "Does your PC have an Nvidia GPU RTX 30 or 40 serial? [y/n]" response
+read -p "How many Gb VRAM does your machine have?? [0/2/4/8/16/24]" VRAMSize
+read -p "What is the robot model you use? [Zenbo/Kebbi/ZenboJrII]" RobotModel
 
-if [[ "$response" =~ ^[yYnN]$ ]]; then
-  if [[ "$response" =~ ^[yY]$ ]]; then
-    NVidiaGPURTXavailable="y"
-    echo "We will detect the GPU driver. If there is no driver, we will install the driver for you. But you need to restart your PC after the installation."
-    #Check if the GPU driver is installed
-    sudo apt update   #this command is required because Ubuntu's repositories URL changed after its release in 2024 April.
-    ubuntu-drivers devices
-    sudo ubuntu-drivers autoinstall
-  else
-    NVidiaGPURTXavailable="n"
-  fi
-else
-  echo "Invalid response. Please enter y, Y, n, or N."
+#Check if the VARAM size is valid
+allowed_numbers=(0 2 4 8 16 24)
+
+# Validate if the input is a valid integer
+if ! [[ "$VRAMSize" =~ ^[0-9]+$ ]]; then
+  echo "Error: '$VRAMSize' is not a valid integer. Please try again."
   exit
+fi
+
+# Check if the input number is in the allowed_numbers array
+is_valid=false
+for allowed_val in "${allowed_numbers[@]}"; do
+  if [ "$VRAMSize" -eq "$allowed_val" ]; then
+    is_valid=true
+    break # Found a match, no need to check further
+  fi
+done
+
+if ![[ "$is_valid" = true ]]; then
+  echo "Error: '$VRAMSize' is not in the allowed list. Please try again."
+fi
+
+#Check if the RobotModel is valid
+allowed_robot_models=("Zenbo" "Kebbi" "ZenboJrII")
+# Validate if the input is a valid string
+if ! [[ "$RobotModel" =~ ^[A-Za-z]+$ ]]; then
+  echo "Error: '$RobotModel' is not a valid string. Please try again."
+  exit
+fi
+# Check if the input string is in the allowed_robot_models array
+is_valid_robot_model=false
+for allowed_robot_model in "${allowed_robot_models[@]}"; do
+  if [ "$RobotModel" == "$allowed_robot_model" ]; then
+    is_valid_robot_model=true
+    break # Found a match, no need to check further
+  fi
+done
+if ![[ "$is_valid_robot_model" = true ]]; then
+  echo "Error: '$RobotModel' is not in the allowed list. Please try again."
+  exit
+fi
+
+if (( VRAMSize > 0 )); then
+  echo "We will detect the GPU driver. If there is no driver, we will install the driver for you. But you need to restart your PC after the installation."
+  #Check if the GPU driver is installed
+  sudo apt update   #this command is required because Ubuntu's repositories URL changed after its release in 2024 April.
+  ubuntu-drivers devices
+  sudo ubuntu-drivers autoinstall
 fi
 
 #Install the compiler
@@ -36,14 +71,14 @@ sudo apt -y install zip
 sudo apt -y install libgtk2.0-dev 
 
 #create an empty workding directory
-if [ -d "ZenboNurseHelper_build" ]; then
-    rm -rf ZenboNurseHelper_build
+if [ -d "RobotNurseHelper_build" ]; then
+    rm -rf RobotNurseHelper_build
 fi
-mkdir ZenboNurseHelper_build
+mkdir RobotNurseHelper_build
 
 #install OpenCV 4.11, which is required by MediaPipe
 #install OpenCV 4.11 first, because it requires to key in sudo password again
-cd ~/ZenboNurseHelper_build
+cd ~/RobotNurseHelper_build
 sudo apt -y install cmake
 wget -O opencv4.11.zip https://github.com/opencv/opencv/archive/refs/tags/4.11.0.zip
 wget -O opencv_contrib4.11.zip https://github.com/opencv/opencv_contrib/archive/refs/tags/4.11.0.zip
@@ -59,10 +94,10 @@ sudo ldconfig
 
 
 #intall protobuf 3.19.1
-cd ~/ZenboNurseHelper_build
+cd ~/RobotNurseHelper_build
 wget -O protobuf-all-3.19.1.zip https://github.com/protocolbuffers/protobuf/releases/download/v3.19.1/protobuf-all-3.19.1.zip
 unzip protobuf-all-3.19.1.zip
-cd ~/ZenboNurseHelper_build/protobuf-3.19.1
+cd ~/RobotNurseHelper_build/protobuf-3.19.1
 ./configure
 #make -j $(nproc)   #why only 1 core is used?
 make -j 10    #prevent memory peak usage
@@ -83,15 +118,15 @@ git checkout v0.10.22
 
 #download our files
 cd 
-if [ -d "ZenboNurseHelper" ]; then
-    rm -rf ZenboNurseHelper
+if [ -d "RobotNurseHelper" ]; then
+    rm -rf RobotNurseHelper
 fi
-git clone https://github.com/yangchihyuan/ZenboNurseHelper.git
+git clone https://github.com/yangchihyuan/RobotNurseHelper.git
 #copy our code to the mediapipe folder
-cp -r ~/ZenboNurseHelper/Server/mediapipe_addition/* ~/mediapipe/
+cp -r ~/RobotNurseHelper/Server/mediapipe_addition/* ~/mediapipe/
 
 #Install bazelisk
-cd ~/ZenboNurseHelper_build
+cd ~/RobotNurseHelper_build
 wget -O bazelisk-amd64.deb https://github.com/bazelbuild/bazelisk/releases/download/v1.25.0/bazelisk-amd64.deb
 sudo dpkg -i bazelisk-amd64.deb
 
@@ -115,7 +150,7 @@ sudo apt -y install qtcreator
 
 #PortAudio
 #We use it to play voice on the server transmitted from the Android app and received from the robot's microphone. There is no package made for the Ubuntu system, and we need to compile it from downloaded source files, which are available on its GitHub page
-cd ~/ZenboNurseHelper_build
+cd ~/RobotNurseHelper_build
 if [ -d "portaudio" ]; then
     rm -rf portaudio
 fi
@@ -124,7 +159,7 @@ git clone https://github.com/PortAudio/portaudio.git
 #There is an instruction page teaching how to compile and install PortAudio (Link) However, as the page claims it is not reviewed, we modified its commands to
 
 sudo apt-get -y install libasound2-dev
-cd ~/ZenboNurseHelper_build/portaudio
+cd ~/RobotNurseHelper_build/portaudio
 ./configure
 make -j $(nproc)
 sudo make install
@@ -133,15 +168,15 @@ sudo make install
 sudo ldconfig
 
 #whisper.cpp
-#It is voice-to-text library and we utilize it on our server-side program to quickly generate sentences spoken by an operator, which will be sent to the Zenbo robot to speak out. There is no package make for the Ubuntu system, and we need to compile it from it source file downloaded from its GitHub repository
+#It is voice-to-text library and we utilize it on our server-side program to quickly generate sentences spoken by an operator, which will be sent to the robot to speak out. There is no package make for the Ubuntu system, and we need to compile it from it source file downloaded from its GitHub repository
 
 #Debug info 25/3/18,whisper.cpp v1.7.5 changes its install commands
-cd ~/ZenboNurseHelper_build
+cd ~/RobotNurseHelper_build
 if [ -d "whisper.cpp" ]; then
     rm -rf whisper.cpp
 fi
 git clone https://github.com/ggerganov/whisper.cpp.git
-cd ~/ZenboNurseHelper_build/whisper.cpp
+cd ~/RobotNurseHelper_build/whisper.cpp
 git checkout v1.7.5
 bash ./models/download-ggml-model.sh base
 if [ "$NVidiaGPURTXavailable" == "n" ]; then
@@ -158,27 +193,27 @@ else
 fi
 
 #onnx
-cd ~/ZenboNurseHelper_build
+cd ~/RobotNurseHelper_build
 wget -O onnxruntime-linux-x64-1.12.1.tgz https://github.com/microsoft/onnxruntime/releases/download/v1.12.1/onnxruntime-linux-x64-1.12.1.tgz
 tar -xvzf onnxruntime-linux-x64-1.12.1.tgz
 
 #silero-vad
-cd ~/ZenboNurseHelper_build
+cd ~/RobotNurseHelper_build
 git clone https://github.com/snakers4/silero-vad.git
 
 #ollama
 sudo snap install curl
-cd ~/ZenboNurseHelper_build/
+cd ~/RobotNurseHelper_build/
 curl -fsSL https://ollama.com/install.sh | sh
 ollama pull gemma3:1b
 
 #ollama-hpp
-cd ~/ZenboNurseHelper_build
+cd ~/RobotNurseHelper_build
 git clone https://github.com/jmont-dev/ollama-hpp.git
 
 #Build our own program
-cd ~/ZenboNurseHelper/Server
-./build_project.sh Zenbo
+cd ~/RobotNurseHelper/Server
+./build_project.sh $RobotModel
 #copy the required mediapipe files to Server
 cp -r ~/mediapipe/bazel-bin/mediapipe/examples/desktop/libmp/libmp_gpu.so.runfiles/mediapipe/mediapipe .
 if [ -d "temp" ]; then
@@ -191,5 +226,5 @@ cp -r temp/home/$USER/mediapipe/mediapipe .
 rm -rf temp
 
 #copy the file to prevent Nvidia GPU from being unavailable after laptop suspends
-sudo cp ~/ZenboNurseHelper/Server/nvidia-power-management.conf /etc/modprobe.d/
+sudo cp ~/RobotNurseHelper/Server/nvidia-power-management.conf /etc/modprobe.d/
 sudo update-initramfs -u
