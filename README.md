@@ -1,14 +1,14 @@
 #### Introduction
-This is a project for developing a companion robot to help nurses in a pediatric intensive care unit (PICU). There is a shortage of nurses in Taiwan, due to several factors such as low salaries, unsatisfying working environment, and the reduction of young working labors in the population structure caused by sub-replacement fertility.
-In a PICU, children have to be separated from their parents for most time due to the sanity issue. In contrast, a companion robot can be totally sanitized and stay in the PICU. In practice, a PICU nurse usually needs to take care of multiple wards to make the operation economic. When a nurse is busy for one ward, she/he needs a helper to look after other wards. Currently such a duty is delegated to a nurse colleague, so there are multiple nurses on duty in a PICU.
+This is a project for developing a companion robot to help nurses in hospitals. There is a shortage of nurses in Taiwan, due to several factors such as low salaries, unsatisfying working environment, and the reduction of young working labors in the population structure caused by sub-replacement fertility.
 
-#### Scenario
+#### Robot Models
+We develop our programs on three types of robots: Zenbo, Kebbi, and Zenbo Jr. II.
 
-<img src="PICU_Scenario_1.jpg" alt="Scenario 1" height="150"/>
-<img src="PICU_Scenario_2.jpg" alt="Scenario 2" height="150"/>
-<img src="PICU_Scenario_3.jpg" alt="Scenario 3" height="150"/>
-
-We plan to use the Asus Zenbo robots as our experimental vehicles and allocate them aside wards in a PICU. The Zenbo robots do not need to walk on the floor because there are many emergent events in which a robot on the floor may hinder nurses and doctors.
+|Model| Zenbo | Kebbi Air-S | Zenbo Jr. III |
+|:----| :----:| :----: | :----: |
+|image| ![Zenbo](Zenbo.png)  | ![Kebbi](KebbiAirS.png) | ![ZenboJrII](PICU_Scenario_3.jpg) |
+|OS   | Android 6 | Android 9 | Android 10 |
+|Manufactor| Asus | NuwaRobotics| Asus|
 
 #### Goal
 We want to develop a few features of the robot.
