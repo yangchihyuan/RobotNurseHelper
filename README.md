@@ -4,7 +4,7 @@ This is a project for developing a companion robot to help nurses in hospitals. 
 #### Robot Models
 We develop our programs on three types of robots: Zenbo, Kebbi, and Zenbo Jr. II.
 
-|Model| Zenbo | Kebbi Air-S | Zenbo Jr. III |
+|Model| Zenbo | Kebbi Air-S | Zenbo Jr. II |
 |:----| :----:| :----: | :----: |
 |image| ![Zenbo](Zenbo.png)  | ![Kebbi](KebbiAirS.png) | ![ZenboJrII](PICU_Scenario_3.jpg) |
 |OS   | Android 6 | Android 9 | Android 10 |
