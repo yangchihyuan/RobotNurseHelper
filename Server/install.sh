@@ -184,7 +184,7 @@ if((VRAMSize==0)); then
   cmake --build build -j10 --config Release
 else
   sudo apt -y install nvidia-cuda-toolkit
-  if ((VRAMSize==2));
+  if ((VRAMSize==2)); then
     bash ./models/download-ggml-model.sh small
   else
     bash ./models/download-ggml-model.sh large-v3-turbo
