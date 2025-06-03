@@ -31,6 +31,7 @@ RobotStatus robot_status;
 ActionOption action_option;
 
 cv::Mat outFrame;
+std::vector<std::vector<std::array<float, 3>>> global_landmarks;
 
 ThreadProcessImage::ThreadProcessImage()
 {
@@ -835,9 +836,16 @@ void ThreadProcessImage::run()
                     else
                     {
                         //update the last landmarks
+
+                        
+                        if ( Task == "Pose" )
+                        {
+                            global_landmarks = normalized_landmarks; //Code to transfer to global variable, from prompt to LLM [MOHAMED]
+                        }
+                        
+
                         last_landmarks = normalized_landmarks;
                         bLastLandmarksEffective = true;
-
                         //use time control first, wait for 3 seconds
                         auto current_time = std::chrono::high_resolution_clock::now();
                         auto duration = std::chrono::duration_cast<std::chrono::seconds>(current_time - previous_time);

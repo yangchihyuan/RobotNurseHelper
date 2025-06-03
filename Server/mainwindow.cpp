@@ -19,6 +19,7 @@
 #include "RobotStatus.hpp"
 #include "ActionOption.hpp"
 #include "ThreadOllama.hpp"
+#include "LandmarkToRobotAction.hpp" //[MOHAMED]
 
 extern std::mutex gMutex_audio_buffer;
 extern std::queue<short> AudioBuffer;
@@ -140,6 +141,7 @@ void MainWindow::setLanguage( QString Language)
     else if( Language == "English")
     {
         thread_ollama.str_system_message = "You are a medical robot named Zenbo. Please answer in concise English.";
+        // "There is also visual input, however you (the LLM) will not have direct access to it. In addition to recieving text prompts from the patient, you may receive a short sentence that indicates the body language by the patient. This body language should affect your output"
         thread_whisper.strLanguage = "en"; // set language to English
         SentenceFileName = "Sentence_English.txt";
     }
@@ -542,8 +544,17 @@ void MainWindow::timer_event()
 
     if( thread_whisper.b_new_RobotSentence )
     {
+        string body_language_added_prompt = "";
+        if (!global_landmarks.empty()) //[MOHAMED]
+        {
+            if (global_landmarks[0][20][2] > global_landmarks[0][12][2] && global_landmarks[0][18][2] > global_landmarks[0][12][2])
+            {
+                //Check is right pinky and right index y nomralized coordinate is higher than the right shoulder y coordinate, symbolizing raised right hand
+                body_language_added_prompt = "[Body Language from Visual Input]: Patients right hand is raised";
+            }
+        }
         thread_whisper.b_new_RobotSentence = false;
-        ui->plainTextEdit_received->setPlainText(QString::fromStdString(thread_whisper.strRobotSentence));
+        ui->plainTextEdit_received->setPlainText(QString::fromStdString(thread_whisper.strRobotSentence + body_language_added_prompt));
     }
 
     if( thread_whisper.b_RobotSentence_End )

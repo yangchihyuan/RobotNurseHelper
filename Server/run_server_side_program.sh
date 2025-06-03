@@ -5,15 +5,15 @@
 if [ $# == 0 ]; then
     echo "Please specify the GPU model as an argument."
 elif [ $1 == "3050" ]; then
-    build/RobotNurseHelper --WhisperModel $HOME/ZenboNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin \
+    build/RobotNurseHelper --WhisperModel $HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin \
     --ImageSaveDirectory $HOME/Downloads/raw_images --LanguageModel gemma3:1b \
     --ImageSaveEveryNFrame 5 --Language Chinese --DefaultSaveImage true
 elif [ $1 == "4070" ]; then
-    build/RobotNurseHelper --WhisperModel $HOME/ZenboNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin \
+    build/RobotNurseHelper --WhisperModel $HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin \
     --ImageSaveDirectory $HOME/Downloads/raw_images --LanguageModel gemma3:4b \
     --ImageSaveEveryNFrame 1 --Language Chinese --DefaultSaveImage off
 elif [ $1 == "debug" ]; then
-    gdb --args build/RobotNurseHelper "--WhisperModel" "$HOME/ZenboNurseHelper_build/whisper.cpp/models/ggml-base.bin" \
+    gdb --args build/RobotNurseHelper "--WhisperModel" "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-base.bin" \
     "--ImageSaveDirectory" "$HOME/Downloads/raw_images" "--LanguageModel" "gemma3:1b" \
     "--ImageSaveEveryNFrame" "5" "--Language" "Chinese" "--DefaultSaveImage" "true"
 elif [ $1 == "valgrind" ]; then
