@@ -24,7 +24,7 @@ function(my_protobuf_generate_cpp PROTO_SRCS PROTO_HDRS PROTO_FILES)
     # Define the output .pb.cc and .pb.h files
     set(PROTO_CC "${CMAKE_CURRENT_BINARY_DIR}/${PROTO_DIR}/${PROTO_BASE}.pb.cc")
     set(PROTO_HH "${CMAKE_CURRENT_BINARY_DIR}/${PROTO_DIR}/${PROTO_BASE}.pb.h")
-    message(STATUS "CMAKE_CURRENT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}")             #CMAKE_CURRENT_BINARY_DIR = /home/chihyuan/ZenboNurseHelper/Server3-Kebbi/build
+    message(STATUS "CMAKE_CURRENT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}")             #CMAKE_CURRENT_BINARY_DIR = /home/chihyuan/RobotNurseHelper/Server/build
 
     # Run protoc to generate the C++ files
     add_custom_command(
@@ -67,10 +67,10 @@ find_package(OpenCV COMPONENTS core highgui videoio imgproc imgcodecs REQUIRED)
 find_package(Qt6 COMPONENTS Core Widgets Network Multimedia REQUIRED)   
 
 file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
-set(ZENBONURSEHELPER_BUILD_DIR "$ENV{HOME}/ZenboNurseHelper_build")
-set(OLLAMA_HPP_INCLUDE_DIR "${ZENBONURSEHELPER_BUILD_DIR}/ollama-hpp/include")
-set(ONNX_HPP_INCLUDE_DIR "${ZENBONURSEHELPER_BUILD_DIR}/onnxruntime-linux-x64-1.12.1/include")
-set(SILERO_HPP_INCLUDE_DIR "${ZENBONURSEHELPER_BUILD_DIR}/silero-vad/examples/cpp")
+set(ROBOTNURSEHELPER_BUILD_DIR "$ENV{HOME}/RobotNurseHelper_build")
+set(OLLAMA_HPP_INCLUDE_DIR "${ROBOTNURSEHELPER_BUILD_DIR}/ollama-hpp/include")
+set(ONNX_HPP_INCLUDE_DIR "${ROBOTNURSEHELPER_BUILD_DIR}/onnxruntime-linux-x64-1.12.1/include")
+set(SILERO_HPP_INCLUDE_DIR "${ROBOTNURSEHELPER_BUILD_DIR}/silero-vad/examples/cpp")
 set(SOURCES JPEG.cpp
             utility_directory.cpp
             utility_TimeRecorder.cpp
@@ -100,7 +100,7 @@ message(STATUS 'PROTO_SRC ${PROTO_SRC}')
 
 # whisper.cpp v1.7.5
 add_library(LIBWHISPER SHARED IMPORTED)
-set(WHISPER_DIR $ENV{HOME}/ZenboNurseHelper_build/whisper.cpp)
+set(WHISPER_DIR $ENV{HOME}/RobotNurseHelper_build/whisper.cpp)
 set_target_properties(LIBWHISPER PROPERTIES
   IMPORTED_LOCATION "${WHISPER_DIR}/build/src/libwhisper.so")
 target_include_directories(LIBWHISPER INTERFACE "${WHISPER_DIR}/include" "${WHISPER_DIR}/ggml/include" ${WHISPER_DIR}/examples)
@@ -142,7 +142,7 @@ target_link_libraries(RobotNurseHelper LIBMP)
 
 # ONNX
 add_library(LIBONNX SHARED IMPORTED)
-set(ONNX_DIR $ENV{HOME}/ZenboNurseHelper_build/onnxruntime-linux-x64-1.12.1)
+set(ONNX_DIR $ENV{HOME}/RobotNurseHelper_build/onnxruntime-linux-x64-1.12.1)
 set_target_properties(LIBONNX PROPERTIES
   IMPORTED_LOCATION "${ONNX_DIR}/lib/libonnxruntime.so")
 
