@@ -5,3 +5,8 @@
 64	85	1745754511068332402	../../../../build/intermediates/cxx/Debug/5v383i2u/obj/arm64-v8a/libnative-lib.so	79324a00cef6da51
 1	80	1745810675984847430	CMakeFiles/native-lib.dir/src/main/jni/imageutils_jni.cc.o	a38678e58052bb1a
 81	194	1745810676099877158	../../../../build/intermediates/cxx/Debug/5v383i2u/obj/arm64-v8a/libnative-lib.so	79324a00cef6da51
+0	2	0	clean	9a7f50791462cddc
+1	72	1750247969412532000	CMakeFiles/native-lib.dir/src/main/jni/rgb2yuv.cc.o	aa3c277f9c4fc7d
+2	75	1750247969415531946	CMakeFiles/native-lib.dir/src/main/jni/yuv2rgb.cc.o	5cbed76fea623cf6
+2	81	1750247969422531821	CMakeFiles/native-lib.dir/src/main/jni/imageutils_jni.cc.o	a38678e58052bb1a
+81	203	1750247969541529699	../../../../build/intermediates/cxx/Debug/5v383i2u/obj/arm64-v8a/libnative-lib.so	79324a00cef6da51

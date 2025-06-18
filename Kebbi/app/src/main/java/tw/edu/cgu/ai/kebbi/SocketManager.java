@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import RobotCommandProtobuf.RobotCommand;
+import RobotCommandProtobuf.RobotCommandOuterClass;
 
 public class SocketManager {
     public String mServerURL;
@@ -43,7 +43,7 @@ public class SocketManager {
     String endString = new String("EndOfAMessage");
 
     public NuwaRobotAPI mRobotAPI;
-    ArrayList<RobotCommand.KebbiCommand> ArrayListCommand = new ArrayList<RobotCommand.KebbiCommand>();
+    ArrayList<RobotCommandOuterClass.RobotCommand> ArrayListCommand = new ArrayList<RobotCommandOuterClass.RobotCommand>();
     Converter converter;
 
     public boolean bAutoReconnection = true;
@@ -82,7 +82,7 @@ public class SocketManager {
                                     }
                                     effective_length = remaining;
 
-                                    RobotCommand.KebbiCommand command = RobotCommand.KebbiCommand.parseFrom(slice);
+                                    RobotCommandOuterClass.RobotCommand command = RobotCommandOuterClass.RobotCommand.parseFrom(slice);
                                     Log.d("Debug", "Receive a message");
                                     if (command.hasPitch()) {
                                         Log.d("Pitch degree", "Pitch degree " + Integer.toString( command.getPitch()));
