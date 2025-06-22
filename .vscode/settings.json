@@ -71,5 +71,9 @@
         "variant": "cpp",
         "format": "cpp",
         "__nullptr": "cpp"
-    }
+    },
+    "cSpell.words": [
+        "Kebbi",
+        "plugdev"
+    ]
 }

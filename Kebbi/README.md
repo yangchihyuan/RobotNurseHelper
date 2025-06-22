@@ -1,10 +1,9 @@
-This folder contains the source files of our robot-side app of the ZenboNurseHelper project.
+This folder contains the source files to build a robot-side app for the Kebbi Air-S robot.
 
-# Requirement
-This app runs on a Zenbo robot made by Asus Inc. Although this app can be installed on other Android devices, the Zenbo's features will not work.
+![Kebbi](KebbiAirS.png)
 
 # Developing Tool
-Android Studio Koala (2024.1.1)
+Android Studio Meerkat | 2024.3.1 Patch 2
 
 # Platform
 Ubuntu 24.04
@@ -13,28 +12,20 @@ Ubuntu 24.04
 Just use Android Studio to open this directory and the gradle will automatically build this project.
 
 # Installation
-The installation of this app is the same as ones of other Android apps. You can turn on your Zenbo robot's developer options as well as the USB debugging/installing options. Thereafter, you can install the app from the Android Studio through a USB cable connecting to the Zenbo robot by "Running the app on the Zenbo device".
-Another way is to build an APK file, copy the APK file to a USB thumb disk, and install the app through the APK file by inserting the USB thumb disk on a USB port on the Zenbo robot's head.
+There are two ways to install our app onto a Kebbi robot.
+The better way is to install our app through a USB cable connection from the PC to the robot. The benefit is that you can easily debug.
 
-# Hint
-If you use the USB debugging mode to install this app. You need to put your Ubuntu account in the plugdev group. Use this command to check whether your account is in the group already.
+To enable this feature, you need the privilege of Ubuntu's plugdev group.
+Use this command to check whether your account is in the group already.
 ```sh
 cat /etc/group | grep plugdev
 ```
 If you can find your user name, your account is already in the group.
-Otherwise, use this command to add your account into the group
+Otherwise, use this command to add your account into the group and install a package
 ```sh
-sudo adduser <your user name> plugdev
+sudo usermod -aG plugdev $LOGNAME
+sudo apt-get install android-sdk-platform-tools-common
 ```
+You need to log out and log in to activate your new group privilege.
 
-# Run the app
-You can find the app 'Zenbo Nurse Helper' in both the robot's Android apps panel.
-
-# Known problems and workarounds
-## libprotobuf incompatible problem
-Zenbo's Android version is 6, which is too old to be supported by the newly released protobuf libraries. The app will raise an exception if it receive a message with a variable of the type boolean or float. However, there is no exception for the types string, int32 and int64. Therefore, in our ServerSend.proto file, we replace the type of OpenPoseCoordinate.x and OpenPoseCoordinate.y from float to int32 to shun this problem.
-
-# Change log
-v2 (2025.03.17) change the transmittion protocol
-v3 (2025.03.31) add the rotation only command
-v4 (2025.04.16) enable socket auto-reconnection
+There is another way to install our app through an APK file. From the Android Studio, create an APK and manually copy the APK file to a micro SD card. Insert the micro SD card into Kebbi's head socket, which is hided by a rectangle plastic lid. Launch Kebbi's file manager to open the APK file and install our app.
