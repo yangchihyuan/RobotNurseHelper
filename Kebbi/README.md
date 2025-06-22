@@ -58,6 +58,6 @@ If you want to view those motions in 3D, Nuwa robotics provides another page for
 <img src="Kebbi_motion_3D_list.jpg" alt="Kebbi motion 3D list" height="200"/>
 
 However, you need to have a Nuwa developer account and first and log in their developer website and then you can browse those motions.
-[Link](https://dss.nuwarobotics.com/documents/listMotionFile)
+[Link](https://dss.nuwarobotics.com/documents/listMotionFile) In addition, the only language supported by this page is Chinese, which is inconvenient for non-Chinese developers.
 
 <img src="Kebbi_motion_3D.jpg" alt="Kebbi motion 3D" height="200"/>
