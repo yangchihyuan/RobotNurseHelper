@@ -1,0 +1,14 @@
+SP_Swim02
+
+Hello Mohammed! It looks like you're holding your tummy. 
+
+I see you're looking down a little. Are you feeling a bit sad about your tummy ache?
+
+Why don't I tell you a joke? What do you call a lazy kangaroo? Pouch potato! 
+
+**Patient Summary:**
+
+-Name: Muhammad
+-Main Complaint: Stomach ache.
+-Location: Stomach.
+-Additional Concern: Feels stomach in throat.

@@ -29,6 +29,8 @@ protected:
     char str_results[4096];
     int str_results_len;
     mutex mutex_message_buffer;
+    queue<RobotCommandProtobuf::RobotCommand> actionQueue;
+    queue<RobotCommandProtobuf::RobotCommand> messageQueue;
     queue<RobotCommandProtobuf::RobotCommand> mQueue;
 };
 

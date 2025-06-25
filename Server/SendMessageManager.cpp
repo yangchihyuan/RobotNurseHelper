@@ -2,6 +2,8 @@
 #include <iostream>
 #include <signal.h>
 
+int message_counter = 0;
+
 void SendMessageManager::Send()
 {
     //supress the SIGPIPE signal, sometimes the socket may be closed by the robot
@@ -20,6 +22,10 @@ void SendMessageManager::Send()
         {
             if( pSocket->isValid())
             {
+                while(mQueue.size() > 2)
+                {
+                    mQueue.pop();
+                }
                 QDataStream socketStream(pSocket);
                 RobotCommandProtobuf::RobotCommand message = mQueue.front();
                 mQueue.pop();
@@ -51,7 +57,46 @@ void SendMessageManager::Send()
 void SendMessageManager::AddMessage(RobotCommandProtobuf::RobotCommand message)
 {
     mutex_message_buffer.lock();
-    cout << "Add a Message to mQueue" << endl;
-    mQueue.push(message);
+    /*
+    if(message.has_speak_sentence)
+    {
+        messageQueue.push(message);
+        cout << "Add a Message to messageQueue" << endl;
+        message_counter++;
+    }
+    else
+    {
+        actionQueue.push(message);
+        cout << "Add a Message to messageQueue" << endl;
+    }
+    */
+    if(message.has_speak_sentence())
+    {
+        if (message.speak_sentence() != "")
+        {
+            cout << "OUTPUT: " << message.speak_sentence() << "\n";
+            cout << "Add a Message to mQueue" << endl;
+            mQueue.push(message);
+        }
+    }
+    else
+    {
+        if (message.has_motion())
+        {
+            cout << "HAS_MOTION\n";
+        }
+        else if (message.has_turnspeed())
+        {
+            cout << "TURNSPEED_MESSAGE: " << message.turnspeed() << "\n";
+        }
+        else 
+        {
+            cout << "UNKNOWN_MESSAGE: <<\n";
+        }
+        cout << "Add a Message to mQueue" << endl;
+        mQueue.push(message);
+    }
+    //cout << "Add a Message to mQueue" << endl;
+    //mQueue.push(message);
     mutex_message_buffer.unlock();
 }

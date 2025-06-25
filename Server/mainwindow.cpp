@@ -21,6 +21,8 @@
 #include "ThreadOllama.hpp"
 #include "LandmarkToRobotAction.hpp" //[MOHAMED]
 
+#include "cppvader/include/cppvader.hpp" //[MOHAMED]
+
 extern std::mutex gMutex_audio_buffer;
 extern std::queue<short> AudioBuffer;
 extern std::condition_variable cond_var_audio;
@@ -29,6 +31,34 @@ extern int PortAudio_stop_and_terminate();
 extern bool gbPlayAudio;
 extern RobotStatus robot_status;
 extern ActionOption action_option;
+
+int question_counter = 0;
+int motion_counter = 0;
+//extern string chosen_action;
+//extern cv::Mat outFrame; // [MOHAMED]
+
+int checkDoubleDigits(const std::string& str, int minRange, int maxRange) {
+    int foundCount = 0, last_num = 0;
+    for (size_t i = 0; i < str.length() - 1; ++i) {
+        if (isdigit(str[i]) && isdigit(str[i+1])) {
+            int num = std::stoi(str.substr(i, 2));
+            if (num >= minRange && num <= maxRange) {
+                foundCount++;
+                i++;
+                last_num = num;
+            }
+        }
+    }
+    if (foundCount < 1)
+    {
+		return 0;
+	}
+	else if(foundCount > 1)
+	{
+		return -1;
+	}
+    return last_num;
+}
 
 void MainWindow::startThreads()
 {
@@ -140,8 +170,32 @@ void MainWindow::setLanguage( QString Language)
     }
     else if( Language == "English")
     {
-        thread_ollama.str_system_message = "You are a medical robot named Zenbo. Please answer in concise English.";
-        // "There is also visual input, however you (the LLM) will not have direct access to it. In addition to recieving text prompts from the patient, you may receive a short sentence that indicates the body language by the patient. This body language should affect your output"
+        //thread_ollama.str_system_message = "You are a medical robot named Zenbo. Please answer in concise English.";
+        std::string prompt = R"(Here is a list of available robot actions:
+
+        "EM_Mad02", "BA_Nodhead", "SP_Swim02", "PE_RotateA", "SP_Karate", "RE_Cheer", "SP_Climb",
+        "DA_Hit", "TA_DictateR", "SP_Bowling", "SP_Walk", "SA_Find", "BA_TurnHead", "SA_Toothache",
+        "SA_Sick", "SA_Shocked", "SP_Dumbbell", "SA_Discover", "RE_Thanks", "PE_Changing",
+        "SP_HorizontalBar", "WO_Traffic", "RE_HiR", "RE_HiL", "DA_Brushteeth", "RE_Encourage",
+        "RE_Request", "PE_Brewing", "RE_Change", "PE_Phubbing", "RE_Baoquan", "SP_Cheer", "RE_Ask",
+        "PE_Triangel", "PE_Sorcery", "PE_Sneak", "PE_Singing", "LE_Yoyo", "SP_Throw", "SP_RaceWalk",
+        "PE_ShakeFart", "PE_RotateC", "PE_RotateB", "EM_Blush", "PE_Puff", "PE_PlayCello", "PE_Pikachu"
+
+        Pick the best action for a friendly robot talking to a child.
+
+        It should be fun, safe, and help the child feel happy or engaged.
+
+        Reply with:
+        1. The chosen action
+        2. A short reason why it’s a good fit)";
+
+        thread_ollama.str_system_message_list[0] = "You are a medical robot named Zenbo. You are talking to a child patient. Please answer in very concise English. In addition to recieving text prompts from the patient, you may receive a short sentence that indicates the body language by the patient. We will need you to issue a series of prompts for data gathering purposes, first to ask one by one for age, name, patient's symptoms, and pain intensity. A raised right hand means that the patient would like to ask a question. The robot can move with set actions, but this is handled completely seperately"; // Once information is gathered, do not restate the questions";
+        // thread_ollama.str_system_message_list[0] += prompt;
+        thread_ollama.str_system_message_list[1] = "You are a medical robot named Zenbo. You are talking to a young child patient. Describe what you can see the patient doing. Do not repeat the same question twice. Please answer in very concise and friendly English. Output only one or two short sentences at a time. In addition to recieving text prompts from the patient, you are recieving an image of the patient in front of you. This body language should affect your output. Please tell the child patient to do very simple exercises (like raise hands) and provide details on specific strecthes. Then see if they moving correctly. Don't repeat yourself. A raised right hand means that the patient would like to ask a question.";
+        thread_ollama.str_system_message_list[2] = "You are a medical robot named Zenbo. You are talking to a young child patient. Describe what you can see the patient doing. Do not repeat the same question twice. Please answer in very concise and friendly English. Output only one or two short sentences at a time. In addition to recieving text prompts from the patient, you are recieving an image of the patient in front of you. This body language should affect your output. Please tell tell the child a few jokes and answer their questions if they have any.";
+        // We will need you to issue a series of prompts for data gathering purposes, first to ask one by one for age, name, patient's symptoms, and pain intensity. Once information is gathered, do not restate the questions";
+        // A raised right hand means that the patient would like to ask a question. We will need you to issue a series of prompts for data gathering purposes, first to ask for age, name and how the patient is feeling. Once information is gathered, do not restate the questions"; 
+        //"Only respond if the patient is looking towards you. Do not respond if the patient is NOT looking towards you.";
         thread_whisper.strLanguage = "en"; // set language to English
         SentenceFileName = "Sentence_English.txt";
     }
@@ -153,7 +207,7 @@ void MainWindow::setLanguage( QString Language)
     }
     else
     {
-        throw "Unsupported language: " + Language.toStdString();    
+        throw "Unsupported language: " + Language.toStdString();
     }
 
     QFile textFile(SentenceFileName);
@@ -544,19 +598,147 @@ void MainWindow::timer_event()
 
     if( thread_whisper.b_new_RobotSentence )
     {
-        string body_language_added_prompt = "";
+        string body_language_added_prompt = "[Body Language from Visual Input]: Patients right hand is lowered";
+        /*
+        //cout << global_landmarks[0][14][1] << " " << global_landmarks[0][12][1] << "\n";
         if (!global_landmarks.empty()) //[MOHAMED]
         {
-            if (global_landmarks[0][20][2] > global_landmarks[0][12][2] && global_landmarks[0][18][2] > global_landmarks[0][12][2])
+            cout << global_landmarks[0][14][1] << " " << global_landmarks[0][12][1] << "\n";
+            if (global_landmarks[0][14][1] < global_landmarks[0][12][1]) // && global_landmarks[0][18][1] > global_landmarks[0][12][1])
             {
                 //Check is right pinky and right index y nomralized coordinate is higher than the right shoulder y coordinate, symbolizing raised right hand
                 body_language_added_prompt = "[Body Language from Visual Input]: Patients right hand is raised";
             }
         }
-        thread_whisper.b_new_RobotSentence = false;
-        ui->plainTextEdit_received->setPlainText(QString::fromStdString(thread_whisper.strRobotSentence + body_language_added_prompt));
-    }
+        */
 
+        if(!thread_whisper.strRobotSentence.empty())
+        {
+
+            //vader::SentimentIntensityAnalyser analyser("cppvader/vader_lexicon.txt", "cppvader/emoji_utf8_lexicon.txt");
+            //auto vs = analyser.polarityScores(thread_whisper.strRobotSentence);
+            //cout << vs << "\n"; //analyser.polarityScores(thread_whisper.strRobotSentence) << "\n";
+            RobotCommandProtobuf::RobotCommand motion_command;
+            RobotCommandProtobuf::RobotCommand facial_command;
+            if (!(thread_whisper.strRobotSentence.empty() || thread_whisper.strRobotSentence == ""))
+            {
+                vader::SentimentIntensityAnalyser analyser("cppvader/vader_lexicon.txt", "cppvader/emoji_utf8_lexicon.txt");
+                auto vs = analyser.polarityScores(thread_whisper.strRobotSentence);
+                cout << vs << "\n"; //analyser.polarityScores(thread_whisper.strRobotSentence) << "\n";
+                int action_index = 7;
+                if (vs.pos > 0.4)
+                {
+                    //if (motion_counter % 3 == 0)
+                    //{
+                    //motion_command.set_motion(7);
+                    action_index = 7;
+                    //}
+                    /*
+                    else if (motion_counter % 3 == 1)
+                    {
+                        motion_command.set_motion(6);
+                    }
+                    else 
+                    {
+                        motion_command.set_motion(4);
+                    }
+                    motion_counter++;
+                    */
+                    //motion_command.set_motion(7);
+                    
+                    cout << thread_whisper.strRobotSentence << " " << "HAPPY\n";
+                    facial_command.set_face(5);
+                    //sendMessageManager.AddMessage(facial_command);
+                }
+                else if(vs.neg > 0.4)
+                {
+                    //motion_command.set_motion(16);
+                    action_index = 16;
+                    cout << thread_whisper.strRobotSentence << " " << "SAD\n";
+                    facial_command.set_face(11);
+                    //sendMessageManager.AddMessage(facial_command);
+                }
+                else
+                {
+                    //motion_command.set_motion(3);
+                    action_index = 3;
+                    cout << thread_whisper.strRobotSentence << " " << "NUETRAL\n";
+                }
+                QString target = QString::fromStdString(chosen_action);
+                //int index = -1;
+                QStringList strList_action;
+                strList_action.append("TA_DictateL");
+                strList_action.append("DA_Full");
+                strList_action.append("EM_Mad02");
+                strList_action.append("BA_Nodhead");
+                strList_action.append("SP_Swim02"); 
+                strList_action.append("PE_RotateA"); //5
+                strList_action.append("SP_Karate");
+                strList_action.append("RE_Cheer");
+                strList_action.append("SP_Climb");
+                strList_action.append("DA_Hit"); 
+                strList_action.append("TA_DictateR"); //10
+                strList_action.append("SP_Bowling");
+                strList_action.append("SP_Walk");
+                strList_action.append("SA_Find");
+                strList_action.append("BA_TurnHead");
+                strList_action.append("SA_Toothache"); //15
+                strList_action.append("SA_Sick");
+                strList_action.append("SA_Shocked");
+                strList_action.append("SP_Dumbbell");
+                strList_action.append("SA_Discover");
+                strList_action.append("RE_Thanks"); //15
+                strList_action.append("PE_Changing");
+                strList_action.append("SP_HorizontalBar");
+                strList_action.append("WO_Traffic");
+                strList_action.append("RE_HiR");
+                strList_action.append("RE_HiL"); //20
+                strList_action.append("DA_Brushteeth");
+                strList_action.append("RE_Encourage");
+                strList_action.append("RE_Request");
+                strList_action.append("PE_Brewing");
+                strList_action.append("RE_Change"); //25
+                strList_action.append("PE_Phubbing");
+                strList_action.append("RE_Baoquan");
+                strList_action.append("SP_Cheer");
+                strList_action.append("RE_Ask");
+                strList_action.append("PE_Triangel"); //30
+                strList_action.append("PE_Sorcery");
+                strList_action.append("PE_Sneak");
+                strList_action.append("PE_Singing");
+                strList_action.append("LE_Yoyo");
+                strList_action.append("SP_Throw"); //35
+                strList_action.append("SP_RaceWalk");
+                strList_action.append("PE_ShakeFart");
+                strList_action.append("PE_RotateC");
+                strList_action.append("PE_RotateB");
+                strList_action.append("EM_Blush"); //40
+                strList_action.append("PE_Puff");
+                strList_action.append("PE_PlayCello");
+                strList_action.append("PE_Pikachu");
+                for (int i = 0; i < strList_action.size(); ++i) {
+                    if (strList_action[i].compare(target, Qt::CaseInsensitive) == 0) {
+                        action_index = i;
+                        cout << "FOUND AN ACTION";
+                        break;
+                    }
+                }
+                cout << "CHOSEN ACTION INDEX" << action_index << ": " << strList_action[action_index].toStdString() << "\n";
+                cout << "SPECIFIED ACTION: " << target.toStdString() << "\n";
+                motion_command.set_motion(action_index);
+                sendMessageManager.AddMessage(motion_command);
+                //sendMessageManager.Send();
+            }
+        }
+        string added_prompt = "";
+        body_language_added_prompt = ""; 
+        added_prompt = "";
+        thread_whisper.b_new_RobotSentence = false;
+        ui->plainTextEdit_received->setPlainText(QString::fromStdString(thread_whisper.strRobotSentence + added_prompt));
+        cv::imwrite("image_temp.jpg", outFrame);
+        //sendMessageManager.Send();
+    }
+    //cv::imwrite("image_temp.jpg", outFrame);
     if( thread_whisper.b_RobotSentence_End )
     {
         thread_whisper.b_RobotSentence_End = false;

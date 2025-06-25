@@ -73,7 +73,7 @@ int FaceLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
             status.pitch_degree = pitch;
         }
     }
-
+    message.set_turnspeed(5);
     return 1;
 }
 
@@ -132,6 +132,6 @@ int PoseLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
             status.pitch_degree = pitch;
         }
     }
-
+    message.set_turnspeed(20);
     return 1;
 }

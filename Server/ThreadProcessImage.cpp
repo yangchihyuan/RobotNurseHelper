@@ -804,8 +804,8 @@ void ThreadProcessImage::run()
                         auto current_time = std::chrono::high_resolution_clock::now();
                         auto duration = std::chrono::duration_cast<std::chrono::seconds>(current_time - previous_time);
 //                        cout << "duration empty" << duration.count() << endl;
-                        if (duration.count() >= 3 && bLastLandmarksEffective) {
-                            bLastLandmarksEffective = false;
+                        if (duration.count() >= 3 && bLastLandmarksEffective) { //3 [MOHAMED]
+                            bLastLandmarksEffective = false;  
                             if( action_option.move_mode != action_option.MOVE_MANUAL)
                             {
                                 RobotCommandProtobuf::RobotCommand message;
@@ -850,7 +850,7 @@ void ThreadProcessImage::run()
                         auto current_time = std::chrono::high_resolution_clock::now();
                         auto duration = std::chrono::duration_cast<std::chrono::seconds>(current_time - previous_time);
 //                        cout << "duration " << duration.count() << endl;
-                        if (duration.count() >= 3) {
+                        if (duration.count() >= 3) { //3 [MOHAMED]
                             if( action_option.move_mode != action_option.MOVE_MANUAL)
                             {
                                 RobotCommandProtobuf::RobotCommand message;

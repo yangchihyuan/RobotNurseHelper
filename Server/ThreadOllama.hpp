@@ -9,6 +9,8 @@
 
 using namespace std;
 
+extern string chosen_action, summary;
+
 class ThreadOllama: public QThread
 {
     Q_OBJECT
@@ -23,10 +25,12 @@ public:
     bool b_new_LLM_response = false;
     string strResponse;
     string str_system_message;
-    string ModelName = "gemma3:1b";
+    string str_system_message_list[4];
+    string ModelName = "gemma3:4b";
 
 protected:
     void run();
+    string validate_conversation(ollama::options options, ollama::messages &message_history, string &prompt, bool remove_message, int context_size=0);
     mutex mtx;
 };
 
