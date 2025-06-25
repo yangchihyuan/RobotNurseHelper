@@ -26,7 +26,7 @@ for allowed_val in "${allowed_numbers[@]}"; do
   fi
 done
 
-if ![[ "$is_valid" = true ]]; then
+if ! [[ "$is_valid" = true ]]; then
   echo "Error: '$VRAMSize' is not in the allowed list. Please try again."
 fi
 
@@ -45,7 +45,7 @@ for allowed_robot_model in "${allowed_robot_models[@]}"; do
     break # Found a match, no need to check further
   fi
 done
-if ![[ "$is_valid_robot_model" = true ]]; then
+if ! [[ "$is_valid_robot_model" = true ]]; then
   echo "Error: '$RobotModel' is not in the allowed list. Please try again."
   exit
 fi
@@ -178,7 +178,7 @@ fi
 git clone https://github.com/ggerganov/whisper.cpp.git
 cd ~/RobotNurseHelper_build/whisper.cpp
 git checkout v1.7.5
-if((VRAMSize==0)); then
+if ((VRAMSize==0)); then
   bash ./models/download-ggml-model.sh tiny
   cmake -B build
   cmake --build build -j10 --config Release

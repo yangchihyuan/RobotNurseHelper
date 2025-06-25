@@ -44,7 +44,8 @@ void ThreadWhisper::run()
     ctx = whisper_init_from_file_with_params(model_file_path.toUtf8().constData(), cparams);
     if (ctx == NULL) {
         std::cerr << "Failed to initialize whisper context" << std::endl;
-        return;
+        //throw std::invalid_argument("Division by zero");
+        //raise exception("whiper loading model fails");
     }
     cparams.flash_attn = params.flash_attn;
 
@@ -160,9 +161,9 @@ void ThreadWhisper::run()
                         }
                     }
                 }
-                strFixed += strTemp;
+                //strFixed += strTemp;
             }
-            strRobotSentence = strFixed + strTemp;
+            strRobotSentence = strTemp; //strFixed + strTemp;
             b_new_RobotSentence = true;
 
             //check whether there is an end of the voice.

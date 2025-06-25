@@ -4,6 +4,7 @@ package RobotCommandProtobuf;
 
 message RobotCommand {
   optional string speak_sentence = 1;
+  optional int32 turnspeed = 9;
   optional int32 yaw = 2;
   optional int32 pitch = 3;
   optional int32 headspeed = 4;

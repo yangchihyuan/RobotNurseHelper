@@ -1,9 +1,32 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <QCommandLineParser>
+#include <csignal>
+#include <fstream>
+#include <string>
+#include "ThreadOllama.hpp"
+#include <csignal>
+//extern std::string chosen_action;
+//extern string chosen_action;
+void handle_sigint(int) {
+    std::ofstream file("chosen_action.txt");
+    if (file.is_open()) {
+        file << chosen_action << "\n\n";
+        file << summary;
+        file.close();
+        cout << "\n" << chosen_action << "\nSaved chosen_action on Ctrl+C\n";
+    }
+    std::exit(0);  // Exit cleanly
+}
+// Register at exit
+//__attribute__((constructor)) void register_saver() {
+//    std::atexit(save_chosen_action);
+//}
 
 int main(int argc, char *argv[])
 {
+    signal(SIGINT, handle_sigint);
+
     QApplication app(argc, argv);
     QCoreApplication::setApplicationName("Zenbo Nurse Helper");
     QCoreApplication::setApplicationVersion("25.5.25");
