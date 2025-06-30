@@ -79,7 +79,8 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="$PROJECT_DIR$/app/src/main/ic_launcher-playstore.png" />
+                                                <entry key="imagePath" value="$PROJECT_DIR$/queuetest/src/Kebbi.jpg" />
+                                                <entry key="scalingPercent" value="116" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>

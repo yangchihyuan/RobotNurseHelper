@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "/home/chihyuan/ZenboNurseHelper/Kebbi/app/build/intermediates/cxx/Debug/2yc6n4g3/obj/x86/libnative-lib.so"
+			"path" : "/home/chihyuan/RobotNurseHelper/Kebbi/app/build/intermediates/cxx/Debug/2yc6n4g3/obj/arm64-v8a/libnative-lib.so"
 		}
 	],
 	"backtrace" : 1,
@@ -75,7 +75,7 @@
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/i686-linux-android/28/liblog.so",
+				"fragment" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/28/liblog.so",
 				"role" : "libraries"
 			},
 			{

@@ -1,0 +1,3 @@
+/home/chihyuan/RobotNurseHelper/Kebbi/app/.cxx/Debug/2yc6n4g3/arm64-v8a/CMakeFiles/native-lib.dir
+/home/chihyuan/RobotNurseHelper/Kebbi/app/.cxx/Debug/2yc6n4g3/arm64-v8a/CMakeFiles/edit_cache.dir
+/home/chihyuan/RobotNurseHelper/Kebbi/app/.cxx/Debug/2yc6n4g3/arm64-v8a/CMakeFiles/rebuild_cache.dir
