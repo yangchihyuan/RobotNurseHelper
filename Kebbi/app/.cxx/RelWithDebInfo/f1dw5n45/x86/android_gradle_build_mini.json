@@ -1,0 +1,27 @@
+{
+  "buildFiles": [
+    "/home/chihyuan/ZenboNurseHelper/Kebbi/app/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/home/chihyuan/Android/Sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/home/chihyuan/ZenboNurseHelper/Kebbi/app/.cxx/RelWithDebInfo/f1dw5n45/x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/home/chihyuan/Android/Sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/home/chihyuan/ZenboNurseHelper/Kebbi/app/.cxx/RelWithDebInfo/f1dw5n45/x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "native-lib::@6890427a1f51a3e7e1df": {
+      "artifactName": "native-lib",
+      "abi": "x86",
+      "output": "/home/chihyuan/ZenboNurseHelper/Kebbi/app/build/intermediates/cxx/RelWithDebInfo/f1dw5n45/obj/x86/libnative-lib.so",
+      "runtimeFiles": []
+    }
+  }
+}

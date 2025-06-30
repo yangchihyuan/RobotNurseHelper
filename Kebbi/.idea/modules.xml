@@ -7,6 +7,10 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Kebbi.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Kebbi.app.androidTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Kebbi.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Kebbi.app.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Kebbi.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Kebbi.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/queuetest/Kebbi.queuetest.iml" filepath="$PROJECT_DIR$/.idea/modules/queuetest/Kebbi.queuetest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/queuetest/Kebbi.queuetest.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/queuetest/Kebbi.queuetest.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/queuetest/Kebbi.queuetest.main.iml" filepath="$PROJECT_DIR$/.idea/modules/queuetest/Kebbi.queuetest.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/queuetest/Kebbi.queuetest.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/queuetest/Kebbi.queuetest.unitTest.iml" />
     </modules>
   </component>
 </project>

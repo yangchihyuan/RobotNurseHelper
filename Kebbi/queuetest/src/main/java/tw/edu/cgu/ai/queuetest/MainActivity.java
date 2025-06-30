@@ -1,6 +1,8 @@
 package tw.edu.cgu.ai.queuetest;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,7 +10,16 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.nuwarobotics.service.IClientId;
+import com.nuwarobotics.service.agent.NuwaRobotAPI;
+import com.nuwarobotics.service.agent.RobotEventListener;
+import com.nuwarobotics.service.agent.VoiceEventListener;
+
 public class MainActivity extends AppCompatActivity {
+
+    Button button1 = (Button) findViewById(R.id.button);
+    Button button2 = (Button) findViewById(R.id.button2);
+    Button button3 = (Button) findViewById(R.id.button3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,5 +31,32 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        button1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            }
+        );
+
+        button2.setOnClickListener(new View.OnClickListener() {
+                                       @Override
+                                       public void onClick(View v) {
+
+                                       }
+                                   }
+        );
+
+        button3.setOnClickListener(new View.OnClickListener() {
+                                       @Override
+                                       public void onClick(View v) {
+
+                                       }
+                                   }
+        );
+
     }
+
+
 }
