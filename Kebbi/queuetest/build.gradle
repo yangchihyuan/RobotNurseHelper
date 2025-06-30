@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace 'tw.edu.cgu.ai.queuetest'
-    compileSdk 28
+    compileSdk 35
 
     defaultConfig {
         applicationId "tw.edu.cgu.ai.queuetest"

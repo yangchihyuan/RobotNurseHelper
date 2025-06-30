@@ -42,7 +42,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.annotation.NonNull;
+
 import android.util.Size;
 import android.view.TextureView;
 import android.view.View;
@@ -735,13 +735,13 @@ public class MainActivity extends Activity {
                    new CameraCaptureSession.StateCallback() {
 
                         @Override
-                        public void onConfigured(@NonNull CameraCaptureSession session) {
+                        public void onConfigured(CameraCaptureSession session) {
                             mPreviewSession = session;
                             updatePreview();
                         }
 
                         @Override
-                        public void onConfigureFailed(@NonNull CameraCaptureSession session) {
+                        public void onConfigureFailed(CameraCaptureSession session) {
                             showToast("Failed");
                         }
                     }, handlerImageListener);

@@ -26,9 +26,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    aaptOptions {
-        noCompress 'pb'
-    }
     externalNativeBuild {
         cmake {
             path "CMakeLists.txt"
@@ -62,12 +59,15 @@ android {
             }
         }
     }
+    androidResources {
+        noCompress 'pb'
+    }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
-    implementation 'com.android.support:appcompat-v7:23.1.1'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation (name:'NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7', ext:'aar')
     implementation 'com.google.protobuf:protobuf-javalite:3.8.0'
 }
