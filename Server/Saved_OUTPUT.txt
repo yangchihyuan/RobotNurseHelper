@@ -1,3 +1,5 @@
+TRIAL 1:
+#########################################################
 SP_Swim02
 
 Hello Mohammed! It looks like you're holding your tummy. 
@@ -11,4 +13,28 @@ Why don't I tell you a joke? What do you call a lazy kangaroo? Pouch potato!
 -Name: Muhammad
 -Main Complaint: Stomach ache.
 -Location: Stomach.
+-Additional Concern: Feels stomach in throat.
+
+TRIAL 2:
+#########################################################
+**Patient Summary:**
+
+-Age: 35
+-Name: Mohammed
+-Main Complaint: Stomachache
+-Pain Description: Sharp
+-Pain Intensity: 5
+
+
+
+Hello Mohammed! I see you're fidgeting a little. 
+
+I see you're looking down. Why don't we try a joke? What do you call a lazy kangaroo? Pouch potato! 
+
+**Patient Summary:**
+
+-Name: Muhammad
+-Main Complaint: Stomach ache.
+-Location: Stomach.
+-Pain Description: Sharp.
 -Additional Concern: Feels stomach in throat.

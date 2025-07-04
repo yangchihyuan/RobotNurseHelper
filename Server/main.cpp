@@ -12,11 +12,15 @@ void handle_sigint(int) {
     std::ofstream file("chosen_action.txt");
     if (file.is_open()) {
         file << chosen_action << "\n\n";
-        file << summary;
+        for (int i = 0; i < summary.size(); i++)
+        {
+            file << summary[i] << "\n\n";
+        }
         file.close();
         cout << "\n" << chosen_action << "\nSaved chosen_action on Ctrl+C\n";
     }
-    std::exit(0);  // Exit cleanly
+    //std::exit(0);  // Exit cleanly
+    std::_Exit(0);
 }
 // Register at exit
 //__attribute__((constructor)) void register_saver() {
@@ -26,7 +30,7 @@ void handle_sigint(int) {
 int main(int argc, char *argv[])
 {
     signal(SIGINT, handle_sigint);
-
+    //signal(SIGSEGV, handle_sigint);
     QApplication app(argc, argv);
     QCoreApplication::setApplicationName("Zenbo Nurse Helper");
     QCoreApplication::setApplicationVersion("25.5.25");

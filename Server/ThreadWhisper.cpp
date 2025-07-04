@@ -82,6 +82,7 @@ void ThreadWhisper::run()
 
     while(b_WhileLoop)
     {
+        //is << n_iter << "R\n";
         if(bOperatorBuffer_open && pOperatorBuffer->size() > 0)
         {
             //Why is the length /4? Because the input format is float rather than short.

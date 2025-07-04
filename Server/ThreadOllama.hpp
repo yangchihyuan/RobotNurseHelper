@@ -9,7 +9,8 @@
 
 using namespace std;
 
-extern string chosen_action, summary;
+extern string chosen_action; 
+extern vector<string> summary;
 
 class ThreadOllama: public QThread
 {
@@ -26,7 +27,7 @@ public:
     string strResponse;
     string str_system_message;
     string str_system_message_list[4];
-    string ModelName = "gemma3:4b";
+    string ModelName = "gemma3:27b";
 
 protected:
     void run();
