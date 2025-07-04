@@ -16,7 +16,7 @@ ThreadOllama::~ThreadOllama()
 bool done = 0;
 int message_count = 0;
 string chosen_action = "";
-string summary = "";
+vector<string> summary(3, "");
 
 string ThreadOllama::validate_conversation(ollama::options options, ollama::messages &message_history, string &prompt, bool remove_message, int context_size)
 {
@@ -67,37 +67,65 @@ void ThreadOllama::run()
 
     ollama::message message("user", strPrompt);
     ollama::response context = ollama::chat(ModelName, message, options);
-    //vector<ollama::message> message_history = {system_message};
+    vector<ollama::message> message_buffer;
+    stack<int> message_type;
+
     ollama::message system_message("system", str_system_message_list[0]);
     ollama::messages message_history = {system_message};
     ollama::messages recent_history;
-    time_t last_prompt_time = time(0); 
-    while(b_WhileLoop)// || 1
+    time_t last_prompt_time = time(0), last_response_time = time(0); 
+    while(b_WhileLoop || 1)
     {
+        time_t current_time = time(0);
         std::unique_lock<std::mutex> lk(mtx);
         cond_var_ollama.wait(lk);
-        cout << strPrompt << " " << last_prompt_time - time(0) << "\n";
+        cout << "TIMER: " << strPrompt << " " << last_prompt_time - current_time << "\n";
         string message_sender = "user";
-        if( strPrompt == "" && time(0) - last_prompt_time < 30)
+        if(message_buffer.size() <= 0)
+        {
+            if( strPrompt == "" && current_time - last_prompt_time < 30)
+            {
+                continue;
+            }
+            else if (strPrompt == "")
+            {
+                strPrompt = "No response from patient. Continue with what you are saying";
+                message_sender = "system";
+            }
+        }
+
+        if (strPrompt != "")
+        {
+            last_prompt_time = current_time;
+            //cv::imwrite("image_temp.jpg", outFrame);
+            
+            //Preprare prompt message with image for LLM
+            ollama::image image = ollama::image::from_file("image_temp.jpg");
+            ollama::message message_with_image(message_sender, strPrompt, image);
+            ollama::message message(message_sender, strPrompt);
+            //message_history.push_back(message);
+            
+            //recent_history.push_back(message);
+            message_buffer.push_back(message);
+            message_count++;
+            cout << "message_buffer SIZE: " << message_buffer.size() << "\n";
+        }
+
+        if (current_time - last_prompt_time < 3)
         {
             continue;
         }
-        else if (strPrompt == "")
+        else
         {
-            strPrompt = "No response from patient. Continue with what you are saying";
-            message_sender = "system";
+            recent_history.clear();
+            last_response_time = current_time;
+            while(message_buffer.size() > 0)
+            {
+               message_history.push_back(message_buffer[0]);
+               recent_history.push_back(message_buffer[0]);
+               message_buffer.erase(message_buffer.begin());
+            }
         }
-        last_prompt_time = time(0);
-        //cv::imwrite("image_temp.jpg", outFrame);
-
-        //Preprare prompt message with image for LLM
-        ollama::image image = ollama::image::from_file("image_temp.jpg");
-        ollama::message message_with_image(message_sender, strPrompt, image);
-        ollama::message message(message_sender, strPrompt);
-        message_history.push_back(message);
-        recent_history.push_back(message);
-        message_count++;
-
         //Gather Response from LLM
         ollama::response response = ollama::chat(ModelName, message_history, options);
         ollama::message response_message("Zenbo", response.as_simple_string());
@@ -105,12 +133,9 @@ void ThreadOllama::run()
         recent_history.push_back(response_message);
         strResponse = response.as_simple_string();
         
-        string check_prompt = "Has ALL the patient age, name, pain intensity/level, and symptom information been correctly gathered? This is important to assess whether to continue asking. State yes or no.";
-        string check_summary = ThreadOllama::validate_conversation(options, message_history, check_prompt, 1);
-        cout << "SUMMARY_ANALYSIS: " << " " << check_summary << "\n"; 
-
+        
         string action_prompt = R"(Here is a list of available robot actions:
-
+        
         "EM_Mad02", "BA_Nodhead", "SP_Swim02", "PE_RotateA", "SP_Karate", "RE_Cheer", "SP_Climb",
         "DA_Hit", "TA_DictateR", "SP_Bowling", "SP_Walk", "SA_Find", "BA_TurnHead", "SA_Toothache",
         "SA_Sick", "SA_Shocked", "SP_Dumbbell", "SA_Discover", "RE_Thanks", "PE_Changing",
@@ -118,29 +143,38 @@ void ThreadOllama::run()
         "RE_Request", "PE_Brewing", "RE_Change", "PE_Phubbing", "RE_Baoquan", "SP_Cheer", "RE_Ask",
         "PE_Triangel", "PE_Sorcery", "PE_Sneak", "PE_Singing", "LE_Yoyo", "SP_Throw", "SP_RaceWalk",
         "PE_ShakeFart", "PE_RotateC", "PE_RotateB", "EM_Blush", "PE_Puff", "PE_PlayCello", "PE_Pikachu"
-
+        
         Pick the best action for a suitable for the recent conversation context provided. For example, SA_Shocked for shocking responses, RE_Request for requests and so on. If a child patient requests a certain action, choose the most fitting from the above list.
-
+        
         Reply only with:
         The chosen action)";
         //Pick the best action for a friendly robot talking to a child.
         //It should be fun, safe, and help the child feel happy or engaged.
         //2. A short reason why it’s a good fit)";
         chosen_action = ThreadOllama::validate_conversation(options, recent_history, action_prompt, 1, 10);
-
+        
         cout << chosen_action << "\n";
-
+        
         string summary_prompt = R"(Summarize only the important information gathered about patient so far. In this format (only as an example):
         **Patient Summary:**
-
+        
         -Age: Conflicting reports. Patient states 35, then 30. Clarification needed.
         -Name: Muhammad
         -Main Complaint: Stomach ache.
         -Location: Stomach.
         -Pain Intensity: Additional Concern:** Feels stomach in throat.)";
+
+        summary[(done) ? 2 : 0] = ThreadOllama::validate_conversation(options, message_history, summary_prompt, 1);
+        ollama::message summary_message("Zenbo", summary[(done) ? 2 : 0]);
+        cout << "\n\n" << summary[(done) ? 2 : 0] << "\n";
+
         
-        cout << summary << "\n";
-        summary = ThreadOllama::validate_conversation(options, message_history, summary_prompt, 1);
+        string check_prompt = "Has ALL the patient age, name, pain intensity/level, and symptom/main complaint information been correctly gathered? This is important to assess whether to continue asking. State yes or no.";
+        message_history.push_back(summary_message);
+        string check_summary = ThreadOllama::validate_conversation(options, message_history, check_prompt, 1);
+        message_history.pop_back();
+        cout << "SUMMARY_ANALYSIS: " << " " << check_summary << "\n"; 
+        
         
         for (int i = 0; i < check_summary.size(); i++)
         {
@@ -149,7 +183,7 @@ void ThreadOllama::run()
         if(check_summary.find("yes") != std::string::npos)
         {
             done = 1;
-            //message_history.clear();
+            //message_history.clear(); //To start memory from scratch //Alternative would be to clear, then add the summary
             message_history.erase(message_history.begin());
             ollama::message new_system_message("system", str_system_message_list[2]);
             //message_history.push_back(new_system_message);
@@ -157,13 +191,13 @@ void ThreadOllama::run()
         }
         if (done)
         {
-            cout << "DONEDONEDONE\n";
+            cout << "\nDONEDONEDONE\n";
         }
-        if (message_count > 1)
-        {
-            recent_history.pop_back();
-            recent_history.pop_back();
-        }
+        //if (message_count > 1)
+        //{
+        //    recent_history.pop_back();
+        //    recent_history.pop_back();
+        //}
         b_new_LLM_response = true;
     }
     std::cout << "Exit thread Ollama while loop." << std::endl;

@@ -34,31 +34,7 @@ extern ActionOption action_option;
 
 int question_counter = 0;
 int motion_counter = 0;
-//extern string chosen_action;
 //extern cv::Mat outFrame; // [MOHAMED]
-
-int checkDoubleDigits(const std::string& str, int minRange, int maxRange) {
-    int foundCount = 0, last_num = 0;
-    for (size_t i = 0; i < str.length() - 1; ++i) {
-        if (isdigit(str[i]) && isdigit(str[i+1])) {
-            int num = std::stoi(str.substr(i, 2));
-            if (num >= minRange && num <= maxRange) {
-                foundCount++;
-                i++;
-                last_num = num;
-            }
-        }
-    }
-    if (foundCount < 1)
-    {
-		return 0;
-	}
-	else if(foundCount > 1)
-	{
-		return -1;
-	}
-    return last_num;
-}
 
 void MainWindow::startThreads()
 {
@@ -347,6 +323,7 @@ void MainWindow::readSocket()
 
 void MainWindow::readSocket3()
 {
+    cout << "HELLO\n";
     QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
 
     QDataStream socketStream(socket);
@@ -595,7 +572,8 @@ void MainWindow::timer_event()
         thread_whisper.b_new_OperatorSentence = false;
         ui->plainTextEdit_speak->setPlainText(QString::fromStdString(thread_whisper.strOperatorSentence));
     }
-
+    
+    int action_index = 3;
     if( thread_whisper.b_new_RobotSentence )
     {
         string body_language_added_prompt = "[Body Language from Visual Input]: Patients right hand is lowered";
@@ -618,41 +596,21 @@ void MainWindow::timer_event()
             //vader::SentimentIntensityAnalyser analyser("cppvader/vader_lexicon.txt", "cppvader/emoji_utf8_lexicon.txt");
             //auto vs = analyser.polarityScores(thread_whisper.strRobotSentence);
             //cout << vs << "\n"; //analyser.polarityScores(thread_whisper.strRobotSentence) << "\n";
-            RobotCommandProtobuf::RobotCommand motion_command;
             RobotCommandProtobuf::RobotCommand facial_command;
             if (!(thread_whisper.strRobotSentence.empty() || thread_whisper.strRobotSentence == ""))
             {
                 vader::SentimentIntensityAnalyser analyser("cppvader/vader_lexicon.txt", "cppvader/emoji_utf8_lexicon.txt");
                 auto vs = analyser.polarityScores(thread_whisper.strRobotSentence);
                 cout << vs << "\n"; //analyser.polarityScores(thread_whisper.strRobotSentence) << "\n";
-                int action_index = 7;
                 if (vs.pos > 0.4)
                 {
-                    //if (motion_counter % 3 == 0)
-                    //{
-                    //motion_command.set_motion(7);
                     action_index = 7;
-                    //}
-                    /*
-                    else if (motion_counter % 3 == 1)
-                    {
-                        motion_command.set_motion(6);
-                    }
-                    else 
-                    {
-                        motion_command.set_motion(4);
-                    }
-                    motion_counter++;
-                    */
-                    //motion_command.set_motion(7);
-                    
                     cout << thread_whisper.strRobotSentence << " " << "HAPPY\n";
                     facial_command.set_face(5);
                     //sendMessageManager.AddMessage(facial_command);
                 }
                 else if(vs.neg > 0.4)
                 {
-                    //motion_command.set_motion(16);
                     action_index = 16;
                     cout << thread_whisper.strRobotSentence << " " << "SAD\n";
                     facial_command.set_face(11);
@@ -660,83 +618,86 @@ void MainWindow::timer_event()
                 }
                 else
                 {
-                    //motion_command.set_motion(3);
                     action_index = 3;
                     cout << thread_whisper.strRobotSentence << " " << "NUETRAL\n";
                 }
-                QString target = QString::fromStdString(chosen_action);
-                //int index = -1;
-                QStringList strList_action;
-                strList_action.append("TA_DictateL");
-                strList_action.append("DA_Full");
-                strList_action.append("EM_Mad02");
-                strList_action.append("BA_Nodhead");
-                strList_action.append("SP_Swim02"); 
-                strList_action.append("PE_RotateA"); //5
-                strList_action.append("SP_Karate");
-                strList_action.append("RE_Cheer");
-                strList_action.append("SP_Climb");
-                strList_action.append("DA_Hit"); 
-                strList_action.append("TA_DictateR"); //10
-                strList_action.append("SP_Bowling");
-                strList_action.append("SP_Walk");
-                strList_action.append("SA_Find");
-                strList_action.append("BA_TurnHead");
-                strList_action.append("SA_Toothache"); //15
-                strList_action.append("SA_Sick");
-                strList_action.append("SA_Shocked");
-                strList_action.append("SP_Dumbbell");
-                strList_action.append("SA_Discover");
-                strList_action.append("RE_Thanks"); //15
-                strList_action.append("PE_Changing");
-                strList_action.append("SP_HorizontalBar");
-                strList_action.append("WO_Traffic");
-                strList_action.append("RE_HiR");
-                strList_action.append("RE_HiL"); //20
-                strList_action.append("DA_Brushteeth");
-                strList_action.append("RE_Encourage");
-                strList_action.append("RE_Request");
-                strList_action.append("PE_Brewing");
-                strList_action.append("RE_Change"); //25
-                strList_action.append("PE_Phubbing");
-                strList_action.append("RE_Baoquan");
-                strList_action.append("SP_Cheer");
-                strList_action.append("RE_Ask");
-                strList_action.append("PE_Triangel"); //30
-                strList_action.append("PE_Sorcery");
-                strList_action.append("PE_Sneak");
-                strList_action.append("PE_Singing");
-                strList_action.append("LE_Yoyo");
-                strList_action.append("SP_Throw"); //35
-                strList_action.append("SP_RaceWalk");
-                strList_action.append("PE_ShakeFart");
-                strList_action.append("PE_RotateC");
-                strList_action.append("PE_RotateB");
-                strList_action.append("EM_Blush"); //40
-                strList_action.append("PE_Puff");
-                strList_action.append("PE_PlayCello");
-                strList_action.append("PE_Pikachu");
-                for (int i = 0; i < strList_action.size(); ++i) {
-                    if (strList_action[i].compare(target, Qt::CaseInsensitive) == 0) {
-                        action_index = i;
-                        cout << "FOUND AN ACTION";
-                        break;
-                    }
-                }
-                cout << "CHOSEN ACTION INDEX" << action_index << ": " << strList_action[action_index].toStdString() << "\n";
-                cout << "SPECIFIED ACTION: " << target.toStdString() << "\n";
-                motion_command.set_motion(action_index);
-                sendMessageManager.AddMessage(motion_command);
-                //sendMessageManager.Send();
             }
         }
         string added_prompt = "";
-        body_language_added_prompt = ""; 
         added_prompt = "";
         thread_whisper.b_new_RobotSentence = false;
         ui->plainTextEdit_received->setPlainText(QString::fromStdString(thread_whisper.strRobotSentence + added_prompt));
         cv::imwrite("image_temp.jpg", outFrame);
         //sendMessageManager.Send();
+    }
+    
+    if (chosen_action != "")
+    {
+        QString target = QString::fromStdString(chosen_action);
+        QStringList strList_action;
+        strList_action.append("TA_DictateL");
+        strList_action.append("DA_Full");
+        strList_action.append("EM_Mad02");
+        strList_action.append("BA_Nodhead");
+        strList_action.append("SP_Swim02"); 
+        strList_action.append("PE_RotateA"); //5
+        strList_action.append("SP_Karate");
+        strList_action.append("RE_Cheer");
+        strList_action.append("SP_Climb");
+        strList_action.append("DA_Hit"); 
+        strList_action.append("TA_DictateR"); //10
+        strList_action.append("SP_Bowling");
+        strList_action.append("SP_Walk");
+        strList_action.append("SA_Find");
+        strList_action.append("BA_TurnHead");
+        strList_action.append("SA_Toothache"); //15
+        strList_action.append("SA_Sick");
+        strList_action.append("SA_Shocked");
+        strList_action.append("SP_Dumbbell");
+        strList_action.append("SA_Discover");
+        strList_action.append("RE_Thanks"); //15
+        strList_action.append("PE_Changing");
+        strList_action.append("SP_HorizontalBar");
+        strList_action.append("WO_Traffic");
+        strList_action.append("RE_HiR");
+        strList_action.append("RE_HiL"); //20
+        strList_action.append("DA_Brushteeth");
+        strList_action.append("RE_Encourage");
+        strList_action.append("RE_Request");
+        strList_action.append("PE_Brewing");
+        strList_action.append("RE_Change"); //25
+        strList_action.append("PE_Phubbing");
+        strList_action.append("RE_Baoquan");
+        strList_action.append("SP_Cheer");
+        strList_action.append("RE_Ask");
+        strList_action.append("PE_Triangel"); //30
+        strList_action.append("PE_Sorcery");
+        strList_action.append("PE_Sneak");
+        strList_action.append("PE_Singing");
+        strList_action.append("LE_Yoyo");
+        strList_action.append("SP_Throw"); //35
+        strList_action.append("SP_RaceWalk");
+        strList_action.append("PE_ShakeFart");
+        strList_action.append("PE_RotateC");
+        strList_action.append("PE_RotateB");
+        strList_action.append("EM_Blush"); //40
+        strList_action.append("PE_Puff");
+        strList_action.append("PE_PlayCello");
+        strList_action.append("PE_Pikachu");
+        for (int i = 0; i < strList_action.size(); ++i) {
+            if (strList_action[i].compare(target, Qt::CaseInsensitive) == 0) {
+                action_index = i;
+                cout << "FOUND AN ACTION";
+                break;
+            }
+        }
+        cout << "CHOSEN ACTION INDEX" << action_index << ": " << strList_action[action_index].toStdString() << "\n";
+        cout << "SPECIFIED ACTION: " << target.toStdString() << "\n";
+        RobotCommandProtobuf::RobotCommand motion_command;
+        motion_command.set_motion(action_index);
+        sendMessageManager.AddMessage(motion_command);
+        //sendMessageManager.Send();
+        chosen_action = "";
     }
     //cv::imwrite("image_temp.jpg", outFrame);
     if( thread_whisper.b_RobotSentence_End )
