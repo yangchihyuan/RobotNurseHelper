@@ -1,0 +1,3 @@
+/home/chihyuan/ZenboNurseHelper/Kebbi/app/.cxx/Debug/4t4i4y5j/x86/CMakeFiles/native-lib.dir
+/home/chihyuan/ZenboNurseHelper/Kebbi/app/.cxx/Debug/4t4i4y5j/x86/CMakeFiles/edit_cache.dir
+/home/chihyuan/ZenboNurseHelper/Kebbi/app/.cxx/Debug/4t4i4y5j/x86/CMakeFiles/rebuild_cache.dir

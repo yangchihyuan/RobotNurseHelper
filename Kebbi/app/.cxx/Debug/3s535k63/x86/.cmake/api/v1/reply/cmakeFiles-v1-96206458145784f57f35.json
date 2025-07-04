@@ -41,7 +41,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : ".cxx/Debug/2yc6n4g3/x86/CMakeFiles/3.22.1-g37088a8/CMakeSystem.cmake"
+			"path" : ".cxx/Debug/3s535k63/x86/CMakeFiles/3.22.1-g37088a8/CMakeSystem.cmake"
 		},
 		{
 			"isExternal" : true,
@@ -307,7 +307,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : ".cxx/Debug/2yc6n4g3/x86/CMakeFiles/3.22.1-g37088a8/CMakeCCompiler.cmake"
+			"path" : ".cxx/Debug/3s535k63/x86/CMakeFiles/3.22.1-g37088a8/CMakeCCompiler.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -541,7 +541,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : ".cxx/Debug/2yc6n4g3/x86/CMakeFiles/3.22.1-g37088a8/CMakeCXXCompiler.cmake"
+			"path" : ".cxx/Debug/3s535k63/x86/CMakeFiles/3.22.1-g37088a8/CMakeCXXCompiler.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -692,7 +692,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : ".cxx/Debug/2yc6n4g3/x86/CMakeFiles/3.22.1-g37088a8/CMakeCCompiler.cmake"
+			"path" : ".cxx/Debug/3s535k63/x86/CMakeFiles/3.22.1-g37088a8/CMakeCCompiler.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -786,14 +786,14 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : ".cxx/Debug/2yc6n4g3/x86/CMakeFiles/3.22.1-g37088a8/CMakeCXXCompiler.cmake"
+			"path" : ".cxx/Debug/3s535k63/x86/CMakeFiles/3.22.1-g37088a8/CMakeCXXCompiler.cmake"
 		}
 	],
 	"kind" : "cmakeFiles",
 	"paths" : 
 	{
-		"build" : "/home/chihyuan/RobotNurseHelper/Kebbi/app/.cxx/Debug/2yc6n4g3/x86",
-		"source" : "/home/chihyuan/RobotNurseHelper/Kebbi/app"
+		"build" : "/home/chihyuan/ZenboNurseHelper/Kebbi/app/.cxx/Debug/3s535k63/x86",
+		"source" : "/home/chihyuan/ZenboNurseHelper/Kebbi/app"
 	},
 	"version" : 
 	{
