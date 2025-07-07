@@ -30,8 +30,24 @@ You need to log out and log in to activate your new group privilege.
 
 On the Kebbi robot, you need to enable its USB debugging mode.
 Kebbi's OS is Android 9, and you need to click "About Kebbi" (關於凱比) 10 times to turn on the Android developer mode.
+
+<img src="Photo_AboutKebbi.jpg" alt="Photo_AboutKebbi.jpg" height="200"/>
+
+<img src="Photo_System.jpg" alt="Photo_System.jpg" height="200"/>
+
+<img src="Photo_DeveloperOptions.jpg" alt="Photo_DeveloperOptions.jpg" height="200"/>
+
 When the Android developer mode is available, go to the "Developer Options" and enable the "USB debugging".
-After connecting to PC, you will see a dialog window to confirm your intention to connect this Android device to this PC. Here, you need to key in the ADB (Android Debug Bridge) password !Q@W#E$R to ensure this step.
+After connecting to PC, you will see a dialog window to confirm your intention to connect this Android device to this PC. 
+
+<img src="Photo_ADB.jpg" alt="Photo_ADB.jpg" height="200"/>
+
+Here, you need to key in the ADB (Android Debug Bridge) password !Q@W#E$R to ensure this step.
+
+<img src="Screenshot_Device.png" alt="Screenshot_Device.png" height="200"/>
+
+<img src="Screenshot_DeviceDebugging.png" alt="Screenshot_DeviceDebugging.png" height="200"/>
+
 
 There is another way to install our app through an APK file. From the Android Studio, create an APK and manually copy the APK file to a micro SD card. Insert the micro SD card into Kebbi's head socket, which is hided by a rectangle plastic lid. Launch Kebbi's file manager to open the APK file and install our app.
 
