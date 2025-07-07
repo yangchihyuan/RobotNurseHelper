@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.protobuf'
 
 android {
-    compileSdk 28
+    compileSdk 36
 
     //Chih-Yuan Yang: I need the compileSdkVersion item for Android 6 SDK. Don't remove it. Don't
     //follow new gradle version's suggestion.
@@ -19,6 +19,7 @@ android {
                 cppFlags ""
             }
         }
+        targetSdk 28
     }
     buildTypes {
         release {
@@ -70,6 +71,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation (name:'NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7', ext:'aar')
     implementation 'com.google.protobuf:protobuf-javalite:3.8.0'
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
 }
 
 repositories {
