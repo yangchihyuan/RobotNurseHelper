@@ -147,7 +147,7 @@ class ImageListener implements OnImageAvailableListener {
             */
             //I no longer need this.
             PitchDegree = String.format("%03d", 0);
-
+            String isDancing = String.format("%03d", socketManager.dancing_status);
             ByteBuffer buffer = ByteBuffer.allocate(buffer_length);
             buffer.order(ByteOrder.LITTLE_ENDIAN); // Ubuntu byte order
 
@@ -155,7 +155,7 @@ class ImageListener implements OnImageAvailableListener {
             buffer.putLong(message_length);
             buffer.put(Timestamp.getBytes());
             buffer.put("_".getBytes());
-            buffer.put(PitchDegree.getBytes());
+            buffer.put(isDancing.getBytes());
             String Null = "\0";
             buffer.put(Null.getBytes());
             buffer.put(JPEG_length.getBytes());

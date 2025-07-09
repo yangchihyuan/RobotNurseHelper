@@ -1,7 +1,5 @@
 # ninja log v5
-0	29	1745754511012331781	CMakeFiles/native-lib.dir/src/main/jni/rgb2yuv.cc.o	aa3c277f9c4fc7d
-0	30	1745754511013331792	CMakeFiles/native-lib.dir/src/main/jni/yuv2rgb.cc.o	5cbed76fea623cf6
-0	64	1745754511048332180	CMakeFiles/native-lib.dir/src/main/jni/imageutils_jni.cc.o	a38678e58052bb1a
-64	85	1745754511068332402	../../../../build/intermediates/cxx/Debug/5v383i2u/obj/arm64-v8a/libnative-lib.so	79324a00cef6da51
-1	80	1745810675984847430	CMakeFiles/native-lib.dir/src/main/jni/imageutils_jni.cc.o	a38678e58052bb1a
-81	194	1745810676099877158	../../../../build/intermediates/cxx/Debug/5v383i2u/obj/arm64-v8a/libnative-lib.so	79324a00cef6da51
+0	14	1750925742927821247	CMakeFiles/native-lib.dir/src/main/jni/rgb2yuv.cc.o	952f0fa0492390cb
+1	15	1750925742928821214	CMakeFiles/native-lib.dir/src/main/jni/yuv2rgb.cc.o	e23657b6e70e05ba
+1	32	1750925742945820649	CMakeFiles/native-lib.dir/src/main/jni/imageutils_jni.cc.o	4e803d833ed96fbf
+32	46	1750925742959820184	../../../../build/intermediates/cxx/Debug/5v383i2u/obj/arm64-v8a/libnative-lib.so	9ff4805d52b8c302

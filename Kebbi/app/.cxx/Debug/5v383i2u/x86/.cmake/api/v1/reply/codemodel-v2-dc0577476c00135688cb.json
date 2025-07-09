@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "native-lib::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-native-lib-Debug-a07ae19bb71a7bead5d9.json",
+					"jsonFile" : "target-native-lib-Debug-b41f98c2d3a84b41aafe.json",
 					"name" : "native-lib",
 					"projectIndex" : 0
 				}
@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/home/chihyuan/ZenboNurseHelper/Kebbi/app/.cxx/Debug/5v383i2u/x86_64",
-		"source" : "/home/chihyuan/ZenboNurseHelper/Kebbi/app"
+		"build" : "/home/mohamed/RobotNurseHelper/Kebbi/app/.cxx/Debug/5v383i2u/x86",
+		"source" : "/home/mohamed/RobotNurseHelper/Kebbi/app"
 	},
 	"version" : 
 	{

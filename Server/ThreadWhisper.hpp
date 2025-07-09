@@ -25,7 +25,7 @@ struct whisper_params {
 
 //    float vad_thold    = 0.6f;  
     float vad_thold    = 1.0f; //0.9f;  //0.8f
-    float freq_thold   = 80.0f; //100.0f;
+    float freq_thold   = 150.0f; //80.0f; //100.0f;
 
     bool translate     = false;
     bool no_fallback   = false;

@@ -11,7 +11,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "x86"
+			"value" : "arm64-v8a"
 		},
 		{
 			"name" : "ANDROID_NDK",
@@ -23,7 +23,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973"
+			"value" : "/home/mohamed/Android/Sdk/ndk/27.0.12077973"
 		},
 		{
 			"name" : "ANDROID_PLATFORM",
@@ -51,7 +51,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-addr2line"
+			"value" : "/home/mohamed/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-addr2line"
 		},
 		{
 			"name" : "CMAKE_ANDROID_ARCH_ABI",
@@ -63,7 +63,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "x86"
+			"value" : "arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_ANDROID_NDK",
@@ -75,7 +75,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973"
+			"value" : "/home/mohamed/Android/Sdk/ndk/27.0.12077973"
 		},
 		{
 			"name" : "CMAKE_AR",
@@ -91,7 +91,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar"
+			"value" : "/home/mohamed/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar"
 		},
 		{
 			"name" : "CMAKE_ASM_FLAGS",
@@ -151,7 +151,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/chihyuan/ZenboNurseHelper/Kebbi/app/.cxx/Debug/5v383i2u/x86"
+			"value" : "/home/mohamed/RobotNurseHelper/Kebbi/app/.cxx/Debug/5v383i2u/arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -199,7 +199,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/chihyuan/Android/Sdk/cmake/3.22.1/bin/cmake"
+			"value" : "/home/mohamed/Android/Sdk/cmake/3.22.1/bin/cmake"
 		},
 		{
 			"name" : "CMAKE_CPACK_COMMAND",
@@ -211,7 +211,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/chihyuan/Android/Sdk/cmake/3.22.1/bin/cpack"
+			"value" : "/home/mohamed/Android/Sdk/cmake/3.22.1/bin/cpack"
 		},
 		{
 			"name" : "CMAKE_CTEST_COMMAND",
@@ -223,7 +223,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/chihyuan/Android/Sdk/cmake/3.22.1/bin/ctest"
+			"value" : "/home/mohamed/Android/Sdk/cmake/3.22.1/bin/ctest"
 		},
 		{
 			"name" : "CMAKE_CXX_COMPILER",
@@ -527,7 +527,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-dlltool"
+			"value" : "/home/mohamed/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-dlltool"
 		},
 		{
 			"name" : "CMAKE_EXECUTABLE_FORMAT",
@@ -703,7 +703,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/chihyuan/ZenboNurseHelper/Kebbi/app"
+			"value" : "/home/mohamed/RobotNurseHelper/Kebbi/app"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -739,7 +739,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "/home/chihyuan/ZenboNurseHelper/Kebbi/app/build/intermediates/cxx/Debug/5v383i2u/obj/x86"
+			"value" : "/home/mohamed/RobotNurseHelper/Kebbi/app/build/intermediates/cxx/Debug/5v383i2u/obj/arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_LINKER",
@@ -755,7 +755,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/ld.lld"
+			"value" : "/home/mohamed/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/ld.lld"
 		},
 		{
 			"name" : "CMAKE_MAKE_PROGRAM",
@@ -767,7 +767,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "/home/chihyuan/Android/Sdk/cmake/3.22.1/bin/ninja"
+			"value" : "/home/mohamed/Android/Sdk/cmake/3.22.1/bin/ninja"
 		},
 		{
 			"name" : "CMAKE_MODULE_LINKER_FLAGS",
@@ -863,7 +863,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-nm"
+			"value" : "/home/mohamed/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-nm"
 		},
 		{
 			"name" : "CMAKE_NUMBER_OF_MAKEFILES",
@@ -891,7 +891,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-objcopy"
+			"value" : "/home/mohamed/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-objcopy"
 		},
 		{
 			"name" : "CMAKE_OBJDUMP",
@@ -907,7 +907,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-objdump"
+			"value" : "/home/mohamed/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-objdump"
 		},
 		{
 			"name" : "CMAKE_PLATFORM_INFO_INITIALIZED",
@@ -971,7 +971,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ranlib"
+			"value" : "/home/mohamed/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ranlib"
 		},
 		{
 			"name" : "CMAKE_READELF",
@@ -987,7 +987,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf"
+			"value" : "/home/mohamed/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf"
 		},
 		{
 			"name" : "CMAKE_ROOT",
@@ -999,7 +999,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/chihyuan/Android/Sdk/cmake/3.22.1/share/cmake-3.22"
+			"value" : "/home/mohamed/Android/Sdk/cmake/3.22.1/share/cmake-3.22"
 		},
 		{
 			"name" : "CMAKE_RUNTIME_OUTPUT_DIRECTORY",
@@ -1011,7 +1011,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "/home/chihyuan/ZenboNurseHelper/Kebbi/app/build/intermediates/cxx/Debug/5v383i2u/obj/x86"
+			"value" : "/home/mohamed/RobotNurseHelper/Kebbi/app/build/intermediates/cxx/Debug/5v383i2u/obj/arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_SHARED_LINKER_FLAGS",
@@ -1219,7 +1219,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip"
+			"value" : "/home/mohamed/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip"
 		},
 		{
 			"name" : "CMAKE_SYSTEM_NAME",
@@ -1255,7 +1255,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/build/cmake/android.toolchain.cmake"
+			"value" : "/home/mohamed/Android/Sdk/ndk/27.0.12077973/build/cmake/android.toolchain.cmake"
 		},
 		{
 			"name" : "CMAKE_UNAME",
@@ -1295,7 +1295,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/chihyuan/ZenboNurseHelper/Kebbi/app/.cxx/Debug/5v383i2u/x86"
+			"value" : "/home/mohamed/RobotNurseHelper/Kebbi/app/.cxx/Debug/5v383i2u/arm64-v8a"
 		},
 		{
 			"name" : "Project_IS_TOP_LEVEL",
@@ -1319,7 +1319,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/chihyuan/ZenboNurseHelper/Kebbi/app"
+			"value" : "/home/mohamed/RobotNurseHelper/Kebbi/app"
 		},
 		{
 			"name" : "log-lib",
@@ -1331,7 +1331,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/i686-linux-android/28/liblog.so"
+			"value" : "/home/mohamed/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/28/liblog.so"
 		},
 		{
 			"name" : "native-lib_LIB_DEPENDS",
@@ -1343,7 +1343,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "general;/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/i686-linux-android/28/liblog.so;"
+			"value" : "general;/home/mohamed/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/28/liblog.so;"
 		}
 	],
 	"kind" : "cache",

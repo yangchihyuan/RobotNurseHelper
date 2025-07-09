@@ -3,6 +3,7 @@
 #include <opencv2/highgui.hpp>
 #include <ctime>
 #include <cctype>
+#include "ThreadProcessImage.hpp"
 extern cv::Mat outFrame; // [MOHAMED]
 ThreadOllama::ThreadOllama()
 {
@@ -14,33 +15,15 @@ ThreadOllama::~ThreadOllama()
     
 }
 bool done = 0;
-int message_count = 0;
+int stage_count = 0;
 string chosen_action = "";
+string check_summary = "";
+int chosen_dance = 0;
+
 vector<string> summary(3, "");
 
 string ThreadOllama::validate_conversation(ollama::options options, ollama::messages &message_history, string &prompt, bool remove_message, int context_size)
 {
-    // if (context_size)
-    // {
-    //     ollama::message check_prompt("system", prompt);
-    //     ollama::messages recent_messages = {check_prompt};
-    //     auto i = message_history.size();
-    //     if (i < 10)
-    //     {
-    //         return "NONE";
-    //     }
-    //     for (auto i = message_history.size(); i > message_history.size() - context_size; i--)
-    //     {  
-    //         recent_messages.push_back(message_history[i]);
-    //     }
-    //     //ollama::message check_prompt("system", prompt);
-    //     //recent_messages.push_back(check_prompt);
-    //     ollama::response check_response = ollama::chat(ModelName, recent_messages, options);
-    //     return check_response.as_simple_string();
-    // }
-    // else
-    // {
-    // }
     ollama::message check_prompt("system", prompt);
     message_history.push_back(check_prompt);
     ollama::response check_response = ollama::chat(ModelName, message_history, options);
@@ -54,7 +37,7 @@ void ThreadOllama::run()
     ollama::options options;
     options["seed"] = 1;      //I cannot fix the seed. Otherwise, the result is always the same.
     options["temperature"] = 0.1;
-    options["num_ctx"] = 16384; 
+    options["num_ctx"] = 131072; //32768;//16384; 
     options["think"] = 1;
     //preload the model
     //How can I check if the model is available?
@@ -65,17 +48,19 @@ void ThreadOllama::run()
         return;
     }
 
-    ollama::message message("user", strPrompt);
-    ollama::response context = ollama::chat(ModelName, message, options);
     vector<ollama::message> message_buffer;
-    stack<int> message_type;
 
     ollama::message system_message("system", str_system_message_list[0]);
-    ollama::messages message_history = {system_message};
+    string speak_ch = R"(請用中文回答。)";
+    ollama::message speak_ch_system_message("system", speak_ch);
+    ollama::messages message_history = {system_message, speak_ch_system_message};
     ollama::messages recent_history;
     time_t last_prompt_time = time(0), last_response_time = time(0); 
     while(b_WhileLoop || 1)
     {
+        cout << "\nis_dancing: " << is_dancing << "\n\n";
+        if (is_dancing)
+            continue;
         time_t current_time = time(0);
         std::unique_lock<std::mutex> lk(mtx);
         cond_var_ollama.wait(lk);
@@ -83,13 +68,13 @@ void ThreadOllama::run()
         string message_sender = "user";
         if(message_buffer.size() <= 0)
         {
-            if( strPrompt == "" && current_time - last_prompt_time < 30)
+            if( strPrompt == "" && current_time - last_prompt_time < maximum_prompt_wait_time)
             {
                 continue;
             }
             else if (strPrompt == "")
             {
-                strPrompt = "No response from patient. Continue with what you are saying";
+                strPrompt = no_response;
                 message_sender = "system";
             }
         }
@@ -101,17 +86,22 @@ void ThreadOllama::run()
             
             //Preprare prompt message with image for LLM
             ollama::image image = ollama::image::from_file("image_temp.jpg");
+            if (message_sender == "user")
+            {
+                strPrompt = strResponse + "\n\n" + strPrompt; 
+
+            }
             ollama::message message_with_image(message_sender, strPrompt, image);
             ollama::message message(message_sender, strPrompt);
-            //message_history.push_back(message);
             
+            //Push new message prompt to message buffer/stack
+            //message_history.push_back(message);    
             //recent_history.push_back(message);
             message_buffer.push_back(message);
-            message_count++;
             cout << "message_buffer SIZE: " << message_buffer.size() << "\n";
         }
 
-        if (current_time - last_prompt_time < 3)
+        if (current_time - last_prompt_time < 2)
         {
             continue;
         }
@@ -126,79 +116,80 @@ void ThreadOllama::run()
                message_buffer.erase(message_buffer.begin());
             }
         }
+        
+        
         //Gather Response from LLM
         ollama::response response = ollama::chat(ModelName, message_history, options);
         ollama::message response_message("Zenbo", response.as_simple_string());
-        message_history.push_back(response_message);
-        recent_history.push_back(response_message);
         strResponse = response.as_simple_string();
         
-        
-        string action_prompt = R"(Here is a list of available robot actions:
-        
-        "EM_Mad02", "BA_Nodhead", "SP_Swim02", "PE_RotateA", "SP_Karate", "RE_Cheer", "SP_Climb",
-        "DA_Hit", "TA_DictateR", "SP_Bowling", "SP_Walk", "SA_Find", "BA_TurnHead", "SA_Toothache",
-        "SA_Sick", "SA_Shocked", "SP_Dumbbell", "SA_Discover", "RE_Thanks", "PE_Changing",
-        "SP_HorizontalBar", "WO_Traffic", "RE_HiR", "RE_HiL", "DA_Brushteeth", "RE_Encourage",
-        "RE_Request", "PE_Brewing", "RE_Change", "PE_Phubbing", "RE_Baoquan", "SP_Cheer", "RE_Ask",
-        "PE_Triangel", "PE_Sorcery", "PE_Sneak", "PE_Singing", "LE_Yoyo", "SP_Throw", "SP_RaceWalk",
-        "PE_ShakeFart", "PE_RotateC", "PE_RotateB", "EM_Blush", "PE_Puff", "PE_PlayCello", "PE_Pikachu"
-        
-        Pick the best action for a suitable for the recent conversation context provided. For example, SA_Shocked for shocking responses, RE_Request for requests and so on. If a child patient requests a certain action, choose the most fitting from the above list.
-        
-        Reply only with:
-        The chosen action)";
-        //Pick the best action for a friendly robot talking to a child.
-        //It should be fun, safe, and help the child feel happy or engaged.
-        //2. A short reason why it’s a good fit)";
-        chosen_action = ThreadOllama::validate_conversation(options, recent_history, action_prompt, 1, 10);
-        
+        //message_history.push_back(response_message);
+        recent_history.push_back(response_message);
+
+        //Prompt for chosen action fitting to recent conversation history
+        chosen_action = ThreadOllama::validate_conversation(options, recent_history, action_prompt, 1);
         cout << chosen_action << "\n";
         
-        string summary_prompt = R"(Summarize only the important information gathered about patient so far. In this format (only as an example):
-        **Patient Summary:**
+        b_new_LLM_response = true;
         
-        -Age: Conflicting reports. Patient states 35, then 30. Clarification needed.
-        -Name: Muhammad
-        -Main Complaint: Stomach ache.
-        -Location: Stomach.
-        -Pain Intensity: Additional Concern:** Feels stomach in throat.)";
-
-        summary[(done) ? 2 : 0] = ThreadOllama::validate_conversation(options, message_history, summary_prompt, 1);
+        //Summarize patient data
+        summary[(done) ? 2 : 0] = ThreadOllama::validate_conversation(options, message_history, bio_summary_prompt, 1);
         ollama::message summary_message("Zenbo", summary[(done) ? 2 : 0]);
         cout << "\n\n" << summary[(done) ? 2 : 0] << "\n";
-
         
-        string check_prompt = "Has ALL the patient age, name, pain intensity/level, and symptom/main complaint information been correctly gathered? This is important to assess whether to continue asking. State yes or no.";
-        message_history.push_back(summary_message);
-        string check_summary = ThreadOllama::validate_conversation(options, message_history, check_prompt, 1);
-        message_history.pop_back();
-        cout << "SUMMARY_ANALYSIS: " << " " << check_summary << "\n"; 
-        
-        
-        for (int i = 0; i < check_summary.size(); i++)
+        //Validate stages
+        if (stage_count == 0)
         {
-            check_summary[i] = tolower(check_summary[i]);
+            //string check_prompt = "Has ALL the patient age, name, pain intensity/level, and symptom/main complaint information been correctly gathered? This is important to assess whether to continue asking. State yes or no. If no, state what is missing.";
+            message_history.push_back(summary_message);
+            check_summary = ThreadOllama::validate_conversation(options, message_history, check_stage_prompt, 1);
+            message_history.pop_back();
+            cout << "SUMMARY_ANALYSIS: " << " " << check_summary << "\n"; 
+            for (int i = 0; i < check_summary.size(); i++)
+            {
+                check_summary[i] = tolower(check_summary[i]);
+            }
+            
+            // string missing_prompt = "What is missing from the patient age, name, pain intensity/level, and symptom/main complaint information. State what is missing.";
+            // string missing_summary = ThreadOllama::validate_conversation(options, message_history, missing_prompt, 1);
+            // string missing_context = "Check if there is any missing information"; //"\n\nMissing info: " + missing_summary;
+            //ollama::message summary_context_message("Zenbo", summary_context);
+            //message_history.push_back(summary_context_message);
         }
-        if(check_summary.find("yes") != std::string::npos)
+        else if(stage_count == 1)
+        {
+            string dance_prompt = "Did the patient pick the Egypt Dance or the Cowboy dance? State 1 for Egypt Dance, 2 for Cowboy dance and 0 for none";
+            string dance_response = ThreadOllama::validate_conversation(options, recent_history, dance_prompt, 1);
+            if (dance_response.find("1") != std::string::npos)
+            {
+                chosen_dance = 1;
+                stage_count++;
+            }
+            else if (dance_response.find("2") != std::string::npos)
+            {
+                chosen_dance = 2;
+                stage_count++;
+            }
+            cout << "CHOSEN_DANCE: " << " " << chosen_dance << "\n"; 
+        }
+        if(stage_count == 0 && check_summary.find("yes") != std::string::npos)
         {
             done = 1;
+            stage_count++;
             //message_history.clear(); //To start memory from scratch //Alternative would be to clear, then add the summary
             message_history.erase(message_history.begin());
-            ollama::message new_system_message("system", str_system_message_list[2]);
-            //message_history.push_back(new_system_message);
+            ollama::message new_system_message("system", str_system_message_list[stage_count]);
             message_history.insert(message_history.begin(), new_system_message);
-        }
-        if (done)
-        {
             cout << "\nDONEDONEDONE\n";
         }
-        //if (message_count > 1)
-        //{
-        //    recent_history.pop_back();
-        //    recent_history.pop_back();
-        //}
-        b_new_LLM_response = true;
+        else if (stage_count == 0)
+        {
+            message_history.erase(message_history.begin());
+            string missing_context = "Check if there is any missing information"; //"\n\nMissing info: " + missing_summary;
+            missing_context = str_system_message_list[stage_count] + missing_context;
+            ollama::message new_system_message("system", missing_context);
+            message_history.insert(message_history.begin(), new_system_message);
+        }
     }
     std::cout << "Exit thread Ollama while loop." << std::endl;
 

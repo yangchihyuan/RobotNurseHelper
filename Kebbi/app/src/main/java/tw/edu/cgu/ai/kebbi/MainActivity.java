@@ -104,9 +104,10 @@ public class MainActivity extends Activity {
     private CameraCaptureSession mPreviewSession;
     private final ImageListener mPreviewListener = new ImageListener();
     private final SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss.SSS");
-
-    private SocketManager socketManager = new SocketManager();
-
+    private SocketManager socketManager;
+    //private SocketManager socketManager = new SocketManager();
+    //private SocketManager socketManager = new SocketManager(this);
+    //socketManager = new SocketManager(this);
     private Converter converter;
 
     /**
@@ -192,6 +193,8 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
+        socketManager = new SocketManager(this);
+        //socketManager.launchPlayer();
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main_activity);
@@ -208,7 +211,6 @@ public class MainActivity extends Activity {
         editText_Server = (EditText) findViewById(R.id.editText_Server);
         checkBox_enable_connection = (CheckBox) findViewById(R.id.checkBox_connect);
         Button button_close = (Button) findViewById(R.id.button_close);
-
         // init kiwi sdk
         String your_app_package_name = getPackageName ();
         IClientId id = new IClientId(your_app_package_name);
@@ -412,6 +414,8 @@ public class MainActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    //socketManager.launchPlayer();
+
                     //Save the IP address to SharedPreferences
                     SharedPreferences sharedPref = getSharedPreferences("ZenboNurseHelper_Preference", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPref.edit();
@@ -541,13 +545,13 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onPause() {
-        closeCamera();
-        socketManager.disconnectSockets();
-        status = false;
-        if( recorder != null) {
-            recorder.release();     //It causes an exception. Why?
-            recorder = null;
-        }
+        //closeCamera();
+        //socketManager.disconnectSockets();
+        //status = false;
+//        if( recorder != null) {
+//            recorder.release();     //It causes an exception. Why?
+//            recorder = null;
+//        }
         Log.d("VS","Recorder released");
 
         super.onPause();
@@ -556,6 +560,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onStop()
     {
+        //socketManager.disconnectSockets();
         super.onStop();
         stopThreads();      //Which is better? onPause() or onStop()?
         socketManager.stopThreads();

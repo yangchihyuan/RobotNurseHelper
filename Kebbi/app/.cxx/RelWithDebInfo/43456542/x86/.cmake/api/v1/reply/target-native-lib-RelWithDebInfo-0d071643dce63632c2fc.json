@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "/home/chihyuan/ZenboNurseHelper/Kebbi/app/build/intermediates/cxx/Debug/5v383i2u/obj/x86/libnative-lib.so"
+			"path" : "/home/mohamed/RobotNurseHelper/Kebbi/app/build/intermediates/cxx/RelWithDebInfo/43456542/obj/x86/libnative-lib.so"
 		}
 	],
 	"backtrace" : 1,
@@ -42,7 +42,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC"
+					"fragment" : "-g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -O2 -g -DNDEBUG -fPIC"
 				}
 			],
 			"defines" : 
@@ -60,7 +60,7 @@
 			],
 			"sysroot" : 
 			{
-				"path" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
+				"path" : "/home/mohamed/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
 			}
 		}
 	],
@@ -70,12 +70,12 @@
 		"commandFragments" : 
 		[
 			{
-				"fragment" : "-static-libstdc++ -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--no-undefined-version -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments",
+				"fragment" : "-static-libstdc++ -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--no-undefined-version -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments  -Wl,--gc-sections",
 				"role" : "flags"
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/i686-linux-android/28/liblog.so",
+				"fragment" : "/home/mohamed/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/i686-linux-android/28/liblog.so",
 				"role" : "libraries"
 			},
 			{
@@ -86,7 +86,7 @@
 		"language" : "CXX",
 		"sysroot" : 
 		{
-			"path" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
+			"path" : "/home/mohamed/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
 		}
 	},
 	"name" : "native-lib",

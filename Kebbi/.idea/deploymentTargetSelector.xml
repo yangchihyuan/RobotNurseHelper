@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-04-25T09:03:53.257597291Z">
+        <DropdownSelection timestamp="2025-07-04T05:48:24.145208086Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/home/chihyuan/.android/avd/Kebbi_Emulator.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=10390NNNB2250700046" />
             </handle>
           </Target>
         </DropdownSelection>
