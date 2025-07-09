@@ -32,6 +32,7 @@ ActionOption action_option;
 
 cv::Mat outFrame;
 std::vector<std::vector<std::array<float, 3>>> global_landmarks;
+int is_dancing = 0;
 
 ThreadProcessImage::ThreadProcessImage()
 {
@@ -630,13 +631,13 @@ void ThreadProcessImage::run()
 
             string header(data_);
             string str_timestamp = header.substr(0,13);
-            string str_pitch_degree = header.substr(14,3);
+            string str_is_dancing = header.substr(14,3);
 
             long timestamp = 0;
-            int pitch_degree = 0;
+            is_dancing = 0;
             try{
                 timestamp = stol(str_timestamp);                
-                pitch_degree = stoi(str_pitch_degree);
+                is_dancing = stoi(str_is_dancing);
             }
             catch(exception &e)
             {
@@ -799,28 +800,29 @@ void ThreadProcessImage::run()
                     {
                         cout << "Task is not supported." << endl;
                     }
-
-                    if (normalized_landmarks.empty()) {
+                    
+                    if (normalized_landmarks.empty() || is_dancing) {
                         auto current_time = std::chrono::high_resolution_clock::now();
                         auto duration = std::chrono::duration_cast<std::chrono::seconds>(current_time - previous_time);
 //                        cout << "duration empty" << duration.count() << endl;
-                        if (duration.count() >= 3 && bLastLandmarksEffective) { //3 [MOHAMED]
-                            bLastLandmarksEffective = false;  
+                        if (duration.count() >= 1 && bLastLandmarksEffective) { //3 [MOHAMED]
+                            //bLastLandmarksEffective = false;  
                             if( action_option.move_mode != action_option.MOVE_MANUAL)
                             {
+                                std::vector<std::vector<std::array<float, 3>>> empty_landmarks; // [MOHAMED]
                                 RobotCommandProtobuf::RobotCommand message;
                                 if( Task == "Face" )
                                 {
-                                    FaceLandmarks_to_RobotAction(last_landmarks, robot_status, action_option, message);
+                                    FaceLandmarks_to_RobotAction(empty_landmarks, robot_status, action_option, message); // [MOHAMED]
                                 }
                                 else if( Task == "Pose" )
                                 {
-                                    PoseLandmarks_to_RobotAction(last_landmarks, robot_status, action_option, message);
+                                    PoseLandmarks_to_RobotAction(empty_landmarks, robot_status, action_option, message);
                                 }
                                 else if( Task == "Holistic" )
                                 {
                                     //I use Pose, I haven't develop a new function for Holistic.
-                                    PoseLandmarks_to_RobotAction(last_landmarks, robot_status, action_option, message);
+                                    PoseLandmarks_to_RobotAction(empty_landmarks, robot_status, action_option, message);
                                 }
                                 else
                                 {
@@ -844,13 +846,13 @@ void ThreadProcessImage::run()
                         }
                         
 
-                        last_landmarks = normalized_landmarks;
+                        //last_landmarks = normalized_landmarks;
                         bLastLandmarksEffective = true;
                         //use time control first, wait for 3 seconds
                         auto current_time = std::chrono::high_resolution_clock::now();
                         auto duration = std::chrono::duration_cast<std::chrono::seconds>(current_time - previous_time);
 //                        cout << "duration " << duration.count() << endl;
-                        if (duration.count() >= 3) { //3 [MOHAMED]
+                        if (duration.count() >= 1) { //3 [MOHAMED]
                             if( action_option.move_mode != action_option.MOVE_MANUAL)
                             {
                                 RobotCommandProtobuf::RobotCommand message;

@@ -16,9 +16,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import RobotCommandProtobuf.RobotCommand;
+import RobotCommandProtobuf.RobotCommandOuterClass;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.app.Activity;
 
+import android.net.Uri;
+import java.io.File;
 public class SocketManager {
+    public static final int REQUEST_CODE = 201 ;
     public String mServerURL;
     public Integer mPortNumber;
 
@@ -43,10 +50,49 @@ public class SocketManager {
     String endString = new String("EndOfAMessage");
 
     public NuwaRobotAPI mRobotAPI;
-    ArrayList<RobotCommand.KebbiCommand> ArrayListCommand = new ArrayList<RobotCommand.KebbiCommand>();
+    ArrayList<RobotCommandOuterClass.RobotCommand> ArrayListCommand = new ArrayList<RobotCommandOuterClass.RobotCommand>();
     Converter converter;
 
+    public int done = 0;
+
+    public int dancing_status = 0;
     public boolean bAutoReconnection = true;
+//    private final Context mContext;
+//    public SocketManager(Context context) {
+//        this.mContext = context.getApplicationContext(); // safe to store
+//    }
+
+    private final Activity mActivity;
+
+    // constructor:
+    public SocketManager(Activity activity) {
+        this.mActivity = activity;
+    }
+    public void launchPlayer(int dance_type) {
+        dancing_status = 1;
+        Intent intent = new Intent();
+        ComponentName comp = new ComponentName("com.nuwarobotics.app.nuwaplayer","com.nuwarobotics.app.nuwaplayer.PlayContentEditorActivity");
+        intent.setComponent(comp);
+        intent.setAction("com.nuwarobotics.app.nuwaplayer.action.PLAY_MBTX");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (dance_type == 1)
+        {
+            intent.putExtra("PlayId", "Egypt_Dance-v2");
+        }
+        else if(dance_type == 2)
+        {
+            intent.putExtra("PlayId", "Dancing_Cowboy");
+        }
+        else if(dance_type == 3)
+        {
+            intent.putExtra("PlayId", "Short_Test_Project");
+        }
+        //intent.putExtra("PlayId", "Egypt_Dance");
+        //intent.putExtra("PlayId", "Short_Test_Project");
+        //intent.putExtra("PlayId", "Wendy_Safety_Video");
+        mActivity.startActivity(intent);
+        done = 1;
+    }
     public void startReceiveCommands()
     {
         //Debug information 2025/4/17. I need to complete this runnable bofore post it again. If there are two runnables in a handler, behaviors become unknown.
@@ -54,11 +100,14 @@ public class SocketManager {
             @Override
             public void run() {
                 mbReceiveCommand = true;
+                //launchPlayer(3);
                 while(mbReceiveCommand) {
 //                    Log.d ("mbReceiveCommand","still running");
                     if (socketReceiveCommand != null && socketReceiveCommand.isConnected()) {
 //                        Log.d ("mbReceiveCommand","Enter if");
                         try {
+                            mRobotAPI.hideFace();
+                            mRobotAPI.hideWindow(false);
                             BufferedInputStream dIn = new BufferedInputStream(socketReceiveCommand.getInputStream());
 //                            Log.d("BufferedInputStream", "created");
                             int length = 4096;
@@ -82,7 +131,7 @@ public class SocketManager {
                                     }
                                     effective_length = remaining;
 
-                                    RobotCommand.KebbiCommand command = RobotCommand.KebbiCommand.parseFrom(slice);
+                                    RobotCommandOuterClass.RobotCommand command = RobotCommandOuterClass.RobotCommand.parseFrom(slice);
                                     Log.d("Debug", "Receive a message");
                                     if (command.hasPitch()) {
                                         Log.d("Pitch degree", "Pitch degree " + Integer.toString( command.getPitch()));
@@ -139,6 +188,24 @@ public class SocketManager {
                                         Log.d("Debug", "Receive an action command");
                                         mRobotAPI.motionPlay(motionArray[command.getMotion()], true);
                                     }
+
+                                    if (command.hasDancetype() && command.getDancetype() != 0)
+                                    {
+                                        launchPlayer(command.getDancetype());
+                                    }
+                                    {
+                                        dancing_status = 0;
+                                    }
+                                    if (command.hasTurnspeed())
+                                    {
+                                        mRobotAPI.turn(command.getTurnspeed());
+                                    }
+                                    else
+                                    {
+                                        mRobotAPI.turn(0.0f);
+                                    }
+                                    //float num1 = 10.2f;
+                                    //mRobotAPI.turn(num1); //command.getTurnspeed());
                                 }
                             } else {
                                 //sleep 30 msecs;

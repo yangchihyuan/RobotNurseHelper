@@ -10,6 +10,7 @@ message RobotCommand {
   optional int32 headspeed = 4;
   optional int32 face = 5;
   optional bool hideface = 6;
+  optional int32 dancetype = 10;
 
   enum FaceEnum{
     TTS_AngerA = 0;

@@ -19,6 +19,7 @@
 
 
 using namespace std;
+extern int is_dancing;
 
 class ThreadProcessImage: public QThread
 {

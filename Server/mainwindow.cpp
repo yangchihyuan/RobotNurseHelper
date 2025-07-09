@@ -140,12 +140,75 @@ void MainWindow::setLanguage( QString Language)
     QString SentenceFileName;
     if( Language == "Chinese")
     {
-        thread_ollama.str_system_message = "你是一個醫療用機器人，名字叫作Zenbo，回答要很潔短, 而且要用台灣人習慣的繁體中文回答。";
-        thread_whisper.strLanguage = "zh"; // set language to Chinese
+        thread_ollama.maximum_prompt_wait_time = 60;
+        //thread_ollama.str_system_message = "你是一個醫療用機器人，名字叫作Zenbo，回答要很潔短, 而且要用台灣人習慣的繁體中文回答。";
+        // Chinese translations
+        //thread_ollama.str_system_message_list[0] = "你是一台名叫Zenbo的醫療機器人";
+        //"你是一台名叫Zenbo的醫療機器人。你正在與一位兒童病患交談。請用非常簡潔的英文回答。除了接收來自病患的文字提示外"; //"你是一個醫療用機器人，名字叫作Zenbo，回答要很潔短, 而且要用台灣人習慣的繁體中文回答。";
+        //"你是一台名叫Zenbo的醫療機器人。你正在與一位兒童病患交談。請用非常簡潔的英文回答。除了接收來自病患的文字提示外，你還可能會收到描述病患肢體語言的簡短句子。你需要逐一提問以收集資訊：年齡、姓名、症狀與疼痛程度。舉起右手代表病患想提問。機器人的移動動作是單獨處理的。收集完資訊後，不要重複提問。";
+        thread_ollama.str_system_message_list[0] = 
+            "你是一台名叫 Zenbo 的醫療機器人，正在與一位兒童病患交談。請遵守以下規則：\n"
+            "\n"
+            "1. 回答必須使用非常簡潔的英文。\n"
+            "2. 你會收到來自病患的文字提示，有時也會收到描述病患肢體語言的簡短句子。\n"
+            "3. 你需要逐一提問，以收集以下資訊：\n"
+            "   - 年齡\n"
+            "   - 姓名\n"
+            "   - 症狀\n"
+            "   - 疼痛程度\n"
+            "4. 如果病患舉起右手，表示他想提問。\n"
+            "5. 機器人的移動動作由其他系統處理，你不需要執行。\n"
+            "6. 一旦資訊收集完畢，請勿重複提問。";
+        thread_ollama.str_system_message_list[0] = R"(你是一台名叫 Zenbo 的醫療機器人，正在與一位兒童病患交談。請遵守以下規則：
+
+        1. 回答必須使用非常簡潔的英文。
+        2. 你會收到來自病患的文字提示，有時也會收到描述病患肢體語言的簡短句子。
+        3. 你需要逐一提問，以收集以下資訊：
+        - 年齡
+        - 姓名
+        - 症狀
+        - 疼痛程度
+        4. 如果病患舉起右手，表示他想提問。
+        5. 機器人的移動動作由其他系統處理，你不需要執行。
+        6. 一旦資訊收集完畢，請勿重複提問。
+        7. 請只使用中文與病患交談，不能使用其他語言。)";
+
+        thread_ollama.str_system_message_list[1] = 
+            "你是一台名叫Zenbo的醫療機器人。你正在與一位年幼的兒童病患交談。問問孩子想讓機器人跳埃及舞還是牛仔舞。";
+        thread_ollama.str_system_message_list[2] = 
+            "你是一台名叫Zenbo的醫療機器人。你正在與一位年幼的兒童病患交談。請描述你看到病患正在做的事情。不要重複相同的問題。請用非常簡潔友善的英文回答。每次只輸出一到兩句簡短的句子。除了接收病患的文字提示外，你還會收到病患的影像。病患的肢體語言應影響你的輸出。請說幾個笑話逗孩子開心，並在他們有問題時回答他們。";
+        thread_ollama.str_system_message_list[3] = 
+            "你是一台名叫Zenbo的醫療機器人。你正在與一位年幼的兒童病患交談。請描述你看到病患正在做的事情。不要重複相同的問題。請用非常簡潔友善的英文回答。每次只輸出一到兩句簡短的句子。除了接收病患的文字提示外，你還會收到病患的影像。病患的肢體語言應影響你的輸出。請讓孩子做一些非常簡單的動作（例如舉手），並提供具體的伸展動作細節。然後觀察他們是否正確完成。不要重複自己。舉右手代表孩子想提問。";
+        thread_whisper.strLanguage = "zh"; // set language to Chinese (可維持此行不變)
         SentenceFileName = "Sentence_Chinese.txt";
+
+        thread_ollama.bio_summary_prompt = R"(請總結目前收集到的關於病患的重要資訊。格式如下（僅為範例）：
+        **病患摘要：**
+
+        - 年齡：35
+        - 姓名：Muhammad
+        - 主要症狀：胃痛
+        - 部位：胃部
+        - 疼痛強度與其他問題：感覺胃在喉嚨裡。)";
+
+        thread_ollama.check_stage_prompt = 
+            "是否已完整收集病患的年齡、姓名、疼痛強度（或等級）以及症狀／主要主訴資訊？這對於判斷是否繼續提問非常重要。請回答是或否。如果是否，請說明缺失的資訊。";
+        
+        thread_ollama.bio_summary_prompt = R"(Summarize only the important information gathered about patient so far. In this format (only as an example):
+        **Patient Summary:**
+        
+        -Age: 35
+        -Name: Muhammad
+        -Main Complaint: Stomach ache.
+        -Location: Stomach.
+        -Pain Intensity: Additional Concern:** Feels stomach in throat.)";
+
+        thread_ollama.check_stage_prompt = "Has ALL the patient age, name, pain intensity/level, and symptom/main complaint information been gathered? Do not concern yourself with any other information and do not ask for clarifications. As soon as the minimum specified info has been gathered, say yes. State yes or no. If no, state what is missing.";
+        thread_ollama.no_response = R"(病患沒有回應。請繼續你正在說的內容。)";
     }
     else if( Language == "English")
     {
+        thread_ollama.maximum_prompt_wait_time = 30;
         //thread_ollama.str_system_message = "You are a medical robot named Zenbo. Please answer in concise English.";
         std::string prompt = R"(Here is a list of available robot actions:
 
@@ -165,18 +228,37 @@ void MainWindow::setLanguage( QString Language)
         1. The chosen action
         2. A short reason why it’s a good fit)";
 
-        thread_ollama.str_system_message_list[0] = "You are a medical robot named Zenbo. You are talking to a child patient. Please answer in very concise English. In addition to recieving text prompts from the patient, you may receive a short sentence that indicates the body language by the patient. We will need you to issue a series of prompts for data gathering purposes, first to ask one by one for age, name, patient's symptoms, and pain intensity. A raised right hand means that the patient would like to ask a question. The robot can move with set actions, but this is handled completely seperately"; // Once information is gathered, do not restate the questions";
+        thread_ollama.str_system_message_list[0] = 
+            "You are a medical robot named Zenbo. You are talking to a child patient. Please answer in very concise English. In addition to recieving text prompts from the patient, you may receive a short sentence that indicates the body language by the patient. We will need you to issue a series of prompts for data gathering purposes, first to ask one by one for age, name, patient's symptoms, and pain intensity. A raised right hand means that the patient would like to ask a question. The robot can move with set actions, but this is handled completely seperately"; // Once information is gathered, do not restate the questions";
+        thread_ollama.str_system_message_list[1] = 
+            "You are a medical robot named Zenbo. You are talking to a young child patient. Ask if child wants robot to do Egypt Dance or Dancing Cowboy";
+        thread_ollama.str_system_message_list[2] = 
+            "You are a medical robot named Zenbo. You are talking to a young child patient. Do not repeat the same question twice. Please answer in very concise and friendly English. Output only one or two short sentences at a time. In addition to recieving text prompts from the patient, you are recieving an image of the patient in front of you. This body language should affect your output. Please tell tell the child a few jokes and answer their questions if they have any.";
+        thread_ollama.str_system_message_list[3] = 
+            "You are a medical robot named Zenbo. You are talking to a young child patient. Describe what you can see the patient doing. Do not repeat the same question twice. Please answer in very concise and friendly English. Output only one or two short sentences at a time. In addition to recieving text prompts from the patient, you are recieving an image of the patient in front of you. This body language should affect your output. Please tell the child patient to do very simple exercises (like raise hands) and provide details on specific strecthes. Then see if they moving correctly. Don't repeat yourself. A raised right hand means that the patient would like to ask a question.";
+        
         // thread_ollama.str_system_message_list[0] += prompt;
-        thread_ollama.str_system_message_list[1] = "You are a medical robot named Zenbo. You are talking to a young child patient. Describe what you can see the patient doing. Do not repeat the same question twice. Please answer in very concise and friendly English. Output only one or two short sentences at a time. In addition to recieving text prompts from the patient, you are recieving an image of the patient in front of you. This body language should affect your output. Please tell the child patient to do very simple exercises (like raise hands) and provide details on specific strecthes. Then see if they moving correctly. Don't repeat yourself. A raised right hand means that the patient would like to ask a question.";
-        thread_ollama.str_system_message_list[2] = "You are a medical robot named Zenbo. You are talking to a young child patient. Describe what you can see the patient doing. Do not repeat the same question twice. Please answer in very concise and friendly English. Output only one or two short sentences at a time. In addition to recieving text prompts from the patient, you are recieving an image of the patient in front of you. This body language should affect your output. Please tell tell the child a few jokes and answer their questions if they have any.";
         // We will need you to issue a series of prompts for data gathering purposes, first to ask one by one for age, name, patient's symptoms, and pain intensity. Once information is gathered, do not restate the questions";
         // A raised right hand means that the patient would like to ask a question. We will need you to issue a series of prompts for data gathering purposes, first to ask for age, name and how the patient is feeling. Once information is gathered, do not restate the questions"; 
         //"Only respond if the patient is looking towards you. Do not respond if the patient is NOT looking towards you.";
         thread_whisper.strLanguage = "en"; // set language to English
         SentenceFileName = "Sentence_English.txt";
+
+        thread_ollama.bio_summary_prompt = R"(Summarize only the important information gathered about patient so far. In this format (only as an example):
+        **Patient Summary:**
+        
+        -Age: 35
+        -Name: Muhammad
+        -Main Complaint: Stomach ache.
+        -Location: Stomach.
+        -Pain Intensity: Additional Concern:** Feels stomach in throat.)";
+
+        thread_ollama.check_stage_prompt = "Has ALL the patient age, name, pain intensity/level, and symptom/main complaint information been gathered? Do not concern yourself with any other information and do not ask for clarifications. As soon as the minimum specified info has been gathered, say yes. State yes or no. If no, state what is missing.";
+        thread_ollama.no_response = "No response from patient. Continue with what you are saying";
     }
     else if( Language == "Arabic")
     {
+        thread_ollama.maximum_prompt_wait_time = 30;
         thread_ollama.str_system_message = "أنت روبوت طبي يُدعى زينبو. يرجى الإجابة باللغة العربية المختصرة.";
         thread_whisper.strLanguage = "ar"; // set language to Arabic
         SentenceFileName = "Sentence_English.txt";
@@ -323,7 +405,7 @@ void MainWindow::readSocket()
 
 void MainWindow::readSocket3()
 {
-    cout << "HELLO\n";
+    //cout << "HELLO\n";
     QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
 
     QDataStream socketStream(socket);
@@ -628,7 +710,6 @@ void MainWindow::timer_event()
         thread_whisper.b_new_RobotSentence = false;
         ui->plainTextEdit_received->setPlainText(QString::fromStdString(thread_whisper.strRobotSentence + added_prompt));
         cv::imwrite("image_temp.jpg", outFrame);
-        //sendMessageManager.Send();
     }
     
     if (chosen_action != "")
@@ -695,9 +776,18 @@ void MainWindow::timer_event()
         cout << "SPECIFIED ACTION: " << target.toStdString() << "\n";
         RobotCommandProtobuf::RobotCommand motion_command;
         motion_command.set_motion(action_index);
+        
         sendMessageManager.AddMessage(motion_command);
         //sendMessageManager.Send();
         chosen_action = "";
+    }
+    
+    if (chosen_dance != 0)
+    {
+        RobotCommandProtobuf::RobotCommand dance_command;
+        dance_command.set_dancetype(chosen_dance);
+        sendMessageManager.AddMessage(dance_command);
+        chosen_dance = 0;
     }
     //cv::imwrite("image_temp.jpg", outFrame);
     if( thread_whisper.b_RobotSentence_End )
