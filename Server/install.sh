@@ -5,30 +5,25 @@
 #Author: Chih-Yuan Yang
 #Project: Robot Nurse Helper
 
-read -p "How many Gb VRAM does your machine have?? [0/2/4/8/16/24]" VRAMSize
+read -p "How is your GPU model? [none/3050laptop/4070laptop/4080/4090]" GPUModel
 read -p "What is the robot model you use? [Zenbo/Kebbi/ZenboJrII]" RobotModel
 
 #Check if the VARAM size is valid
-allowed_numbers=(0 2 4 8 16 24)
-
-# Validate if the input is a valid integer
-if ! [[ "$VRAMSize" =~ ^[0-9]+$ ]]; then
-  echo "Error: '$VRAMSize' is not a valid integer. Please try again."
+if ["$GPUModel" == "none"]
+  VRAMSize=0
+elif ["$GPUModel" == "3050laptop"]
+  VRAMSize=4
+elif ["$GPUModel" == "4070laptop"]
+  VRAMSize=8
+elif ["$GPUModel" == "4080"]
+  VRAMSize=16
+elif ["$GPUModel" == "4090"]
+  VRAMSize=24
+else
+  echo "Error: '$GPUModel' is not in the allowed list. Please try again."
   exit
 fi
 
-# Check if the input number is in the allowed_numbers array
-is_valid=false
-for allowed_val in "${allowed_numbers[@]}"; do
-  if [ "$VRAMSize" -eq "$allowed_val" ]; then
-    is_valid=true
-    break # Found a match, no need to check further
-  fi
-done
-
-if ! [[ "$is_valid" = true ]]; then
-  echo "Error: '$VRAMSize' is not in the allowed list. Please try again."
-fi
 
 #Check if the RobotModel is valid
 allowed_robot_models=("Zenbo" "Kebbi" "ZenboJrII")
@@ -54,8 +49,15 @@ if (( VRAMSize > 0 )); then
   echo "We will detect the GPU driver. If there is no driver, we will install the driver for you. But you need to restart your PC after the installation."
   #Check if the GPU driver is installed
   sudo apt update   #this command is required because Ubuntu's repositories URL changed after its release in 2024 April.
-  ubuntu-drivers devices
-  sudo ubuntu-drivers autoinstall
+  ubuntu-drivers devices             #list available drivers
+  sudo ubuntu-drivers autoinstall    #Sometimes the system need a reboot. Otherwise Ubuntu does not detect the GPU.
+  nvidia-smi
+  read -p "Can you see the nvidia-smi GPU usage messages? [y/n]" GPUDriverWork
+  if ! [[ "$GPUDriverWork" == "Y" || "$GPUDriverWork" == "y" ]]; then
+    echo "You need to reboot your PC to make the newly installed GPU driver enable."
+    exit
+  fi
+
 fi
 
 #Install the compiler
