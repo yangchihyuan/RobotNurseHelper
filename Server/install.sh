@@ -9,15 +9,15 @@ read -p "How is your GPU model? [none/3050laptop/4070laptop/4080/4090]" GPUModel
 read -p "What is the robot model you use? [Zenbo/Kebbi/ZenboJrII]" RobotModel
 
 #Check if the VARAM size is valid
-if ["$GPUModel" == "none"]
+if [ "$GPUModel" = "none" ]; then
   VRAMSize=0
-elif ["$GPUModel" == "3050laptop"]
+elif [ "$GPUModel" = "3050laptop" ]; then
   VRAMSize=4
-elif ["$GPUModel" == "4070laptop"]
+elif [ "$GPUModel" = "4070laptop" ]; then
   VRAMSize=8
-elif ["$GPUModel" == "4080"]
+elif [ "$GPUModel" = "4080" ]; then
   VRAMSize=16
-elif ["$GPUModel" == "4090"]
+elif [ "$GPUModel" = "4090" ]; then
   VRAMSize=24
 else
   echo "Error: '$GPUModel' is not in the allowed list. Please try again."
