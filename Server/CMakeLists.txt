@@ -76,7 +76,7 @@ set(SOURCES JPEG.cpp
             utility_TimeRecorder.cpp
             utility_compute.cpp
             utility_string.cpp
-            utility_csv.cpp
+            utility_time.cpp
             main.cpp
             mainwindow.h
             mainwindow.cpp
@@ -87,7 +87,7 @@ set(SOURCES JPEG.cpp
             SocketHandler.cpp
             SendMessageManager.cpp
             GetLandmarks.cpp
-            silero-vad-onnx.cpp
+            silero-vad-onnx.cpp            
     )
 
 set(SOURCES2 ${ROBOT_MODEL}/LandmarkToRobotAction.cpp

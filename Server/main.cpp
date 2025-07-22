@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <QCommandLineParser>
+#include <utility_time.hpp>
 
 int main(int argc, char *argv[])
 {
@@ -72,13 +73,15 @@ int main(int argc, char *argv[])
         qDebug() << "DefaultSaveImage boolean is:" << bDefaultSaveImage;
     }
 
+    //Program launch time for Fang-yu's need to save images in this directory
+    string str_now = GetCurrentTimeString(false);
 
     MainWindow w;
     w.setWhisperModelFile(whisperModel);
     w.setLanguageModelName(languageModel);
     w.setImageSaveEveryNFrame(strimageSaveEveryNFrame.toInt());
     w.setLanguage(strLanguage);
-    w.setImageSaveDirectory(parser.value(ImageSaveDirectoryOption));
+    w.setImageSaveDirectory(parser.value(ImageSaveDirectoryOption).append("/").append(str_now.c_str()));
     w.setDefaultSaveImage(bDefaultSaveImage);
     w.startThreads();
     w.show();

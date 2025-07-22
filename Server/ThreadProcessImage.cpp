@@ -2,7 +2,7 @@
 #include "utility_TimeRecorder.hpp"
 #include "utility_directory.hpp"
 #include "utility_string.hpp"
-#include "utility_csv.hpp"
+#include "utility_time.hpp"
 #include <numeric>      // std::iota
 #include "JPEG.hpp"
 #ifdef USE_KEBBI
@@ -23,6 +23,7 @@
 
 #include "GetLandmarks.hpp"
 #include "LandmarkToRobotAction.hpp"
+
 
 //using namespace human_pose_estimation;
 using namespace cv;
@@ -668,10 +669,11 @@ void ThreadProcessImage::run()
             {
                 if(bSaveTransmittedImage)
                 {
-                    //2025/1/7 How to change the timestamp to a meaningful filename?
                     if(iFrameCount % image_save_every_N_frame == 0 )
                     {
-                        string filename = ImageSaveDirectory + "/" + str_timestamp + ".jpg";
+                        string str_now = GetCurrentTimeString(true);
+
+                        string filename = ImageSaveDirectory + "/" + str_now + ".jpg";
                         save_image_JPEG(data_ + shift_length, iJPEG_length , filename);
                         iFrameCount = 0; //reset the frame count
                     }
