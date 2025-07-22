@@ -1,11 +1,23 @@
 #!/bin/bash
 
-#2025/6/1
+#2025/7/23
 #Install Robot Nurse Helper to Ubuntu 24.04
 #Author: Chih-Yuan Yang
 #Project: Robot Nurse Helper
 
-read -p "How is your GPU model? [none/3050laptop/4070laptop/4080/4090]" GPUModel
+read -p "Is your secure boot off in your motherboard's UEFI setting? [y/n]" SecureBoot
+if ! [[ "$SecureBoot" == "Y" || "$SecureBoot" == "y" ]]; then
+  echo "This install.sh script cannot fully automatically install a Nvidia GPU driver because your UEFI secure boot is on. If you want to use this instal.sh to fully automatically install a NVidia GPU driver, you need to set your UEFI secure boot off. Otherwise, you need to install the Nvidia GPU driver manually."
+  read -p "Do you want to stop the install.sh? [y/n]" StopInstall
+  if ! [[ "$StopInstall" == "Y" || "$StopInstall" == "y" ]]; then
+    echo "You can continue to install the Robot Nurse Helper, but you need to install the Nvidia GPU driver manually after the installation."
+  else
+    echo "You can run this install.sh again after you set your UEFI secure boot off."
+    exit  #stop the installation script
+  fi  
+fi
+
+read -p "What is your GPU model? [none/3050laptop/4070laptop/4080/4090]" GPUModel
 read -p "What is the robot model you use? [Zenbo/Kebbi/ZenboJrII]" RobotModel
 
 #Check if the VARAM size is valid
