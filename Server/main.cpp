@@ -6,26 +6,53 @@
 #include <string>
 #include "ThreadOllama.hpp"
 #include <csignal>
-//extern std::string chosen_action;
-//extern string chosen_action;
+
 void handle_sigint(int) {
-    std::ofstream file("chosen_action.txt");
+    std::time_t currentTime = std::time(0); 
+    // Convert the time_t object to a string representing local time
+    char* dateTimeString = std::ctime(&currentTime);
+
+    // Print the current date and time
+    std::cout << "The current date and time is: " << dateTimeString << std::endl;
+    
+    string filename = "Conversation_Summarys/Conversation_Summary-";
+    filename += dateTimeString;
+    filename += ".txt";
+    std::ofstream file(filename);
+
+    file << "Date and time at completion: " << dateTimeString << "\n\n";
     if (file.is_open()) {
-        file << chosen_action << "\n\n";
         for (int i = 0; i < summary.size(); i++)
         {
-            file << summary[i] << "\n\n";
+            if (summary[i].size() == 0)
+            {
+                continue;
+            }
+            file << "STAGE " << i << ":\n\n" << summary[i] << "\n\n";
         }
         file.close();
-        cout << "\n" << chosen_action << "\nSaved chosen_action on Ctrl+C\n";
+        cout << "\n" << "\nSaved Conversation_Summary on Ctrl+C\n";
     }
+
+    string filename2 = "Complete_Logs/Complete_Log-";
+    filename2 += dateTimeString;
+    filename2 += ".txt";
+    std::ofstream file2(filename2);
+
+    file2 << "Date and time at completion: " << dateTimeString << "\n\n";
+    if (file2.is_open()) {
+        while(message_log.size())
+        {
+            file2 << message_log.front() << "\n\n";
+            message_log.erase(message_log.begin());
+        }
+        file2.close();
+        cout << "\n" << "\nSaved Complete_Log on Ctrl+C\n";
+    }
+
     //std::exit(0);  // Exit cleanly
     std::_Exit(0);
 }
-// Register at exit
-//__attribute__((constructor)) void register_saver() {
-//    std::atexit(save_chosen_action);
-//}
 
 int main(int argc, char *argv[])
 {

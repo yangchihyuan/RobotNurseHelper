@@ -18,7 +18,7 @@ elif [ $1 == "4090" ]; then
     --ImageSaveEveryNFrame 1 --Language Chinese --DefaultSaveImage off
 elif [ $1 == "debug" ]; then
     gdb --args build/RobotNurseHelper "--WhisperModel" "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-base.bin" \
-    "--ImageSaveDirectory" "$HOME/Downloads/raw_images" "--LanguageModel" "gemma3:1b" \
+    "--ImageSaveDirectory" "$HOME/Downloads/raw_images" "--LanguageModel" "gemma3:12b" \
     "--ImageSaveEveryNFrame" "5" "--Language" "Chinese" "--DefaultSaveImage" "true"
 elif [ $1 == "valgrind" ]; then
     valgrind build/RobotNurseHelper

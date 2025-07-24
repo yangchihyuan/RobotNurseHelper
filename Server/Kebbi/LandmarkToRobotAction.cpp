@@ -5,6 +5,15 @@
 
 float prev_x = 0.5;
 
+// 3D Euclidean distance
+float euclidean_distance(const std::array<float, 3>& a, const std::array<float, 3>& b) {
+    return std::sqrt(
+        std::pow(a[0] - b[0], 2) +
+        std::pow(a[1] - b[1], 2) +
+        std::pow(a[2] - b[2], 2)
+    );
+}
+
 int FaceLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
     RobotStatus &status, 
     ActionOption action_option,
@@ -62,7 +71,7 @@ int FaceLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
                 std::cout << "Error: " << x - 0.5 << "\n";
                 std::cout << "Previous_X: " << prev_x << "\n";
                 std::cout << "Change: " << (x - prev_x) << "\n";
-                int k_p = 2, k_d = 1;
+                int k_p = 2, k_d = 1.5;
                 float mag = abs(x - 0.5) * k_p;
                 int current_time = time(0);
                 mag += (prev_x - x) * k_d; // / (current_time - prev_time + 0.1) * k_d;
@@ -82,31 +91,46 @@ int FaceLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
                 }
 
             }
+
+            // std::string emotion = "Neutral";  // default
+
+            // // Normalize or precompute these based on interocular distance or other scaling if needed
+            // float mouth_width = euclidean_distance(face_landmarks[61], face_landmarks[291]); // corners of mouth
+            // float mouth_open = euclidean_distance(face_landmarks[13], face_landmarks[14]);   // top-bottom lips
+
+            // float left_eye_open = std::abs(face_landmarks[159][1] - face_landmarks[145][1]);    // left eye top-bottom
+            // float right_eye_open = std::abs(face_landmarks[386][1] - face_landmarks[374][1]);   // right eye top-bottom
+            // float eye_open = (left_eye_open + right_eye_open) / 2.0f;
+
+            // float left_brow_raise = (face_landmarks[159][1] + face_landmarks[145][1]) / 2.0f - face_landmarks[65][1];  // eye to brow
+            // float right_brow_raise = (face_landmarks[386][1] + face_landmarks[374][1]) / 2.0f - face_landmarks[295][1];
+            // float brow_raise = (left_brow_raise + right_brow_raise) / 2.0f;
+
+            // // --- Heuristics ---
+            // if (mouth_open > 0.05 && mouth_width > 0.10 && eye_open > 0.03 && brow_raise > 0.03) {
+            //     emotion = "Surprised";
+            // }
+            // else if (mouth_width > 0.08 && mouth_open < 0.02 && brow_raise < 0.015) {
+            //     emotion = "Happy";
+            // }
+            // else if (brow_raise < -0.01 && eye_open < 0.02) {
+            //     emotion = "Angry";
+            // }
+            // else if (brow_raise > 0.02 && eye_open < 0.015 && mouth_open < 0.015) {
+            //     emotion = "Sad";
+            // }
+            // else if (mouth_open < 0.015 && brow_raise < 0.015 && eye_open < 0.02) {
+            //     emotion = "Neutral";
+            // }
+            // std::cout << "\n" << emotion << "mouth_open: " << mouth_open << "mouth_open: " << mouth_open << "mouth_open: " << mouth_open "\n\n";
         }
         else  //move head
         {
-            message.set_turnspeed(0);
-            float yaw_shift = -(x-0.5)*62.5;
-            float pitch_shift = (y-0.5)*48.9;         //Kebbi's postive pitch degree is downward
-            //I need to know current yaw
-            int yaw = status.yaw_degree + static_cast<int>(yaw_shift);
-            yaw *= 0.4; //[MOHAMED]
-            if( yaw < -40) yaw = -40;
-            if( yaw > 40) yaw = 40;
-            message.set_yaw(yaw);
-            status.yaw_degree = yaw;
-            
-            int pitch = status.pitch_degree + static_cast<int>(pitch_shift);
-            pitch *= 0.4; //[MOHAMED]
-            if( pitch < -20 ) pitch = -20;
-            if( pitch > 20 ) pitch = 20;
-            message.set_pitch(pitch);
-            status.pitch_degree = pitch;
-
+            float mag = 0;
             if(num_faces == 1)
             {
-                int k_p = 2, k_d = 1;
-                float mag = abs(x - 0.5) * k_p;
+                int k_p = 2, k_d = 1.5;
+                mag = abs(x - 0.5) * k_p;
                 int current_time = time(0);
                 mag += (prev_x - x) * k_d; // / (current_time - prev_time + 0.1) * k_d;
                 prev_x = x;
@@ -124,6 +148,24 @@ int FaceLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
                     message.set_turnspeed(0.0f);
                 }
             }   
+            message.set_turnspeed(0);
+            float yaw_shift = -(x-0.5)*62.5;
+            float pitch_shift = (y-0.5)*48.9;         //Kebbi's postive pitch degree is downward
+            //I need to know current yaw
+            int yaw = status.yaw_degree + static_cast<int>(yaw_shift);
+            yaw *= 0.4; //[MOHAMED]
+            yaw *= (1 - mag) * 1.5;
+            if( yaw < -40) yaw = -40;
+            if( yaw > 40) yaw = 40;
+            message.set_yaw(yaw);
+            status.yaw_degree = yaw;
+            
+            int pitch = status.pitch_degree + static_cast<int>(pitch_shift);
+            pitch *= 0.4; //[MOHAMED]
+            if( pitch < -20 ) pitch = -20;
+            if( pitch > 20 ) pitch = 20;
+            message.set_pitch(pitch);
+            status.pitch_degree = pitch;
         }
     }
     if(num_faces == 0)

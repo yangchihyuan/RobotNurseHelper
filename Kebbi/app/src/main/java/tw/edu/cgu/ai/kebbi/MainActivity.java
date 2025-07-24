@@ -429,6 +429,7 @@ public class MainActivity extends Activity {
                     socketManager.connectSockets();
                     socketManager.startReceiveCommands();
                     socketManager.startDisconnectionChecker();
+                    long lastTimeMillis = System.currentTimeMillis();
                 }
                 else {
                     //2025/1/3 the recorder should stop in onPause()
@@ -487,8 +488,13 @@ public class MainActivity extends Activity {
             recorder = new AudioRecord(audioSouce, sampleRate, channelConfig, audioFormat, minBufSize * 10);   //5376* 10
             Log.d("VS", "Recorder initialized");
         }
-        if( checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED )
+        if (checkSelfPermission(PERMISSION_CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, 100);
+        } else {
             openCamera();
+        }
+//        if( checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED )
+//            openCamera();
 
         StartAudioRecorder();
 
@@ -545,6 +551,8 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onPause() {
+        socketManager.mRobotAPI.hideFace();
+        socketManager.mRobotAPI.hideWindow(false);
         //closeCamera();
         //socketManager.disconnectSockets();
         //status = false;
@@ -561,6 +569,8 @@ public class MainActivity extends Activity {
     protected void onStop()
     {
         //socketManager.disconnectSockets();
+        socketManager.mRobotAPI.hideFace();
+        socketManager.mRobotAPI.hideWindow(false);
         super.onStop();
         stopThreads();      //Which is better? onPause() or onStop()?
         socketManager.stopThreads();
