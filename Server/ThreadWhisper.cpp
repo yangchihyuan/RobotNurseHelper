@@ -60,6 +60,7 @@ void ThreadWhisper::run()
     wparams.max_tokens       = params.max_tokens;
     wparams.n_threads        = params.n_threads;
     wparams.beam_search.beam_size = params.beam_size;
+    wparams.beam_search.patience = 1.2f; //[MOHAMED]
 
     wparams.audio_ctx        = params.audio_ctx;
 
@@ -67,6 +68,8 @@ void ThreadWhisper::run()
 
     // disable temperature fallback
     //wparams.temperature_inc  = -1.0f;
+    wparams.temperature_inc = 0.2f;
+    wparams.temperature = (strLanguage.c_str() == "zh") ? 0.5f : 0.5f;//[MOHAMED]
     wparams.temperature_inc  = params.no_fallback ? 0.0f : wparams.temperature_inc;
 
     wparams.prompt_tokens    = params.no_context ? nullptr : prompt_tokens.data();
@@ -74,7 +77,7 @@ void ThreadWhisper::run()
 
     wparams.translate = false;
     wparams.language = strLanguage.c_str();        // "zh" for Chinese, "en" for English, "ar" for Arabic
-    wparams.no_speech_thold = 0.6f; // silence threshold for VAD
+    wparams.no_speech_thold = 0.02f; //0.6f; // silence threshold for VAD //[MOHAMED]
 
     int n_iter = 0;
 
