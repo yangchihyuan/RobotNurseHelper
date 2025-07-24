@@ -44,8 +44,8 @@ public class SocketManager {
 
     byte[] mMessagePool = new byte[8192];
     int effective_length = 0;
-    String beginString = new String("BeginOfAMessage");
-    String endString = new String("EndOfAMessage");
+    String beginString = "BeginOfAMessage";
+    String endString = "EndOfAMessage";
 
     public RobotAPI mRobotAPI;
     ArrayList<RobotCommandOuterClass.RobotCommand> ArrayListCommand = new ArrayList<RobotCommandOuterClass.RobotCommand>();
@@ -150,19 +150,25 @@ public class SocketManager {
                                             mRobotAPI.robot.setExpression(newFace);
                                         }
                                     }
-                                    if (command.hasCustomAction()) {
-                                        if( command.getCustomAction() == 0) {
+                                    if (command.hasSong()) {
+                                        if( command.getSong() == 0) {
                                             if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
                                                 mediaPlayer.start();
                                             }
                                         }
-                                        else if( command.getCustomAction() == 1) {
+                                        else if( command.getSong() == 1) {
                                             if (mediaPlayer2 != null && !mediaPlayer2.isPlaying()) {
                                                 mediaPlayer2.start();
                                             }
                                         }
                                     }
-
+                                    if(command.hasStopsong())
+                                    {
+                                        if( mediaPlayer2.isPlaying()){
+                                            mediaPlayer2.stop();
+                                            mediaPlayer2.prepare();
+                                        }
+                                    }
                                 }
                             } else {
                                 //sleep 30 msecs;

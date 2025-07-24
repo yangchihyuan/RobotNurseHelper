@@ -1,1 +1,1 @@
-/home/chihyuan/ZenboNurseHelper/Zenbo/app/CMakeLists.txt
+/home/chihyuan/RobotNurseHelper/Zenbo/app/CMakeLists.txt

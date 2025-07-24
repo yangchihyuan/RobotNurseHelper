@@ -138,8 +138,8 @@ MainWindow::MainWindow(QWidget *parent)
         QStandardItem *item = new QStandardItem(string);
         ItemModel_customaction->appendRow(item);
     }
-    ui->listView_CustomAction->setModel(ItemModel_customaction);
-    ui->listView_CustomAction->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->listView_Song->setModel(ItemModel_customaction);
+    ui->listView_Song->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     //One QTcpServer only listens to one port. If you want to listen to multiple ports, you need to create multiple QTcpServer objects.
     m_server_receive_image = new QTcpServer();
@@ -286,11 +286,13 @@ void MainWindow::on_listView_PredefinedAction_doubleClicked(const QModelIndex &i
     sendMessageManager.AddMessage(command);
 }
 
-void MainWindow::on_listView_CustomAction_doubleClicked(const QModelIndex &index)
+void MainWindow::on_listView_Song_doubleClicked(const QModelIndex &index)
 {
     RobotCommandProtobuf::RobotCommand command;
-    command.set_custom_action(index.row());
+    command.set_song(index.row());
     sendMessageManager.AddMessage(command);
+    //debug
+    cout << "Custom action: " << index.row() << endl;
 }
 
 void MainWindow::on_pushButton_speak_2_clicked()

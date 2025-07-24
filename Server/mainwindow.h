@@ -113,11 +113,12 @@ private slots:
     void on_pushButton_movebody_clicked();
     void on_pushButton_movehead_clicked();
     void on_pushButton_stop_action_clicked();
+    void on_pushButton_stop_song_clicked();
     void on_pushButton_voice_to_text_clicked();
 
     void on_listView_FacialExpressions_doubleClicked(const QModelIndex &index);
     void on_listView_PredefinedAction_doubleClicked(const QModelIndex &index);
-    void on_listView_CustomAction_doubleClicked(const QModelIndex &index);
+    void on_listView_Song_doubleClicked(const QModelIndex &index);
     void on_listView_Sentence1_doubleClicked(const QModelIndex &index);
     void on_listView_Sentence1_clicked(const QModelIndex &index);
     void on_listView_Sentence2_doubleClicked(const QModelIndex &index);

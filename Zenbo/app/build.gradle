@@ -10,8 +10,8 @@ android {
         applicationId 'tw.edu.cgu.ai.zenbo'
         minSdk 23
         targetSdkVersion 23
-        versionCode 9
-        versionName 'v25.05.22'
+        versionCode 10
+        versionName 'v25.07.24'
         externalNativeBuild {
             cmake {
                 cppFlags ""
