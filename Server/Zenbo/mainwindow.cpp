@@ -1,5 +1,6 @@
 #include "mainwindow.h"
-#include "./ui_mainwindow.h"
+#include "./ui_mainwindow.h"     //in      RobotNurseHelper/Server/build/RobotNurseHelper_autogen/include/Zenbo
+                                 //also in RobotNurseHelper/Server/build/RobotNurseHelper_autogen/include
 #include <QPixmap>
 #include <QStringListModel>
 #include <QStandardItemModel>
@@ -123,6 +124,22 @@ MainWindow::MainWindow(QWidget *parent)
     }
     ui->listView_PredefinedAction->setModel(ItemModel_action);
     ui->listView_PredefinedAction->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+
+    QStringList strList_customaction;
+    strList_customaction.append("小布也愛你喲");
+    strList_customaction.append("Chipi Chipi");
+
+    QStandardItemModel* ItemModel_customaction = new QStandardItemModel(this);
+    nCount = strList_customaction.size();
+    for(int i = 0; i < nCount; i++)
+    {
+        QString string = static_cast<QString>(strList_customaction.at(i));
+        QStandardItem *item = new QStandardItem(string);
+        ItemModel_customaction->appendRow(item);
+    }
+    ui->listView_CustomAction->setModel(ItemModel_customaction);
+    ui->listView_CustomAction->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     //One QTcpServer only listens to one port. If you want to listen to multiple ports, you need to create multiple QTcpServer objects.
     m_server_receive_image = new QTcpServer();
@@ -266,6 +283,13 @@ void MainWindow::on_listView_PredefinedAction_doubleClicked(const QModelIndex &i
 {
     RobotCommandProtobuf::RobotCommand command;
     command.set_predefined_action(index.row());
+    sendMessageManager.AddMessage(command);
+}
+
+void MainWindow::on_listView_CustomAction_doubleClicked(const QModelIndex &index)
+{
+    RobotCommandProtobuf::RobotCommand command;
+    command.set_custom_action(index.row());
     sendMessageManager.AddMessage(command);
 }
 

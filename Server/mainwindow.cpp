@@ -644,6 +644,13 @@ void MainWindow::on_pushButton_stop_action_clicked()
     sendMessageManager.AddMessage(command);
 }
 
+void MainWindow::on_pushButton_stop_song_clicked()
+{
+    RobotCommandProtobuf::RobotCommand command;
+    command.set_stopsong(1);
+    sendMessageManager.AddMessage(command);
+}
+
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     QString action;

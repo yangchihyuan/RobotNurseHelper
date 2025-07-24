@@ -56,5 +56,7 @@ message RobotCommand {
   optional int32 stopmove = 16;
   optional int32 predefined_action = 17;
   optional int32 hideface = 18;
+  optional int32 song = 19;
+  optional int32 stopsong = 20;
 }
 

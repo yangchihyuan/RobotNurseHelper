@@ -11,7 +11,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "x86"
+			"value" : "x86_64"
 		},
 		{
 			"name" : "ANDROID_NDK",
@@ -63,7 +63,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "x86"
+			"value" : "x86_64"
 		},
 		{
 			"name" : "CMAKE_ANDROID_NDK",
@@ -151,7 +151,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/chihyuan/ZenboNurseHelper/ZenboJuniorII/app/.cxx/Debug/2f173c56/x86"
+			"value" : "/home/chihyuan/RobotNurseHelper/ZenboJuniorII/app/.cxx/Debug/2f173c56/x86_64"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -703,7 +703,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/chihyuan/ZenboNurseHelper/ZenboJuniorII/app"
+			"value" : "/home/chihyuan/RobotNurseHelper/ZenboJuniorII/app"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -739,7 +739,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "/home/chihyuan/ZenboNurseHelper/ZenboJuniorII/app/build/intermediates/cxx/Debug/2f173c56/obj/x86"
+			"value" : "/home/chihyuan/RobotNurseHelper/ZenboJuniorII/app/build/intermediates/cxx/Debug/2f173c56/obj/x86_64"
 		},
 		{
 			"name" : "CMAKE_LINKER",
@@ -1011,7 +1011,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "/home/chihyuan/ZenboNurseHelper/ZenboJuniorII/app/build/intermediates/cxx/Debug/2f173c56/obj/x86"
+			"value" : "/home/chihyuan/RobotNurseHelper/ZenboJuniorII/app/build/intermediates/cxx/Debug/2f173c56/obj/x86_64"
 		},
 		{
 			"name" : "CMAKE_SHARED_LINKER_FLAGS",
@@ -1295,7 +1295,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/chihyuan/ZenboNurseHelper/ZenboJuniorII/app/.cxx/Debug/2f173c56/x86"
+			"value" : "/home/chihyuan/RobotNurseHelper/ZenboJuniorII/app/.cxx/Debug/2f173c56/x86_64"
 		},
 		{
 			"name" : "Project_IS_TOP_LEVEL",
@@ -1319,7 +1319,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/chihyuan/ZenboNurseHelper/ZenboJuniorII/app"
+			"value" : "/home/chihyuan/RobotNurseHelper/ZenboJuniorII/app"
 		},
 		{
 			"name" : "log-lib",
@@ -1331,7 +1331,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/i686-linux-android/29/liblog.so"
+			"value" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/x86_64-linux-android/29/liblog.so"
 		},
 		{
 			"name" : "native-lib_LIB_DEPENDS",
@@ -1343,7 +1343,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "general;/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/i686-linux-android/29/liblog.so;"
+			"value" : "general;/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/x86_64-linux-android/29/liblog.so;"
 		}
 	],
 	"kind" : "cache",

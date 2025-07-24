@@ -40,6 +40,7 @@ import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.ImageReader;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -109,6 +110,9 @@ public class MainActivity extends Activity {
     private SocketManager socketManager = new SocketManager();
 
     private Converter converter;
+
+    private MediaPlayer mediaPlayer;
+    private MediaPlayer mediaPlayer2;
 
     /**
      * {@link android.view.TextureView.SurfaceTextureListener} handles several lifecycle events on a
@@ -204,6 +208,10 @@ public class MainActivity extends Activity {
         mRobotAPI = new RobotAPI(this, robotCallback);
         socketManager.mRobotAPI = mRobotAPI;
         socketManager.startThreads();
+        mediaPlayer = MediaPlayer.create(this, R.raw.zenbo_love_you_too_manderin); // R.raw.your_mp3_filename
+        mediaPlayer2 = MediaPlayer.create(this, R.raw.chipi_chipi_chapa_chapa); // R.raw.your_mp3_filename
+        socketManager.mediaPlayer = mediaPlayer;
+        socketManager.mediaPlayer2 = mediaPlayer2;
 
         inputView = (InputView) findViewById(R.id.inputview);
         editText_Port = (EditText) findViewById(R.id.editText_Port);

@@ -2,6 +2,7 @@ package tw.edu.cgu.ai.zenbo;
 
 import static java.lang.Thread.sleep;
 
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
@@ -49,6 +50,10 @@ public class SocketManager {
     public RobotAPI mRobotAPI;
     ArrayList<RobotCommandOuterClass.RobotCommand> ArrayListCommand = new ArrayList<RobotCommandOuterClass.RobotCommand>();
     Converter converter;
+
+    public MediaPlayer mediaPlayer;
+    public MediaPlayer mediaPlayer2;
+
 
     public boolean bAutoReconnection = true;
     public void startReceiveCommands()
@@ -143,6 +148,18 @@ public class SocketManager {
                                         if( command.getHideface() == 1) {
                                             RobotFace newFace = RobotFace.HIDEFACE;
                                             mRobotAPI.robot.setExpression(newFace);
+                                        }
+                                    }
+                                    if (command.hasCustomAction()) {
+                                        if( command.getCustomAction() == 0) {
+                                            if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
+                                                mediaPlayer.start();
+                                            }
+                                        }
+                                        else if( command.getCustomAction() == 1) {
+                                            if (mediaPlayer2 != null && !mediaPlayer2.isPlaying()) {
+                                                mediaPlayer2.start();
+                                            }
                                         }
                                     }
 

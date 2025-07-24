@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "/home/chihyuan/ZenboNurseHelper/ZenboJuniorII/app/build/intermediates/cxx/Debug/2f173c56/obj/x86/libnative-lib.so"
+			"path" : "/home/chihyuan/RobotNurseHelper/ZenboJuniorII/app/build/intermediates/cxx/Debug/2f173c56/obj/armeabi-v7a/libnative-lib.so"
 		}
 	],
 	"backtrace" : 1,
@@ -42,7 +42,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC"
+					"fragment" : "-g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC"
 				}
 			],
 			"defines" : 
@@ -75,7 +75,7 @@
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/i686-linux-android/29/liblog.so",
+				"fragment" : "/home/chihyuan/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/arm-linux-androideabi/29/liblog.so",
 				"role" : "libraries"
 			},
 			{

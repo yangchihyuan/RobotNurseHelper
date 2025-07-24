@@ -1,4 +1,4 @@
-# Install script for directory: /home/chihyuan/ZenboNurseHelper/ZenboJuniorII/app
+# Install script for directory: /home/chihyuan/RobotNurseHelper/ZenboJuniorII/app
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/chihyuan/ZenboNurseHelper/ZenboJuniorII/app/.cxx/Debug/2f173c56/x86_64/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/chihyuan/RobotNurseHelper/ZenboJuniorII/app/.cxx/Debug/2f173c56/x86_64/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

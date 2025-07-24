@@ -117,6 +117,7 @@ private slots:
 
     void on_listView_FacialExpressions_doubleClicked(const QModelIndex &index);
     void on_listView_PredefinedAction_doubleClicked(const QModelIndex &index);
+    void on_listView_CustomAction_doubleClicked(const QModelIndex &index);
     void on_listView_Sentence1_doubleClicked(const QModelIndex &index);
     void on_listView_Sentence1_clicked(const QModelIndex &index);
     void on_listView_Sentence2_doubleClicked(const QModelIndex &index);
