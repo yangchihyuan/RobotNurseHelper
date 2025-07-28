@@ -42,6 +42,8 @@ public:
     string check_stage_prompt;
     string no_response, dance_complete;
     string ModelName = "gemma3:12b";
+    string previous_context_path;
+    int start_stage_input;
 
     string action_prompt = R"(Here is a list of available robot actions:
     
