@@ -2,10 +2,14 @@ package tw.edu.cgu.ai.kebbi;
 
 import static java.lang.Thread.sleep;
 
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
+import android.content.Context;
 
 import com.nuwarobotics.service.agent.NuwaRobotAPI;
 
@@ -57,6 +61,7 @@ public class SocketManager {
     public int done = 0;
 
     public long dancing_status = 0;
+    public Activity activity;
     public boolean bAutoReconnection = true;
 //    private final Context mContext;
 //    public SocketManager(Context context) {
@@ -227,6 +232,18 @@ public class SocketManager {
                                     }
                                     //float num1 = 10.2f;
                                     //mRobotAPI.turn(num1); //command.getTurnspeed());
+                                    if( command.hasContent())
+                                    {
+                                        final int REQUEST_CODE = 201 ;
+                                        Intent intent = new Intent();
+                                        ComponentName comp = new ComponentName("com.nuwarobotics.app.nuwaplayer","com.nuwarobotics.app.nuwaplayer.PlayContentEditorActivity");
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        intent.setAction("com.nuwarobotics.app.nuwaplayer.action.PLAY_MBTX");
+                                        intent.setComponent(comp);
+                                        intent.putExtra("PlayId", command.getContent());//the file name put in  /sdcard/contenteditor/
+                                        Context context;
+                                        activity.startActivityForResult(intent, REQUEST_CODE);
+                                    }
                                 }
                             } else {
                                 //sleep 30 msecs;

@@ -94,6 +94,7 @@ set(SOURCES2 ${ROBOT_MODEL}/LandmarkToRobotAction.cpp
              ${ROBOT_MODEL}/ThreadTablet.cpp
              ${ROBOT_MODEL}/mainwindow.cpp
              ${ROBOT_MODEL}/mainwindow.ui
+             ${ROBOT_MODEL}/mainwindow.h
              ${PROTO_SRC})
 
 message(STATUS 'PROTO_SRC ${PROTO_SRC}')             

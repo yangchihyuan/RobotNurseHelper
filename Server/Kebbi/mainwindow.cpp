@@ -123,6 +123,21 @@ MainWindow::MainWindow(QWidget *parent)
     ui->listView_PredefinedAction->setModel(ItemModel_action);
     ui->listView_PredefinedAction->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
+    QStringList strList_content;
+    strList_content.append("Cataract_health_education_1_20250725095927");
+
+    QStandardItemModel* ItemModel_content = new QStandardItemModel(this);
+    nCount = strList_content.size();
+    for(int i = 0; i < nCount; i++)
+    {
+        QString string = static_cast<QString>(strList_content.at(i));
+        QStandardItem *item = new QStandardItem(string);
+        ItemModel_content->appendRow(item);
+    }
+    ui->listView_Content->setModel(ItemModel_content);
+    ui->listView_Content->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+
     //One QTcpServer only listens to one port. If you want to listen to multiple ports, you need to create multiple QTcpServer objects.
     m_server_receive_image = new QTcpServer();
     //2024/12/27 The port number is also hard-coded. I need to modify it in the future.
@@ -276,6 +291,15 @@ void MainWindow::on_pushButton_hideface_clicked()
     RobotCommandProtobuf::RobotCommand command;
     command.set_hideface(true);
     sendMessageManager.AddMessage(command);
+}
+
+void MainWindow::on_listView_Content_doubleClicked(const QModelIndex &index)
+{
+    RobotCommandProtobuf::RobotCommand command;
+    command.set_content(static_cast<QString>(ui->listView_Content->model()->data(index).toString()).toStdString());
+    sendMessageManager.AddMessage(command);
+    //debug
+    cout << "Content: " << static_cast<QString>(ui->listView_Content->model()->data(index).toString()).toStdString() << endl;
 }
 
 

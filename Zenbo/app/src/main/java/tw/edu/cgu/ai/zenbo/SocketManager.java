@@ -2,6 +2,7 @@ package tw.edu.cgu.ai.zenbo;
 
 import static java.lang.Thread.sleep;
 
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
@@ -43,12 +44,16 @@ public class SocketManager {
 
     byte[] mMessagePool = new byte[8192];
     int effective_length = 0;
-    String beginString = new String("BeginOfAMessage");
-    String endString = new String("EndOfAMessage");
+    String beginString = "BeginOfAMessage";
+    String endString = "EndOfAMessage";
 
     public RobotAPI mRobotAPI;
     ArrayList<RobotCommandOuterClass.RobotCommand> ArrayListCommand = new ArrayList<RobotCommandOuterClass.RobotCommand>();
     Converter converter;
+
+    public MediaPlayer mediaPlayer;
+    public MediaPlayer mediaPlayer2;
+
 
     public boolean bAutoReconnection = true;
     public void startReceiveCommands()
@@ -145,7 +150,25 @@ public class SocketManager {
                                             mRobotAPI.robot.setExpression(newFace);
                                         }
                                     }
-
+                                    if (command.hasSong()) {
+                                        if( command.getSong() == 0) {
+                                            if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
+                                                mediaPlayer.start();
+                                            }
+                                        }
+                                        else if( command.getSong() == 1) {
+                                            if (mediaPlayer2 != null && !mediaPlayer2.isPlaying()) {
+                                                mediaPlayer2.start();
+                                            }
+                                        }
+                                    }
+                                    if(command.hasStopsong())
+                                    {
+                                        if( mediaPlayer2.isPlaying()){
+                                            mediaPlayer2.stop();
+                                            mediaPlayer2.prepare();
+                                        }
+                                    }
                                 }
                             } else {
                                 //sleep 30 msecs;
