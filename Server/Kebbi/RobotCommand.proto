@@ -29,5 +29,6 @@ message RobotCommand {
 
   optional int32 stopmove = 7;
   optional int32 motion = 8;
+  optional string content = 9;
 }
 

@@ -487,7 +487,7 @@ public class MainActivity extends Activity {
             openCamera();
 
         StartAudioRecorder();
-
+        socketManager.activity = this;
     }
 
     private void StartAudioRecorder()

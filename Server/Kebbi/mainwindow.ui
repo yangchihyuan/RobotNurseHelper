@@ -803,6 +803,16 @@
      <string>Language</string>
     </property>
    </widget>
+   <widget class="QListView" name="listView_Content">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>330</y>
+      <width>121</width>
+      <height>251</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

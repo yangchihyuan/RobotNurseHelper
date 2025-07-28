@@ -2,9 +2,13 @@ package tw.edu.cgu.ai.kebbi;
 
 import static java.lang.Thread.sleep;
 
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
+import android.content.Context;
 
 import com.nuwarobotics.service.agent.NuwaRobotAPI;
 
@@ -46,6 +50,7 @@ public class SocketManager {
     ArrayList<RobotCommandOuterClass.RobotCommand> ArrayListCommand = new ArrayList<RobotCommandOuterClass.RobotCommand>();
     Converter converter;
 
+    public Activity activity;
     public boolean bAutoReconnection = true;
     public void startReceiveCommands()
     {
@@ -138,6 +143,18 @@ public class SocketManager {
                                                 "666_PE_PlayCello","666_PE_Pikachu"};
                                         Log.d("Debug", "Receive an action command");
                                         mRobotAPI.motionPlay(motionArray[command.getMotion()], true);
+                                    }
+                                    if( command.hasContent())
+                                    {
+                                        final int REQUEST_CODE = 201 ;
+                                        Intent intent = new Intent();
+                                        ComponentName comp = new ComponentName("com.nuwarobotics.app.nuwaplayer","com.nuwarobotics.app.nuwaplayer.PlayContentEditorActivity");
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        intent.setAction("com.nuwarobotics.app.nuwaplayer.action.PLAY_MBTX");
+                                        intent.setComponent(comp);
+                                        intent.putExtra("PlayId", command.getContent());//the file name put in  /sdcard/contenteditor/
+                                        Context context;
+                                        activity.startActivityForResult(intent, REQUEST_CODE);
                                     }
                                 }
                             } else {
