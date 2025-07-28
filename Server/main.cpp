@@ -87,6 +87,11 @@ int main(int argc, char *argv[])
     QCommandLineOption DefaultSaveImageOption("DefaultSaveImage", "The default value of saving images.", "boolean", "false");
     parser.addOption(DefaultSaveImageOption);
 
+    QCommandLineOption previousContextOption({"pf", "previous_context"}, "Previous context text file", "string", "");
+    parser.addOption(previousContextOption);
+
+    QCommandLineOption stageOption({"s", "stage"}, "LLM starting stage", "int", 0);
+    parser.addOption(stageOption);
 
     parser.process(app);
 
@@ -126,10 +131,23 @@ int main(int argc, char *argv[])
         qDebug() << "DefaultSaveImage boolean is:" << bDefaultSaveImage;
     }
 
+    QString previousContext;
+    if (parser.isSet(previousContextOption)) {
+        previousContext = parser.value(previousContextOption);
+        qDebug() << "previousContext string is:" << previousContext;
+    }
+
+    QString strstage;;
+    if (parser.isSet(stageOption)) {
+        strstage = parser.value(stageOption);
+        qDebug() << "Stage int is:" << strstage;
+    }
 
     MainWindow w;
     w.setWhisperModelFile(whisperModel);
     w.setLanguageModelName(languageModel);
+    w.setPreviousContextFile(previousContext);
+    w.setStage(strstage.toInt());
     w.setImageSaveEveryNFrame(strimageSaveEveryNFrame.toInt());
     w.setLanguage(strLanguage);
     w.setImageSaveDirectory(parser.value(ImageSaveDirectoryOption));

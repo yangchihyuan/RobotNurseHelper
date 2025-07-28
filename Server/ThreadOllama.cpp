@@ -174,9 +174,7 @@ void ThreadOllama::run()
     }
     
     vector<ollama::message> message_buffer;
-    
-    int start_stage_input;
-    cin >> start_stage_input;
+
     stage_count = start_stage_input;
     ollama::message system_message("system", str_system_message_list[start_stage_input]);
     string speak_ch = R"(請用中文回答。)";
@@ -189,6 +187,32 @@ void ThreadOllama::run()
     
     stage_start_time[0] = chrono::high_resolution_clock::now(); //time(0);
     int loop_cnt = 0;
+
+    if (previous_context_path != "")
+    {
+        std::ifstream file(previous_context_path);
+    
+        // Check if the file was opened successfully
+        if (!file.is_open()) {
+            std::cerr << "Error: Could not open file " << previous_context_path << std::endl;
+            return;
+        }
+    
+        // Read the entire file content into a string
+        std::string fileContent((std::istreambuf_iterator<char>(file)),
+                                 std::istreambuf_iterator<char>());
+        
+        ollama::message previous_summary_message("user", fileContent);
+        message_history.push_back(previous_summary_message);
+        // Close the file (optional, as it will be closed when `file` goes out of scope)
+        file.close();
+        cout << "FILE_CONTEXT ADDED\n\n";
+    }
+
+    // Open the file for reading
+
+
+
     while(b_WhileLoop || 1)
     {
         auto current_time = chrono::high_resolution_clock::now(); //time(0);
@@ -224,7 +248,7 @@ void ThreadOllama::run()
         current_time = chrono::high_resolution_clock::now(); //time(0);
         if(message_buffer.size() <= 0)
         {
-            if( strPrompt == "" && chrono::duration_cast<chrono::milliseconds>(current_time - last_prompt_time) < maximum_prompt_wait_time[stage_count])
+            if( (strPrompt == "" && chrono::duration_cast<chrono::milliseconds>(current_time - last_prompt_time) < maximum_prompt_wait_time[stage_count]) || (strPrompt.size() > 2 && strPrompt[0] == '!'))
             {
                 if (chrono::duration_cast<chrono::milliseconds>(current_time - last_prompt_time) > chrono::milliseconds(11000) && chrono::duration_cast<chrono::milliseconds>(current_time - last_prompt_time) < chrono::milliseconds(14000) && recent_history.size() > 1)
                 {

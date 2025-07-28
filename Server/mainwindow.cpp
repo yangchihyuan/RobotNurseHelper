@@ -114,6 +114,16 @@ void MainWindow::setLanguageModelName( QString ModelName)
     thread_ollama.ModelName = ModelName.toStdString();
 }
 
+void MainWindow::setPreviousContextFile( QString filePath)
+{
+    thread_ollama.previous_context_path = filePath.toStdString();;
+}
+
+void MainWindow::setStage(int N)
+{
+    thread_ollama.start_stage_input = N;
+}
+
 void MainWindow::setImageSaveDirectory( QString ImageSaveDirectory)
 {
     thread_process_image.ImageSaveDirectory = ImageSaveDirectory.toStdString();
