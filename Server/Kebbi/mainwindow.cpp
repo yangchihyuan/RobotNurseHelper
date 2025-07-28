@@ -40,13 +40,13 @@ MainWindow::MainWindow(QWidget *parent)
     strList.append("TTS_Contempt");
     strList.append("TTS_Disgust");
     strList.append("TTS_Fear");
-    strList.append("TTS_JoyA");
+    strList.append("TTS_JoyA"); //5
     strList.append("TTS_JoyB");
     strList.append("TTS_JoyC");
     strList.append("TTS_PeaceA");
     strList.append("TTS_PeaceB");
     strList.append("TTS_PeaceC");
-    strList.append("TTS_SadnessA");
+    strList.append("TTS_SadnessA"); //11
     strList.append("TTS_SadnessB");
     strList.append("TTS_Surprise");
 
@@ -66,48 +66,48 @@ MainWindow::MainWindow(QWidget *parent)
     strList_action.append("DA_Full");
     strList_action.append("EM_Mad02");
     strList_action.append("BA_Nodhead");
-    strList_action.append("SP_Swim02");
-    strList_action.append("PE_RotateA");
+    strList_action.append("SP_Swim02"); 
+    strList_action.append("PE_RotateA"); //5
     strList_action.append("SP_Karate");
     strList_action.append("RE_Cheer");
     strList_action.append("SP_Climb");
-    strList_action.append("DA_Hit");
-    strList_action.append("TA_DictateR");
+    strList_action.append("DA_Hit"); 
+    strList_action.append("TA_DictateR"); //10
     strList_action.append("SP_Bowling");
     strList_action.append("SP_Walk");
     strList_action.append("SA_Find");
     strList_action.append("BA_TurnHead");
-    strList_action.append("SA_Toothache");
+    strList_action.append("SA_Toothache"); //15
     strList_action.append("SA_Sick");
     strList_action.append("SA_Shocked");
     strList_action.append("SP_Dumbbell");
     strList_action.append("SA_Discover");
-    strList_action.append("RE_Thanks");
+    strList_action.append("RE_Thanks"); //15
     strList_action.append("PE_Changing");
     strList_action.append("SP_HorizontalBar");
     strList_action.append("WO_Traffic");
     strList_action.append("RE_HiR");
-    strList_action.append("RE_HiL");
+    strList_action.append("RE_HiL"); //20
     strList_action.append("DA_Brushteeth");
     strList_action.append("RE_Encourage");
     strList_action.append("RE_Request");
     strList_action.append("PE_Brewing");
-    strList_action.append("RE_Change");
+    strList_action.append("RE_Change"); //25
     strList_action.append("PE_Phubbing");
     strList_action.append("RE_Baoquan");
     strList_action.append("SP_Cheer");
     strList_action.append("RE_Ask");
-    strList_action.append("PE_Triangel");
+    strList_action.append("PE_Triangel"); //30
     strList_action.append("PE_Sorcery");
     strList_action.append("PE_Sneak");
     strList_action.append("PE_Singing");
     strList_action.append("LE_Yoyo");
-    strList_action.append("SP_Throw");
+    strList_action.append("SP_Throw"); //35
     strList_action.append("SP_RaceWalk");
     strList_action.append("PE_ShakeFart");
     strList_action.append("PE_RotateC");
     strList_action.append("PE_RotateB");
-    strList_action.append("EM_Blush");
+    strList_action.append("EM_Blush"); //40
     strList_action.append("PE_Puff");
     strList_action.append("PE_PlayCello");
     strList_action.append("PE_Pikachu");

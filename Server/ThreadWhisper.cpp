@@ -44,7 +44,8 @@ void ThreadWhisper::run()
     ctx = whisper_init_from_file_with_params(model_file_path.toUtf8().constData(), cparams);
     if (ctx == NULL) {
         std::cerr << "Failed to initialize whisper context" << std::endl;
-        return;
+        //throw std::invalid_argument("Division by zero");
+        //raise exception("whiper loading model fails");
     }
     cparams.flash_attn = params.flash_attn;
 
@@ -59,6 +60,7 @@ void ThreadWhisper::run()
     wparams.max_tokens       = params.max_tokens;
     wparams.n_threads        = params.n_threads;
     wparams.beam_search.beam_size = params.beam_size;
+    wparams.beam_search.patience = 1.2f; //[MOHAMED]
 
     wparams.audio_ctx        = params.audio_ctx;
 
@@ -66,6 +68,8 @@ void ThreadWhisper::run()
 
     // disable temperature fallback
     //wparams.temperature_inc  = -1.0f;
+    wparams.temperature_inc = 0.2f;
+    wparams.temperature = (strLanguage.c_str() == "zh") ? 0.5f : 0.5f;//[MOHAMED]
     wparams.temperature_inc  = params.no_fallback ? 0.0f : wparams.temperature_inc;
 
     wparams.prompt_tokens    = params.no_context ? nullptr : prompt_tokens.data();
@@ -73,7 +77,7 @@ void ThreadWhisper::run()
 
     wparams.translate = false;
     wparams.language = strLanguage.c_str();        // "zh" for Chinese, "en" for English, "ar" for Arabic
-    wparams.no_speech_thold = 0.6f; // silence threshold for VAD
+    wparams.no_speech_thold = 0.02f; //0.6f; // silence threshold for VAD //[MOHAMED]
 
     int n_iter = 0;
 
@@ -81,6 +85,7 @@ void ThreadWhisper::run()
 
     while(b_WhileLoop)
     {
+        // << n_iter << "R\n";
         if(bOperatorBuffer_open && pOperatorBuffer->size() > 0)
         {
             //Why is the length /4? Because the input format is float rather than short.
@@ -160,9 +165,9 @@ void ThreadWhisper::run()
                         }
                     }
                 }
-                strFixed += strTemp;
+                //strFixed += strTemp;
             }
-            strRobotSentence = strFixed + strTemp;
+            strRobotSentence = strTemp; //strFixed + strTemp;
             b_new_RobotSentence = true;
 
             //check whether there is an end of the voice.

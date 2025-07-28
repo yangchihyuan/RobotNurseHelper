@@ -42,6 +42,8 @@ public:
     ~MainWindow();
     void setWhisperModelFile(QString filePath);
     void setLanguageModelName(QString ModelName);
+    void setPreviousContextFile(QString filePath);
+    void setStage(int N);
     void setImageSaveEveryNFrame(int N);
     void setLanguage(QString Language);
     void setImageSaveDirectory(QString ImageSaveDirectory);

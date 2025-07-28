@@ -2,9 +2,63 @@
 #include <QApplication>
 #include <QCommandLineParser>
 #include <utility_time.hpp>
+#include <csignal>
+#include <fstream>
+#include <string>
+#include "ThreadOllama.hpp"
+#include <csignal>
+
+void handle_sigint(int) {
+    std::time_t currentTime = std::time(0); 
+    // Convert the time_t object to a string representing local time
+    char* dateTimeString = std::ctime(&currentTime);
+
+    // Print the current date and time
+    std::cout << "The current date and time is: " << dateTimeString << std::endl;
+    
+    string filename = "Conversation_Summarys/Conversation_Summary-";
+    filename += dateTimeString;
+    filename += ".txt";
+    std::ofstream file(filename);
+
+    file << "Date and time at completion: " << dateTimeString << "\n\n";
+    if (file.is_open()) {
+        for (int i = 0; i < summary.size(); i++)
+        {
+            if (summary[i].size() == 0)
+            {
+                continue;
+            }
+            file << "STAGE " << i << ":\n\n" << summary[i] << "\n\n";
+        }
+        file.close();
+        cout << "\n" << "\nSaved Conversation_Summary on Ctrl+C\n";
+    }
+
+    string filename2 = "Complete_Logs/Complete_Log-";
+    filename2 += dateTimeString;
+    filename2 += ".txt";
+    std::ofstream file2(filename2);
+
+    file2 << "Date and time at completion: " << dateTimeString << "\n\n";
+    if (file2.is_open()) {
+        while(message_log.size())
+        {
+            file2 << message_log.front() << "\n\n";
+            message_log.erase(message_log.begin());
+        }
+        file2.close();
+        cout << "\n" << "\nSaved Complete_Log on Ctrl+C\n";
+    }
+
+    //std::exit(0);  // Exit cleanly
+    std::_Exit(0);
+}
 
 int main(int argc, char *argv[])
 {
+    signal(SIGINT, handle_sigint);
+    //signal(SIGSEGV, handle_sigint);
     QApplication app(argc, argv);
     QCoreApplication::setApplicationName("Zenbo Nurse Helper");
     QCoreApplication::setApplicationVersion("25.5.25");
@@ -34,6 +88,11 @@ int main(int argc, char *argv[])
     QCommandLineOption DefaultSaveImageOption("DefaultSaveImage", "The default value of saving images.", "boolean", "false");
     parser.addOption(DefaultSaveImageOption);
 
+    QCommandLineOption previousContextOption({"pf", "previous_context"}, "Previous context text file", "string", "");
+    parser.addOption(previousContextOption);
+
+    QCommandLineOption stageOption({"s", "stage"}, "LLM starting stage", "int", 0);
+    parser.addOption(stageOption);
 
     parser.process(app);
 
@@ -76,9 +135,24 @@ int main(int argc, char *argv[])
     //Program launch time for Fang-yu's need to save images in this directory
     string str_now = GetCurrentTimeString(false);
 
+
+    QString previousContext;
+    if (parser.isSet(previousContextOption)) {
+        previousContext = parser.value(previousContextOption);
+        qDebug() << "previousContext string is:" << previousContext;
+    }
+
+    QString strstage;;
+    if (parser.isSet(stageOption)) {
+        strstage = parser.value(stageOption);
+        qDebug() << "Stage int is:" << strstage;
+    }
+
     MainWindow w;
     w.setWhisperModelFile(whisperModel);
     w.setLanguageModelName(languageModel);
+    w.setPreviousContextFile(previousContext);
+    w.setStage(strstage.toInt());
     w.setImageSaveEveryNFrame(strimageSaveEveryNFrame.toInt());
     w.setLanguage(strLanguage);
     w.setImageSaveDirectory(parser.value(ImageSaveDirectoryOption).append("/").append(str_now.c_str()));

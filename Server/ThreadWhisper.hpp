@@ -21,11 +21,11 @@ struct whisper_params {
     int32_t keep_ms    = 1000;  //whisper.cpp requests at least 1 second to recognize the audio
     int32_t max_tokens = 32;
     int32_t audio_ctx  = 0;
-    int32_t beam_size  = 8;
+    int32_t beam_size  = 6;
 
 //    float vad_thold    = 0.6f;  
-    float vad_thold    = 0.8f;  
-    float freq_thold   = 100.0f;
+    float vad_thold    = 1.0f; //0.9f;  //0.8f
+    float freq_thold   = 150.0f; //80.0f; //100.0f;
 
     bool translate     = false;
     bool no_fallback   = false;
