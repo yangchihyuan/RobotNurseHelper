@@ -78,7 +78,6 @@ set(SOURCES JPEG.cpp
             utility_string.cpp
             utility_time.cpp
             main.cpp
-            mainwindow.h
             mainwindow.cpp
             ThreadPortAudio.cpp
             ThreadProcessImage.cpp
@@ -94,7 +93,6 @@ set(SOURCES2 ${ROBOT_MODEL}/LandmarkToRobotAction.cpp
              ${ROBOT_MODEL}/ThreadTablet.cpp
              ${ROBOT_MODEL}/mainwindow.cpp
              ${ROBOT_MODEL}/mainwindow.ui
-             ${ROBOT_MODEL}/mainwindow.h
              ${PROTO_SRC})
 
 message(STATUS 'PROTO_SRC ${PROTO_SRC}')             
@@ -154,8 +152,8 @@ if(COMPILE_WITH_G_FLAG)
   set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")   
 endif()
 
-
-include_directories(${CMAKE_SOURCE_DIR}  ${PROTOBUF_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} ${OLLAMA_HPP_INCLUDE_DIR} ${ONNX_HPP_INCLUDE_DIR} ${SILERO_HPP_INCLUDE_DIR})
+#add the include directories
+include_directories(${CMAKE_SOURCE_DIR} ${ROBOT_MODEL} ${PROTOBUF_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} ${OLLAMA_HPP_INCLUDE_DIR} ${ONNX_HPP_INCLUDE_DIR} ${SILERO_HPP_INCLUDE_DIR})
 set_target_properties(${TARGET_NAME} PROPERTIES "CMAKE_CXX_FLAGS" "${CMAKE_CXX_FLAGS}")
 
 target_link_libraries(RobotNurseHelper LIBWHISPER

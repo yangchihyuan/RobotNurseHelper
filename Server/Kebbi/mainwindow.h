@@ -42,6 +42,8 @@ public:
     ~MainWindow();
     void setWhisperModelFile(QString filePath);
     void setLanguageModelName(QString ModelName);
+    void setPreviousContextFile(QString filePath);
+    void setStage(int N);
     void setImageSaveEveryNFrame(int N);
     void setLanguage(QString Language);
     void setImageSaveDirectory(QString ImageSaveDirectory);
@@ -113,7 +115,6 @@ private slots:
     void on_pushButton_movebody_clicked();
     void on_pushButton_movehead_clicked();
     void on_pushButton_stop_action_clicked();
-    void on_pushButton_stop_song_clicked();
     void on_pushButton_voice_to_text_clicked();
 
     void on_listView_FacialExpressions_doubleClicked(const QModelIndex &index);
