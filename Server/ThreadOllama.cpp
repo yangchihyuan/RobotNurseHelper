@@ -213,7 +213,7 @@ void ThreadOllama::run()
 
 
 
-    while(b_WhileLoop || 1)
+    while(b_WhileLoop)
     {
         auto current_time = chrono::high_resolution_clock::now(); //time(0);
         bool change_stage = 0;

@@ -319,7 +319,7 @@ void MainWindow::timer_event()
         cv::imshow("Image", outFrame);
         cv::waitKey(1);    //I miss this line so that Ubuntu does not update the window.
         thread_process_image.bNewoutFrame = false;
-        cv::imwrite("image_temp.jpg", outFrame); //[MOHAMED]
+        cv::imwrite("image_temp.jpg", outFrame); //[MOHAMED]   //Chih-Yuan: Do we still need this line? It seems that we do not use this image anymore.
         //update pitch and yaw
         ui->lineEdit_yaw_now->setText(QString::number(robot_status.yaw_degree));
         ui->lineEdit_pitch_now->setText(QString::number(robot_status.pitch_degree));
