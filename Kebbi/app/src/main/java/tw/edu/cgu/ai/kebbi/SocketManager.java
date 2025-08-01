@@ -222,6 +222,7 @@ public class SocketManager {
                                     {
                                         dancing_status = 0;
                                     }
+
                                     if (command.hasTurnspeed())
                                     {
                                         mRobotAPI.turn(command.getTurnspeed());
@@ -243,6 +244,13 @@ public class SocketManager {
                                         intent.putExtra("PlayId", command.getContent());//the file name put in  /sdcard/contenteditor/
                                         Context context;
                                         activity.startActivityForResult(intent, REQUEST_CODE);
+                                    }
+
+                                    if( command.hasKillapp() && command.getKillapp() == true)
+                                    {
+                                        android.os.Process.killProcess(android.os.Process.myPid());
+                                        // this function only kill this activity
+                                        //activity.finish();
                                     }
                                 }
                             } else {

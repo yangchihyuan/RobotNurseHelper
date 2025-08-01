@@ -125,10 +125,6 @@ void MainWindow::setStage(int N)
 void MainWindow::setImageSaveDirectory( QString ImageSaveDirectory)
 {
     thread_process_image.ImageSaveDirectory = ImageSaveDirectory.toStdString();
-    if( !CheckDirectoryExist(thread_process_image.ImageSaveDirectory))
-    {
-        CreateDirectory(thread_process_image.ImageSaveDirectory);
-    }
 }
 
 void MainWindow::setDefaultSaveImage(bool bDefaultSaveImage)

@@ -50,6 +50,7 @@ protected:
     std::string Processor;
     mutex mtx_Task;
     mutex mtx;
+    bool m_bDirectoryCreated = false;
 };
 
 #endif

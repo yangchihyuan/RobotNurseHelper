@@ -297,6 +297,13 @@ void MainWindow::on_pushButton_hideface_clicked()
     sendMessageManager.AddMessage(command);
 }
 
+void MainWindow::on_pushButton_killapp_clicked()
+{
+    RobotCommandProtobuf::RobotCommand command;
+    command.set_killapp(true);
+    sendMessageManager.AddMessage(command);
+}
+
 void MainWindow::on_listView_Content_doubleClicked(const QModelIndex &index)
 {
     RobotCommandProtobuf::RobotCommand command;

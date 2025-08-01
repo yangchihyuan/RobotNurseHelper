@@ -676,6 +676,14 @@ void ThreadProcessImage::run()
                         string str_now = GetCurrentTimeString(true);
 
                         string filename = ImageSaveDirectory + "/" + str_now + ".jpg";
+                        if(! m_bDirectoryCreated )
+                        {
+                            if( !CheckDirectoryExist(ImageSaveDirectory))
+                            {
+                                CreateDirectory(ImageSaveDirectory);
+                                m_bDirectoryCreated = true;
+                            }
+                        }
                         save_image_JPEG(data_ + shift_length, iJPEG_length , filename);
                         iFrameCount = 0; //reset the frame count
                     }

@@ -565,7 +565,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>stop action</string>
+     <string>Stop action</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_voice_to_text">
@@ -678,7 +678,7 @@
      <rect>
       <x>850</x>
       <y>410</y>
-      <width>231</width>
+      <width>261</width>
       <height>23</height>
      </rect>
     </property>
@@ -811,6 +811,19 @@
       <width>121</width>
       <height>251</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_killapp">
+    <property name="geometry">
+     <rect>
+      <x>770</x>
+      <y>810</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Kill app</string>
     </property>
    </widget>
   </widget>
