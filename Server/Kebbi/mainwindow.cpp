@@ -201,7 +201,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->comboBox_DetectionMode->addItems({"None",
         "Face",
         "Pose",
-        "Holistic"});
+        "Holistic",
+        "Hand"});
     connect(ui->comboBox_DetectionMode,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),this,&MainWindow::comboBox_DetectionMode_changed);
 
     ui->comboBox_Processor->addItems({"CPU",

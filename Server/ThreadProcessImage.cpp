@@ -104,13 +104,21 @@ void ThreadProcessImage::setTask(std::string task)
         }
         Task = "Face";
     }
-     else if(task == "Holistic")
+    else if(task == "Holistic")
     {
         if( Task != "Holistic" )
         {
             ChangeTask = true;
         }
         Task = "Holistic";
+    }
+    else if(task == "Hand")
+    {
+        if( Task != "Hand" )
+        {
+            ChangeTask = true;
+        }
+        Task = "Hand";
     }
     else if(task == "None")
     {
@@ -371,6 +379,59 @@ void ThreadProcessImage::reloadGraph()
                 input_stream: "VECTOR:render_data_vector"
                 output_stream: "IMAGE:output_video"
                 }
+            )";
+            bChange = true;
+        }
+        else if (Task == "Face")
+        {
+            // This graph_string is from graphs/hand_tracking/hand_tracking_desktop_live.pbtxt
+            graph_string = R"(                
+                # MediaPipe graph that performs hands tracking on desktop with TensorFlow
+                # Lite on CPU.
+                # Used in the example in
+                # mediapipe/examples/desktop/hand_tracking:hand_tracking_cpu.
+
+                # CPU image. (ImageFrame)
+                input_stream: "input_video"
+
+                # CPU image. (ImageFrame)
+                output_stream: "output_video"
+
+                # Generates side packet cotaining max number of hands to detect/track.
+                node {
+                calculator: "ConstantSidePacketCalculator"
+                output_side_packet: "PACKET:num_hands"
+                node_options: {
+                    [type.googleapis.com/mediapipe.ConstantSidePacketCalculatorOptions]: {
+                    packet { int_value: 2 }
+                    }
+                }
+                }
+
+                # Detects/tracks hand landmarks.
+                node {
+                calculator: "HandLandmarkTrackingCpu"
+                input_stream: "IMAGE:input_video"
+                input_side_packet: "NUM_HANDS:num_hands"
+                output_stream: "LANDMARKS:landmarks"
+                output_stream: "HANDEDNESS:handedness"
+                output_stream: "PALM_DETECTIONS:multi_palm_detections"
+                output_stream: "HAND_ROIS_FROM_LANDMARKS:multi_hand_rects"
+                output_stream: "HAND_ROIS_FROM_PALM_DETECTIONS:multi_palm_rects"
+                }
+
+                # Subgraph that renders annotations and overlays them on top of the input
+                # images (see hand_renderer_cpu.pbtxt).
+                node {
+                calculator: "HandRendererSubgraph"
+                input_stream: "IMAGE:input_video"
+                input_stream: "DETECTIONS:multi_palm_detections"
+                input_stream: "LANDMARKS:landmarks"
+                input_stream: "HANDEDNESS:handedness"
+                input_stream: "NORM_RECTS:0:multi_palm_rects"
+                input_stream: "NORM_RECTS:1:multi_hand_rects"
+                output_stream: "IMAGE:output_video"
+                }            
             )";
             bChange = true;
         }

@@ -862,6 +862,10 @@ void MainWindow::comboBox_DetectionMode_changed()
             thread_process_image.setTask("Holistic");
             thread_process_image.b_HumanPoseEstimation = true;
             break;
+        case 4:     //Hand
+            thread_process_image.setTask("Hand");
+            thread_process_image.b_HumanPoseEstimation = true;
+            break;
     }
 }
 
