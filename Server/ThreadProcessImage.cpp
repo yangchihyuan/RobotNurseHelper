@@ -32,7 +32,6 @@ RobotStatus robot_status;
 ActionOption action_option;
 
 cv::Mat outFrame;
-std::vector<std::vector<std::array<float, 3>>> global_landmarks;
 int is_dancing = 0;
 
 ThreadProcessImage::ThreadProcessImage()
@@ -130,7 +129,7 @@ void ThreadProcessImage::setTask(std::string task)
     }
     else
     {
-        cout << "Task is not supported." << endl;
+        cout << "Task is not supported. (A)" << endl;
     }
 
     if( ChangeTask )
@@ -382,7 +381,7 @@ void ThreadProcessImage::reloadGraph()
             )";
             bChange = true;
         }
-        else if (Task == "Face")
+        else if (Task == "Hand")
         {
             // This graph_string is from graphs/hand_tracking/hand_tracking_desktop_live.pbtxt
             graph_string = R"(                
@@ -437,7 +436,7 @@ void ThreadProcessImage::reloadGraph()
         }
         else
         {
-            cout << "Task is not supported." << endl;
+            cout << "Task is not supported. (B)" << endl;
         }
     }
     else if(Processor == "GPU")
@@ -599,7 +598,7 @@ void ThreadProcessImage::reloadGraph()
         }
         else
         {
-            cout << "Task is not supported." << endl;
+            cout << "Task is not supported. (C)" << endl;
         }
     }
 
@@ -628,7 +627,10 @@ void ThreadProcessImage::reloadGraph()
             libmp->AddOutputStream("face_landmarks");
             libmp->AddOutputStream("output_video");
         }
-        
+        else if(Task == "Hand")
+        {
+            libmp->AddOutputStream("output_video");
+        }
         libmp->Start();
     }
 }
@@ -699,7 +701,7 @@ void ThreadProcessImage::run()
             is_dancing = 0;
             try{
                 timestamp = stol(str_timestamp);                
-                is_dancing = stoi(str_is_dancing);
+                is_dancing = stoi(str_is_dancing);   //2025 Aug 5: Mohamed wants the server-side program to know that the robot is dancing.
             }
             catch(exception &e)
             {
@@ -822,13 +824,16 @@ void ThreadProcessImage::run()
                         std::cout << "Process time: " << duration_ms.count() << " milliseconds" << std::endl;
                     }
                         
+                    //2025/8/5 My holistic return value changes to a new structure HolisticLandmarks
+                    //The normalized_landmarks will serve only face and pose.
                     std::vector<std::vector<std::array<float, 3>>> normalized_landmarks;
+                    HolisticLandmarks holistic_landmarks;
                     if( Task == "Face" ) 
                     {
                         normalized_landmarks = get_landmarks_face(libmp);      //This is not the reason of memory leak
 
                         // For each face, draw a circle at each landmark's position
-                        bool bDrawImageByOurOwn = false;
+                        bool bDrawImageByOurOwn = false;        //2025/8/5: I didn't use it, why?
                         if( bDrawImageByOurOwn )
                         {
                             size_t num_faces = normalized_landmarks.size();
@@ -865,13 +870,58 @@ void ThreadProcessImage::run()
                     }
                     else if( Task == "Holistic" )
                     {
-                        normalized_landmarks = get_landmarks_holistic(libmp);
+                        //2025/8/5 change to a return value
+                        holistic_landmarks = get_landmarks_holistic2(libmp);    
+                        normalized_landmarks.push_back( holistic_landmarks.pose );
+                        if( holistic_landmarks.right_hand.size() > 0 && holistic_landmarks.left_hand.size() > 0)
+                        {
+                            std::cout << "right hand / left hand landmark positions: " << std::endl;
+                            for( int i = 0; i < holistic_landmarks.left_hand.size(); i++)
+                            {
+                                const std::array<float, 3>& norm_xyz_right = holistic_landmarks.right_hand[i];
+                                int x_right = static_cast<int>(norm_xyz_right[0] * inputImage.cols);
+                                int y_right = static_cast<int>(norm_xyz_right[1] * inputImage.rows);
+                                std::cout << cv::Point(x_right, y_right);
+
+                                const std::array<float, 3>& norm_xyz_left = holistic_landmarks.left_hand[i];
+                                int x_left = static_cast<int>(norm_xyz_left[0] * inputImage.cols);
+                                int y_left = static_cast<int>(norm_xyz_left[1] * inputImage.rows);
+                                std::cout << cv::Point(x_left, y_left) << std::endl;
+                                
+                            }
+                        }
+                        else if (holistic_landmarks.right_hand.size() > 0)
+                        {
+                            std::cout << "right hand position: " << std::endl;
+                            for (const std::array<float, 3>& norm_xyz : holistic_landmarks.right_hand) {
+                                int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
+                                int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
+                                std::cout << cv::Point(x, y) << std::endl;
+                            }
+                        }
+                        else if( holistic_landmarks.left_hand.size() > 0 )
+                        {
+                            std::cout << "left hand position: " << std::endl;
+                            for (const std::array<float, 3>& norm_xyz : holistic_landmarks.left_hand) {
+                                int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
+                                int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
+                                std::cout << cv::Point(x, y) << std::endl;
+                            }
+                        }
+                    }
+                    else if( Task == "Hand" )
+                    {
+                        //ToDo: I have not developed the Hand landmarks function yet.
+                        //normalized_landmarks = get_landmarks_holistic(libmp);
                     }
                     else
                     {
-                        cout << "Task is not supported." << endl;
+                        cout << "Task is not supported. (D)" << endl;
                     }
                     
+                    //What is the difference between the if and else sections?
+                    //The difference is that the if section is used when the robot is dancing.
+                    //It appears that dancing is not playing mbkx files.
                     if (normalized_landmarks.empty() || is_dancing) {
                         auto current_time = std::chrono::high_resolution_clock::now();
                         auto duration = std::chrono::duration_cast<std::chrono::seconds>(current_time - previous_time);
@@ -895,9 +945,14 @@ void ThreadProcessImage::run()
                                     //I use Pose, I haven't develop a new function for Holistic.
                                     PoseLandmarks_to_RobotAction(empty_landmarks, robot_status, action_option, message);
                                 }
+                                else if( Task == "Hand" )
+                                {
+                                    //ToDo: I have not develop this function yet.
+                                    //PoseLandmarks_to_RobotAction(empty_landmarks, robot_status, action_option, message);
+                                }
                                 else
                                 {
-                                    cout << "Task is not supported." << endl;
+                                    cout << "Task is not supported. (E)" << endl;
     //                                continue;
                                 }
                                 previous_time = current_time;
@@ -908,15 +963,6 @@ void ThreadProcessImage::run()
                     }
                     else
                     {
-                        //update the last landmarks
-
-                        
-                        if ( Task == "Pose" )
-                        {
-                            global_landmarks = normalized_landmarks; //Code to transfer to global variable, from prompt to LLM [MOHAMED]
-                        }
-                        
-
                         //last_landmarks = normalized_landmarks;
                         bLastLandmarksEffective = true;
                         //use time control first, wait for 3 seconds
@@ -942,7 +988,7 @@ void ThreadProcessImage::run()
                                 }
                                 else
                                 {
-                                    cout << "Task is not supported." << endl;
+                                    cout << "Task is not supported. (F)" << endl;
     //                                continue;
                                 }
                                 previous_time = current_time;

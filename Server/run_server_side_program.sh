@@ -48,10 +48,10 @@ elif [[ "$1" = "debug" ]]; then
     gdb --args build/RobotNurseHelper \
         "--WhisperModel" "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-base.bin" \
         "--ImageSaveDirectory" "$HOME/Downloads/raw_images" \
-        "--LanguageModel" "gemma3:12b" \
+        "--LanguageModel" "gemma3:4b" \
         "--ImageSaveEveryNFrame" "5" \
         "--Language" "Chinese" \
-        "--DefaultSaveImage" "true" 
+        "--DefaultSaveImage" "false" 
 elif [[ "$1" = "valgrind" ]]; then
     valgrind build/RobotNurseHelper # Consider adding specific valgrind flags if needed, e.g., --leak-check=full
 else 

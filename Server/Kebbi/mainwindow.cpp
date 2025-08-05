@@ -27,7 +27,6 @@ extern int PortAudio_stop_and_terminate();
 extern bool gbPlayAudio;
 extern RobotStatus robot_status;
 extern ActionOption action_option;
-extern std::vector<std::vector<std::array<float, 3>>> global_landmarks; //[MOHAMED]
 
 time_t start_dance_time = 0;
 time_t dance_period = 7;
@@ -342,20 +341,7 @@ void MainWindow::timer_event()
     if( thread_whisper.b_new_RobotSentence )
     {
         string body_language_added_prompt = "[Body Language from Visual Input]: Patients right hand is lowered";
-        if (!global_landmarks.empty()) //[MOHAMED]
-        {
-            //cout << global_landmarks[0][15][1] << " " << global_landmarks[0][16][1] << "\n";
-        }
-        /*
-        //cout << global_landmarks[0][14][1] << " " << global_landmarks[0][12][1] << "\n";
-        if (global_landmarks[0][14][1] < global_landmarks[0][12][1]) // && global_landmarks[0][18][1] > global_landmarks[0][12][1])
-        {
-            //Check is right pinky and right index y nomralized coordinate is higher than the right shoulder y coordinate, symbolizing raised right hand
-            body_language_added_prompt = "[Body Language from Visual Input]: Patients right hand is raised";
-            }
-            }
-            */
-            
+           
             if(!thread_whisper.strRobotSentence.empty())
             {
                 
