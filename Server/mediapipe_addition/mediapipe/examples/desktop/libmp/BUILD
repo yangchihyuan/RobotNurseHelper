@@ -136,6 +136,9 @@ LIB_DEPS_GPU = [
     "//mediapipe/modules/hand_landmark:hand_landmark_tracking_gpu",
     "//mediapipe/calculators/util:annotation_overlay_calculator",
     "//mediapipe/calculators/util:detections_to_render_data_calculator",
+    # CPU version is included, too
+    "//mediapipe/modules/hand_landmark:hand_landmark_tracking_cpu",
+    "//mediapipe/graphs/hand_tracking:desktop_tflite_calculators",    
 
     # Face detection
     "//mediapipe/graphs/face_detection:face_detection_full_range_desktop_live_deps",

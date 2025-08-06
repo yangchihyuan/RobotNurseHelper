@@ -110,7 +110,7 @@ std::vector<std::vector<std::array<float, 3>>> get_landmarks_holistic(const std:
 		return normalized_landmarks; // return empty vector if no output packets or packet is invalid
 	}
 
-	int	pose_num = 0; // pose_num is always 0 for pose tracking
+	int	pose_num = 0; // pose_num is always 0 for holistic tracking
 	const void* lm_list_proto = mediapipe::LibMP::GetPacketProtoMsg(lm_packet_ptr.get());
 	// Get byte size of protobuf message
 	size_t lm_list_proto_size = mediapipe::LibMP::GetProtoMsgByteSize(lm_list_proto);
@@ -130,4 +130,125 @@ std::vector<std::vector<std::array<float, 3>>> get_landmarks_holistic(const std:
 	}
 
 	return normalized_landmarks;
+}
+
+// Now I need the hand landmarks. What format should I return them in?
+HolisticLandmarks get_landmarks_holistic2(const std::shared_ptr<mediapipe::LibMP>& libmp) {
+	HolisticLandmarks holistic_landmarks;
+
+	std::unique_ptr<const void, decltype(&mediapipe::LibMP::DeletePacket)> lm_packet_ptr(nullptr, mediapipe::LibMP::DeletePacket);
+	std::unique_ptr<const void, decltype(&mediapipe::LibMP::DeletePacket)> lm_packet_ptr2(nullptr, mediapipe::LibMP::DeletePacket);
+	std::unique_ptr<const void, decltype(&mediapipe::LibMP::DeletePacket)> lm_packet_ptr3(nullptr, mediapipe::LibMP::DeletePacket);
+	std::unique_ptr<const void, decltype(&mediapipe::LibMP::DeletePacket)> lm_packet_ptr4(nullptr, mediapipe::LibMP::DeletePacket);
+
+	// Keep getting packets from queue until empty
+	while (libmp->GetOutputQueueSize("pose_landmarks") > 0) {
+		lm_packet_ptr.reset(libmp->GetOutputPacket("pose_landmarks"));
+	}
+	while (libmp->GetOutputQueueSize("left_hand_landmarks") > 0) {
+		lm_packet_ptr2.reset(libmp->GetOutputPacket("left_hand_landmarks"));
+	}
+	while (libmp->GetOutputQueueSize("right_hand_landmarks") > 0) {
+		lm_packet_ptr3.reset(libmp->GetOutputPacket("right_hand_landmarks"));
+	}
+	while (libmp->GetOutputQueueSize("face_landmarks") > 0) {
+		lm_packet_ptr4.reset(libmp->GetOutputPacket("face_landmarks"));
+	}
+	
+	if (lm_packet_ptr.get() == nullptr || mediapipe::LibMP::PacketIsEmpty(lm_packet_ptr.get())) {
+		return holistic_landmarks;
+	}
+
+	// Get pose landmarks
+	const void* lm_list_proto = mediapipe::LibMP::GetPacketProtoMsg(lm_packet_ptr.get());
+	// Get byte size of protobuf message
+	size_t lm_list_proto_size = mediapipe::LibMP::GetProtoMsgByteSize(lm_list_proto);
+
+	// Create buffer to hold protobuf message data; copy data to buffer
+	std::shared_ptr<uint8_t[]> proto_data(new uint8_t[lm_list_proto_size]);
+	mediapipe::LibMP::WriteProtoMsgData(proto_data.get(), lm_list_proto, static_cast<int>(lm_list_proto_size));
+
+	// Initialize a mediapipe::NormalizedLandmarkList object from the buffer
+	mediapipe::NormalizedLandmarkList pose_landmarks;
+	pose_landmarks.ParseFromArray(proto_data.get(), static_cast<int>(lm_list_proto_size));
+
+	// Copy the landmark data to our custom data structure
+	holistic_landmarks.pose.emplace_back();
+	for (const mediapipe::NormalizedLandmark& lm : pose_landmarks.landmark()) {
+		holistic_landmarks.pose.push_back({ lm.x(), lm.y(), lm.z() });
+	}
+
+	// Get left hand landmarks
+	// There maybe no left hand landmarks detected, so we check for that
+	if (lm_packet_ptr2.get() == nullptr || mediapipe::LibMP::PacketIsEmpty(lm_packet_ptr2.get())) {
+		holistic_landmarks.left_hand.clear();
+	} else {
+		const void* lm_list_proto2 = mediapipe::LibMP::GetPacketProtoMsg(lm_packet_ptr2.get());
+		// Get byte size of protobuf message
+		size_t lm_list_proto_size2 = mediapipe::LibMP::GetProtoMsgByteSize(lm_list_proto2);
+
+		// Create buffer to hold protobuf message data; copy data to buffer
+		std::shared_ptr<uint8_t[]> proto_data2(new uint8_t[lm_list_proto_size2]);
+		mediapipe::LibMP::WriteProtoMsgData(proto_data2.get(), lm_list_proto2, static_cast<int>(lm_list_proto_size2));
+
+		// Initialize a mediapipe::NormalizedLandmarkList object from the buffer
+		mediapipe::NormalizedLandmarkList left_hand_landmarks;
+		left_hand_landmarks.ParseFromArray(proto_data2.get(), static_cast<int>(lm_list_proto_size2));
+
+		// Copy the landmark data to our custom data structure
+		holistic_landmarks.left_hand.emplace_back();
+		for (const mediapipe::NormalizedLandmark& lm : left_hand_landmarks.landmark()) {
+			holistic_landmarks.left_hand.push_back({ lm.x(), lm.y(), lm.z() });
+		}
+	}
+
+	// Get right hand landmarks
+	// There maybe no right hand landmarks detected, so we check for that
+	if (lm_packet_ptr3.get() == nullptr || mediapipe::LibMP::PacketIsEmpty(lm_packet_ptr3.get())) {
+		holistic_landmarks.right_hand.clear();
+	} else {
+		// Get right hand landmarks
+		const void* lm_list_proto3 = mediapipe::LibMP::GetPacketProtoMsg(lm_packet_ptr3.get());
+		// Get byte size of protobuf message
+		size_t lm_list_proto_size3 = mediapipe::LibMP::GetProtoMsgByteSize(lm_list_proto3);
+		// Create buffer to hold protobuf message data; copy data to buffer
+		std::shared_ptr<uint8_t[]> proto_data3(new uint8_t[lm_list_proto_size3]);
+		mediapipe::LibMP::WriteProtoMsgData(proto_data3.get(), lm_list_proto3, static_cast<int>(lm_list_proto_size3));
+
+		// Initialize a mediapipe::NormalizedLandmarkList object from the buffer
+		mediapipe::NormalizedLandmarkList right_hand_landmarks;
+		right_hand_landmarks.ParseFromArray(proto_data3.get(), static_cast<int>(lm_list_proto_size3));
+
+		// Copy the landmark data to our custom data structure
+		holistic_landmarks.right_hand.emplace_back();
+		for (const mediapipe::NormalizedLandmark& lm : right_hand_landmarks.landmark()) {
+			holistic_landmarks.right_hand.push_back({ lm.x(), lm.y(), lm.z() });
+		}
+	}
+
+	// Get face landmarks
+	if (lm_packet_ptr4.get() == nullptr || mediapipe::LibMP::PacketIsEmpty(lm_packet_ptr4.get())) {
+		holistic_landmarks.face.clear();
+	} else {
+		// Get face landmarks
+		// Get the face landmarks packet
+		const void* lm_list_proto4 = mediapipe::LibMP::GetPacketProtoMsg(lm_packet_ptr4.get());
+		// Get byte size of protobuf message
+		size_t lm_list_proto_size4 = mediapipe::LibMP::GetProtoMsgByteSize(lm_list_proto4);
+		// Create buffer to hold protobuf message data; copy data to buffer
+		std::shared_ptr<uint8_t[]> proto_data4(new uint8_t[lm_list_proto_size4]);
+		mediapipe::LibMP::WriteProtoMsgData(proto_data4.get(), lm_list_proto4, static_cast<int>(lm_list_proto_size4));
+
+		// Initialize a mediapipe::NormalizedLandmarkList object from the buffer
+		mediapipe::NormalizedLandmarkList face_landmarks;
+		face_landmarks.ParseFromArray(proto_data4.get(), static_cast<int>(lm_list_proto_size4));
+
+		// Copy the landmark data to our custom data structure
+		holistic_landmarks.face.emplace_back();
+		for (const mediapipe::NormalizedLandmark& lm : face_landmarks.landmark()) {
+			holistic_landmarks.face.push_back({ lm.x(), lm.y(), lm.z() });
+		}
+	}
+
+	return holistic_landmarks;
 }

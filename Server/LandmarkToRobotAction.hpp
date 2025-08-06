@@ -1,9 +1,6 @@
 #include <vector>
 #include <array>
 
-
-extern std::vector<std::vector<std::array<float, 3>>> global_landmarks; //[MOHAMED]
-
 #ifdef USE_KEBBI
     #include "Kebbi/RobotCommand.pb.h"
 #elif USE_ZENBO
