@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import tw.edu.cgu.ai.kebbi.pressnumber.R;
+
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
@@ -21,6 +23,10 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton btn1, btn2, btn3, btn4, btn5;
     //btnGoPain, btnGoVideo,
     private Button btnNetworkSetting;
+    private String mServerURL;
+    private Integer mPortNumber;
+
+    Socket SocketToServer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,21 +40,38 @@ public class MainActivity extends AppCompatActivity {
         btn5 = findViewById(R.id.btn5);
         btnNetworkSetting = findViewById(R.id.btnNetworkSetting);
 
-        // 1. 點擊 -> PainActivity
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, PainActivity.class);
-                startActivity(intent);
+                SendMessageToServer(1);
             }
         });
 
-        // 2. 點擊 -> VideoActivity
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, VideoActivity.class);
-                startActivity(intent);
+                SendMessageToServer(2);
+            }
+        });
+
+        btn3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SendMessageToServer(3);
+            }
+        });
+
+        btn4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SendMessageToServer(4);
+            }
+        });
+
+        btn5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SendMessageToServer(5);
             }
         });
 
@@ -98,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
                         ByteBuffer buffer2 = ByteBuffer.allocate(4);
                         buffer2.order(ByteOrder.LITTLE_ENDIAN); // Ubuntu byte order
-                        buffer2.putInt(gfaceIndex);
+                        buffer2.putInt(number);
                         byte[] byteArray2 = buffer2.array();
                         os.write(byteArray2);
 

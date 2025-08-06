@@ -6,19 +6,18 @@
     android:layout_height="match_parent">
 
     <ImageButton
-        android:id="@+id/btnGoPain"
-        android:layout_width="600dp"
-        android:layout_height="600dp"
-        android:layout_marginStart="100dp"
+        android:id="@+id/btn1"
+        android:layout_width="200dp"
+        android:layout_height="476dp"
         android:layout_marginTop="100dp"
         android:layout_marginBottom="100dp"
         android:adjustViewBounds="true"
         android:background="@null"
         android:contentDescription="@string/desc_pain_btn"
         android:scaleType="fitCenter"
-        android:src="@drawable/pain_btn"
+        android:src="@drawable/number1"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btnGoVideo"
+        app:layout_constraintEnd_toStartOf="@+id/btn2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -31,19 +30,58 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageButton
-        android:id="@+id/btnGoVideo"
-        android:layout_width="600dp"
-        android:layout_height="600dp"
+        android:id="@+id/btn2"
+        android:layout_width="247dp"
+        android:layout_height="476dp"
         android:layout_marginTop="100dp"
-        android:layout_marginEnd="100dp"
         android:layout_marginBottom="100dp"
         android:adjustViewBounds="true"
         android:background="@null"
         android:contentDescription="@string/desc_video_btn"
         android:scaleType="fitCenter"
-        android:src="@drawable/video_btn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btnGoPain"
+        android:src="@drawable/number2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn1"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btn3"
+        android:layout_width="251dp"
+        android:layout_height="476dp"
+        android:layout_marginTop="98dp"
+        android:layout_marginBottom="97dp"
+        android:background="@color/white"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn2"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:srcCompat="@drawable/number3" />
+
+    <ImageButton
+        android:id="@+id/btn4"
+        android:layout_width="291dp"
+        android:layout_height="476dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="100dp"
+        android:background="@color/white"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/number4" />
+
+    <ImageButton
+        android:id="@+id/btn5"
+        android:layout_width="260dp"
+        android:layout_height="476dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="100dp"
+        android:background="@color/white"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn4"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/number5" />
 </androidx.constraintlayout.widget.ConstraintLayout>

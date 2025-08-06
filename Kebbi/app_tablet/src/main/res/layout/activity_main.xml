@@ -15,7 +15,7 @@
     <!-- 第二顆: 撥放影片按鈕(圖片) -->
 
     <ImageButton
-        android:id="@+id/btnGoPain"
+        android:id="@+id/btn1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -27,12 +27,12 @@
         android:scaleType="fitCenter"
         android:src="@drawable/pain_btn"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btnGoVideo"
+        app:layout_constraintEnd_toStartOf="@+id/btn2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
-        android:id="@+id/btnGoVideo"
+        android:id="@+id/btn2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="258dp"
@@ -44,7 +44,7 @@
         android:src="@drawable/video_btn"
         app:layout_constraintBottom_toTopOf="@+id/btnNetworkSetting"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btnGoPain"
+        app:layout_constraintStart_toEndOf="@+id/btn1"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button

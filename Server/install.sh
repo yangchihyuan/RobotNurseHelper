@@ -52,7 +52,7 @@ for allowed_robot_model in "${allowed_robot_models[@]}"; do
     break # Found a match, no need to check further
   fi
 done
-if ! [[ "$is_valid_robot_model" = true ]]; then
+
 if ! [[ "$is_valid_robot_model" = true ]]; then
   echo "Error: '$RobotModel' is not in the allowed list. Please try again."
   exit

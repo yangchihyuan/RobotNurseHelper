@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PainRating</string>
+    <string name="app_name">Press Numbeers</string>
 
     <!-- 首頁按鈕文字 (若需要用在 contentDescription 或 Toast) -->
     <string name="desc_pain_btn">Pain Button</string>

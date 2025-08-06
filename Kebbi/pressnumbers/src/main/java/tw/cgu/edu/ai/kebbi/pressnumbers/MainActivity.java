@@ -1,11 +1,15 @@
 package tw.cgu.edu.ai.kebbi.pressnumbers;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.view.View;
 
 import androidx.navigation.NavController;
@@ -18,7 +22,13 @@ import tw.cgu.edu.ai.kebbi.pressnumbers.databinding.ActivityMainBinding;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.io.OutputStream;
+import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 public class MainActivity extends AppCompatActivity {
+
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
