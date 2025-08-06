@@ -1,5 +1,2 @@
 include ':app'
-include ':queuetest'
-include ':servicetest'
-include ':pressnumbers'
-include ':app_tablet'
+include ':app_pressnumber'
