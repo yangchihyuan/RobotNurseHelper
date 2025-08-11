@@ -17,8 +17,7 @@ ThreadOllama::~ThreadOllama()
     
 }
 
-// string chosen_action = "";
-string chosen_face = "";
+string chosen_face = "";            //added by Mohamed. Why did he use the global variable?
 string check_summary = "";
 int dancing_status = 0;
 //time_t last_prompt_time;
@@ -27,11 +26,12 @@ chrono::time_point<chrono::high_resolution_clock> last_prompt_time;
 vector<string> summary(7, "");
 vector<string> message_log = {};
 
-
+//This function simply use ollama::chat to generate a response based on the prompt and message history.
+//The third parameter prompt in fact is the system prompt.
 string ThreadOllama::validate_conversation(ollama::options options, ollama::messages &message_history, string &prompt, bool remove_message)
 {
-    ollama::message check_prompt("system", prompt);
-    message_history.push_back(check_prompt);
+    ollama::message check_prompt("system", prompt);     //The latest system prompt will replace all exsting system prompts in the message history.
+    message_history.push_back(check_prompt);        //push_back the system prompt
     ollama::response check_response = ollama::chat(ModelName, message_history, options);
     if (remove_message)
         message_history.pop_back();
@@ -39,12 +39,15 @@ string ThreadOllama::validate_conversation(ollama::options options, ollama::mess
     return check_response.as_simple_string();
 }
 
+//This function checks the current stage and decides whether to change the stage or not.
+//There are two options in the parameters.
 bool ThreadOllama::stage_check(ollama::options options, ollama::options options_short, ollama::messages &message_history, ollama::messages &recent_history, bool remove_message)
 {
     //Summarize patient data
     summary[stage_count] = ThreadOllama::validate_conversation(options, message_history, bio_summary_prompt, 1);
     bool change_stage = 0;
     auto current_time = chrono::high_resolution_clock::now();
+    //The criteria for changing the stage 0 is time. If the time is more than 50 seconds, change the stage.
     if (stage_count == 0)
     {
         if(chrono::duration_cast<chrono::milliseconds>(current_time - stage_start_time[stage_count]) > chrono::milliseconds(50000))
@@ -52,16 +55,15 @@ bool ThreadOllama::stage_check(ollama::options options, ollama::options options_
             change_stage = 1;
         }
     }
+    // Try 200 seconds to gather a patient's basic information.
     else if (stage_count == 1)
     {
-        ollama::message summary_message("Zenbo", summary[stage_count]);
         cout << "\n\n" << summary[stage_count] << "\n";
         //string check_prompt = "Has ALL the patient age, name, pain intensity/level, and symptom/main complaint information been correctly gathered? This is important to assess whether to continue asking. State yes or no. If no, state what is missing.";
-        recent_history.push_back(summary_message);
         check_summary = ThreadOllama::validate_conversation(options, message_history, check_stage_prompt, 1);
         recent_history.pop_back();
         cout << "SUMMARY_ANALYSIS: " << " " << check_summary << "\n"; 
-        transform(check_summary.begin(), check_summary.end(), check_summary.begin(), ::tolower);
+        transform(check_summary.begin(), check_summary.end(), check_summary.begin(), ::tolower);  //transform is a standard library function that converts all characters in a string to lowercase.
         
         // string missing_prompt = "What is missing from the patient age, name, pain intensity/level, and symptom/main complaint information. State what is missing.";
         // string missing_summary = ThreadOllama::validate_conversation(options, message_history, missing_prompt, 1);
@@ -71,8 +73,6 @@ bool ThreadOllama::stage_check(ollama::options options, ollama::options options_
         if(check_summary.find("yes") != string::npos || chrono::duration_cast<chrono::milliseconds>(current_time - stage_start_time[stage_count]) > chrono::milliseconds(200000))
         {
             change_stage = 1;
-            //message_history.clear(); 
-            //message_history.push_back(summary_message); //To start memory from scratch //Alternative would be to clear, then add the summary
             
             cout << "\nDONEDONEDONE\n";
             last_prompt_time -= (maximum_prompt_wait_time[stage_count] * 9)/10;
@@ -155,17 +155,26 @@ void ThreadOllama::run()
     ollama::options options;
     options["seed"] = 1;      //I cannot fix the seed. Otherwise, the result is always the same.
     options["temperature"] = 0.3;
-    options["num_ctx"] = 131072; //131072; //32768;//16384; 
-    //options["think"] = 0;
-    
+    options["num_ctx"] = 131072; //131072; //32768;//16384; number of context tokens, which is the maximum number of tokens the model can handle in a single request
+
     ollama::options options_short;
-    options_short["seed"] = 1;      //I cannot fix the seed. Otherwise, the result is always the same.
+    options_short["seed"] = 1;
     options_short["temperature"] = 0.5;
-    options_short["num_ctx"] = 16384; //131072; //32768;//16384; 
-    //options_short["think"] = 0;
-    //options["max_tokens"] = 50;
+    options_short["num_ctx"] = 16384; //131072; //32768;//16384; //This is the major difference.
+    //Why does Mohamed create a shorter options? For speed? For diversity?
+
     //preload the model
-    //How can I check if the model is available?
+    std::vector<std::string> models = ollama::list_models();
+    //check if the ModelName is in the list of models
+    if (std::find(models.begin(), models.end(), ModelName) == models.end())
+    {
+        cerr << "Model " << ModelName << " not found. Please check the model name." << endl;
+        return;
+    }
+    
+    // Load the model
+    cout << "Loading model: " << ModelName << endl;
+
     bool model_loaded = ollama::load_model(ModelName);
     if( !model_loaded )
     {
@@ -173,13 +182,12 @@ void ThreadOllama::run()
         return;
     }
     
-    vector<ollama::message> message_buffer;
+    vector<ollama::message> message_buffer;         //Created by Mohamed. What is the purpose of this message_buffer? debug or dump messages?
 
-    stage_count = start_stage_input;
+    stage_count = start_stage_input;    //2025/8/6 stage_count is the current stage of the conversation.
     ollama::message system_message("system", str_system_message_list[start_stage_input]);
-    string speak_ch = R"(請用中文回答。)";
-    ollama::message speak_ch_system_message("system", speak_ch);
-    ollama::messages message_history = {system_message}; //, speak_ch_system_message};
+    ollama::message speak_ch_system_message("system", R"(請用中文回答。)");
+    ollama::messages message_history = {system_message};
     ollama::messages recent_history;
     last_prompt_time = chrono::high_resolution_clock::now(); // time(0);
     auto last_response_time = chrono::high_resolution_clock::now(); //time(0); 
@@ -188,6 +196,8 @@ void ThreadOllama::run()
     stage_start_time[0] = chrono::high_resolution_clock::now(); //time(0);
     int loop_cnt = 0;
 
+    // Load previous context if available. This is Mohamed's addition.
+    // However, this is a debugging feature, not used in the run_server_side_program.
     if (previous_context_path != "")
     {
         std::ifstream file(previous_context_path);
@@ -209,10 +219,6 @@ void ThreadOllama::run()
         cout << "FILE_CONTEXT ADDED\n\n";
     }
 
-    // Open the file for reading
-
-
-
     while(b_WhileLoop)
     {
         auto current_time = chrono::high_resolution_clock::now(); //time(0);
@@ -231,7 +237,7 @@ void ThreadOllama::run()
         }
         if(change_stage && stage_count == 3)
         {
-            strPrompt = dance_complete;
+            strPrompt = dance_complete;    //R"(病人選擇的舞蹈已經完成)";
             message_sender = "system";
             cout << "DANCE IS COMPLETED\n";
         }
@@ -246,7 +252,7 @@ void ThreadOllama::run()
         //unique_lock<mutex> lk(mtx);
         //cond_var_ollama.wait(lk);
         current_time = chrono::high_resolution_clock::now(); //time(0);
-        if(message_buffer.size() <= 0)
+        if(message_buffer.size() <= 0)   //message_buffer is a vector. It is impossible to be less than 0.
         {
             if( (strPrompt == "" && chrono::duration_cast<chrono::milliseconds>(current_time - last_prompt_time) < maximum_prompt_wait_time[stage_count]) || (strPrompt.size() > 2 && strPrompt[0] == '!'))
             {
@@ -274,14 +280,13 @@ void ThreadOllama::run()
             }
         }
 
+        //What is the purpose of this section?
         cout << "----------------------------------------\n\n";
         if (strPrompt != "")
         {
-            //strPrompt = removeThinkSection(strPrompt);
             last_prompt_time = current_time;
             
             //Preprare prompt message with image for LLM
-            //ollama::image image = ollama::image::from_file("image_temp.jpg");
             string input = message_sender + std::string(": ") + strResponse;
             message_log.push_back(input);
             if (message_sender == "user")
@@ -323,29 +328,30 @@ void ThreadOllama::run()
         string output = std::string("Zenbo") + std::string(": ") + strResponse;
         message_log.push_back(output);
         
+        //2025/8/8 Why is Zenbo here? What is the role of Zenbo?
         ollama::message response_message("Zenbo", strResponse);
         
-        //message_history.push_back(response_message);
         recent_history.push_back(response_message);
         auto history_copy1 = recent_history;
         auto history_copy2 = recent_history;
 
         auto bound_fn1 = bind(
             &ThreadOllama::validate_conversation,
-            this,
+            this,                                        //For non-static member function, this is required to access the member variables and functions.
             options_short,
-            ref(history_copy1),
-            ref(action_prompt),
+            ref(history_copy1),                          //ref() means pass by reference, used for async()
+            ref(action_prompt),                          //the action prompt is used to ask the LLM to choose an action based on the recent conversation context.
             true
         );
         
         future<string> fut1;
-        if (loop_cnt % 3 || strResponse.size() > 25)
+        if (loop_cnt % 3 || strResponse.size() > 25)   //Why does Mohamed use loop_cnt % 3? Does he want to skip stage 0 and 3?
         {
             fut1 = async(launch::async, bound_fn1);
         }
         
         //Prompt for chosen action fitting to recent conversation history
+        //What is Mohamed's purpose of this section? Does he want to use the LLM to pick up an action or a face?
         auto bound_fn2 = bind(
             &ThreadOllama::validate_conversation,
             this,
@@ -356,14 +362,6 @@ void ThreadOllama::run()
         );
         
         future<string> fut2 = async(launch::async, bound_fn2);
-        // if (loop_cnt % 3 != 2 || strResponse.size() > 25)
-        // {
-            //fut2 = async(launch::async, bound_fn2);
-            //}
-            // //Summarize patient data
-            // summary[stage_count] = ThreadOllama::validate_conversation(options, message_history, bio_summary_prompt, 1);
-            // ollama::message summary_message("Zenbo", summary[stage_count]);
-            // cout << "\n\n" << summary[stage_count] << "\n";
             
         b_new_LLM_response = true;
         if (loop_cnt % 3 || strResponse.size() > 25)
@@ -375,20 +373,13 @@ void ThreadOllama::run()
             chosen_action = "BA_Nodhead";
         }
         
-        //if (loop_cnt % 3 != 2 || strResponse.size() > 25)
-        //{
-        chosen_face = fut2.get();
-        //}
-        // else
-        // {
-        //     chosen_face = (loop_cnt % 10 > 5) ? "TTS_JoyB" : "TTS_PeaceC";
-        // }
+        chosen_face = fut2.get();       //In fact, the fut2.get() will block the thread until the future is ready.
 
         cout << chosen_action << "\n";
         cout << chosen_face << "\n";
         
         auto bound_fn4 = bind(
-            &ThreadOllama::stage_check,
+            &ThreadOllama::stage_check,  //this is the only place to call stage_check
             this,
             options,
             options_short,
@@ -398,7 +389,9 @@ void ThreadOllama::run()
         );
         future<bool> fut4 = async(launch::async, bound_fn4);
 
-        change_stage = fut4.get();
+        //2025/8/8 Chih-Yuan: If we call get() immediately, it will block the thread until the future is ready.
+        //Thus, it is meaningless to use async() here.
+        change_stage = fut4.get();      
         if(change_stage)
         {
             std::string elapsed_time_str = std::to_string(

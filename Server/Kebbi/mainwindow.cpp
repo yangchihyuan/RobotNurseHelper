@@ -455,6 +455,7 @@ void MainWindow::timer_event()
         thread_ollama.chosen_action = "";
     }
 
+    //2025/8/6 Mohamed uses this Timer_event to update Kebbi's face. LLM may generate a wrong command, so we need to check it.
     if (chosen_face != "")
     {
         int face_index = -1; 
@@ -494,6 +495,7 @@ void MainWindow::timer_event()
         }
         chosen_face = "";
     }
+
     if (thread_ollama.chosen_dance != 0)
     {
         RobotCommandProtobuf::RobotCommand dance_command;

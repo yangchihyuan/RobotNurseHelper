@@ -29,21 +29,20 @@ public:
     int stage_count = 0;
     std::chrono::time_point<std::chrono::high_resolution_clock> stage_start_time[7]; 
 
-    bool change_stage = 0;
     bool b_WhileLoop = true;
     bool b_new_LLM_response = false;
     
     condition_variable cond_var_ollama;
     string strPrompt;
     string strResponse;
-    string str_system_message;
-    string str_system_message_list[7];
+    string str_system_message;               
+    string str_system_message_list[7];      //added by Mohamed
     
-    string bio_summary_prompt;
-    string check_stage_prompt;
-    string no_response, dance_complete;
+    string bio_summary_prompt;              //added by Mohamed
+    string check_stage_prompt;              //added by Mohamed
+    string no_response, dance_complete;     //added by Mohamed
     string ModelName = "gemma3:12b";
-    string previous_context_path;
+    string previous_context_path;           //added by Mohamed
     int start_stage_input;
 
     string action_prompt = R"(Here is a list of available robot actions:
@@ -73,7 +72,6 @@ public:
     The chosen face animation)";
 
     string chosen_action = "";
-    //string chosen_face = "";
     int chosen_dance = 0;
 
 protected:
