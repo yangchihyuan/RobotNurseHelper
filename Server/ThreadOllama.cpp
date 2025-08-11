@@ -55,7 +55,7 @@ bool ThreadOllama::stage_check(ollama::options options, ollama::options options_
             change_stage = 1;
         }
     }
-    // Try 200 seconds to gather a patient's basic information.
+    // Stage 1: Try 200 seconds to gather a patient's basic information.
     else if (stage_count == 1)
     {
         cout << "\n\n" << summary[stage_count] << "\n";
