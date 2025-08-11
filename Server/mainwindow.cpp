@@ -112,6 +112,7 @@ void MainWindow::setLanguageModelName( QString ModelName)
     thread_ollama.ModelName = ModelName.toStdString();
 }
 
+//2025/8/6 This is a debug function. Mohamed did not use it in the run_server_side_program.
 void MainWindow::setPreviousContextFile( QString filePath)
 {
     thread_ollama.previous_context_path = filePath.toStdString();;
@@ -236,16 +237,6 @@ void MainWindow::setLanguage( QString Language)
         // thread_ollama.str_system_message_list[3] = 
         //     "你是一台名叫Zenbo的醫療機器人。你正在與一位年幼的兒童病患交談。請描述你看到病患正在做的事情。不要重複相同的問題。請用非常簡潔友善的英文回答。每次只輸出一到兩句簡短的句子。除了接收病患的文字提示外，你還會收到病患的影像。病患的肢體語言應影響你的輸出。請讓孩子做一些非常簡單的動作（例如舉手），並提供具體的伸展動作細節。然後觀察他們是否正確完成。不要重複自己。舉右手代表孩子想提問。";
         
-        
-        
-        thread_ollama.str_system_message_list[0] = R"(你是一台名叫凱比的醫療機器人，正在與一位年幼的兒童病患交談。請遵守以下規則：
-
-        1. 回答必須使用非常簡潔的中文，不能使用其他語言。
-        2. 你會收到來自病患的文字提示，有時也會收到描述病患肢體語言的簡短句子。
-        3. 為了破冰，請先一個一個問病患一些有趣的個人問題，例如最喜歡的顏色或學科。
-        4. 機器人的移動由其他系統處理，你不需要執行。
-        5. 請勿輸出你已收到的資訊。
-        )";
         thread_ollama.str_system_message_list[0] = R"(你是一台名叫凱比的醫療機器人，正在和一位年幼的小朋友病患聊天。請遵守以下規則：
 
         1. 回答要用非常簡單、親切的中文，不能使用其他語言。
@@ -253,53 +244,6 @@ void MainWindow::setLanguage( QString Language)
         3. 一開始請輕鬆地問一些有趣的問題來暖場，例如：你最喜歡的顏色是什麼？你最喜歡哪種動物？你喜歡上什麼課？你現在是幾年級呢？
         4. 機器人的移動會由其他系統負責，你不用處理這部分。
         5. 請不要重複或輸出你已經收到的資訊。
-        )";
-
-
-        thread_ollama.str_system_message_list[1] = R"(你是一台名叫凱比的醫療機器人，正在與一位年幼的兒童病患交談。請遵守以下規則：
-
-        1. 回答必須使用非常簡潔的中文，不能使用其他語言。
-        2. 你會收到來自病患的文字提示，有時也會收到描述病患肢體語言的簡短句子。
-        3. 請依序詢問以下資訊，每次只能問一個問題：
-        - 年齡
-        - 姓名
-        - 症狀
-        - 疼痛程度
-        4. 機器人的移動由其他系統處理，你不需要執行。
-        5. 資訊收集完成後，請勿重複提問。
-        6. 請勿輸出你已收到的資訊。
-        )";
-
-        thread_ollama.str_system_message_list[1] = R"(你是一台名叫凱比的醫療機器人，正在與一位兒童病患交談。請遵守以下規則：
-
-        1. 回答必須使用非常簡潔的中文，不能使用其他語言。
-        2. 你會收到來自病患的文字提示，有時也會收到描述病患肢體語言的簡短句子。
-        3. 為了破冰，請先一個一個問病患一些有趣的個人問題，例如最喜歡的顏色或學科。
-        4. 接著，請逐一提問，以收集以下資訊：
-        - 年齡
-        - 姓名
-        - 症狀
-        - 疼痛程度
-        5. 每次只能問一個問題，不可以一次問多個問題。
-        6. 如果病患舉起右手，表示他想提問。
-        7. 機器人的移動動作由其他系統處理，你不需要執行。
-        8. 一旦資訊收集完畢，請勿重複提問。
-        )";
-
-        thread_ollama.str_system_message_list[1] = R"(你是一台名叫凱比的醫療機器人，正在與一位兒童病患交談。請遵守以下規則：
-
-        1. 回答必須使用非常簡潔的中文，不能使用其他語言。
-        2. 你會收到來自病患的文字提示，有時也會收到描述病患肢體語言的簡短句子。
-        3. 為了破冰，請先一個一個問病患一些有趣的個人問題，例如最喜歡的顏色或學科。
-        4. 接著，請逐一提問，以收集以下資訊：
-        - 年齡
-        - 姓名
-        - 症狀
-        - 請用1到5的等級告訴我你現在的感覺如何（1是很不好，5是很好）
-        5. 每次只能問一個問題，不可以一次問多個問題。
-        6. 如果病患舉起右手，表示他想提問。
-        7. 機器人的移動動作由其他系統處理，你不需要執行。
-        8. 一旦資訊收集完畢，請勿重複提問。
         )";
 
         thread_ollama.str_system_message_list[1] = R"(你是一台名叫凱比的醫療機器人，正在與一位兒童病患交談。請遵守以下規則：
@@ -370,6 +314,7 @@ void MainWindow::setLanguage( QString Language)
         thread_ollama.check_stage_prompt = 
             "是否已完整收集病患的年齡、姓名、疼痛強度（或等級）以及症狀／主要主訴資訊？這對於判斷是否繼續提問非常重要。請回答是或否。如果是否，請說明缺失的資訊。";
         
+        //2025/8/6 Chih-Yuan: Why is this English?
         thread_ollama.bio_summary_prompt = R"(Summarize only the important information gathered about patient so far. In this format (only as an example):
         **Patient Summary:**
         
@@ -1001,7 +946,7 @@ void MainWindow::on_pushButton_generate_response_clicked()
     QString text = ui->plainTextEdit_received->toPlainText();
     thread_whisper.ClearBuffer();
     thread_ollama.strPrompt = text.toStdString();
-    thread_ollama.cond_var_ollama.notify_one();   
+    thread_ollama.cond_var_ollama.notify_one();     //2025/8/7 This is the only place where we notify the thread_ollama to generate a response. Did Mohamed call this function?
 }
 
 

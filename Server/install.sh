@@ -68,6 +68,7 @@ if (( VRAMSize > 0 )); then
   read -p "Can you see the nvidia-smi GPU usage messages? [y/n]" GPUDriverWork
   if ! [[ "$GPUDriverWork" == "Y" || "$GPUDriverWork" == "y" ]]; then
     echo "You need to reboot your PC to make the newly installed GPU driver enable."
+    echo "After rebooting your PC, launch the ./install.sh again."
     exit
   fi
 
