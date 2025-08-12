@@ -21,7 +21,16 @@ elif [[ "$1" = "4070" ]]; then
     build/RobotNurseHelper \
         --WhisperModel "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin" \
         --ImageSaveDirectory "$HOME/Downloads/raw_images" \
-        --LanguageModel gemma3:1b \
+        --LanguageModel gemma3:4b \
+        --ImageSaveEveryNFrame 1 \
+        --Language Chinese \
+        --DefaultSaveImage false
+elif [[ "$1" = "4080" ]]; then
+    build/RobotNurseHelper \
+        --WhisperModel "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin" \
+        --ImageSaveDirectory "$HOME/Downloads/raw_images" \
+        --LanguageModel gemma3:4b \
+        --stage 2 \
         --ImageSaveEveryNFrame 1 \
         --Language Chinese \
         --DefaultSaveImage false
@@ -43,6 +52,7 @@ elif [[ "$1" = "exp2" ]]; then
         --ImageSaveEveryNFrame 1 \
         --Language Chinese \
         --DefaultSaveImage false
+
 elif [[ "$1" = "cyy" ]]; then
     build/RobotNurseHelper \
         --WhisperModel "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin" \
