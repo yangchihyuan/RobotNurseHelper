@@ -19,7 +19,7 @@ ThreadOllama::~ThreadOllama()
 
 string chosen_face = "";            //added by Mohamed. Why did he use the global variable?
 string check_summary = "";
-int dancing_status = 0;
+int dancing_status = 0;             //added by Mohamed. This variable indicates whether the robot is playing a mbtx file.
 //time_t last_prompt_time;
 chrono::time_point<chrono::high_resolution_clock> last_prompt_time;
 
@@ -61,6 +61,7 @@ bool ThreadOllama::stage_check(ollama::options options, ollama::options options_
         cout << "\n\n" << summary[stage_count] << "\n";
         //string check_prompt = "Has ALL the patient age, name, pain intensity/level, and symptom/main complaint information been correctly gathered? This is important to assess whether to continue asking. State yes or no. If no, state what is missing.";
         check_summary = ThreadOllama::validate_conversation(options, message_history, check_stage_prompt, 1);
+        //check_stage_prompt = "是否已完整收集病患的年齡、姓名、疼痛強度（或等級）以及症狀／主要主訴資訊？這對於判斷是否繼續提問非常重要。請回答是或否。如果是否，請說明缺失的資訊。"
         recent_history.pop_back();
         cout << "SUMMARY_ANALYSIS: " << " " << check_summary << "\n"; 
         transform(check_summary.begin(), check_summary.end(), check_summary.begin(), ::tolower);  //transform is a standard library function that converts all characters in a string to lowercase.
@@ -75,12 +76,16 @@ bool ThreadOllama::stage_check(ollama::options options, ollama::options options_
             change_stage = 1;
             
             cout << "\nDONEDONEDONE\n";
+            //2025/8/12 Mohamed use the 9/10 to adjust the wait time. It is a parameter tuning.
             last_prompt_time -= (maximum_prompt_wait_time[stage_count] * 9)/10;
         }
     }
     else if(stage_count == 2)
     {
-        string dance_prompt = "Did the patient pick the Egypt Dance or the Cowboy dance? State 1 for Egypt Dance, 2 for Cowboy dance and 0 for none. Strictly only output 0, 1, or 2.";
+        //2025/8/12 Something wrong here. The Whisper may fail to recognize Egyptian dance so the LLM will not be able to choose the dance.
+        //In addition, Mohamed used English to ask the LLM to choose the dance. It is not suitable for a Chinese child. 
+        //string dance_prompt = "Did the patient pick the Egypt Dance or the Cowboy dance? State 1 for Egypt Dance, 2 for Cowboy dance and 0 for none. Strictly only output 0, 1, or 2.";
+        string dance_prompt = "使用者的回覆中有没有提到埃及或是吉？有的話請回覆1。有沒有提到牛仔，有的話請回覆2。如果都沒有的話，請回覆0。";
         string dance_response = ThreadOllama::validate_conversation(options_short, recent_history, dance_prompt, 1);
         cout << "CHOSEN_DANCE_PROMPT: " << dance_response << "\n";
         if (dance_response.find("1") != string::npos)
@@ -187,7 +192,7 @@ void ThreadOllama::run()
     stage_count = start_stage_input;    //2025/8/6 stage_count is the current stage of the conversation.
     ollama::message system_message("system", str_system_message_list[start_stage_input]);
     ollama::message speak_ch_system_message("system", R"(請用中文回答。)");
-    ollama::messages message_history = {system_message};
+    ollama::messages message_history = {system_message};     //Here is the declaration of message_history.
     ollama::messages recent_history;
     last_prompt_time = chrono::high_resolution_clock::now(); // time(0);
     auto last_response_time = chrono::high_resolution_clock::now(); //time(0); 
@@ -229,9 +234,10 @@ void ThreadOllama::run()
         
         cout << "\ndancing_status: " << dancing_status << " stage_count: " << stage_count << "\n\n";
         string message_sender = "user";
+
+        //2025/8/12 While the robot is still playing a mbtx file, Hohamed disable all LLM inputs.
         if (dancing_status != 0)
         {
-            //strResponse = "";
             stage_start_time[stage_count] = chrono::high_resolution_clock::now(); //time(0);
             continue;
         }
@@ -254,6 +260,7 @@ void ThreadOllama::run()
         current_time = chrono::high_resolution_clock::now(); //time(0);
         if(message_buffer.size() <= 0)   //message_buffer is a vector. It is impossible to be less than 0.
         {
+            //When does the strPrompt start with a !
             if( (strPrompt == "" && chrono::duration_cast<chrono::milliseconds>(current_time - last_prompt_time) < maximum_prompt_wait_time[stage_count]) || (strPrompt.size() > 2 && strPrompt[0] == '!'))
             {
                 if (chrono::duration_cast<chrono::milliseconds>(current_time - last_prompt_time) > chrono::milliseconds(11000) && chrono::duration_cast<chrono::milliseconds>(current_time - last_prompt_time) < chrono::milliseconds(14000) && recent_history.size() > 1)
@@ -271,6 +278,7 @@ void ThreadOllama::run()
                     chosen_action = fut_extra.get();
                     cout << "EXTRA_ACTION: " << chosen_action << "\n";
                 }
+                //Why does Mohamed use this continue statement here?
                 continue;
             }
             else if (strPrompt == "")
@@ -404,6 +412,7 @@ void ThreadOllama::run()
             stage_count++;
             stage_start_time[stage_count] = chrono::high_resolution_clock::now(); //time(0);
             
+            //When stage is changed, the message_history will be cleared. But why only the first one?
             message_history.erase(message_history.begin());
             ollama::message new_system_message("system", str_system_message_list[stage_count]);
             message_history.insert(message_history.begin(), new_system_message);

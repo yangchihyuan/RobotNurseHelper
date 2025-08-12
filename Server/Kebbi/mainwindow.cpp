@@ -338,49 +338,12 @@ void MainWindow::timer_event()
         ui->plainTextEdit_speak->setPlainText(QString::fromStdString(thread_whisper.strOperatorSentence));
     }
     
+    //If the voice recognition result is ready, update the plainTextEdit_received.
     if( thread_whisper.b_new_RobotSentence )
     {
-        string body_language_added_prompt = "[Body Language from Visual Input]: Patients right hand is lowered";
-           
-            if(!thread_whisper.strRobotSentence.empty())
-            {
-                
-                //vader::SentimentIntensityAnalyser analyser("cppvader/vader_lexicon.txt", "cppvader/emoji_utf8_lexicon.txt");
-                //auto vs = analyser.polarityScores(thread_whisper.strRobotSentence);
-                //cout << vs << "\n"; //analyser.polarityScores(thread_whisper.strRobotSentence) << "\n";
-                RobotCommandProtobuf::RobotCommand facial_command;
-                if (!(thread_whisper.strRobotSentence.empty() || thread_whisper.strRobotSentence == ""))
-                {
-                    //vader::SentimentIntensityAnalyser analyser("cppvader/vader_lexicon.txt", "cppvader/emoji_utf8_lexicon.txt");
-                    //auto vs = analyser.polarityScores(thread_whisper.strRobotSentence);
-                    //cout << vs << "\n"; //analyser.polarityScores(thread_whisper.strRobotSentence) << "\n";
-                    // if (vs.pos > 0.4)
-                    // {
-                        //     action_index = 7;
-                        //     cout << thread_whisper.strRobotSentence << " " << "HAPPY\n";
-                        //     facial_command.set_face(5);
-                        //     //sendMessageManager.AddMessage(facial_command);
-                        // }
-                        // else if(vs.neg > 0.4)
-                        // {
-                            //     action_index = 16;
-                            //     cout << thread_whisper.strRobotSentence << " " << "SAD\n";
-                            //     facial_command.set_face(11);
-                            //     //sendMessageManager.AddMessage(facial_command);
-                            // }
-                            // else
-                            // {
-                                //     action_index = 3;
-                                //     cout << thread_whisper.strRobotSentence << " " << "NUETRAL\n";
-                                // }
-                            }
-                        }
-                        string added_prompt = "";
-                        added_prompt = "";
-                        thread_whisper.b_new_RobotSentence = false;
-                        ui->plainTextEdit_received->setPlainText(QString::fromStdString(thread_whisper.strRobotSentence + added_prompt));
-                        //cv::imwrite("image_temp.jpg", outFrame);
-                    }
+        thread_whisper.b_new_RobotSentence = false;
+        ui->plainTextEdit_received->setPlainText(QString::fromStdString(thread_whisper.strRobotSentence));
+    }
                     
     int action_index = -1;
     if (thread_ollama.chosen_action != "")
@@ -496,25 +459,26 @@ void MainWindow::timer_event()
         chosen_face = "";
     }
 
+    //2025/8/12 This section of code looks like that Mohamed sends the dance command to the robot, and suppresses the server's action while the robot is dancing.
     if (thread_ollama.chosen_dance != 0)
     {
         RobotCommandProtobuf::RobotCommand dance_command;
         dance_command.set_dancetype(thread_ollama.chosen_dance);
         sendMessageManager.AddMessage(dance_command);
         start_dance_time = time(0);
-        if (thread_ollama.chosen_dance == 1)
+        if (thread_ollama.chosen_dance == 1)     //Egyptian dance
         {
             dance_period = 73;
         }
-        else if(thread_ollama.chosen_dance == 2)
+        else if(thread_ollama.chosen_dance == 2)   //Cowboy dance
         {
             dance_period = 81;
         }
-        else if(thread_ollama.chosen_dance == 3)
+        else if(thread_ollama.chosen_dance == 3)   //What is this? chosen_dance = 3 is never used in the code.
         {
             dance_period = 5;
         }
-        else if(thread_ollama.chosen_dance == 4)
+        else if(thread_ollama.chosen_dance == 4)   //This is the health education video.
         {
             dance_period = 57;
         }
@@ -522,7 +486,7 @@ void MainWindow::timer_event()
         thread_ollama.chosen_dance = 0;
     }
     
-    //cv::imwrite("image_temp.jpg", outFrame);
+    //2025/8/12 I need to revise this section of code because thread_whisper.b_RobotSentence_End is unstable.
     if( thread_whisper.b_RobotSentence_End )
     {
         thread_whisper.b_RobotSentence_End = false;
@@ -546,15 +510,9 @@ void MainWindow::timer_event()
     sendMessageManager.Send();
     
     time_t current_time = time(0);
-    if ((thread_ollama.chosen_dance != 0) && ((current_time - start_dance_time > 2 || is_dancing)))
-    {
-    }
-    if((thread_ollama.chosen_dance != 0) && dancing_status == 0)
-    {
-    }
+    //2025/8/12 This is the only place to use the variable dance_period.
     if (dancing_status == 1 && current_time - start_dance_time > dance_period)
     {  
-        dancing_status = 0;
-        //dance_period = 0;
+        dancing_status = 0;     //This variable indicates whether the robot is dancing or not.
     }
 }

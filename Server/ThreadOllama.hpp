@@ -12,9 +12,6 @@ using namespace std;
 extern int dancing_status;
 extern vector<string> summary;
 extern vector<string> message_log;
-
-//250729 In fact, this variable is not used.
-//extern ollama::messages message_history;        //this class is defined in ollama.hpp. In fact, it is a vector of ollama::message, and a message class is a json object.
 extern string chosen_face;
 
 class ThreadOllama: public QThread

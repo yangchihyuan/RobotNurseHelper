@@ -853,6 +853,7 @@ void ThreadProcessImage::run()
                     {
                         normalized_landmarks = get_landmarks_pose(libmp);
 
+                        //2025/8/12 This is an experimental code to draw the landmarks by our own.
                         bool bDrawImageByOurOwn = false;
                         if( bDrawImageByOurOwn )
                         {

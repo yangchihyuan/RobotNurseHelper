@@ -189,6 +189,8 @@ void MainWindow::setLanguage( QString Language)
 
         1. 請避免提到自己。
         2. 詢問小朋友是否想讓機器人跳「埃及舞」或「牛仔舞」。
+        3. 請不要輸出任何表情符號
+        4. 請不要輸出任何括號
         )";
 
         thread_ollama.str_system_message_list[3] = R"(你是一台名叫凱比的醫療機器人，正在與一位年幼的兒童病患交談。請遵守以下規則：
@@ -197,6 +199,8 @@ void MainWindow::setLanguage( QString Language)
         2. 請使用非常簡潔且友善的語氣回答。
         3. 每次輸出只能包含一句或兩句簡短的句子。
         4. 請告訴小朋友一些有趣的謎語（如果他們答錯，可以提示後再給一次機會），並回答他們的問題。
+        5. 請不要輸出任何表情符號
+        6. 請不要輸出任何括號
         )";
 
         thread_ollama.str_system_message_list[4] = R"(你是一台名叫凱比的醫療機器人，正在與一位年幼的兒童病患交談。
@@ -210,13 +214,18 @@ void MainWindow::setLanguage( QString Language)
         3. 每次回答只能包含一句或兩句簡短的句子。
         4. 和小朋友玩一個猜動物的遊戲：給出關於一種動物的簡短提示，讓小朋友猜。
         5. 如果小朋友猜錯，請提供一個友善的提示，讓他們再試一次。
-        6. 如果小朋友提問，請回答他們的問題。)";
+        6. 如果小朋友提問，請回答他們的問題。
+        7. 請不要輸出任何表情符號
+        8. 請不要輸出任何括號
+        )";
 
 
         thread_ollama.str_system_message_list[6] = R"(你是一台名叫凱比的醫療機器人，正在與一位年幼的兒童病患交談。請遵守以下規則：
 
         1. 請說一個簡短有趣的故事逗病患開心。
         2. 接著請詢問小朋友是否對這個故事有任何問題想問。
+        3. 請不要輸出任何表情符號
+        4. 請不要輸出任何括號
         )";
 
         
@@ -227,8 +236,8 @@ void MainWindow::setLanguage( QString Language)
         thread_ollama.bio_summary_prompt = R"(請總結目前收集到的關於病患的重要資訊。格式如下（僅為範例）：
         **病患摘要：**
 
-        - 年齡：35
-        - 姓名：Muhammad
+        - 年齡：8
+        - 姓名：楊智淵
         - 主要症狀：胃痛
         - 部位：胃部
         - 疼痛強度與其他問題：感覺胃在喉嚨裡。)";
@@ -237,7 +246,7 @@ void MainWindow::setLanguage( QString Language)
             "是否已完整收集病患的年齡、姓名、疼痛強度（或等級）以及症狀／主要主訴資訊？這對於判斷是否繼續提問非常重要。請回答是或否。如果是否，請說明缺失的資訊。";
         
         //2025/8/6 Chih-Yuan: Why is this English?
-        thread_ollama.bio_summary_prompt = R"(Summarize only the important information gathered about patient so far. In this format (only as an example):
+/*        thread_ollama.bio_summary_prompt = R"(Summarize only the important information gathered about patient so far. In this format (only as an example):
         **Patient Summary:**
         
         -Age: 35
@@ -245,7 +254,7 @@ void MainWindow::setLanguage( QString Language)
         -Main Complaint: Stomach ache.
         -Location: Stomach.
         -Feeling on a scale from 1 to 5: Additional Concern:** Feels stomach in throat.)";
-
+*/
         //2025/8/11, the check_stage_prompt is repeated.
 //        thread_ollama.check_stage_prompt = "Has ALL the patient age, name, pain intensity/level, and symptom/main complaint information been gathered? Do not concern yourself with any other information and do not ask for clarifications. As soon as the minimum specified info has been gathered, say yes. State yes or no. If no, state what is missing.";
 //        thread_ollama.check_stage_prompt = "Has ALL the patient age, name, how they are feeling on a scale from 1 to 5 (there must be a number from 1 to 5), and symptom/main complaint information been gathered? Do not concern yourself with any other information and do not ask for clarifications. As soon as the minimum specified info has been gathered (AND ANSWERED BY THE PATIENT), say yes. State yes or no. If no, state what is missing.";
@@ -868,7 +877,7 @@ void MainWindow::on_pushButton_generate_response_clicked()
 {
     QString text = ui->plainTextEdit_received->toPlainText();
     thread_whisper.ClearBuffer();
-    thread_ollama.strPrompt = text.toStdString();
+    thread_ollama.strPrompt = text.toStdString();      //The string is used here.
     thread_ollama.cond_var_ollama.notify_one();     //2025/8/7 This is the only place where we notify the thread_ollama to generate a response. Did Mohamed call this function?
 }
 
