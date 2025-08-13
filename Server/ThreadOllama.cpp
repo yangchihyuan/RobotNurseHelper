@@ -6,7 +6,7 @@
 #include "ThreadProcessImage.hpp"
 #include <future>
 #include <chrono>
-extern cv::Mat outFrame; // [MOHAMED]
+extern cv::Mat outFrame; // [MOHAMED]       //2025/8/12 the variable is not used.
 ThreadOllama::ThreadOllama()
 {
     
@@ -17,16 +17,23 @@ ThreadOllama::~ThreadOllama()
     
 }
 
+//This is a utility function for debugging
+void DumpOllamaMessages(ollama::messages messages)
+{
+    for (const auto message : messages)
+    {
+        cout << message << endl;
+    }
+}
+
 string chosen_face = "";            //added by Mohamed. Why did he use the global variable?
 string check_summary = "";
 int dancing_status = 0;             //added by Mohamed. This variable indicates whether the robot is playing a mbtx file.
-//time_t last_prompt_time;
-chrono::time_point<chrono::high_resolution_clock> last_prompt_time;
 
 vector<string> summary(7, "");
 vector<string> message_log = {};
 
-//This function simply use ollama::chat to generate a response based on the prompt and message history.
+//ollama::chat is only used in the validate_conversation and in the while loop of run().
 //The third parameter prompt in fact is the system prompt.
 string ThreadOllama::validate_conversation(ollama::options options, ollama::messages &message_history, string &prompt, bool remove_message)
 {
@@ -66,11 +73,6 @@ bool ThreadOllama::stage_check(ollama::options options, ollama::options options_
         cout << "SUMMARY_ANALYSIS: " << " " << check_summary << "\n"; 
         transform(check_summary.begin(), check_summary.end(), check_summary.begin(), ::tolower);  //transform is a standard library function that converts all characters in a string to lowercase.
         
-        // string missing_prompt = "What is missing from the patient age, name, pain intensity/level, and symptom/main complaint information. State what is missing.";
-        // string missing_summary = ThreadOllama::validate_conversation(options, message_history, missing_prompt, 1);
-        // string missing_context = "Check if there is any missing information"; //"\n\nMissing info: " + missing_summary;
-        //ollama::message summary_context_message("Zenbo", summary_context);
-        //message_history.push_back(summary_context_message);
         if(check_summary.find("yes") != string::npos || chrono::duration_cast<chrono::milliseconds>(current_time - stage_start_time[stage_count]) > chrono::milliseconds(200000))
         {
             change_stage = 1;
@@ -124,6 +126,11 @@ bool ThreadOllama::stage_check(ollama::options options, ollama::options options_
     }
     else if (stage_count == 6)
     {
+        //2025/8/12 It appears that Mohamed forget to add a time limit for stage 6. So I need it here.
+        if(chrono::duration_cast<chrono::milliseconds>(current_time - stage_start_time[stage_count]) > chrono::milliseconds(100000))
+        {
+            change_stage = 1;
+        }
         std::string elapsed_time_str = std::to_string(
             std::chrono::duration_cast<std::chrono::milliseconds>(
                 current_time - stage_start_time[stage_count]
@@ -132,19 +139,6 @@ bool ThreadOllama::stage_check(ollama::options options, ollama::options options_
         summary[stage_count] = "ELAPSED_TIME: " + elapsed_time_str + "\n\n" + summary[stage_count];
     }
     return change_stage;
-}
-
-string removeThinkSection(const string& input) {
-    string result = input;
-    size_t startTag = result.find("<think>");
-    size_t endTag = result.find("</think>");
-
-    if (startTag != string::npos && endTag != string::npos && endTag > startTag) {
-        endTag += string("</think>").length();
-        result.erase(startTag, endTag - startTag);
-    }
-
-    return result;
 }
 
 //stage 0: Ice breaker, ask about child's favourite animal, color... [50s]
@@ -187,13 +181,13 @@ void ThreadOllama::run()
         return;
     }
     
-    vector<ollama::message> message_buffer;         //Created by Mohamed. What is the purpose of this message_buffer? debug or dump messages?
+    ollama::messages message_buffer;                 //message_buffer looks like the history of strPrompt.
 
     stage_count = start_stage_input;    //2025/8/6 stage_count is the current stage of the conversation.
     ollama::message system_message("system", str_system_message_list[start_stage_input]);
     ollama::message speak_ch_system_message("system", R"(請用中文回答。)");
     ollama::messages message_history = {system_message};     //Here is the declaration of message_history.
-    ollama::messages recent_history;
+    ollama::messages recent_history; //What is the purpose of this recent_history?
     last_prompt_time = chrono::high_resolution_clock::now(); // time(0);
     auto last_response_time = chrono::high_resolution_clock::now(); //time(0); 
     unique_lock<mutex> lk(mtx);
@@ -251,7 +245,7 @@ void ThreadOllama::run()
         current_time = chrono::high_resolution_clock::now(); //time(0);
         if(message_buffer.size() <= 0)   //message_buffer is a vector. It is impossible to be less than 0.
         {
-            //The prompt[0] == ! means that the prompt is wrongly generated by Whisper.
+            //The prompt[0] == '!' means that the prompt is wrongly generated by Whisper. Usually it is "!!!!!!!!!!!!!!!!!!!".
             //It seems that Mohamed need to handle the wrong prompts.
             if( (strPrompt == "" && chrono::duration_cast<chrono::milliseconds>(current_time - last_prompt_time) < maximum_prompt_wait_time[stage_count]) || (strPrompt.size() > 2 && strPrompt[0] == '!'))
             {
@@ -267,7 +261,7 @@ void ThreadOllama::run()
                         true
                     );
                     future<string> fut_extra = async(launch::async, bound_fn_extra);
-                    chosen_action = fut_extra.get();
+                    chosen_action = fut_extra.get();    //I don't understand. get() after async() is meaningless.
                     cout << "EXTRA_ACTION: " << chosen_action << "\n";
                 }
                 //Why does Mohamed use this continue statement here?
@@ -280,8 +274,8 @@ void ThreadOllama::run()
             }
         }
 
-        //What is the purpose of this section?
-        cout << "----------------------------------------\n\n";
+        //Purpose of this section is to prepare the prompt for LLM.
+        cout << "---------------Prepare Prompt-------------------------\n\n";
         if (strPrompt != "")
         {
             last_prompt_time = current_time;
@@ -291,19 +285,22 @@ void ThreadOllama::run()
             message_log.push_back(input);
             if (message_sender == "user")
             {
-                strPrompt = strResponse + "\n\n" + strPrompt; 
-                
+                strPrompt = strResponse + "\n\n" + strPrompt;   //Why did Mohamed manipulate the strPrompt like this?
             }
-            //ollama::message message_with_image("system", "Say the predicted emotion: Surprised, Happy, Sad, Neutral", image);
             ollama::message message(message_sender, strPrompt);
             
-            //Push new message prompt to message buffer/stack
-            //message_history.push_back(message);    
-            //recent_history.push_back(message);
-            message_buffer.push_back(message);
-            cout << "message_buffer SIZE: " << message_buffer.size() << "\n";
+            //Push new message prompt to message buffer
+            message_buffer.push_back(message);                 //This is the only place message_buffer is pushed.
+            cout << "message_buffer SIZE: " << message_buffer.size() << endl;
+            DumpOllamaMessages(message_buffer); 
+            cout << "recent_history SIZE: " << recent_history.size() << endl;
+            DumpOllamaMessages(recent_history);
+            cout << "message_history SIZE: " << message_history.size() << endl;
+            DumpOllamaMessages(message_history);
         }
-        current_time = chrono::high_resolution_clock::now(); //time(0);
+
+        //Every 0.6 seconds, recent_history and message_buffer will be cleared. So soon?
+        current_time = chrono::high_resolution_clock::now();
         if (chrono::duration_cast<chrono::milliseconds>(current_time - last_prompt_time) < chrono::milliseconds(600))
         {
             continue;
@@ -311,8 +308,8 @@ void ThreadOllama::run()
         else
         {
             recent_history.clear();
-            last_response_time = current_time;
-            while(message_buffer.size() > 0)
+            last_response_time = current_time;          //Is this wrong? last_response_time is never used.
+            while(message_buffer.size() > 0)            //This while loop will move all message_buffer to message_history
             {
                 message_history.push_back(message_buffer[0]);
                 recent_history.push_back(message_buffer[0]);
@@ -320,19 +317,18 @@ void ThreadOllama::run()
             }
         }
 
-        cout << "++++++++++++++++++++++++++++++++++++++++\n\n";
+        cout << "++++++++++++++++Call LLM++++++++++++++++++++++++\n\n";
         
         //Gather Response from LLM
         ollama::response response = ollama::chat(ModelName, message_history, options);
         strResponse = response.as_simple_string();
-        string output = std::string("Zenbo") + std::string(": ") + strResponse;
+        string output = std::string("Zenbo") + std::string(": ") + strResponse;     //The Zenbo here just is a log indicator.
         message_log.push_back(output);
         
-        //2025/8/8 Why is Zenbo here? What is the role of Zenbo?
-        ollama::message response_message("Zenbo", strResponse);
+        ollama::message response_message("Zenbo", strResponse);         //The response_message is only used for pushing to recent_history.
         
-        recent_history.push_back(response_message);
-        auto history_copy1 = recent_history;
+        recent_history.push_back(response_message);     //This is the 2nd place to push the response message to recent_history.
+        auto history_copy1 = recent_history;     //This is where recent_history is used, and the purpose is to choose face and motion.
         auto history_copy2 = recent_history;
 
         auto bound_fn1 = bind(
@@ -345,13 +341,12 @@ void ThreadOllama::run()
         );
         
         future<string> fut1;
-        if (loop_cnt % 3 || strResponse.size() > 25)   //Why does Mohamed use loop_cnt % 3? Does he want to skip stage 0 and 3?
+        if (loop_cnt % 3 || strResponse.size() > 25)   //Only a long response will trigger a motion
         {
             fut1 = async(launch::async, bound_fn1);
         }
         
-        //Prompt for chosen action fitting to recent conversation history
-        //What is Mohamed's purpose of this section? Does he want to use the LLM to pick up an action or a face?
+        //Prompt for chosen a face from recent conversation
         auto bound_fn2 = bind(
             &ThreadOllama::validate_conversation,
             this,
@@ -373,11 +368,13 @@ void ThreadOllama::run()
             chosen_action = "BA_Nodhead";
         }
         
+        //Here, the chosen_face is set, and in the MainWindow::timer_event() function, a RobotCommand is sent to the robot.
         chosen_face = fut2.get();       //In fact, the fut2.get() will block the thread until the future is ready.
 
         cout << chosen_action << "\n";
         cout << chosen_face << "\n";
         
+        //2025/8/12 stage_check is only called in bound_fn4. But the async function does not run in parallel in fact.
         auto bound_fn4 = bind(
             &ThreadOllama::stage_check,  //this is the only place to call stage_check
             this,

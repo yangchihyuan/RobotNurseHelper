@@ -406,15 +406,14 @@ void MainWindow::timer_event()
                 break;
             }
         }
-        //cout << "CHOSEN ACTION INDEX" << action_index << ": " << strList_action[action_index].toStdString() << "\n";
-        //cout << "SPECIFIED ACTION: " << target.toStdString() << "\n";
+        
         if(action_index != -1)
         {
             RobotCommandProtobuf::RobotCommand motion_command;
             motion_command.set_motion(action_index);
             sendMessageManager.AddMessage(motion_command);
         }
-        //sendMessageManager.Send();
+
         thread_ollama.chosen_action = "";
     }
 
