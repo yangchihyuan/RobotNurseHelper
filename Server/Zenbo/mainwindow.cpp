@@ -358,7 +358,7 @@ void MainWindow::timer_event()
     {
         thread_whisper.b_RobotSentence_End = false;
         //send a command as the push button clicked
-        ui->pushButton_generate_response->click();
+        ui->pushButton_generate_response->click();      //This funciton will call the MainWindow::on_pushButton_generate_response_clicked() function.
     }
 
     if( thread_ollama.b_new_LLM_response )

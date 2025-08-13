@@ -18,7 +18,7 @@ struct whisper_params {
     int32_t n_threads  = std::min(4, (int32_t) std::thread::hardware_concurrency());    //this does not matter because I need to use GPU to run it.
     int32_t step_ms    = 500;
     int32_t length_ms  = 5000;
-    int32_t keep_ms    = 1000;  //whisper.cpp requests at least 1 second to recognize the audio
+    int32_t keep_ms    = 4500;
     int32_t max_tokens = 32;
     int32_t audio_ctx  = 0;
     int32_t beam_size  = 6;
@@ -52,9 +52,9 @@ public:
     QBuffer *pOperatorBuffer = NULL;             //This buffer is used by operator.
     bool bOperatorBuffer_open = false;
     std::vector<float> pcmf32;
-    std::vector<float> pcmf32_old;
+//    std::vector<float> pcmf32_old;
     std::vector<float> pcmf32_new;
-    int bufferlength = 0;
+    int bufferlength = 0;                       //When new audio data comes, the bufferlength will be increased, and the data will be copied to pcmf32_new.
     std::vector<float> pcmf32_detect;
 
     std::vector<whisper_token> prompt_tokens;
@@ -72,7 +72,7 @@ public:
     void setStartTime();
     void ClearBuffer();
 
-    VadIterator *pVad = NULL;
+    VadIterator *pVad = NULL;             //This is the silero vad iterator.
 
 protected:
     void run();
@@ -83,6 +83,7 @@ protected:
     int n_samples_step;
     int n_samples_len;
     int n_samples_keep;
+    int n_samples_silent;
     mutex mtx;
 
     std::chrono::high_resolution_clock::time_point t_last;

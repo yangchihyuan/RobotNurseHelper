@@ -7,6 +7,7 @@ ThreadWhisper::ThreadWhisper()
     n_samples_keep = (int)(1e-3*params.keep_ms*WHISPER_SAMPLE_RATE);
     n_samples_len = (int)(1e-3*params.length_ms*WHISPER_SAMPLE_RATE);
     n_samples_step = (int) (1e-3*params.step_ms*WHISPER_SAMPLE_RATE);
+    n_samples_silent = (int)(0.5*WHISPER_SAMPLE_RATE);               //set the silent length to 1 seconds
 
     //used for the stream mode
     if( n_samples_step > 0)
@@ -14,7 +15,7 @@ ThreadWhisper::ThreadWhisper()
 
     string filepath(getenv("HOME"));
     filepath += "/RobotNurseHelper_build/silero-vad/src/silero_vad/data/silero_vad.onnx";
-    pVad = new VadIterator(filepath);
+    pVad = new VadIterator(filepath);       //Create the silero vad iterator
 }
 
 ThreadWhisper::~ThreadWhisper()
@@ -28,7 +29,7 @@ ThreadWhisper::~ThreadWhisper()
 
     if( pVad != NULL)
     {
-        delete pVad;
+        delete pVad;                //delete the silero vad iterator
         pVad = NULL;
     }
 }
@@ -79,7 +80,7 @@ void ThreadWhisper::run()
     wparams.language = strLanguage.c_str();        // "zh" for Chinese, "en" for English, "ar" for Arabic
     wparams.no_speech_thold = 0.02f; //0.6f; // silence threshold for VAD //[MOHAMED]
 
-    int n_iter = 0;
+//    int n_iter = 0;
 
     const int n_step_in_length = !use_vad ? std::max(1, params.length_ms / params.step_ms) : 1; // number of steps to print new line
 
@@ -100,38 +101,67 @@ void ThreadWhisper::run()
             }
         }
 
-        if(bufferlength >= n_samples_step)
+        if(bufferlength >= n_samples_step)  //n_samples_step = 8000; bufferlength is the new coming audio data.
         {
-            //Get the data
+            //n_samples_len = 80000; // 5 seconds, in samples
             mtx_whisper_buffer.lock();
             int n_samples_new = bufferlength;
 
-            //The term "take" means to reserve the old data
-            int n_samples_take = std::min((int) pcmf32_old.size(), std::max(0, n_samples_keep + n_samples_len - n_samples_new));
-
-            pcmf32.resize(n_samples_new + n_samples_take);
-
-            //move data from pcmf32_old to pcmf32
-            for (int i = 0; i < n_samples_take; i++) {
-                pcmf32[i] = pcmf32_old[pcmf32_old.size() - n_samples_take + i];
+            if( n_samples_new + pcmf32.size() < n_samples_len)
+            {
+                int old_size = pcmf32.size();
+                pcmf32.resize(pcmf32.size() + n_samples_new);
+                for (int i = 0; i < n_samples_new; i++) {
+                    pcmf32[old_size + i] = pcmf32_new[i];
+                }
+                //I cannot use memcpy, which will cause a segmentation fault.
             }
-
-            memcpy(pcmf32.data() + n_samples_take, pcmf32_new.data(), n_samples_new*sizeof(float));
+            else if(n_samples_new >= n_samples_len)     //debug case
+            {
+                pcmf32.resize(n_samples_len);
+                for (int i = 0; i < n_samples_len; i++) {
+                    pcmf32[i] = pcmf32_new[n_samples_new - n_samples_len + i];
+                }
+            }
+            else
+            {
+                int old_size = pcmf32.size();
+                int n_samples_remove = pcmf32.size() + n_samples_new - n_samples_len;
+                pcmf32.resize(pcmf32.size() + n_samples_new);
+                for (int i = 0; i < n_samples_new; i++) {
+                    pcmf32[old_size + i] = pcmf32_new[i];
+                }
+                pcmf32.erase(pcmf32.begin(), pcmf32.begin() + n_samples_remove );
+//                cout << "erase size " << n_samples_remove << endl;
+            }
+//            cout << "(A) pcmf32.size() " << pcmf32.size() << " n_samples_new " << n_samples_new << endl;
 
             bufferlength = 0;
             mtx_whisper_buffer.unlock();
         
-            //copy, backup
-            pcmf32_old = pcmf32;
 
-            //check the volume, if it is too low, skip the inference
-//            float volume = ComputeVolume(pcmf32);
-//            cout << "Volume: " << volume << std::endl;
+            if( pcmf32.size() < 16000)
+            {
+                continue;   //not enough data, wait for more data
+            }
 
-            pVad->process(pcmf32);
+            pVad->process(pcmf32);              //Use silero vad to check whether there is speech in the audio.
+            //There is a clear problem. If the speech has not ended, the vad still returns true.
+            //I need to know the end of the speech.
+            int last_speech_end = 80000; // 5 seconds, in samples
             if( pVad->get_speech_timestamps().size() > 0)
             {
-                // run the inference
+//                cout << "Speech detected: " << pVad->get_speech_timestamps().back().c_str() << endl;
+                last_speech_end = pVad->get_speech_timestamps().back().end;
+            }
+
+//            cout << "(B) pcmf32.size() " << pcmf32.size() << " last_speech_end " << last_speech_end << endl;
+            if( last_speech_end < pcmf32.size() - n_samples_silent)    //to ensure that there is a slience greater than 0.3 seconds.
+            {
+                //n_samples_len = 80000;
+                //n_samples_silent = 16800;
+
+                // run the Whisper inference
                 strTemp = "";
                 if (whisper_full(ctx, wparams, pcmf32.data(), pcmf32.size()) != 0) {
                     fprintf(stderr, "failed to process audio\n");
@@ -144,86 +174,40 @@ void ThreadWhisper::run()
                         strTemp += text;
                 }
                 
-                std::cout << strTemp << std::endl;
+//                std::cout << strTemp << std::endl;
+
+                //clean the pcmf32 buffer and the pcmf32_old buffer
+                pcmf32.clear();
+                strRobotSentence = strTemp;             //2025/8/13 This is not good enough. The sentence is incomplete.
+                b_new_RobotSentence = true;
+                b_RobotSentence_End = true;
             }
-            ++n_iter;
             
-            if (n_iter % n_step_in_length == 0) {
 
-                // keep part of the audio for next iteration to try to mitigate word boundary issues
-                pcmf32_old = std::vector<float>(pcmf32.end() - n_samples_keep, pcmf32.end());
+            // Add tokens of the last full length segment as the prompt
+            /*
+            if (!params.no_context) {
+                prompt_tokens.clear();
 
-                // Add tokens of the last full length segment as the prompt
-                if (!params.no_context) {
-                    prompt_tokens.clear();
-
-                    const int n_segments = whisper_full_n_segments(ctx);
-                    for (int i = 0; i < n_segments; ++i) {
-                        const int token_count = whisper_full_n_tokens(ctx, i);
-                        for (int j = 0; j < token_count; ++j) {
-                            prompt_tokens.push_back(whisper_full_get_token_id(ctx, i, j));
-                        }
+                const int n_segments = whisper_full_n_segments(ctx);
+                for (int i = 0; i < n_segments; ++i) {
+                    const int token_count = whisper_full_n_tokens(ctx, i);
+                    for (int j = 0; j < token_count; ++j) {
+                        prompt_tokens.push_back(whisper_full_get_token_id(ctx, i, j));
                     }
                 }
-                //strFixed += strTemp;
             }
-            strRobotSentence = strTemp; //strFixed + strTemp;
-            b_new_RobotSentence = true;
+            */
 
             //check whether there is an end of the voice.
+            /*
             bool b_vad_detected = ::vad_simple(pcmf32, WHISPER_SAMPLE_RATE, 1000, params.vad_thold, params.freq_thold, false);
             if( b_vad_detected)
             {
                 b_RobotSentence_End = true;
                 // send the sentence to the LLM, and reset the buffer
             }
-        }
-        else if( false )  //temporary disable the VAD
-        {
-            const auto t_now  = std::chrono::high_resolution_clock::now();
-            const auto t_diff = std::chrono::duration_cast<std::chrono::milliseconds>(t_now - t_last).count();
-
-            if (t_diff < 2000) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-                continue;
-            }
-
-            mtx_whisper_buffer.lock();
-            pcmf32_detect.resize(bufferlength);
-            memcpy(pcmf32_detect.data(), pcmf32_new.data(), bufferlength*sizeof(float));
-            bool b_vad_detected = ::vad_simple(pcmf32_detect, WHISPER_SAMPLE_RATE, 1000, params.vad_thold, params.freq_thold, false);
-            if( b_vad_detected)
-            {
-                // copy the new audio to the end of the buffer
-                int copy_length = min(bufferlength, n_samples_len);
-                pcmf32.resize(copy_length);
-                memcpy(pcmf32.data(), pcmf32_new.data()+bufferlength-copy_length, copy_length*sizeof(float));
-                bufferlength = 0;
-            }
-            mtx_whisper_buffer.unlock();
-            if( !b_vad_detected)
-            {
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                continue;
-            }
-
-            t_last = t_now;
-
-            // run the inference
-            strRobotSentence = "";
-            if (whisper_full(ctx, wparams, pcmf32.data(), pcmf32.size()) != 0) {
-                fprintf(stderr, "failed to process audio\n");
-                return;
-            }
-
-            const int n_segments = whisper_full_n_segments(ctx);
-            for (int i = 0; i < n_segments; ++i) {
-                const char * text = whisper_full_get_segment_text(ctx, i);
-                    strRobotSentence += text;
-            }
-            b_new_RobotSentence = true;
-
+            */
         }
         else
               std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -246,7 +230,7 @@ void ThreadWhisper::ClearBuffer()
 {
     mtx_whisper_buffer.lock();
     pcmf32.clear();
-    pcmf32_old.clear();
+//    pcmf32_old.clear();
     pcmf32_new.clear();
     bufferlength = 0;
     strRobotSentence = "";

@@ -233,33 +233,18 @@ void MainWindow::setLanguage( QString Language)
         thread_whisper.strLanguage = "zh"; // set language to Chinese (可維持此行不變)
         SentenceFileName = "Sentence_Chinese.txt";
 
+        //2025/8/13 I no longer use this prompt.
         thread_ollama.bio_summary_prompt = R"(請總結目前收集到的關於病患的重要資訊。格式如下（僅為範例）：
         **病患摘要：**
-
         - 年齡：8
         - 姓名：楊智淵
         - 主要症狀：胃痛
         - 部位：胃部
         - 疼痛強度與其他問題：感覺胃在喉嚨裡。)";
 
-        thread_ollama.check_stage_prompt = 
-            "是否已完整收集病患的年齡、姓名、疼痛強度（或等級）以及症狀／主要主訴資訊？這對於判斷是否繼續提問非常重要。請回答是或否。如果是否，請說明缺失的資訊。";
-        
-        //2025/8/6 Chih-Yuan: Why is this English?
-/*        thread_ollama.bio_summary_prompt = R"(Summarize only the important information gathered about patient so far. In this format (only as an example):
-        **Patient Summary:**
-        
-        -Age: 35
-        -Name: Muhammad
-        -Main Complaint: Stomach ache.
-        -Location: Stomach.
-        -Feeling on a scale from 1 to 5: Additional Concern:** Feels stomach in throat.)";
-*/
-        //2025/8/11, the check_stage_prompt is repeated.
-//        thread_ollama.check_stage_prompt = "Has ALL the patient age, name, pain intensity/level, and symptom/main complaint information been gathered? Do not concern yourself with any other information and do not ask for clarifications. As soon as the minimum specified info has been gathered, say yes. State yes or no. If no, state what is missing.";
-//        thread_ollama.check_stage_prompt = "Has ALL the patient age, name, how they are feeling on a scale from 1 to 5 (there must be a number from 1 to 5), and symptom/main complaint information been gathered? Do not concern yourself with any other information and do not ask for clarifications. As soon as the minimum specified info has been gathered (AND ANSWERED BY THE PATIENT), say yes. State yes or no. If no, state what is missing.";
-        thread_ollama.no_response = R"(病患沒有回應。請繼續你正在說的內容。)";
-        thread_ollama.dance_complete = R"(病人選擇的舞蹈已經完成)";
+        thread_ollama.check_stage_prompt = "是否已完整收集病患的年齡、姓名、疼痛強度（或等級）以及症狀／主要主訴資訊？這對於判斷是否繼續提問非常重要。請回答是或否。如果是否，請說明缺失的資訊。";
+        thread_ollama.no_response = "病患沒有回應。請繼續你正在說的內容。";
+        thread_ollama.dance_complete = "病人選擇的舞蹈已經完成";
     }
     else if( Language == "English")
     {

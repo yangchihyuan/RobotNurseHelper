@@ -11,7 +11,7 @@ using namespace std;
 
 extern int dancing_status;
 extern vector<string> summary;
-extern vector<string> message_log;
+extern vector<string> message_log;      //created by Mohamed, for debugging purpose.
 extern string chosen_face;
 
 class ThreadOllama: public QThread
@@ -35,7 +35,7 @@ public:
     string str_system_message;               
     string str_system_message_list[7];      //added by Mohamed
     
-    string bio_summary_prompt;              //added by Mohamed
+    string bio_summary_prompt;              
     string check_stage_prompt;              //added by Mohamed
     string no_response, dance_complete;     //added by Mohamed
     string ModelName = "gemma3:12b";
