@@ -35,7 +35,8 @@ void SendMessageManager::Send()
                 pSocket->write("BeginOfAMessage");
                 socketStream.writeRawData(str_results, str_results_len);
                 pSocket->write("EndOfAMessage");
-                cout << "send a message " << endl;
+                //debug
+                //cout << "send a message " << endl;
 
                 //The robot may close the connection suddenly.
                 //pSocket->isValid cannot prevent it.
@@ -74,8 +75,9 @@ void SendMessageManager::AddMessage(RobotCommandProtobuf::RobotCommand message)
     {
         if (message.speak_sentence() != "")
         {
-            cout << "OUTPUT: " << message.speak_sentence() << "\n";
-            cout << "Add a Message to mQueue" << endl;
+            //Debug
+//            cout << "OUTPUT: " << message.speak_sentence() << "\n";
+//            cout << "Add a Message to mQueue" << endl;
             mQueue.push(message);
         }
     }
@@ -93,7 +95,8 @@ void SendMessageManager::AddMessage(RobotCommandProtobuf::RobotCommand message)
         // {
         //     cout << "UNKNOWN_MESSAGE: <<\n";
         // }
-        cout << "Add a Message to mQueue" << endl;
+        //debug
+//        cout << "Add a Message to mQueue" << endl;
         mQueue.push(message);
     }
     //cout << "Add a Message to mQueue" << endl;

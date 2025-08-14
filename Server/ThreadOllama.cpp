@@ -9,7 +9,16 @@
 extern cv::Mat outFrame; // [MOHAMED]       //2025/8/12 the variable is not used.
 ThreadOllama::ThreadOllama()
 {
-    
+    mStageDurationLimit[0] = 50s;
+    mStageDurationLimit[1] = 10s;
+    mStageDurationLimit[2] = 10s;
+    mStageDurationLimit[3] = 10s;
+    mStageDurationLimit[4] = 10s;
+    mStageDurationLimit[5] = 10s;
+    mStageDurationLimit[6] = 80s;
+    mStageDurationLimit[7] = 60s;
+    mStageDurationLimit[8] = 60s;
+    mStageDurationLimit[9] = 100s;
 }
 
 ThreadOllama::~ThreadOllama()
@@ -43,7 +52,8 @@ string ThreadOllama::validate_conversation(ollama::options options, ollama::mess
     message_history.pop_back();
     
     //debug
-    cout << "validate_conversation prompt:" << prompt << " check_response: " << check_response.as_simple_string() << endl;
+    //cout << "validate_conversation prompt:" << prompt << " check_response: " << check_response.as_simple_string() << endl;
+
     return check_response.as_simple_string();
 }
 
@@ -58,23 +68,21 @@ bool ThreadOllama::stage_check(ollama::options options, ollama::options options_
     //The criteria for changing the stage 0 is time. If the time is more than 50 seconds, change the stage.
     if (stage_count == 0)
     {
-        if(chrono::duration_cast<chrono::milliseconds>(current_time - stage_start_time[stage_count]) > chrono::milliseconds(50000))
+        if(chrono::duration_cast<chrono::milliseconds>(current_time - stage_start_time[stage_count]) > mStageDurationLimit[stage_count])
         {
             change_stage = 1;
         }
     }
-    // Stage 1: Try 200 seconds to gather a patient's basic information.
-    else if (stage_count == 1)
+    else if (stage_count >= 1 && stage_count <= 4)
     {
-        //cout << "summary[stage_count] " << summary[stage_count] << endl;      //2025/8/12 Meaningless.
-        //string check_prompt = "Has ALL the patient age, name, pain intensity/level, and symptom/main complaint information been correctly gathered? This is important to assess whether to continue asking. State yes or no. If no, state what is missing.";
         check_summary = ThreadOllama::validate_conversation(options, message_history, check_stage_prompt);
         recent_history.pop_back();
         cout << "SUMMARY_ANALYSIS: " << " " << check_summary << "\n"; 
         transform(check_summary.begin(), check_summary.end(), check_summary.begin(), ::tolower);  //transform is a standard library function that converts all characters in a string to lowercase.
         
         //Wrong. The check_summary is in Chinese.
-        if(check_summary.find("是") != string::npos || chrono::duration_cast<chrono::milliseconds>(current_time - stage_start_time[stage_count]) > chrono::milliseconds(200000))
+        //Problem: The LLM generate wrong answer. Our flow control will be wrong.
+        if(check_summary.find("是") != string::npos || chrono::duration_cast<chrono::milliseconds>(current_time - stage_start_time[stage_count]) > mStageDurationLimit[stage_count])
         {
             change_stage = 1;
             
@@ -83,50 +91,62 @@ bool ThreadOllama::stage_check(ollama::options options, ollama::options options_
             last_prompt_time -= (maximum_prompt_wait_time[stage_count] * 9)/10;
         }
     }
-    else if(stage_count == 2)
+    else if(stage_count == 5)
     {
         //Use a new system prompt
-        string dance_prompt = "使用者的回覆中有没有提到埃及或是吉？有的話請回覆1。有沒有提到牛仔，有的話請回覆2。如果都沒有的話，請回覆0。";
-        string dance_response = ThreadOllama::validate_conversation(options_short, recent_history, dance_prompt);
+        string dance_prompt = "使用者的回覆中有没有提到埃及或是吉或是集？有的話請回覆1。有沒有提到牛仔，有的話請回覆2。如果都沒有的話，請回覆0。";
+        //Problem: the prompt is unreliable. The user input is "埃及武"，the dance_response should be 1, but the dance response is 0.
+        string dance_response = ThreadOllama::validate_conversation(options_short, message_history, dance_prompt);
         cout << "CHOSEN_DANCE_PROMPT: " << dance_response << "\n";
+        if (dance_response.find("0") != string::npos)
+        {
+            //Say: 那我來跳埃及舞吧。            
+            change_stage = 1;
+            chosen_dance = 1;
+        }
         if (dance_response.find("1") != string::npos)
         {
             change_stage = 1;
             chosen_dance = 1;
         }
-        else if (dance_response.find("2") != string::npos || chrono::duration_cast<chrono::milliseconds>(current_time - stage_start_time[stage_count]) > chrono::milliseconds(50000))
+        else if (dance_response.find("2") != string::npos || chrono::duration_cast<chrono::milliseconds>(current_time - stage_start_time[stage_count]) > mStageDurationLimit[stage_count])
         {
+            change_stage = 1;
+            chosen_dance = 2;
+        }
+        else
+        {
+            //Say: 那我來跳牛仔舞吧。
             change_stage = 1;
             chosen_dance = 2;
         }
         cout << "CHOSEN_DANCE: " << chosen_dance << "\n"; 
     }
-    else if(stage_count == 3)
+    else if(stage_count == 6)
     {
-        if(chrono::duration_cast<chrono::milliseconds>(current_time - stage_start_time[stage_count]) > chrono::milliseconds(80000))
+        if(chrono::duration_cast<chrono::milliseconds>(current_time - stage_start_time[stage_count]) > mStageDurationLimit[stage_count])
         {
             change_stage = 1;
             chosen_dance = 4; 
         }
     }
-    else if(stage_count == 4)
+    else if(stage_count == 7)
     {
-        if(chrono::duration_cast<chrono::milliseconds>(current_time - stage_start_time[stage_count]) > chrono::milliseconds(60000))
-        {
-        }
-        change_stage = 1;
-    }
-    else if (stage_count == 5)
-    {
-        if(chrono::duration_cast<chrono::milliseconds>(current_time - stage_start_time[stage_count]) > chrono::milliseconds(60000))
+        if(chrono::duration_cast<chrono::milliseconds>(current_time - stage_start_time[stage_count]) > mStageDurationLimit[stage_count])
         {
             change_stage = 1;
         }
     }
-    else if (stage_count == 6)
+    else if (stage_count == 8)
     {
-        //2025/8/12 It appears that Mohamed forget to add a time limit for stage 6. So I need it here.
-        if(chrono::duration_cast<chrono::milliseconds>(current_time - stage_start_time[stage_count]) > chrono::milliseconds(100000))
+        if(chrono::duration_cast<chrono::milliseconds>(current_time - stage_start_time[stage_count]) > mStageDurationLimit[stage_count])
+        {
+            change_stage = 1;
+        }
+    }
+    else if (stage_count == 9)
+    {
+        if(chrono::duration_cast<chrono::milliseconds>(current_time - stage_start_time[stage_count]) > mStageDurationLimit[stage_count])
         {
             change_stage = 1;
         }
@@ -242,6 +262,7 @@ void ThreadOllama::run()
         //2025/8/13 I guess this section of code is to handle the case that there are several meaningless prompts generated by the Whisper model. Today I have solve the problem. Do I still need this section of code?
         if(message_buffer.size() <= 0)   //message_buffer is a vector. It is impossible to be less than 0.
         {
+            cout << "message_buffer.size() <= 0" << endl;
             //The prompt[0] == '!' means that the prompt is wrongly generated by Whisper. Usually it is "!!!!!!!!!!!!!!!!!!!".
             //It seems that Mohamed need to handle the wrong prompts.
             //Here, Mohamed wants to deal with the case that the patient does not respond to the robot's question.
@@ -302,6 +323,8 @@ void ThreadOllama::run()
         //Gather Response from LLM
         ollama::response response = ollama::chat(ModelName, message_history, options);
         strResponse = response.as_simple_string();        //The strResponse will be send to the robot to speak out.
+        b_new_LLM_response = true;      //Here is the signal to let timer_event() send a speaking sentence.
+        cout << "response " << response << endl;
         ollama::message response_message("assistant", response);
         message_history.push_back(response_message);
 
@@ -334,7 +357,6 @@ void ThreadOllama::run()
         
         future<string> fut2 = async(launch::async, bound_fn2);
             
-        b_new_LLM_response = true;      //Here is the signal to let timer_event() send a speaking sentence.
         if (loop_cnt % 3 || strResponse.size() > 25)
         {
             chosen_action = fut1.get();
@@ -361,23 +383,56 @@ void ThreadOllama::run()
             stage_start_time[stage_count] = chrono::high_resolution_clock::now(); //time(0);
             
             //If the new stage_count is 1, add the new system prompt to the message_history
-            if( stage_count != 2 )
+            if( stage_count == 1 )
             {
+                message_history.clear();
                 ollama::message new_system_message("system", str_system_message_list[stage_count]);
                 message_history.push_back(new_system_message);
+                strResponse = "請問你叫什麼名字？";
+                ollama::message response_message("assistant", strResponse);
+                message_history.push_back(response_message);
+                b_new_LLM_response = true;      //Here is the signal to let timer_event() send a speaking sentence.
             }
-            //If the new stage count is 2, use a new system prompot
             else if( stage_count == 2 )
+            {
+                strResponse = "請問你幾歲了？";
+                ollama::message response_message("assistant", strResponse);
+                message_history.push_back(response_message);
+                b_new_LLM_response = true;      //Here is the signal to let timer_event() send a speaking sentence.
+            }
+            else if( stage_count == 3 )
+            {
+                strResponse = "請問你生的是什麼病啊？";
+                ollama::message response_message("assistant", strResponse);
+                message_history.push_back(response_message);
+                b_new_LLM_response = true;      //Here is the signal to let timer_event() send a speaking sentence.
+            }
+            else if( stage_count == 4 )
+            {
+                strResponse = "請你用一到五的等級告訴我你現在的感覺如何？一是很不好，五是很好。";
+                ollama::message response_message("assistant", strResponse);
+                message_history.push_back(response_message);
+                b_new_LLM_response = true;      //Here is the signal to let timer_event() send a speaking sentence.
+            }
+            else if( stage_count == 5 )
             {
                 message_history.clear();
                 ollama::message new_system_message("system", str_system_message_list[stage_count]);
                 message_history.push_back(new_system_message);
                 //LLM is unstable, assign the question directly.
-                strResponse = "我會跳舞喲，我會跳埃及舞和牛仔舞，你比較想看我跳哪一種舞？";
+                strResponse = "我會跳舞喲，我會跳埃及舞和牛仔舞，你想看我跳哪一種舞？";
+                //Here is a problem. Whisper detect a speech even before Kebbi finishes his sentence. We need to know when Kebbi complete
+                //speaking this sentence and then wait for user's voice input.
                 ollama::message response_message("assistant", strResponse);
                 message_history.push_back(response_message);
                 b_new_LLM_response = true;      //Here is the signal to let timer_event() send a speaking sentence.
             }
+            else
+            {
+                ollama::message new_system_message("system", str_system_message_list[stage_count]);
+                message_history.push_back(new_system_message);
+            }
+
             
             
             cout << "\nSTAGE_DONE\n";

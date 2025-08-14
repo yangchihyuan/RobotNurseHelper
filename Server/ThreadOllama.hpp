@@ -33,7 +33,8 @@ public:
     string strPrompt;                       //The strPrompt is the user's input sentence, genrated by Whisper.
     string strResponse;
     string str_system_message;               
-    string str_system_message_list[7];      //added by Mohamed
+    string str_system_message_list[10];
+    chrono::seconds mStageDurationLimit[10];
     
     string bio_summary_prompt;              
     string check_stage_prompt;              //added by Mohamed

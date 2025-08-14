@@ -447,8 +447,9 @@ void MainWindow::timer_event()
         }
         if (face_index != -1)
         {
-            cout << "CHOSEN ACTION FACE" << face_index << ": " << strList_face[face_index].toStdString() << "\n";
-            cout << "SPECIFIED FACE: " << target.toStdString() << "\n";
+            //debug
+            //cout << "CHOSEN ACTION FACE" << face_index << ": " << strList_face[face_index].toStdString() << "\n";
+            //cout << "SPECIFIED FACE: " << target.toStdString() << "\n";
             RobotCommandProtobuf::RobotCommand facial_command;
             facial_command.set_face(face_index);
             
