@@ -96,7 +96,7 @@ MainWindow::~MainWindow()
       delete audioSrc;
 
     thread_ollama.b_WhileLoop = false;
-    thread_ollama.cond_var_ollama.notify_one();
+//    thread_ollama.cond_var_ollama.notify_one();
     thread_ollama.wait();
 
     delete ui;
@@ -848,7 +848,7 @@ void MainWindow::on_pushButton_generate_response_clicked()
     QString text = ui->plainTextEdit_received->toPlainText();
     thread_whisper.ClearBuffer();
     thread_ollama.strPrompt = text.toStdString();      //The string is used here.
-    thread_ollama.cond_var_ollama.notify_one();     //2025/8/7 This is the only place where we notify the thread_ollama to generate a response. Did Mohamed call this function?
+//    thread_ollama.cond_var_ollama.notify_one();     //2025/8/7 This is the only place where we notify the thread_ollama to generate a response. Did Mohamed call this function?
 }
 
 

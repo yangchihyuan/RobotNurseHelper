@@ -644,6 +644,7 @@ void ThreadProcessImage::run()
     int iFrameCount = 0;
     while(b_WhileLoop)
     {
+        int iNoPersonFrameCount = 0;  //If cannot find a person for 30 frames, move the head to up right frontal
         if( pSocketHandler->get_queue_length() > 0 )    //here is an infinite loop
         {
             auto start = std::chrono::high_resolution_clock::now();
@@ -854,6 +855,7 @@ void ThreadProcessImage::run()
                         normalized_landmarks = get_landmarks_pose(libmp);
 
                         //2025/8/12 This is an experimental code to draw the landmarks by our own.
+                        //debug
                         bool bDrawImageByOurOwn = false;
                         if( bDrawImageByOurOwn )
                         {
@@ -923,7 +925,7 @@ void ThreadProcessImage::run()
                     //What is the difference between the if and else sections?
                     //The difference is that the if section is used when the robot is dancing.
                     //It appears that dancing is not playing mbkx files.
-                    if (normalized_landmarks.empty() || is_dancing) {
+/*                    if (normalized_landmarks.empty() || is_dancing) {
                         auto current_time = std::chrono::high_resolution_clock::now();
                         auto duration = std::chrono::duration_cast<std::chrono::seconds>(current_time - previous_time);
 //                        cout << "duration empty" << duration.count() << endl;
@@ -963,37 +965,56 @@ void ThreadProcessImage::run()
                         }
                     }
                     else
+*/
+                    if( !is_dancing )
                     {
-                        //last_landmarks = normalized_landmarks;
-                        bLastLandmarksEffective = true;
-                        //use time control first, wait for 3 seconds
-                        auto current_time = std::chrono::high_resolution_clock::now();
-                        auto duration = std::chrono::duration_cast<std::chrono::seconds>(current_time - previous_time);
-//                        cout << "duration " << duration.count() << endl;
-                        if (duration.count() >= 1) { //3 [MOHAMED]
-                            if( action_option.move_mode != action_option.MOVE_MANUAL)
+                        if( !normalized_landmarks.empty())
+                        {
+                            iNoPersonFrameCount = 0;
+
+                            //last_landmarks = normalized_landmarks;
+                            bLastLandmarksEffective = true;
+                            //use time control first, wait for 3 seconds
+                            auto current_time = std::chrono::high_resolution_clock::now();
+                            auto duration = std::chrono::duration_cast<std::chrono::seconds>(current_time - previous_time);
+    //                        cout << "duration " << duration.count() << endl;
+                            if (duration.count() >= 1) { //3 [MOHAMED]
+                                if( action_option.move_mode != action_option.MOVE_MANUAL)
+                                {
+                                    RobotCommandProtobuf::RobotCommand message;
+                                    if( Task == "Face" )
+                                    {
+                                        FaceLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, message);
+                                    }
+                                    else if( Task == "Pose" )
+                                    {
+                                        PoseLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, message);
+                                    }
+                                    else if( Task == "Holistic" )
+                                    {
+                                        //I use Pose, I haven't develop a new function for Holistic.
+                                        PoseLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, message);
+                                    }
+                                    else
+                                    {
+                                        cout << "Task is not supported. (F)" << endl;
+        //                                continue;
+                                    }
+                                    previous_time = current_time;
+                                    pSendMessageManager->AddMessage(message);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            iNoPersonFrameCount++;
+                            if( iNoPersonFrameCount > 30)
                             {
-                                RobotCommandProtobuf::RobotCommand message;
-                                if( Task == "Face" )
-                                {
-                                    FaceLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, message);
-                                }
-                                else if( Task == "Pose" )
-                                {
-                                    PoseLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, message);
-                                }
-                                else if( Task == "Holistic" )
-                                {
-                                    //I use Pose, I haven't develop a new function for Holistic.
-                                    PoseLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, message);
-                                }
-                                else
-                                {
-                                    cout << "Task is not supported. (F)" << endl;
-    //                                continue;
-                                }
-                                previous_time = current_time;
-                                pSendMessageManager->AddMessage(message);
+                                RobotCommandProtobuf::RobotCommand command;
+                                command.set_yaw(0);
+                                command.set_pitch(0);
+                                pSendMessageManager->AddMessage(command);
+                                iNoPersonFrameCount = 0;
                             }
                         }
                     }

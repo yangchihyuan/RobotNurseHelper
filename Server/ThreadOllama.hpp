@@ -30,7 +30,7 @@ public:
     bool b_WhileLoop = true;
     bool b_new_LLM_response = false;
     
-    condition_variable cond_var_ollama;
+//    condition_variable cond_var_ollama;
     string strPrompt;                       //The strPrompt is the user's input sentence, genrated by Whisper.
     string strResponse;
     string str_system_message;               

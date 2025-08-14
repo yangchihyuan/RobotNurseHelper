@@ -195,7 +195,7 @@ int PoseLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
         float x = pose_landmarks[0][0];
         float y = pose_landmarks[0][1];
 
-        std::cout << "Pose node 0 Normalized position: (" << x << ", " << y << ")" << std::endl;
+//        std::cout << "Pose node 0 Normalized position: (" << x << ", " << y << ")" << std::endl;
         // Calculate the distance between the eyes
 
         if (action_option.move_mode == action_option.MOVE_BODY)
