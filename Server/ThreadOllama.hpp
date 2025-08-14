@@ -73,7 +73,7 @@ public:
 
 protected:
     void run();
-    string validate_conversation(ollama::options options, ollama::messages &message_history, string &prompt, bool remove_message);
+    string validate_conversation(ollama::options options, ollama::messages &message_history, string &prompt);
     bool stage_check(ollama::options options, ollama::options options_short, ollama::messages &message_history, ollama::messages &recent_history, bool remove_message);
     mutex mtx;
     chrono::time_point<chrono::high_resolution_clock> last_prompt_time;

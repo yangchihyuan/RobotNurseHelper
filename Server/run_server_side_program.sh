@@ -18,10 +18,12 @@ elif [[ "$1" = "3050" ]]; then # Use = for string comparison and quote $1
         --Language Chinese \
         --DefaultSaveImage true
 elif [[ "$1" = "4070" ]]; then
+    #Cannot use 4b. It will use CPU to run the model
     build/RobotNurseHelper \
         --WhisperModel "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin" \
         --ImageSaveDirectory "$HOME/Downloads/raw_images" \
         --LanguageModel gemma3:1b \
+        --stage 0 \
         --ImageSaveEveryNFrame 1 \
         --Language Chinese \
         --DefaultSaveImage false
@@ -42,25 +44,6 @@ elif [[ "$1" = "4090" ]]; then
         --stage 2 \
         --ImageSaveEveryNFrame 1 \
         --Language English \
-        --DefaultSaveImage false
-elif [[ "$1" = "exp2" ]]; then
-    build/RobotNurseHelper \
-        --WhisperModel "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin" \
-        --ImageSaveDirectory "$HOME/Downloads/raw_images" \
-        --LanguageModel gemma3:12b \
-        --stage 0 \
-        --ImageSaveEveryNFrame 1 \
-        --Language Chinese \
-        --DefaultSaveImage false
-
-elif [[ "$1" = "cyy" ]]; then
-    build/RobotNurseHelper \
-        --WhisperModel "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin" \
-        --ImageSaveDirectory "$HOME/Downloads/raw_images" \
-        --LanguageModel gemma3:4b \
-        --stage 0 \
-        --ImageSaveEveryNFrame 1 \
-        --Language Chinese \
         --DefaultSaveImage false
 elif [[ "$1" = "debug" ]]; then
     # Ensure arguments are correctly passed to gdb via --args

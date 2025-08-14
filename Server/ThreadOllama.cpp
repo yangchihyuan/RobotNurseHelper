@@ -35,14 +35,15 @@ vector<string> message_log = {};
 
 //ollama::chat is only used in the validate_conversation and in the while loop of run().
 //The third parameter prompt in fact is the system prompt.
-string ThreadOllama::validate_conversation(ollama::options options, ollama::messages &message_history, string &prompt, bool remove_message)
+string ThreadOllama::validate_conversation(ollama::options options, ollama::messages &message_history, string &prompt)
 {
     ollama::message check_prompt("system", prompt);     //The latest system prompt will replace all exsting system prompts in the message history.
     message_history.push_back(check_prompt);        //push_back the system prompt
     ollama::response check_response = ollama::chat(ModelName, message_history, options);
-    if (remove_message)
-        message_history.pop_back();
+    message_history.pop_back();
     
+    //debug
+    cout << "validate_conversation prompt:" << prompt << " check_response: " << check_response.as_simple_string() << endl;
     return check_response.as_simple_string();
 }
 
@@ -67,13 +68,13 @@ bool ThreadOllama::stage_check(ollama::options options, ollama::options options_
     {
         //cout << "summary[stage_count] " << summary[stage_count] << endl;      //2025/8/12 Meaningless.
         //string check_prompt = "Has ALL the patient age, name, pain intensity/level, and symptom/main complaint information been correctly gathered? This is important to assess whether to continue asking. State yes or no. If no, state what is missing.";
-        check_summary = ThreadOllama::validate_conversation(options, message_history, check_stage_prompt, 1);
-        //check_stage_prompt = "是否已完整收集病患的年齡、姓名、疼痛強度（或等級）以及症狀／主要主訴資訊？這對於判斷是否繼續提問非常重要。請回答是或否。如果是否，請說明缺失的資訊。"
+        check_summary = ThreadOllama::validate_conversation(options, message_history, check_stage_prompt);
         recent_history.pop_back();
         cout << "SUMMARY_ANALYSIS: " << " " << check_summary << "\n"; 
         transform(check_summary.begin(), check_summary.end(), check_summary.begin(), ::tolower);  //transform is a standard library function that converts all characters in a string to lowercase.
         
-        if(check_summary.find("yes") != string::npos || chrono::duration_cast<chrono::milliseconds>(current_time - stage_start_time[stage_count]) > chrono::milliseconds(200000))
+        //Wrong. The check_summary is in Chinese.
+        if(check_summary.find("是") != string::npos || chrono::duration_cast<chrono::milliseconds>(current_time - stage_start_time[stage_count]) > chrono::milliseconds(200000))
         {
             change_stage = 1;
             
@@ -84,11 +85,9 @@ bool ThreadOllama::stage_check(ollama::options options, ollama::options options_
     }
     else if(stage_count == 2)
     {
-        //2025/8/12 Something wrong here. The Whisper may fail to recognize Egyptian dance so the LLM will not be able to choose the dance.
-        //In addition, Mohamed used English to ask the LLM to choose the dance. It is not suitable for a Chinese child. 
-        //string dance_prompt = "Did the patient pick the Egypt Dance or the Cowboy dance? State 1 for Egypt Dance, 2 for Cowboy dance and 0 for none. Strictly only output 0, 1, or 2.";
+        //Use a new system prompt
         string dance_prompt = "使用者的回覆中有没有提到埃及或是吉？有的話請回覆1。有沒有提到牛仔，有的話請回覆2。如果都沒有的話，請回覆0。";
-        string dance_response = ThreadOllama::validate_conversation(options_short, recent_history, dance_prompt, 1);
+        string dance_response = ThreadOllama::validate_conversation(options_short, recent_history, dance_prompt);
         cout << "CHOSEN_DANCE_PROMPT: " << dance_response << "\n";
         if (dance_response.find("1") != string::npos)
         {
@@ -223,10 +222,9 @@ void ThreadOllama::run()
         bool change_stage = 0;
         
         cout << "TIMER: " << chrono::duration_cast<chrono::milliseconds>(current_time - last_prompt_time).count() << " STAGE_TIMER: " << chrono::duration_cast<chrono::milliseconds>(current_time - stage_start_time[stage_count]).count() << "\n";
-        cond_var_ollama.wait(lk);  // Wait for new input
+        cond_var_ollama.wait(lk);  // Wait for new input. It is a problem. If the patient does not speak, what will happen?
         
         cout << "\ndancing_status: " << dancing_status << " stage_count: " << stage_count << "\n\n";
-        string message_sender = "user";
 
         //2025/8/12 While the robot is still playing a mbtx file, Hohamed disable all LLM inputs.
         if (dancing_status != 0)
@@ -237,11 +235,11 @@ void ThreadOllama::run()
         if(change_stage && stage_count == 3)
         {
             strPrompt = dance_complete;    //R"(病人選擇的舞蹈已經完成)";
-            message_sender = "system";
             cout << "DANCE IS COMPLETED\n";
         }
         
         current_time = chrono::high_resolution_clock::now(); //time(0);
+        //2025/8/13 I guess this section of code is to handle the case that there are several meaningless prompts generated by the Whisper model. Today I have solve the problem. Do I still need this section of code?
         if(message_buffer.size() <= 0)   //message_buffer is a vector. It is impossible to be less than 0.
         {
             //The prompt[0] == '!' means that the prompt is wrongly generated by Whisper. Usually it is "!!!!!!!!!!!!!!!!!!!".
@@ -257,8 +255,7 @@ void ThreadOllama::run()
                         this,
                         options_short,
                         ref(history_copy_extra),
-                        ref(action_prompt),
-                        true
+                        ref(action_prompt)
                     );
                     future<string> fut_extra = async(launch::async, bound_fn_extra);
                     chosen_action = fut_extra.get();    //I don't understand. get() after async() is meaningless.
@@ -270,7 +267,6 @@ void ThreadOllama::run()
             else if (strPrompt == "")
             {
                 strPrompt = no_response;        //R"(病患沒有回應。請繼續你正在說的內容。)";
-                message_sender = "system";
             }
         }
 
@@ -318,8 +314,7 @@ void ThreadOllama::run()
             this,                                        //For non-static member function, this is required to access the member variables and functions.
             options_short,
             ref(history_copy1),                          //ref() means pass by reference, used for async()
-            ref(action_prompt),                          //the action prompt is used to ask the LLM to choose an action based on the recent conversation context.
-            true
+            ref(action_prompt)                          //the action prompt is used to ask the LLM to choose an action based on the recent conversation context.
         );
         
         future<string> fut1;
@@ -334,13 +329,12 @@ void ThreadOllama::run()
             this,
             options_short,
             ref(history_copy2),
-            ref(face_prompt),
-            true
+            ref(face_prompt)
         );
         
         future<string> fut2 = async(launch::async, bound_fn2);
             
-        b_new_LLM_response = true;
+        b_new_LLM_response = true;      //Here is the signal to let timer_event() send a speaking sentence.
         if (loop_cnt % 3 || strResponse.size() > 25)
         {
             chosen_action = fut1.get();
@@ -366,8 +360,25 @@ void ThreadOllama::run()
             stage_count++;
             stage_start_time[stage_count] = chrono::high_resolution_clock::now(); //time(0);
             
-            ollama::message new_system_message("system", str_system_message_list[stage_count]);
-            message_history.push_back(new_system_message);
+            //If the new stage_count is 1, add the new system prompt to the message_history
+            if( stage_count != 2 )
+            {
+                ollama::message new_system_message("system", str_system_message_list[stage_count]);
+                message_history.push_back(new_system_message);
+            }
+            //If the new stage count is 2, use a new system prompot
+            else if( stage_count == 2 )
+            {
+                message_history.clear();
+                ollama::message new_system_message("system", str_system_message_list[stage_count]);
+                message_history.push_back(new_system_message);
+                //LLM is unstable, assign the question directly.
+                strResponse = "我會跳舞喲，我會跳埃及舞和牛仔舞，你比較想看我跳哪一種舞？";
+                ollama::message response_message("assistant", strResponse);
+                message_history.push_back(response_message);
+                b_new_LLM_response = true;      //Here is the signal to let timer_event() send a speaking sentence.
+            }
+            
             
             cout << "\nSTAGE_DONE\n";
         }
