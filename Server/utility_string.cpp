@@ -19,3 +19,13 @@ vector<string> LoadFileList(string filelist_path)
     out.close();
     return returned_vector;
 }
+
+int GetChineseCharacterNumberWithoutPunctuationMarks(string input)
+{
+    string PunctuationMarks = "，。？：！「」";
+    icu::UnicodeString ustr_input(input.c_str(), input.length(), "UTF-8");
+    icu::UnicodeString ustr_PunctuationMarks(PunctuationMarks.c_str(), PunctuationMarks.length(), "UTF-8");
+
+    cout << strResponse << " ustr.length() " << ustr.length() << endl;      //correct
+
+}

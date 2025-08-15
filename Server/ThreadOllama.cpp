@@ -6,7 +6,7 @@
 #include "ThreadProcessImage.hpp"
 #include <future>
 #include <chrono>
-//#include <unicode/unistr.h>
+#include <unicode/unistr.h>
 extern cv::Mat outFrame; // [MOHAMED]       //2025/8/12 the variable is not used.
 
 
@@ -306,7 +306,8 @@ void ThreadOllama::run()
                 ollama::message new_system_message("system", str_system_message_list[stage_index]);
                 message_history.push_back(new_system_message);
                 strResponse = "你好，很高興見到你，你今天過得好嗎？";
-//                icu::UnicodeString ustr(strResponse.c_str(), strResponse.length(), "UTF-8");
+                icu::UnicodeString ustr(strResponse.c_str(), strResponse.length(), "UTF-8");
+                cout << strResponse << " ustr.length() " << ustr.length() << endl;      //correct
 
                 ollama::message response_message("assistant", strResponse);
                 message_history.push_back(response_message);

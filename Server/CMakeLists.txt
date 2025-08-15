@@ -65,7 +65,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 find_package(OpenCV COMPONENTS core highgui videoio imgproc imgcodecs REQUIRED)
 find_package(Qt6 COMPONENTS Core Widgets Network Multimedia REQUIRED)   
-#find_package(ICU REQUIRED COMPONENTS uc)
+find_package(ICU REQUIRED COMPONENTS uc)
 
 file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
 set(ROBOTNURSEHELPER_BUILD_DIR "$ENV{HOME}/RobotNurseHelper_build")
@@ -140,6 +140,10 @@ target_link_libraries(MP_FORMATS libprotobuf)
 
 target_link_libraries(RobotNurseHelper MP_FORMATS)
 target_link_libraries(RobotNurseHelper LIBMP)
+
+#ICU
+target_link_libraries(RobotNurseHelper ${ICU_LIBRARIES})
+
 
 # ONNX
 add_library(LIBONNX SHARED IMPORTED)
