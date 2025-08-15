@@ -1,5 +1,8 @@
 #include "utility_string.hpp"
 #include <fstream>
+#include <unicode/unistr.h>
+#include <regex> // C++11 standard library regex
+#include <iostream>
 
 string RemoveFileExtension(string fullname)
 {
@@ -26,6 +29,11 @@ int GetChineseCharacterNumberWithoutPunctuationMarks(string input)
     icu::UnicodeString ustr_input(input.c_str(), input.length(), "UTF-8");
     icu::UnicodeString ustr_PunctuationMarks(PunctuationMarks.c_str(), PunctuationMarks.length(), "UTF-8");
 
-    cout << strResponse << " ustr.length() " << ustr.length() << endl;      //correct
+    std::regex chinese_punctuation_regex("\\p{P}", std::regex::ECMAScript | std::regex::icase | std::regex::collate);
 
+    // Replace all matches of the pattern with an empty string
+    std::string cleaned_text = std::regex_replace(input, chinese_punctuation_regex, "");
+
+    std::cout << "Original string: " << input << std::endl;
+    std::cout << "Cleaned string: " << cleaned_text << std::endl;
 }
