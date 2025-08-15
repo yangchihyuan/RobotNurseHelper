@@ -50,8 +50,8 @@ elif [[ "$1" = "debug" ]]; then
     gdb --args build/RobotNurseHelper \
         "--WhisperModel" "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-base.bin" \
         "--ImageSaveDirectory" "$HOME/Downloads/raw_images" \
-        "--LanguageModel" "gemma3:1b" \
-        "--stage" "7" \
+        "--LanguageModel" "gemma3:12b" \
+        "--stage" "5" \
         "--ImageSaveEveryNFrame" "5" \
         "--Language" "Chinese" \
         "--DefaultSaveImage" "false" 
