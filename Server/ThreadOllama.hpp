@@ -22,10 +22,10 @@ public:
     ThreadOllama();
     ~ThreadOllama();
 
-    chrono::milliseconds maximum_prompt_wait_time[7];
     int stage_index = 0;
     int mNumberOfStages = 9;
-    chrono::time_point<std::chrono::high_resolution_clock> stage_start_time[9]; //I need one more stage to express the ending sentence.
+    chrono::time_point<std::chrono::high_resolution_clock> stage_start_time[9];
+    chrono::milliseconds maximum_prompt_wait_time[9];
 
     bool b_WhileLoop = true;
     bool b_new_LLM_response = false;
@@ -34,8 +34,8 @@ public:
     string strPrompt;                       //The strPrompt is the user's input sentence, genrated by Whisper.
     string strResponse;
     string str_system_message;               
-    string str_system_message_list[8];
-    chrono::seconds mStageDurationLimit[8];
+    string str_system_message_list[9];
+    chrono::seconds mStageDurationLimit[9];
     
     string bio_summary_prompt;              
     string check_stage_prompt;              //added by Mohamed
@@ -79,6 +79,7 @@ protected:
     bool stage_check(ollama::options options, ollama::options options_short, ollama::messages &message_history, ollama::messages &recent_history, bool remove_message);
     mutex mtx;
     chrono::time_point<chrono::high_resolution_clock> last_prompt_time;
+    string mstrUserInput;
 };
 
 #endif

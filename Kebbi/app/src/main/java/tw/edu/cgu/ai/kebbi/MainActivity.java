@@ -378,12 +378,13 @@ public class MainActivity extends Activity {
 
             @Override
             public void onSpeechState (ListenType listenType, SpeechState speechState) {
-
+                Log.d("SpeechState", "listenType: " + listenType + " speechState: " + speechState);
             }
 
             @Override
             public void onSpeakState (SpeakType speakType, SpeakState speakState) {
-
+                //emulator does not call this function
+                Log.d("SpeakState", "speakType: " + speakType + " speakState: " + speakState);
             }
 
             @Override
@@ -444,7 +445,9 @@ public class MainActivity extends Activity {
         button_close.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
-                                                finish();
+                                                android.os.Process.killProcess(android.os.Process.myPid());
+                                                //finsih only kill the activity
+                                                //finish();
                                             }
                                         }
         );

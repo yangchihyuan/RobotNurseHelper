@@ -23,7 +23,7 @@ elif [[ "$1" = "4070" ]]; then
         --WhisperModel "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin" \
         --ImageSaveDirectory "$HOME/Downloads/raw_images" \
         --LanguageModel gemma3:1b \
-        --stage 0 \
+        --stage 6 \
         --ImageSaveEveryNFrame 1 \
         --Language Chinese \
         --DefaultSaveImage false
@@ -50,7 +50,8 @@ elif [[ "$1" = "debug" ]]; then
     gdb --args build/RobotNurseHelper \
         "--WhisperModel" "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-base.bin" \
         "--ImageSaveDirectory" "$HOME/Downloads/raw_images" \
-        "--LanguageModel" "gemma3:4b" \
+        "--LanguageModel" "gemma3:1b" \
+        "--stage" "7" \
         "--ImageSaveEveryNFrame" "5" \
         "--Language" "Chinese" \
         "--DefaultSaveImage" "false" 

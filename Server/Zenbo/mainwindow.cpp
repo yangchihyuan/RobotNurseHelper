@@ -374,6 +374,7 @@ void MainWindow::timer_event()
             sendMessageManager.AddMessage(command);
         }
     }
+
     sendMessageManager.Send();
 }
 
