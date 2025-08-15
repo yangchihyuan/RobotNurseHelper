@@ -385,6 +385,7 @@ public class MainActivity extends Activity {
             public void onSpeakState (SpeakType speakType, SpeakState speakState) {
                 //emulator does not call this function
                 Log.d("SpeakState", "speakType: " + speakType + " speakState: " + speakState);
+                //only START and SPEAKING is called
             }
 
             @Override

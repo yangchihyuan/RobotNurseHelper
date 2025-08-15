@@ -242,6 +242,9 @@ void ThreadOllama::run()
     while(b_WhileLoop)
     {
         auto current_time = chrono::high_resolution_clock::now();
+        auto speak_time = chrono::high_resolution_clock::now();
+        chrono::milliseconds ignore_timespan;
+        const int multiply_factor = 50;
         bool change_stage = 0;
         
 
@@ -311,6 +314,8 @@ void ThreadOllama::run()
                 ollama::message response_message("assistant", strResponse);
                 message_history.push_back(response_message);
                 b_new_LLM_response = true;
+                speak_time = chrono::high_resolution_clock::now();
+                ignore_timespan = chrono::seconds(strResponse.length() * multiply_factor);
             }
             else if( stage_index == 1 )
             {
@@ -321,6 +326,8 @@ void ThreadOllama::run()
                 ollama::message response_message("assistant", strResponse);
                 message_history.push_back(response_message);
                 b_new_LLM_response = true;
+                speak_time = chrono::high_resolution_clock::now();
+                ignore_timespan = chrono::seconds(strResponse.length() * multiply_factor);
             }
             else if( stage_index == 2 )
             {
@@ -328,6 +335,8 @@ void ThreadOllama::run()
                 ollama::message response_message("assistant", strResponse);
                 message_history.push_back(response_message);
                 b_new_LLM_response = true;      //Here is the signal to let timer_event() send a speaking sentence.
+                speak_time = chrono::high_resolution_clock::now();
+                ignore_timespan = chrono::seconds(strResponse.length() * multiply_factor);
             }
             else if( stage_index == 3 )
             {
@@ -335,6 +344,8 @@ void ThreadOllama::run()
                 ollama::message response_message("assistant", strResponse);
                 message_history.push_back(response_message);
                 b_new_LLM_response = true;
+                speak_time = chrono::high_resolution_clock::now();
+                ignore_timespan = chrono::seconds(strResponse.length() * multiply_factor);
             }
             else if( stage_index == 4 )
             {
@@ -342,6 +353,8 @@ void ThreadOllama::run()
                 ollama::message response_message("assistant", strResponse);
                 message_history.push_back(response_message);
                 b_new_LLM_response = true;      //Here is the signal to let timer_event() send a speaking sentence.
+                speak_time = chrono::high_resolution_clock::now();
+                ignore_timespan = chrono::seconds(strResponse.length() * multiply_factor);
             }
             else if( stage_index == 5 )
             {
@@ -355,6 +368,8 @@ void ThreadOllama::run()
                 ollama::message response_message("assistant", strResponse);
                 message_history.push_back(response_message);
                 b_new_LLM_response = true;      //Here is the signal to let timer_event() send a speaking sentence.
+                speak_time = chrono::high_resolution_clock::now();
+                ignore_timespan = chrono::seconds(strResponse.length() * multiply_factor);
             }
             else if( stage_index == 6 )  //animal guesing
             {
@@ -365,6 +380,8 @@ void ThreadOllama::run()
                 ollama::message response_message("assistant", strResponse);
                 message_history.push_back(response_message);
                 b_new_LLM_response = true;
+                speak_time = chrono::high_resolution_clock::now();
+                ignore_timespan = chrono::seconds(strResponse.length() * multiply_factor);
             }
             else if( stage_index == 7 )  //story telling
             {
@@ -375,6 +392,8 @@ void ThreadOllama::run()
                 ollama::message response_message("assistant", strResponse);
                 message_history.push_back(response_message);
                 b_new_LLM_response = true;
+                speak_time = chrono::high_resolution_clock::now();
+                ignore_timespan = chrono::seconds(strResponse.length() * multiply_factor);
             }
             else if( stage_index == 8 )  //ending
             {
@@ -385,6 +404,8 @@ void ThreadOllama::run()
                 ollama::message response_message("assistant", strResponse);
                 message_history.push_back(response_message);
                 b_new_LLM_response = true;
+                speak_time = chrono::high_resolution_clock::now();
+                ignore_timespan = chrono::seconds(strResponse.length() * multiply_factor);
             }
             else
             {
@@ -392,9 +413,12 @@ void ThreadOllama::run()
             }
         }
 
-        //I need to clean Whisper's until the robot finish its speaking.
-        //Currently I can only estimate the time.
-        if (strPrompt != "")
+        //Use strResponse length to estimate the ignore time span
+        if(current_time < speak_time + ignore_timespan)
+        {
+            cout << "ignore period " << current_time << " " << speak_time + ignore_timespan << endl;
+        }
+        else if (strPrompt != "")
         {
             cout << "strPrompt " << strPrompt << endl;
             mstrUserInput = strPrompt;
@@ -419,6 +443,8 @@ void ThreadOllama::run()
             ollama::response response = ollama::chat(ModelName, message_history, options);
             strResponse = response.as_simple_string();        //The strResponse will be send to the robot to speak out.
             b_new_LLM_response = true;      //Here is the signal to let timer_event() send a speaking sentence.
+            speak_time = chrono::high_resolution_clock::now();
+            ignore_timespan = chrono::seconds(strResponse.length() * multiply_factor);
             cout << "response " << response << endl;
             ollama::message response_message("assistant", response);
             message_history.push_back(response_message);
