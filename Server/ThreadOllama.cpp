@@ -240,14 +240,12 @@ void ThreadOllama::run()
         cout << "FILE_CONTEXT ADDED\n\n";
     }
 
+    auto speak_time = chrono::system_clock::now();
+    const int multiply_factor = 250;
+    chrono::milliseconds ignore_timespan;
+    std::chrono::time_point<std::chrono::system_clock> current_time = chrono::system_clock::now();
     while(b_WhileLoop)
     {
-//        auto current_time = chrono::high_resolution_clock::now();
-        auto current_time = chrono::system_clock::now();
-//        auto speak_time = chrono::high_resolution_clock::now();
-        auto speak_time = chrono::system_clock::now();
-        chrono::milliseconds ignore_timespan;
-        const int multiply_factor = 1;
         bool change_stage = 0;
         
 
@@ -320,7 +318,13 @@ void ThreadOllama::run()
                 b_new_LLM_response = true;
                 speak_time = chrono::system_clock::now();
                 ignore_timespan = chrono::milliseconds(strResponse.length() * multiply_factor);
-                cout << "ignore_timespan " << ignore_timespan << endl;
+                cout << "ignore_timespan " << std::to_string(ignore_timespan.count()) << endl;
+                std::time_t current_time_c = std::chrono::system_clock::to_time_t(current_time);
+                std::string time_str = std::ctime(&current_time_c);
+                cout << "current_time " << time_str << endl;
+                std::time_t speak_time_c = std::chrono::system_clock::to_time_t(speak_time);
+                time_str = std::ctime(&speak_time_c);
+                cout << "speak_time " << time_str << endl;
             }
             else if( stage_index == 1 )
             {
@@ -419,14 +423,11 @@ void ThreadOllama::run()
         }
 
         //Use strResponse length to estimate the ignore time span
-        //cout << "current_time " << current_time << " " << speak_time + ignore_timespan << endl;
-/*        if(current_time < speak_time + ignore_timespan)
+        if(current_time < speak_time + ignore_timespan)
         {
             cout << "ignore period " << endl;
         }
-        else 
-*/
-        if (strPrompt != "")
+        else if (strPrompt != "")
         {
             cout << "strPrompt " << strPrompt << endl;
             mstrUserInput = strPrompt;
