@@ -414,9 +414,10 @@ void ThreadOllama::run()
         }
 
         //Use strResponse length to estimate the ignore time span
+        cout << "current_time " << current_time << " " << speak_time + ignore_timespan << endl;
         if(current_time < speak_time + ignore_timespan)
         {
-            cout << "ignore period " << current_time << " " << speak_time + ignore_timespan << endl;
+            cout << "ignore period " << endl;
         }
         else if (strPrompt != "")
         {
