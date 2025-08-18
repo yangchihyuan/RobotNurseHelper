@@ -58,19 +58,6 @@ void SendMessageManager::Send()
 void SendMessageManager::AddMessage(RobotCommandProtobuf::RobotCommand message)
 {
     mutex_message_buffer.lock();
-    /*
-    if(message.has_speak_sentence)
-    {
-        messageQueue.push(message);
-        cout << "Add a Message to messageQueue" << endl;
-        message_counter++;
-    }
-    else
-    {
-        actionQueue.push(message);
-        cout << "Add a Message to messageQueue" << endl;
-    }
-    */
     if(message.has_speak_sentence())
     {
         if (message.speak_sentence() != "")

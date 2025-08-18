@@ -2,6 +2,9 @@ syntax = "proto2";
 
 package RobotCommandProtobuf;
 
+import "google/protobuf/timestamp.proto";
+
+//The command that the server sends to the robot
 message RobotCommand {
   optional string speak_sentence = 1;
   optional int32 turnspeed = 9;
@@ -33,5 +36,14 @@ message RobotCommand {
   optional int32 motion = 8;
   optional string content = 11;
   optional bool killapp = 12;
+}
+
+//The message that the robot sends to the server
+message RobotTSoServerMessage {
+  optional google.protobuf.Timestamp event_time = 1;
+  optional int32 jpegdatalength = 2;
+  optional bytes data = 3;       // jpeg-compressed image data
+  optional string description = 4;
+  optional int32 numberpressed = 5;
 }
 

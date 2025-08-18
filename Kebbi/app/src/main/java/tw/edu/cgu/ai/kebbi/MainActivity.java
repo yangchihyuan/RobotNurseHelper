@@ -358,6 +358,10 @@ public class MainActivity extends Activity {
 
             @Override
             public void onTTSComplete (boolean b) {
+                //the boolean b means isError
+                Log.d("onTTSComplete", "onTTSComplete");
+
+                //I need to get the time and send back the signal to the server.
 
             }
 

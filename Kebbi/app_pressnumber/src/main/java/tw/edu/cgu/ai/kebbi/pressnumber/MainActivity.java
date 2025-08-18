@@ -14,6 +14,8 @@ import android.widget.ImageButton;
 
 import tw.edu.cgu.ai.kebbi.pressnumber.R;
 
+import RobotCommandProtobuf.RobotTSoServerMessage;
+
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
@@ -111,7 +113,13 @@ public class MainActivity extends AppCompatActivity {
                     SocketToServer = new Socket(mServerURL, mPortNumber);
                     if (SocketToServer.isConnected()) {
                         OutputStream os = SocketToServer.getOutputStream();
-                        os.write("Begin:".getBytes());
+                        os.write("BeginOfAMessage".getBytes());
+                        //Test, send a protocol buffer message here.
+                        RobotCommandOuterClass.RobotTSoServerMessage message = new RobotCommandOuterClass.RobotTSoServerMessage();
+                        message.setNumberpressed(number);
+                        os.write(message.toByteArray());
+
+                        /*
                         Long message_length = (long) (4);   //value
                         ByteBuffer buffer = ByteBuffer.allocate(8);
                         buffer.order(ByteOrder.LITTLE_ENDIAN); // Ubuntu byte order
@@ -124,9 +132,9 @@ public class MainActivity extends AppCompatActivity {
                         buffer2.putInt(number);
                         byte[] byteArray2 = buffer2.array();
                         os.write(byteArray2);
-
+*/
                         //                                os.write(gfaceIndex);   //Here is the bug, only 1 byte is sent. Need to send 4 bytes. Maybe there is an implicit convertion.
-                        os.write("EndOfAFrame".getBytes());
+                        os.write("EndOfAMessage".getBytes());
                     } else {
                     }
                     SocketToServer.close();

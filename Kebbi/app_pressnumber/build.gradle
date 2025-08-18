@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.protobuf'
 
 android {
     compileSdk 36
@@ -16,6 +17,21 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    // This is the `sourceSets` block you asked about, but a more common modern version.
+    sourceSets {
+        main {
+            // Android Studio/Gradle defaults often make this unnecessary, but it's good for clarity.
+            java {
+                srcDir 'src/main/java'
+            }
+            proto {
+                // Pointing to where your .proto files are located.
+                srcDir 'src/main/proto'
+            }
+        }
+    }
+
     namespace "tw.edu.cgu.ai.kebbi.pressnumber"
 }
 
@@ -27,4 +43,43 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    // Protobuf dependencies
+    // You need the Protobuf Java lite runtime to use the generated classes.
+    implementation "com.google.protobuf:protobuf-javalite:3.8.0"
 }
+
+// Configure the Protobuf plugin.
+protobuf {
+    // Defines the Protoc tool, which is a compiler for .proto files.
+    protoc {
+        // You can specify a local version or use the bundled one.
+        artifact = 'com.google.protobuf:protoc:3.19.1'
+    }
+
+    // Configure the plugins used by the Protoc compiler.
+    plugins {
+        // The "javalite" plugin generates Java code that is optimized for Android.
+        javalite {
+            artifact = "com.google.protobuf:protoc-gen-javalite:3.19.1"
+        }
+    }
+
+    // Generate the code using the `javalite` plugin.
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                // This tells the task to use the `javalite` plugin
+                // to generate the Java source code from the .proto files.
+                java{
+                    option "lite"
+                }
+
+//                javalite {
+                    // You can specify a `option` for the plugin, e.g., "parcelable" for Android.
+//                }
+            }
+        }
+    }
+}
+

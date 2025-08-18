@@ -91,6 +91,7 @@ set(SOURCES JPEG.cpp
             silero-vad-onnx.cpp            
     )
 
+# robot-specific files    
 set(SOURCES2 ${ROBOT_MODEL}/LandmarkToRobotAction.cpp
              ${ROBOT_MODEL}/ThreadTablet.cpp
              ${ROBOT_MODEL}/mainwindow.cpp
