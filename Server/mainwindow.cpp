@@ -147,14 +147,7 @@ void MainWindow::setLanguage( QString Language)
     QString SentenceFileName;
     if( Language == "Chinese")
     {
-        thread_ollama.maximum_prompt_wait_time[0] = std::chrono::milliseconds(50000);
-        thread_ollama.maximum_prompt_wait_time[1] = std::chrono::milliseconds(60000);
-        thread_ollama.maximum_prompt_wait_time[2] = std::chrono::milliseconds(50000);
-        thread_ollama.maximum_prompt_wait_time[3] = std::chrono::milliseconds(30000);
-        thread_ollama.maximum_prompt_wait_time[4] = std::chrono::milliseconds(80000);
-        thread_ollama.maximum_prompt_wait_time[5] = std::chrono::milliseconds(30000);
-        thread_ollama.maximum_prompt_wait_time[6] = std::chrono::milliseconds(120000);
-        
+       
         thread_ollama.str_system_message_list[0] = R"(你是一台名叫凱比的醫療機器人，正在和一位年幼的小朋友病患聊天。請遵守以下規則：
         1. 回答要用非常簡單、親切的中文，不能使用其他語言。
         2. 一開始請輕鬆地問一些有趣的問題來暖場，例如：你最喜歡的顏色是什麼？你最喜歡哪種動物？你喜歡上什麼課？你現在是幾年級呢？
@@ -239,22 +232,6 @@ void MainWindow::setLanguage( QString Language)
     }
     else if( Language == "English")
     {
-        // thread_ollama.maximum_prompt_wait_time[0] = 30;
-        // thread_ollama.maximum_prompt_wait_time[1] = 30;
-        // thread_ollama.maximum_prompt_wait_time[2] = 20;
-        // thread_ollama.maximum_prompt_wait_time[3] = 25;
-        // thread_ollama.maximum_prompt_wait_time[4] = 80;
-        // thread_ollama.maximum_prompt_wait_time[5] = 25;
-        // thread_ollama.maximum_prompt_wait_time[6] = 100;
-        thread_ollama.maximum_prompt_wait_time[0] = std::chrono::milliseconds(30000);
-        thread_ollama.maximum_prompt_wait_time[1] = std::chrono::milliseconds(30000);
-        thread_ollama.maximum_prompt_wait_time[2] = std::chrono::milliseconds(20000);
-        thread_ollama.maximum_prompt_wait_time[3] = std::chrono::milliseconds(25000);
-        thread_ollama.maximum_prompt_wait_time[4] = std::chrono::milliseconds(80000);
-        thread_ollama.maximum_prompt_wait_time[5] = std::chrono::milliseconds(25000);
-        thread_ollama.maximum_prompt_wait_time[6] = std::chrono::milliseconds(100000);
-        //thread_ollama.str_system_message = "You are a medical robot named Zenbo. Please answer in concise English.";
-
         thread_ollama.str_system_message_list[0] = 
             "You are a medical robot named Zenbo. You are talking to a child patient. Please answer in CONCISE English. DO NOT OUTPUT INFORMATION YOU HAVE RECEIVED. In addition to recieving text prompts from the patient, you may receive a short sentence that indicates the body language by the patient. Start off, by ONE BY ONE asking the child a few fun questions about their personality, like favourite colour, school subject, ect to break the ice. The robot can move with set actions, but this is handled completely seperately"; // Once information is gathered, do not restate the questions";
         thread_ollama.str_system_message_list[1] = 
@@ -292,18 +269,6 @@ void MainWindow::setLanguage( QString Language)
     }
     else if( Language == "Arabic")
     {
-        // thread_ollama.maximum_prompt_wait_time[0] = 30;
-        // thread_ollama.maximum_prompt_wait_time[1] = 20;
-        // thread_ollama.maximum_prompt_wait_time[2] = 15;
-        // thread_ollama.maximum_prompt_wait_time[3] = 1000;
-        // thread_ollama.maximum_prompt_wait_time[4] = 100;
-        thread_ollama.maximum_prompt_wait_time[0] = std::chrono::milliseconds(30000);
-        thread_ollama.maximum_prompt_wait_time[1] = std::chrono::milliseconds(30000);
-        thread_ollama.maximum_prompt_wait_time[2] = std::chrono::milliseconds(20000);
-        thread_ollama.maximum_prompt_wait_time[3] = std::chrono::milliseconds(25000);
-        thread_ollama.maximum_prompt_wait_time[4] = std::chrono::milliseconds(80000);
-        thread_ollama.maximum_prompt_wait_time[5] = std::chrono::milliseconds(25000);
-        thread_ollama.maximum_prompt_wait_time[6] = std::chrono::milliseconds(100000);
         thread_ollama.str_system_message = "أنت روبوت طبي يُدعى زينبو. يرجى الإجابة باللغة العربية المختصرة.";
         thread_whisper.strLanguage = "ar"; // set language to Arabic
         SentenceFileName = "Sentence_English.txt";

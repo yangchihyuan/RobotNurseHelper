@@ -9,26 +9,26 @@
 #include <utility_string.hpp>
 extern cv::Mat outFrame; // [MOHAMED]       //2025/8/12 the variable is not used.
 
-
-//stage 0: Ice breaker, ask about child's favourite animal, color... [50s]
-//stage 1,2,3,4: Data gathering, ask about child's name, age, symptoms, and pain level. [Till data is gathered ~100s, MAX: 250s]
-//stage 5: Dance choice, ask patient for prefered dance type [Till data is gathered ~20s, MAX: 50s] [Dance: ~80s/90s]
-//stage 6: Animal guessing game, tell child patient some animal facts and let them guess the animal [60s]
-//stage 7: Storytelling, tell the child a story or two [Open, not more than 100s]
-//stage 8: Say the ending sentence.
+//stage 0: waiting for start
+//stage 1: Ice breaker, ask about child's favourite animal, color... [50s]
+//stage 2,3,4,5: Data gathering, ask about child's name, age, symptoms, and pain level. [Till data is gathered ~100s, MAX: 250s]
+//stage 6: Dance choice, ask patient for prefered dance type [Till data is gathered ~20s, MAX: 50s] [Dance: ~80s/90s]
+//stage 7: Animal guessing game, tell child patient some animal facts and let them guess the animal [60s]
+//stage 8: Storytelling, tell the child a story or two [Open, not more than 100s]
+//stage 9: Say the ending sentence.
 
 ThreadOllama::ThreadOllama()
 {
     mStageDurationLimit[0] = 50s;
-    mStageDurationLimit[1] = 30s;
+    mStageDurationLimit[1] = 50s;
     mStageDurationLimit[2] = 30s;
     mStageDurationLimit[3] = 30s;
     mStageDurationLimit[4] = 30s;
     mStageDurationLimit[5] = 30s;
-//    mStageDurationLimit[6] = 80s;       //riddle stage
-//    mStageDurationLimit[6] = 60s;       // eye health care 
-    mStageDurationLimit[6] = 60s;         // guess animal
-    mStageDurationLimit[7] = 100s;
+    mStageDurationLimit[6] = 30s;
+    mStageDurationLimit[7] = 60s;         // guess animal
+    mStageDurationLimit[8] = 100s;        //story telling
+    mStageDurationLimit[9] = 100s;        //story telling
 }
 
 ThreadOllama::~ThreadOllama()
@@ -99,8 +99,6 @@ bool ThreadOllama::stage_check(ollama::options options, ollama::options options_
 //            change_stage = 1;
             
 //            cout << "\nDONEDONEDONE\n";
-            //2025/8/12 Mohamed use the 9/10 to adjust the wait time. It is a parameter tuning.
-//            last_prompt_time -= (maximum_prompt_wait_time[stage_index] * 9)/10;
 //        }
         if(chrono::duration_cast<chrono::milliseconds>(current_time - stage_start_time[stage_index]) > mStageDurationLimit[stage_index])
         {
@@ -313,7 +311,7 @@ void ThreadOllama::run()
                 message_history.push_back(response_message);
                 b_new_LLM_response = true;
                 speak_time = chrono::system_clock::now();
-                ignore_timespan = chrono::milliseconds(strResponse.length() * multiply_factor);
+                ignore_timespan = chrono::milliseconds(GetChineseCharacterNumberWithoutPunctuationMarks(strResponse) * multiply_factor);
             }
             else if( stage_index == 1 )
             {
@@ -325,7 +323,7 @@ void ThreadOllama::run()
                 message_history.push_back(response_message);
                 b_new_LLM_response = true;
                 speak_time = chrono::system_clock::now();
-                ignore_timespan = chrono::milliseconds(strResponse.length() * multiply_factor);
+                ignore_timespan = chrono::milliseconds(GetChineseCharacterNumberWithoutPunctuationMarks(strResponse) * multiply_factor);
             }
             else if( stage_index == 2 )
             {
@@ -334,7 +332,7 @@ void ThreadOllama::run()
                 message_history.push_back(response_message);
                 b_new_LLM_response = true;      //Here is the signal to let timer_event() send a speaking sentence.
                 speak_time = chrono::system_clock::now();
-                ignore_timespan = chrono::milliseconds(strResponse.length() * multiply_factor);
+                ignore_timespan = chrono::milliseconds(GetChineseCharacterNumberWithoutPunctuationMarks(strResponse) * multiply_factor);
             }
             else if( stage_index == 3 )
             {
@@ -343,7 +341,7 @@ void ThreadOllama::run()
                 message_history.push_back(response_message);
                 b_new_LLM_response = true;
                 speak_time = chrono::system_clock::now();
-                ignore_timespan = chrono::milliseconds(strResponse.length() * multiply_factor);
+                ignore_timespan = chrono::milliseconds(GetChineseCharacterNumberWithoutPunctuationMarks(strResponse) * multiply_factor);
             }
             else if( stage_index == 4 )
             {
@@ -352,7 +350,7 @@ void ThreadOllama::run()
                 message_history.push_back(response_message);
                 b_new_LLM_response = true;      //Here is the signal to let timer_event() send a speaking sentence.
                 speak_time = chrono::system_clock::now();
-                ignore_timespan = chrono::milliseconds(strResponse.length() * multiply_factor);
+                ignore_timespan = chrono::milliseconds(GetChineseCharacterNumberWithoutPunctuationMarks(strResponse) * multiply_factor);
             }
             else if( stage_index == 5 )
             {
@@ -364,7 +362,7 @@ void ThreadOllama::run()
                 message_history.push_back(response_message);
                 b_new_LLM_response = true;      //Here is the signal to let timer_event() send a speaking sentence.
                 speak_time = chrono::system_clock::now();
-                ignore_timespan = chrono::milliseconds(strResponse.length() * multiply_factor);
+                ignore_timespan = chrono::milliseconds(GetChineseCharacterNumberWithoutPunctuationMarks(strResponse) * multiply_factor);
             }
             else if( stage_index == 6 )  //animal guesing
             {
@@ -376,7 +374,7 @@ void ThreadOllama::run()
                 message_history.push_back(response_message);
                 b_new_LLM_response = true;
                 speak_time = chrono::system_clock::now();
-                ignore_timespan = chrono::milliseconds(strResponse.length() * multiply_factor);
+                ignore_timespan = chrono::milliseconds(GetChineseCharacterNumberWithoutPunctuationMarks(strResponse) * multiply_factor);
             }
             else if( stage_index == 7 )  //story telling
             {
@@ -388,7 +386,7 @@ void ThreadOllama::run()
                 message_history.push_back(response_message);
                 b_new_LLM_response = true;
                 speak_time = chrono::system_clock::now();
-                ignore_timespan = chrono::milliseconds(strResponse.length() * multiply_factor);
+                ignore_timespan = chrono::milliseconds(GetChineseCharacterNumberWithoutPunctuationMarks(strResponse) * multiply_factor);
             }
             else if( stage_index == 8 )  //ending
             {
@@ -400,7 +398,7 @@ void ThreadOllama::run()
                 message_history.push_back(response_message);
                 b_new_LLM_response = true;
                 speak_time = chrono::system_clock::now();
-                ignore_timespan = chrono::milliseconds(strResponse.length() * multiply_factor);
+                ignore_timespan = chrono::milliseconds(GetChineseCharacterNumberWithoutPunctuationMarks(strResponse) * multiply_factor);
             }
             else
             {
@@ -411,15 +409,6 @@ void ThreadOllama::run()
         //Use strResponse length to estimate the ignore time span
         if(current_time < speak_time + ignore_timespan)
         {
-/*
-            time_t current_time_c = std::chrono::system_clock::to_time_t(current_time);
-            string str_current_time = std::ctime(&current_time_c);
-            time_t speak_time_c = std::chrono::system_clock::to_time_t(speak_time);
-            string str_speak_time = std::ctime(&speak_time_c);
-            cout << "speak_time " << str_speak_time;
-            cout << " ignore_timespan " << std::to_string(ignore_timespan.count());
-            cout << " current_time " << str_current_time << endl;
-*/
             cout << "*" << flush;
         }
         else if (strPrompt != "")

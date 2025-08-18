@@ -25,7 +25,7 @@ public:
     int stage_index = 0;
     int mNumberOfStages = 9;
     chrono::time_point<std::chrono::high_resolution_clock> stage_start_time[9];
-    chrono::milliseconds maximum_prompt_wait_time[9];
+
 
     bool b_WhileLoop = true;
     bool b_new_LLM_response = false;

@@ -82,6 +82,7 @@ set(SOURCES JPEG.cpp
             mainwindow.cpp
             ThreadPortAudio.cpp
             ThreadProcessImage.cpp
+            ThreadStateControl.cpp
             ThreadWhisper.cpp
             ThreadOllama.cpp
             SocketHandler.cpp

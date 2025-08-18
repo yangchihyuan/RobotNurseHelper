@@ -25,15 +25,19 @@ vector<string> LoadFileList(string filelist_path)
 
 int GetChineseCharacterNumberWithoutPunctuationMarks(string input)
 {
-    string PunctuationMarks = "，。？：！「」";
-    icu::UnicodeString ustr_input(input.c_str(), input.length(), "UTF-8");
-    icu::UnicodeString ustr_PunctuationMarks(PunctuationMarks.c_str(), PunctuationMarks.length(), "UTF-8");
-
-    std::regex chinese_punctuation_regex("\\p{P}", std::regex::ECMAScript | std::regex::icase | std::regex::collate);
-
-    // Replace all matches of the pattern with an empty string
+    std::regex chinese_punctuation_regex("，|。|？|：|！|「|」");
     std::string cleaned_text = std::regex_replace(input, chinese_punctuation_regex, "");
 
-    std::cout << "Original string: " << input << std::endl;
-    std::cout << "Cleaned string: " << cleaned_text << std::endl;
+    //debug
+    //std::cout << "Original string: " << input << std::endl;
+    //std::cout << "Cleaned string: " << cleaned_text << std::endl;
+
+    int char_count = 0;
+    for (size_t i = 0; i < cleaned_text.length(); ++i) {
+        if ((cleaned_text[i] & 0xC0) != 0x80) {
+            char_count++;
+        }
+    }
+
+    return char_count;
 }
