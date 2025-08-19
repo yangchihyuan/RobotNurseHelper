@@ -46,7 +46,8 @@ dependencies {
 
     // Protobuf dependencies
     // You need the Protobuf Java lite runtime to use the generated classes.
-    implementation "com.google.protobuf:protobuf-javalite:3.8.0"
+//    implementation "com.google.protobuf:protobuf-javalite:3.8.0"
+    implementation 'com.google.protobuf:protobuf-java:3.21.12' // I need this dependency so com.google.protobuf.Timestamp can be resolved
 }
 
 // Configure the Protobuf plugin.

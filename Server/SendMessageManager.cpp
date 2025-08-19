@@ -50,7 +50,7 @@ void SendMessageManager::Send()
         }
         else
         {
-            cout << "Socket is NULL" << endl;
+            //2025/8/19 temporarily disable it cout << "Socket is NULL" << endl;
         }
     }
 }

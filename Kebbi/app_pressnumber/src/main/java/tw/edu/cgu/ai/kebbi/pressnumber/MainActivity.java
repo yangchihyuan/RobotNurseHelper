@@ -14,12 +14,14 @@ import android.widget.ImageButton;
 
 import tw.edu.cgu.ai.kebbi.pressnumber.R;
 
-import RobotCommandProtobuf.RobotTSoServerMessage;
+import RobotCommandProtobuf.RobotCommandOuterClass.RobotToServerMessage;
+import com.google.protobuf.Timestamp;
 
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.time.Instant;
 
 public class MainActivity extends AppCompatActivity {
     private ImageButton btn1, btn2, btn3, btn4, btn5;
@@ -114,26 +116,30 @@ public class MainActivity extends AppCompatActivity {
                     if (SocketToServer.isConnected()) {
                         OutputStream os = SocketToServer.getOutputStream();
                         os.write("BeginOfAMessage".getBytes());
-                        //Test, send a protocol buffer message here.
-                        RobotCommandOuterClass.RobotTSoServerMessage message = new RobotCommandOuterClass.RobotTSoServerMessage();
-                        message.setNumberpressed(number);
+
+                        Instant instant = Instant.now();
+
+                        Timestamp time = Timestamp.newBuilder()
+                                .setSeconds(instant.getEpochSecond())
+                                .setNanos(instant.getNano())
+                                .build();
+
+                        //Test, send a protocol buffer message here
+                        RobotToServerMessage message =
+                        RobotToServerMessage.newBuilder()
+                                .setNumberpressed(number)
+                                .setEventTime(time)
+                                .build();
+                        byte[] byteArray = message.toByteArray();
+
+                        int message_length = byteArray.length;
+                        ByteBuffer message_length_buffer = ByteBuffer.allocate(4);
+                        message_length_buffer.order(ByteOrder.LITTLE_ENDIAN); // Ubuntu byte order
+                        message_length_buffer.putInt(message_length);
+                        os.write(message_length_buffer.array());
+
                         os.write(message.toByteArray());
 
-                        /*
-                        Long message_length = (long) (4);   //value
-                        ByteBuffer buffer = ByteBuffer.allocate(8);
-                        buffer.order(ByteOrder.LITTLE_ENDIAN); // Ubuntu byte order
-                        buffer.putLong(message_length);
-                        byte[] byteArray = buffer.array();
-                        os.write(byteArray);
-
-                        ByteBuffer buffer2 = ByteBuffer.allocate(4);
-                        buffer2.order(ByteOrder.LITTLE_ENDIAN); // Ubuntu byte order
-                        buffer2.putInt(number);
-                        byte[] byteArray2 = buffer2.array();
-                        os.write(byteArray2);
-*/
-                        //                                os.write(gfaceIndex);   //Here is the bug, only 1 byte is sent. Need to send 4 bytes. Maybe there is an implicit convertion.
                         os.write("EndOfAMessage".getBytes());
                     } else {
                     }

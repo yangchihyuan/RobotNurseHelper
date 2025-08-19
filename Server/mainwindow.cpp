@@ -218,6 +218,7 @@ void MainWindow::setLanguage( QString Language)
         SentenceFileName = "Sentence_Chinese.txt";
 
         //2025/8/13 I no longer use this prompt.
+/*
         thread_ollama.bio_summary_prompt = R"(請總結目前收集到的關於病患的重要資訊。格式如下（僅為範例）：
         **病患摘要：**
         - 年齡：8
@@ -225,7 +226,7 @@ void MainWindow::setLanguage( QString Language)
         - 主要症狀：胃痛
         - 部位：胃部
         - 疼痛強度與其他問題：感覺胃在喉嚨裡。)";
-
+*/
         thread_ollama.check_stage_prompt = "是否已完整收集病患的年齡、姓名、疼痛強度（或等級）以及症狀／主要主訴資訊？這對於判斷是否繼續提問非常重要。請回答是或否。如果是否，請說明缺失的資訊。";
         thread_ollama.no_response = "病患沒有回應。請繼續你正在說的內容。";
         thread_ollama.dance_complete = "病人選擇的舞蹈已經完成";

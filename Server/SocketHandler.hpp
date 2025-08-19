@@ -36,8 +36,8 @@ public:
 private:
     unique_ptr<char[]> buffer;
     size_t buffer_length = 0;       //buffer_length is the length of the data in buffer
-    string delimiter_head = "Begin:";
-    string delimiter_tail = "EndOfAFrame";
+    string delimiter_head = "BeginOfAMessage";
+    string delimiter_tail = "EndOfAMessage";
     size_t buffer_size = 0;
     mutex queue_mutex;
 };

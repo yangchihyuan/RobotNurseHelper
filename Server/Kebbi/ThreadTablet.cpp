@@ -5,6 +5,12 @@
 #include "utility_directory.hpp"
 #include "utility_string.hpp"
 #include "utility_directory.hpp"
+#ifdef USE_KEBBI
+    #include "Kebbi/RobotCommand.pb.h"
+#elif USE_ZENBO
+    #include "Zenbo/RobotCommand.pb.h"
+#endif
+
 
 void ThreadTablet::run()
 {
@@ -17,11 +23,19 @@ void ThreadTablet::run()
             Message message = pSocketHandler->get_head();
             pSocketHandler->pop_head();
             char *data_ = message.data.get();
-            int faceIndex;
-            memcpy(&faceIndex, data_, sizeof(int));
+
+            //Here, I need to parse the protobuf object
+            RobotCommandProtobuf::RobotToServerMessage RTSmessage;
+            RTSmessage.ParseFromString(data_);
+
+            int numberpressed = RTSmessage.numberpressed(); 
+
+//            int faceIndex;
+//            memcpy(&faceIndex, data_, sizeof(int));
             std::string str_RobotSpeakSentence;
             int RobotExpressionIndex = 0;
-            switch( faceIndex )
+            cout << "Receive number " << numberpressed << endl;
+            switch( numberpressed )
             {
                 case 1:
                     str_RobotSpeakSentence = "一";

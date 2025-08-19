@@ -89,10 +89,10 @@ void SocketHandler::add_data(char* data_, size_t length)
             }
             else{
                 //check the message length
-                long message_length;
-                memcpy(&message_length, buffer.get() + delimiter_head.length(), sizeof(long));
+                int message_length;
+                memcpy(&message_length, buffer.get() + delimiter_head.length(), sizeof(int));       //here is wrong, why?
                 int length2 = length1 - delimiter_head.length() - delimiter_tail.length();
-                if( message_length != length2 - sizeof(long))
+                if( message_length != length2 - sizeof(int))
                 {
                     cout << "message_length is incorrect. Drop out this message" << endl;
                     cout << "length1: " <<  length1 << endl;
@@ -107,7 +107,7 @@ void SocketHandler::add_data(char* data_, size_t length)
                     Message this_message;
                     this_message.data = shared_ptr<char[]>(new char[message_length]);
                     this_message.length = message_length;
-                    memcpy(this_message.data.get(), buffer.get()+delimiter_head.length()+sizeof(long), message_length);
+                    memcpy(this_message.data.get(), buffer.get()+delimiter_head.length()+sizeof(int), message_length);
                     queue_mutex.lock();
                     messages_queue.push(this_message);
                     queue_mutex.unlock();
