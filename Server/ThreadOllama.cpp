@@ -407,11 +407,12 @@ void ThreadOllama::run()
         }
 
         //Use strResponse length to estimate the ignore time span
-        if(current_time < speak_time + ignore_timespan)
-        {
-            cout << "*" << flush;
-        }
-        else if (strPrompt != "")
+//        if(current_time < speak_time + ignore_timespan)
+//        {
+//            cout << "*" << flush;
+//        }
+//        else 
+        if (strPrompt != "")
         {
             cout << "strPrompt " << strPrompt << endl;
             mstrUserInput = strPrompt;

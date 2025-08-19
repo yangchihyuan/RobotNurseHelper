@@ -1,5 +1,5 @@
-#ifndef ThreadTablet_hpp
-#define ThreadTablet_hpp
+#ifndef __THREAD_RECEIVE_MESSAGES_hpp__
+#define __THREAD_RECEIVE_MESSAGES_hpp__
 
 #include <QThread>
 #include <QTcpServer>
@@ -19,13 +19,13 @@
 
 using namespace std;
 
-class ThreadTablet: public QThread
+class ThreadReceiveMessages: public QThread
 {
     Q_OBJECT
 
 public:
     bool b_WhileLoop = true;
-    condition_variable cond_var_tablet;
+    condition_variable cond_var_receive_messages;
 
     SendMessageManager *pSendMessageManager;
     SocketHandler *pSocketHandler;

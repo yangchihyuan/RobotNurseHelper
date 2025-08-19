@@ -41,7 +41,7 @@ void MainWindow::startThreads()
     //run threads
     thread_process_image.start();
     thread_process_audio.start();
-    thread_tablet.start();
+    thread_receive_messages.start();
     thread_whisper.start();
     thread_ollama.start();
 }
@@ -79,16 +79,16 @@ MainWindow::~MainWindow()
     m_server_receive_audio->close();
     m_server_receive_audio->deleteLater();
 
-    thread_tablet.b_WhileLoop = false;
-    thread_tablet.cond_var_tablet.notify_one();
-    thread_tablet.wait();
+    thread_receive_messages.b_WhileLoop = false;
+    thread_receive_messages.cond_var_receive_messages.notify_one();
+    thread_receive_messages.wait();
     foreach (QTcpSocket* socket, connection_set4)
     {
         socket->close();
         socket->deleteLater();
     }
-    m_server_Tablet->close();
-    m_server_Tablet->deleteLater();
+    m_server_receive_messages->close();
+    m_server_receive_messages->deleteLater();
   
     thread_whisper.b_WhileLoop = false;
     thread_whisper.wait();
@@ -360,8 +360,8 @@ void MainWindow::newConnection_receive_audio()
 void MainWindow::newConnection_Tablet()
 {
     std::cout << "newConnction() 8898" << std::endl;
-    while (m_server_Tablet->hasPendingConnections())
-        appendToSocketList4(m_server_Tablet->nextPendingConnection());
+    while (m_server_receive_messages->hasPendingConnections())
+        appendToSocketList4(m_server_receive_messages->nextPendingConnection());
 }
 
 //Define the behavior of a socket.
@@ -473,7 +473,7 @@ void MainWindow::readSocket4()
     unique_ptr<char[]> pReadData = std::make_unique<char[]>(byteAvailable);
     qint64 readlength = socketStream.readRawData(pReadData.get(), byteAvailable);
     socketHandler4.add_data(pReadData.get(), byteAvailable);
-    thread_tablet.cond_var_tablet.notify_one();
+    thread_receive_messages.cond_var_receive_messages.notify_one();
 }
 
 void MainWindow::discardSocket()

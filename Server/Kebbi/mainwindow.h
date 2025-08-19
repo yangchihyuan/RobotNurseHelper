@@ -13,7 +13,7 @@
 #include <QTcpSocket>
 #include "ThreadProcessImage.hpp"
 #include "ThreadPortAudio.hpp"
-#include "ThreadTablet.hpp"
+#include "ThreadReceiveMessages.hpp"
 #include "ThreadWhisper.hpp"
 #include "ThreadOllama.hpp"
 #include <queue>
@@ -70,10 +70,10 @@ private:
     QSet<QTcpSocket*> connection_set3;   //for receive audio
     ThreadProcessAudio thread_process_audio;
 
-    QTcpServer* m_server_Tablet;
-    QSet<QTcpSocket*> connection_set4;   //for Tablet
+    QTcpServer* m_server_receive_messages;
+    QSet<QTcpSocket*> connection_set4;   //for receive messages
     SocketHandler socketHandler4;
-    ThreadTablet thread_tablet;
+    ThreadReceiveMessages thread_receive_messages;
 
     ThreadWhisper thread_whisper;
 

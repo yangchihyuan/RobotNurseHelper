@@ -7,36 +7,33 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Looper;
 import android.util.Log;
 import android.content.Context;
 
+import com.google.protobuf.Timestamp;
 import com.nuwarobotics.service.agent.NuwaRobotAPI;
 
 import java.io.BufferedInputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import RobotCommandProtobuf.RobotCommandOuterClass;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.app.Activity;
 
-import android.net.Uri;
-import java.io.File;
 public class SocketManager {
     public static final int REQUEST_CODE = 201 ;
     public String mServerURL;
     public Integer mPortNumber;
 
-    public Socket socketReceiveCommand;
-    public Socket mSocketSendImages;
-    public Socket mSocketSendAudio;
+    public Socket mSocketSendImages;      //port 8895
+    public Socket mSocketReceiveCommand;     //port 8896
+    public Socket mSocketSendAudio;       //port 8897
+    public Socket mSocketSendMessages;      //port 8898    //Can I merge this socket with mSocketReceiveCommand?
 
     private HandlerThread threadSendToServer;
     private Handler handlerSendToServer;
@@ -126,14 +123,14 @@ public class SocketManager {
                 //launchPlayer(3);
                 //mRobotAPI.hideFace();
                 //mRobotAPI.hideWindow(false);
-                mRobotAPI.showFace();
-                mRobotAPI.playFaceAnimation("TTS_PeaceB");
+//                mRobotAPI.showFace();                           //2025/8/19 Why do I change face here?
+//                mRobotAPI.playFaceAnimation("TTS_PeaceB");
                 while(mbReceiveCommand) {
 //                    Log.d ("mbReceiveCommand","still running");
-                    if (socketReceiveCommand != null && socketReceiveCommand.isConnected()) {
+                    if (mSocketReceiveCommand != null && mSocketReceiveCommand.isConnected()) {
 //                        Log.d ("mbReceiveCommand","Enter if");
                         try {
-                            BufferedInputStream dIn = new BufferedInputStream(socketReceiveCommand.getInputStream());
+                            BufferedInputStream dIn = new BufferedInputStream(mSocketReceiveCommand.getInputStream());
 //                            Log.d("BufferedInputStream", "created");
                             int length = 4096;
                             byte[] message = new byte[length];
@@ -177,7 +174,7 @@ public class SocketManager {
 
                                     if (command.hasSpeakSentence()) {
                                         mRobotAPI.startTTS(command.getSpeakSentence());
-                                        mRobotAPI.showFace();
+//                                        mRobotAPI.showFace();
                                     }
 
                                     if (command.hasFace()) {
@@ -260,7 +257,7 @@ public class SocketManager {
                         } catch (Exception e) {
                             Log.e("Exception", e.getMessage());
                             try {
-                                socketReceiveCommand.close();
+                                mSocketReceiveCommand.close();
                             }
                             catch( Exception e2)
                             {
@@ -268,7 +265,7 @@ public class SocketManager {
                             }
                             finally
                             {
-                                socketReceiveCommand = null;
+                                mSocketReceiveCommand = null;
                             }
                         }
                     }
@@ -313,6 +310,12 @@ public class SocketManager {
         }
     }
 
+    void sendImage(RobotCommandOuterClass.RobotToServerMessage message)
+    {
+        sendAMessage(message, mSocketSendImages);
+    }
+
+
     void sendAudio(byte[] audioData)
     {
         if( mSocketSendAudio != null && mSocketSendAudio.isConnected()) {
@@ -348,8 +351,9 @@ public class SocketManager {
             public void run() {
                 try {
                     mSocketSendImages = new Socket(mServerURL, mPortNumber);
-                    socketReceiveCommand = new Socket(mServerURL, mPortNumber+1);
+                    mSocketReceiveCommand = new Socket(mServerURL, mPortNumber+1);
                     mSocketSendAudio =  new Socket(mServerURL, mPortNumber+2);
+                    mSocketSendMessages =  new Socket(mServerURL, mPortNumber+3);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.e("new sockets fail", "new sockets fail" + e.getMessage());
@@ -438,7 +442,7 @@ public class SocketManager {
         //Debug Info 25/4/23: The socketRecieveCommand may be broken by the server-side program's error. Thus, I need to close the three sockets separately.
         //Other, the process will jump out of the try when running this command and skip the mSocketSendAudio.close()
         try {
-            socketReceiveCommand.close();
+            mSocketReceiveCommand.close();
         } catch (Exception e) {
             Log.e("disconnectSockets ReceiveCommand", e.getMessage());
         }
@@ -475,6 +479,44 @@ public class SocketManager {
         } catch (final InterruptedException e) {
             Log.e("Exception stopThreads", e.getMessage());
         }
-
     }
+
+    public void sendAMessage( RobotCommandOuterClass.RobotToServerMessage message)
+    {
+        sendAMessage(message, mSocketSendMessages);
+    }
+
+    public void sendAMessage( RobotCommandOuterClass.RobotToServerMessage message, Socket mSocket)
+    {
+        HandlerThread thread = new HandlerThread("SocketProcess");
+        thread.start();
+        Handler handler = new Handler(thread.getLooper());
+        handler.post(new Runnable() {
+                         @Override
+                         public void run() {
+                             try {
+                                 if (mSocket.isConnected()) {
+                                     OutputStream os = mSocket.getOutputStream();
+                                     os.write("BeginOfAMessage".getBytes());
+
+                                     byte[] byteArray = message.toByteArray();
+
+                                     int message_length = byteArray.length;
+                                     ByteBuffer message_length_buffer = ByteBuffer.allocate(4);
+                                     message_length_buffer.order(ByteOrder.LITTLE_ENDIAN); // Ubuntu byte order
+                                     message_length_buffer.putInt(message_length);
+                                     os.write(message_length_buffer.array());
+
+                                     os.write(message.toByteArray());
+
+                                     os.write("EndOfAMessage".getBytes());
+                                 }
+                             } catch (Exception e) {
+                                 e.printStackTrace();
+                             }
+                         }
+                     }
+        );
+    }
+
 }

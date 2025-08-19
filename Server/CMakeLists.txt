@@ -93,7 +93,7 @@ set(SOURCES JPEG.cpp
 
 # robot-specific files    
 set(SOURCES2 ${ROBOT_MODEL}/LandmarkToRobotAction.cpp
-             ${ROBOT_MODEL}/ThreadTablet.cpp
+             ${ROBOT_MODEL}/ThreadReceiveMessages.cpp
              ${ROBOT_MODEL}/mainwindow.cpp
              ${ROBOT_MODEL}/mainwindow.ui
              ${PROTO_SRC})

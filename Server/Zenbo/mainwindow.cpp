@@ -173,10 +173,10 @@ MainWindow::MainWindow(QWidget *parent)
         exit(EXIT_FAILURE);
     }
 
-    m_server_Tablet = new QTcpServer();
-    if(m_server_Tablet->listen(QHostAddress::Any, 8898))
+    thread_receive_messages = new QTcpServer();
+    if(thread_receive_messages->listen(QHostAddress::Any, 8898))
     {
-       connect(m_server_Tablet, &QTcpServer::newConnection, this, &MainWindow::newConnection_Tablet);
+       connect(thread_receive_messages, &QTcpServer::newConnection, this, &MainWindow::newConnection_Tablet);
        cout << "Listening port 8898" << endl;
     }
     else

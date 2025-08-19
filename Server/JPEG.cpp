@@ -1,6 +1,7 @@
 #include "JPEG.hpp"
 #include <fstream>
 
+
 //save JPEG data into a file
 void save_image_JPEG(char* data_, std::size_t length, std::string filename)
 {
@@ -8,6 +9,14 @@ void save_image_JPEG(char* data_, std::size_t length, std::string filename)
     outfile.write(data_, length);
     outfile.close();
 }
+
+void save_image_JPEG(vector<uchar> JPEG_data, std::string filename)
+{
+    ofstream outfile( filename,std::ofstream::binary);
+    outfile.write(reinterpret_cast<const char*>(JPEG_data.data()), JPEG_data.size());
+    outfile.close();
+}
+
 
 JPEG_buffer::JPEG_buffer()
 {

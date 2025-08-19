@@ -52,12 +52,14 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.protobuf.Timestamp;
 import com.nuwarobotics.service.IClientId;
 import com.nuwarobotics.service.agent.NuwaRobotAPI;
 import com.nuwarobotics.service.agent.RobotEventListener;
 import com.nuwarobotics.service.agent.VoiceEventListener;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -68,6 +70,7 @@ import android.media.MediaRecorder;
 import android.util.Log;
 import android.widget.Button;
 
+import RobotCommandProtobuf.RobotCommandOuterClass;
 import tw.edu.cgu.ai.kebbi.env.Logger; //Where do I use the Logger?
 
 public class MainActivity extends Activity {
@@ -103,13 +106,8 @@ public class MainActivity extends Activity {
     private final Semaphore cameraOpenCloseLock = new Semaphore(1);
     private CameraCaptureSession mPreviewSession;
     private final ImageListener mPreviewListener = new ImageListener();
-    private final SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss.SSS");
     private SocketManager socketManager;
-    //private SocketManager socketManager = new SocketManager();
-    //private SocketManager socketManager = new SocketManager(this);
-    //socketManager = new SocketManager(this);
     private Converter converter;
-
     /**
      * {@link android.view.TextureView.SurfaceTextureListener} handles several lifecycle events on a
      * {@link TextureView}.
@@ -359,10 +357,21 @@ public class MainActivity extends Activity {
             @Override
             public void onTTSComplete (boolean b) {
                 //the boolean b means isError
-                Log.d("onTTSComplete", "onTTSComplete");
+                Instant instant = Instant.now();
 
-                //I need to get the time and send back the signal to the server.
+                Timestamp time = Timestamp.newBuilder()
+                        .setSeconds(instant.getEpochSecond())
+                        .setNanos(instant.getNano())
+                        .build();
 
+                //Test, send a protocol buffer message here
+                RobotCommandOuterClass.RobotToServerMessage message =
+                        RobotCommandOuterClass.RobotToServerMessage.newBuilder()
+                                .setDescription("onTTSComplete")
+                                .setEventTime(time)
+                                .build();
+
+                socketManager.sendAMessage(message);
             }
 
             @Override
@@ -410,7 +419,7 @@ public class MainActivity extends Activity {
 
 
         //get the default ServerURL
-        SharedPreferences sharedPref = getSharedPreferences("ZenboNurseHelper_Preference", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPreferences("RobotNurseHelper_Preference", Context.MODE_PRIVATE);
         String ServerURL = sharedPref.getString("ServerURL", "");
         if( !ServerURL.isEmpty() ){
             editText_Server.setText(ServerURL);
@@ -423,7 +432,7 @@ public class MainActivity extends Activity {
                     //socketManager.launchPlayer();
 
                     //Save the IP address to SharedPreferences
-                    SharedPreferences sharedPref = getSharedPreferences("ZenboNurseHelper_Preference", Context.MODE_PRIVATE);
+                    SharedPreferences sharedPref = getSharedPreferences("RobotNurseHelper_Preference", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPref.edit();
                     editor.putString("ServerURL", editText_Server.getText().toString());
                     editor.apply();

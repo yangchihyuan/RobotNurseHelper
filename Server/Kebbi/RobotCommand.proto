@@ -42,7 +42,7 @@ message RobotCommand {
 message RobotToServerMessage {
   optional google.protobuf.Timestamp event_time = 1;
   optional int32 jpegdatalength = 2;
-  optional bytes data = 3;       // jpeg-compressed image data
+  optional bytes jpegdata = 3;
   optional string description = 4;
   optional int32 numberpressed = 5;
 }

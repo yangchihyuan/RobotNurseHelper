@@ -1,7 +1,10 @@
 #include <string>
+#include <vector>
 using namespace std;
 
+typedef unsigned char uchar;
 void save_image_JPEG(char* data_, size_t length, string filename);
+void save_image_JPEG(vector<uchar> JPEG_data,  string filename);
 
 class JPEG_buffer
 {

@@ -173,10 +173,10 @@ MainWindow::MainWindow(QWidget *parent)
         exit(EXIT_FAILURE);
     }
 
-    m_server_Tablet = new QTcpServer();
-    if(m_server_Tablet->listen(QHostAddress::Any, 8898))
+    m_server_receive_messages = new QTcpServer();
+    if(m_server_receive_messages->listen(QHostAddress::Any, 8898))
     {
-       connect(m_server_Tablet, &QTcpServer::newConnection, this, &MainWindow::newConnection_Tablet);
+       connect(m_server_receive_messages, &QTcpServer::newConnection, this, &MainWindow::newConnection_Tablet);
        cout << "Listening port 8898" << endl;
     }
     else
@@ -237,8 +237,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     thread_process_image.pSendMessageManager = &sendMessageManager;
     thread_process_image.pSocketHandler = &socketHandler1;
-    thread_tablet.pSocketHandler = &socketHandler4;
-    thread_tablet.pSendMessageManager = &sendMessageManager;
+    thread_receive_messages.pSocketHandler = &socketHandler4;
+    thread_receive_messages.pSendMessageManager = &sendMessageManager;
 }
 
 void MainWindow::on_pushButton_speak_clicked()

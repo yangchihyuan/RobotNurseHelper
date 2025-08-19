@@ -70,7 +70,7 @@ private:
     QSet<QTcpSocket*> connection_set3;   //for receive audio
     ThreadProcessAudio thread_process_audio;
 
-    QTcpServer* m_server_Tablet;
+    QTcpServer* thread_receive_messages;
     QSet<QTcpSocket*> connection_set4;   //for Tablet
     SocketHandler socketHandler4;
     ThreadTablet thread_tablet;
