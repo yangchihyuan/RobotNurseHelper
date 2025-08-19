@@ -46,8 +46,7 @@ dependencies {
 
     // Protobuf dependencies
     // You need the Protobuf Java lite runtime to use the generated classes.
-//    implementation "com.google.protobuf:protobuf-javalite:3.8.0"
-    implementation 'com.google.protobuf:protobuf-java:3.21.12' // I need this dependency so com.google.protobuf.Timestamp can be resolved
+    implementation "com.google.protobuf:protobuf-javalite:3.19.1"
 }
 
 // Configure the Protobuf plugin.
@@ -58,7 +57,8 @@ protobuf {
         artifact = 'com.google.protobuf:protoc:3.19.1'
     }
 
-    // Configure the plugins used by the Protoc compiler.
+    // Configure the plugins used by the Protoc compiler
+    //Is this instruction necessary?
     plugins {
         // The "javalite" plugin generates Java code that is optimized for Android.
         javalite {
@@ -75,10 +75,6 @@ protobuf {
                 java{
                     option "lite"
                 }
-
-//                javalite {
-                    // You can specify a `option` for the plugin, e.g., "parcelable" for Android.
-//                }
             }
         }
     }

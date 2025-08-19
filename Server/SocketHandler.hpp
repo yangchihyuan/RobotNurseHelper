@@ -1,3 +1,9 @@
+//2025/8/19 This class handle the messages tranmitted from a TCP socket.
+//It detects the delimiter strings in the socket. Once it finds the head and tail delimiter strings,
+//it gets the first 4 bytes as the length to do a basic check because head and tail delimiter strings
+//may occur in the message content even though the probablity is low.
+//Thus, the sender (robot) needs to follow the same protocol.
+
 #include <string>
 #include <memory>  // for unique_ptr
 #include <queue>
