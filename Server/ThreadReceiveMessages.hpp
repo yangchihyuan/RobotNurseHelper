@@ -11,6 +11,8 @@
 #include <condition_variable>
 #include "SendMessageManager.hpp"
 #include "SocketHandler.hpp"
+#include "ThreadStateControl.hpp"
+
 #ifdef USE_KEBBI
     #include "Kebbi/RobotCommand.pb.h"
 #elif USE_ZENBO
@@ -29,6 +31,7 @@ public:
 
     SendMessageManager *pSendMessageManager;
     SocketHandler *pSocketHandler;
+    ThreadStateControl *mpThreadStateControl;
 
 protected:
     void run();

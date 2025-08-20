@@ -20,6 +20,7 @@ struct State
     string m_strFirstSentence;
     ollama::messages message_history;
     bool bInitial = true;
+    bool bWaitForTTSComplete = true;
 };
 
 class ThreadStateControl: public QThread
@@ -36,12 +37,17 @@ public:
     condition_variable cond_var_state_control;
     SendMessageManager *m_pSendMessageManager;
     ThreadWhisper *mpThreadWhisper;
+    void NotifyEvent(string description, chrono::time_point<chrono::system_clock> timestamp);
 
 protected:
     void run();
     vector<State> mStates;
     int m_iNumberOfStates = 10;
     int m_iStateIndex = 0;
+    bool mbTTSComplete = false;
+    bool mbWaitForTTSComplete = false;
+    bool mbWaitForLLMResult = false;
+    chrono::time_point<chrono::system_clock> mtimestamp_TTSComplete;
 };
 
 #endif

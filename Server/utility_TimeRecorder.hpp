@@ -1,11 +1,12 @@
+#ifndef UTILITY_TIMERECORDER_HPP
+#define UTILITY_TIMERECORDER_HPP
+
 #include <string>
 #include <chrono>
 
 using namespace std;
 using namespace std::chrono;
 
-#ifndef UTILITY_TIMERECORDER_HPP
-#define UTILITY_TIMERECORDER_HPP
 
 class TimeRecorder
 {

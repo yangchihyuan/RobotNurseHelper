@@ -7,7 +7,7 @@ ThreadWhisper::ThreadWhisper()
     n_samples_keep = (int)(1e-3*params.keep_ms*WHISPER_SAMPLE_RATE);
     n_samples_len = (int)(1e-3*params.length_ms*WHISPER_SAMPLE_RATE);
     n_samples_step = (int) (1e-3*params.step_ms*WHISPER_SAMPLE_RATE);
-    n_samples_silent = (int)(0.5*WHISPER_SAMPLE_RATE);               //set the silent length to 1 seconds
+    n_samples_silent = (int)(0*WHISPER_SAMPLE_RATE);               //disable the waiting time 0.3 second
 
     //used for the stream mode
     if( n_samples_step > 0)
@@ -132,9 +132,7 @@ void ThreadWhisper::run()
                     pcmf32[old_size + i] = pcmf32_new[i];
                 }
                 pcmf32.erase(pcmf32.begin(), pcmf32.begin() + n_samples_remove );
-//                cout << "erase size " << n_samples_remove << endl;
             }
-//            cout << "(A) pcmf32.size() " << pcmf32.size() << " n_samples_new " << n_samples_new << endl;
 
             bufferlength = 0;
             mtx_whisper_buffer.unlock();
@@ -149,18 +147,18 @@ void ThreadWhisper::run()
             //There is a clear problem. If the speech has not ended, the vad still returns true.
             //I need to know the end of the speech.
             int last_speech_end = 80000; // 5 seconds, in samples
+            int first_speech_start = 0; 
             if( pVad->get_speech_timestamps().size() > 0)
             {
-//                cout << "Speech detected: " << pVad->get_speech_timestamps().back().c_str() << endl;
                 last_speech_end = pVad->get_speech_timestamps().back().end;
+                first_speech_start = pVad->get_speech_timestamps().front().start;
             }
 
-//            cout << "(B) pcmf32.size() " << pcmf32.size() << " last_speech_end " << last_speech_end << endl;
             if( last_speech_end < pcmf32.size() - n_samples_silent)    //to ensure that there is a slience greater than 0.3 seconds.
             {
-                //n_samples_len = 80000;
-                //n_samples_silent = 16800;
-
+                result.tEnd = chrono::system_clock::now();
+                chrono::milliseconds period((last_speech_end - first_speech_start)*1000/WHISPER_SAMPLE_RATE);
+                result.tStart = result.tEnd - period;
                 // run the Whisper inference
                 strTemp = "";
                 if (whisper_full(ctx, wparams, pcmf32.data(), pcmf32.size()) != 0) {
@@ -178,9 +176,14 @@ void ThreadWhisper::run()
 
                 //clean the pcmf32 buffer and the pcmf32_old buffer
                 pcmf32.clear();
+                result.sOutput = strTemp;
+                b_new_result = true;
+
+/*
                 strRobotSentence = strTemp;             //2025/8/13 This is not good enough. The sentence is incomplete.
                 b_new_RobotSentence = true;
                 b_RobotSentence_End = true;
+*/                
             }
             
 
@@ -220,20 +223,21 @@ void ThreadWhisper::run()
 
 }
 
+/*
 void ThreadWhisper::setStartTime()
 {
     t_last = std::chrono::high_resolution_clock::now();
     t_start = t_last;
 }
+*/
 
 void ThreadWhisper::ClearBuffer()
 {
     mtx_whisper_buffer.lock();
     pcmf32.clear();
-//    pcmf32_old.clear();
     pcmf32_new.clear();
     bufferlength = 0;
-    strRobotSentence = "";
+//    strRobotSentence = "";
     strTemp = "";
     strFixed = "";
     mtx_whisper_buffer.unlock();

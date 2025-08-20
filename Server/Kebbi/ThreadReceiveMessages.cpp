@@ -5,6 +5,7 @@
 //#include "utility_directory.hpp"
 //#include "utility_string.hpp"
 //#include "utility_directory.hpp"
+#include "utility_time.hpp"
 #ifdef USE_KEBBI
     #include "Kebbi/RobotCommand.pb.h"
 #elif USE_ZENBO
@@ -30,8 +31,11 @@ void ThreadReceiveMessages::run()
 
             if( RTSmessage.has_description() && RTSmessage.description() == "onTTSComplete")
             {
+                //debug
                 google::protobuf::Timestamp timestamp = RTSmessage.event_time();
-                cout << "Receive onTTSComplete signal at " << timestamp.seconds() << " " << timestamp.nanos() << endl;
+                //cout << "Receive onTTSComplete signal at " << timestamp.seconds() << " " << timestamp.nanos() << endl;
+                //notify ThreadStateControl
+                mpThreadStateControl->NotifyEvent("onTTSComplete", protobufTimestampToTimePoint(timestamp));
             }
 
             if( RTSmessage.has_numberpressed())

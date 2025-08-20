@@ -236,8 +236,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     thread_process_image.pSendMessageManager = &sendMessageManager;
     thread_process_image.pSocketHandler = &socketHandler1;
+
     thread_receive_messages.pSocketHandler = &socketHandler4;
     thread_receive_messages.pSendMessageManager = &sendMessageManager;
+    thread_receive_messages.mpThreadStateControl = &thread_state_control;
+
     thread_state_control.InitializeStates();
     thread_state_control.m_pSendMessageManager = &sendMessageManager;
     thread_state_control.mpThreadWhisper = &thread_whisper;
@@ -341,10 +344,10 @@ void MainWindow::timer_event()
     }
     
     //If the voice recognition result is ready, update the plainTextEdit_received.
-    if( thread_whisper.b_new_RobotSentence )
+    if( thread_whisper.b_new_result )
     {
-        thread_whisper.b_new_RobotSentence = false;
-        ui->plainTextEdit_received->setPlainText(QString::fromStdString(thread_whisper.strRobotSentence));
+//        thread_whisper.b_new_RobotSentence = false;
+        ui->plainTextEdit_received->setPlainText(QString::fromStdString(thread_whisper.result.sOutput));
     }
                     
     int action_index = -1;
@@ -489,12 +492,14 @@ void MainWindow::timer_event()
     }
     
     //2025/8/12 I need to revise this section of code because thread_whisper.b_RobotSentence_End is unstable.
+/*
     if( thread_whisper.b_RobotSentence_End )
     {
         thread_whisper.b_RobotSentence_End = false;
         //send a command as the push button clicked
         ui->pushButton_generate_response->click();
     }
+*/    
     
     if( thread_ollama.b_new_LLM_response )
     {

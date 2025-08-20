@@ -18,6 +18,7 @@ void ThreadStateControl::InitializeStates()
     //state_index = 0;
     mStates[state_index].m_strStateName = "Wait for start";
     mStates[state_index].m_strSystemMessage = "";
+    mStates[state_index].m_strFirstSentence = "我準備好了。";
     mStates[state_index].m_secDurationLimit = 500s;
 
     //state_index = 1;
@@ -163,15 +164,40 @@ void ThreadStateControl::run()
                 RobotCommandProtobuf::RobotCommand command;
                 command.set_speak_sentence(mStates[m_iStateIndex].m_strFirstSentence);
                 m_pSendMessageManager->AddMessage(command);
+                mbTTSComplete = false;
+            }
+            mbWaitForTTSComplete = mStates[m_iStateIndex].bWaitForTTSComplete; 
+        }
+
+        if( mbWaitForTTSComplete)
+        {
+            if( mbTTSComplete)
+            {
+                //check the new Whisper result by comparing the time
+                if( mpThreadWhisper->b_new_result )
+                {
+                    if( mpThreadWhisper->result.tStart > mtimestamp_TTSComplete)
+                    {
+                        cout << "(A)" << mpThreadWhisper->result.sOutput << endl;
+                        //generate LLM result;
+                        mbWaitForTTSComplete = false;
+                        mbWaitForLLMResult = true;
+                    }
+                }
             }
         }
-        else  //following conversation
-        {
-            
-//            ollama::message message("user", mstrUserInput);
-//            message_history.push_back(message);
-//            cout << "++++++++++++++++Call LLM++++++++++++++++++++++++\n\n";
 
+        if( mbWaitForLLMResult)
+        {
+            if( mbLLMResult)
+            {
+                ollama::message response_message("assistant", mStates[m_iStateIndex].m_strFirstSentence);
+                mStates[m_iStateIndex].message_history.push_back(response_message);
+                RobotCommandProtobuf::RobotCommand command;
+                command.set_speak_sentence(mStates[m_iStateIndex].m_strFirstSentence);
+                m_pSendMessageManager->AddMessage(command);
+                mbTTSComplete = false;
+            }
         }
 
         //Check if the time exceed the state limit
@@ -183,9 +209,9 @@ void ThreadStateControl::run()
         //wait for the start command
         if( m_iStateIndex == 0)
         {
-            if( mpThreadWhisper->b_RobotSentence_End)
+            if( mpThreadWhisper->b_new_result)
             {
-                if( mpThreadWhisper->strRobotSentence.find("開始") != 0 )
+                if( mpThreadWhisper->result.sOutput.find("開始") != string::npos )
                 {
                     m_iStateIndex++;
                 }
@@ -194,4 +220,19 @@ void ThreadStateControl::run()
 
         this_thread::sleep_for(std::chrono::milliseconds(1));
     }
+}
+
+void ThreadStateControl::NotifyEvent(string description, chrono::time_point<chrono::system_clock> timestamp)
+{
+    if( description == "onTTSComplete")
+    {
+        mbTTSComplete = true;
+        mtimestamp_TTSComplete = timestamp;
+    }
+    else if( description == "onLLMResult")
+    {
+        mbLLMResult = true;
+        mtimestamp_LLMResult = timestamp;
+    }
+    
 }

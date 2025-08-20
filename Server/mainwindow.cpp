@@ -811,7 +811,7 @@ void MainWindow::on_checkBox_stream_clicked(bool checked)
     if( checked)
     {
         thread_whisper.strFixed = "";
-        thread_whisper.setStartTime();
+//        thread_whisper.setStartTime();
         bstream_recognition = true;
     }
     else

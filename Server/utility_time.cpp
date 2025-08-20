@@ -34,3 +34,18 @@ std::string GetCurrentTimeString(bool bMillisecond)
 
     return oss.str();    
 }
+
+// Function to convert google::protobuf::Timestamp to std::chrono::time_point
+std::chrono::time_point<std::chrono::system_clock> 
+protobufTimestampToTimePoint(const google::protobuf::Timestamp& ts) {
+    // Get seconds and nanos from the protobuf Timestamp
+    std::chrono::seconds s{ts.seconds()};
+    std::chrono::nanoseconds ns{ts.nanos()};
+
+    // Construct the duration and add it to the system_clock epoch
+    std::chrono::time_point<std::chrono::system_clock> tp;
+    tp += s;
+    tp += ns;
+    
+    return tp;
+}

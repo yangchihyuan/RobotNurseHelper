@@ -1,2 +1,12 @@
+#ifndef __UTILITY_TIME_HPP__
+#define __UTILITY_TIME_HPP__
+
 #include <string>
-std::string GetCurrentTimeString(bool bMillisecond);
+#include "google/protobuf/timestamp.pb.h"
+using namespace std;
+
+string GetCurrentTimeString(bool bMillisecond);
+chrono::time_point<chrono::system_clock> 
+protobufTimestampToTimePoint(const google::protobuf::Timestamp& ts);
+
+#endif

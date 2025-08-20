@@ -407,6 +407,8 @@ void ThreadOllama::run()
 //            cout << "*" << flush;
 //        }
 //        else 
+
+/*
         if (strPrompt != "")
         {
             cout << "strPrompt " << strPrompt << endl;
@@ -486,15 +488,17 @@ void ThreadOllama::run()
 
             //chosen_face = 
         }
+*/
 
+/*
         change_stage = stage_check(options, options_short, message_history, recent_history, true);
         if(change_stage)
         {
             stage_index++;
             bToInitializeStageState = true;
         }
-
         loop_cnt++;
+*/
         
         //wait for 100 ms to prevent the loop runs too frequently
         this_thread::sleep_for(std::chrono::milliseconds(1));

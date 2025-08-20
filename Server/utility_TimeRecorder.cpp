@@ -14,3 +14,4 @@ string TimeRecorder::GetDurationString()
     string str = to_string(duration_for_detection.count());
     return str;
 }
+

@@ -40,6 +40,13 @@ struct whisper_params {
     std::string fname_out;
 };
 
+struct WhisperData
+{
+    string sOutput;
+    chrono::time_point<chrono::system_clock> tStart;
+    chrono::time_point<chrono::system_clock> tEnd;
+};
+
 class ThreadWhisper: public QThread
 {
     Q_OBJECT
@@ -52,7 +59,6 @@ public:
     QBuffer *pOperatorBuffer = NULL;             //This buffer is used by operator.
     bool bOperatorBuffer_open = false;
     std::vector<float> pcmf32;
-//    std::vector<float> pcmf32_old;
     std::vector<float> pcmf32_new;
     int bufferlength = 0;                       //When new audio data comes, the bufferlength will be increased, and the data will be copied to pcmf32_new.
     std::vector<float> pcmf32_detect;
@@ -61,15 +67,17 @@ public:
     mutex mtx_whisper_buffer;
     string strOperatorSentence;
     bool b_new_OperatorSentence = false;
-    string strRobotSentence;
+//    string strRobotSentence;
+    WhisperData result;
+    bool b_new_result = false;
     string strTemp;
     string strFixed;
-    bool b_new_RobotSentence = false;
-    bool b_RobotSentence_End = false;    
+//    bool b_new_RobotSentence = false;
+//    bool b_RobotSentence_End = false;    
     QString model_file_path;
     string strLanguage = "zh"; // default language is Chinese
 
-    void setStartTime();
+//    void setStartTime();
     void ClearBuffer();
 
     VadIterator *pVad = NULL;             //This is the silero vad iterator.
@@ -85,9 +93,6 @@ protected:
     int n_samples_keep;
     int n_samples_silent;
     mutex mtx;
-
-    std::chrono::high_resolution_clock::time_point t_last;
-    std::chrono::high_resolution_clock::time_point t_start;
 
     float ComputeVolume(const std::vector<float>& pcmf32);
 };
