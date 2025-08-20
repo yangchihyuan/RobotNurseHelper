@@ -77,5 +77,5 @@ void ThreadReceiveMessages::run()
             cond_var_receive_messages.wait(lk);
         }
     }
-    cout << "Exit tablet while loop." << std::endl;
+    cout << "Exit ReceiveMessages loop." << std::endl;
 }

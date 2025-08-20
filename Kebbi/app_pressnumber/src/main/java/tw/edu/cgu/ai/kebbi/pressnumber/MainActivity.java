@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                     SocketToServer = new Socket(mServerURL, mPortNumber);
                     if (SocketToServer.isConnected()) {
                         OutputStream os = SocketToServer.getOutputStream();
-                        os.write("BeginOfAMessage".getBytes());
+                        os.write("BeginOfADataFrame".getBytes());
 
                         Instant instant = Instant.now();
 
@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
 
                         os.write(message.toByteArray());
 
-                        os.write("EndOfAMessage".getBytes());
+                        os.write("EndOfADataFrame".getBytes());
                     } else {
                     }
                     SocketToServer.close();

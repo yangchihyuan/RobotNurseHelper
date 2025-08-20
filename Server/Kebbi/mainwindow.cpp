@@ -240,6 +240,7 @@ MainWindow::MainWindow(QWidget *parent)
     thread_receive_messages.pSendMessageManager = &sendMessageManager;
     thread_state_control.InitializeStates();
     thread_state_control.m_pSendMessageManager = &sendMessageManager;
+    thread_state_control.mpThreadWhisper = &thread_whisper;
 }
 
 void MainWindow::on_pushButton_speak_clicked()

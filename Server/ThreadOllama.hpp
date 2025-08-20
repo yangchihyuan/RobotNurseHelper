@@ -4,6 +4,7 @@
 #include <QThread>
 #include <iostream>
 #include <mutex>
+#include <queue>
 #include <condition_variable>
 #include "ollama.hpp"
 #include "google/protobuf/timestamp.pb.h"
@@ -80,7 +81,7 @@ public:
     string chosen_action = "";
     int chosen_dance = 0;
     string generateResponse(ollama::messages message_history);
-    void AddQueue(ollama::messages message_history);
+    void AddQueue(OllamaTask task);
 
 protected:
     void run();

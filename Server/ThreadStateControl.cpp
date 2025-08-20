@@ -20,6 +20,7 @@ void ThreadStateControl::InitializeStates()
     mStates[state_index].m_strSystemMessage = "";
     mStates[state_index].m_secDurationLimit = 500s;
 
+    //state_index = 1;
     state_index++;
     mStates[state_index].m_strStateName = "Warm up";
     mStates[state_index].m_strSystemMessage = R"(你是一台名叫凱比的醫療機器人，正在和一位年幼的小朋友病患聊天。請遵守以下規則：
@@ -32,6 +33,7 @@ void ThreadStateControl::InitializeStates()
     mStates[state_index].m_strFirstSentence = "你好，很高興見到你，你今天過得好嗎？";
     mStates[state_index].m_secDurationLimit = 50s;
 
+    //state_index = 2;
     state_index++;
     mStates[state_index].m_strStateName = "Ask name";
     mStates[state_index].m_strSystemMessage = R"(你是一台名叫凱比的醫療機器人，正在與一位兒童病患交談。請遵守以下規則：
@@ -43,6 +45,7 @@ void ThreadStateControl::InitializeStates()
     mStates[state_index].m_strFirstSentence = "請問你叫什麼名字？";
     mStates[state_index].m_secDurationLimit = 30s;
 
+    //state_index = 3;
     state_index++;
     mStates[state_index].m_strStateName = "Ask age";
     mStates[state_index].m_strSystemMessage = R"(你是一台名叫凱比的醫療機器人，正在與一位兒童病患交談。請遵守以下規則：
@@ -54,6 +57,7 @@ void ThreadStateControl::InitializeStates()
     mStates[state_index].m_strFirstSentence = "請問你幾歲了？";
     mStates[state_index].m_secDurationLimit = 30s;
 
+    //state_index = 4;
     state_index++;
     mStates[state_index].m_strStateName = "Ask symdrone";
     mStates[state_index].m_strSystemMessage = R"(你是一台名叫凱比的醫療機器人，正在與一位兒童病患交談。請遵守以下規則：
@@ -65,6 +69,7 @@ void ThreadStateControl::InitializeStates()
     mStates[state_index].m_strFirstSentence = "請問你生的是什麼病啊？";
     mStates[state_index].m_secDurationLimit = 30s;
 
+    //state_index = 5;
     state_index++;
     mStates[state_index].m_strStateName = "Ask one to five";
     mStates[state_index].m_strSystemMessage = R"(你是一台名叫凱比的醫療機器人，正在與一位兒童病患交談。請遵守以下規則：
@@ -76,6 +81,7 @@ void ThreadStateControl::InitializeStates()
     mStates[state_index].m_strFirstSentence = "請你用一到五的等級告訴我你現在的感覺如何？一是很不好，五是很好。";
     mStates[state_index].m_secDurationLimit = 30s;
 
+    //state_index = 6;
     state_index++;
     mStates[state_index].m_strStateName = "Ask dance";
     mStates[state_index].m_strSystemMessage = R"(你是一台名叫凱比的醫療機器人，正在與一位年幼的兒童病患交談。請遵守以下規則：
@@ -87,6 +93,7 @@ void ThreadStateControl::InitializeStates()
     mStates[state_index].m_strFirstSentence = "我會跳舞喲，我會跳埃及舞和牛仔舞，你想看我跳哪一種舞？";
     mStates[state_index].m_secDurationLimit = 30s;
 
+    //state_index = 7;
     state_index++;
     mStates[state_index].m_strStateName = "Guess animal";
     mStates[state_index].m_strSystemMessage = R"(你是一台名叫凱比的醫療機器人，正在與一位年幼的兒童病患交談。請遵守以下規則：
@@ -102,6 +109,7 @@ void ThreadStateControl::InitializeStates()
     mStates[state_index].m_strFirstSentence = "我們來玩一個遊戲吧。我來想一個動物，你來猜，好不好啊？";
     mStates[state_index].m_secDurationLimit = 60s;
 
+    //state_index = 8;
     state_index++;
     mStates[state_index].m_strStateName = "Tell a story";
     mStates[state_index].m_strSystemMessage = R"(你是一台名叫凱比的醫療機器人，正在與一位年幼的兒童病患交談。請遵守以下規則：
@@ -113,6 +121,7 @@ void ThreadStateControl::InitializeStates()
     mStates[state_index].m_strFirstSentence = "我會說故事喲。我可以講各種各樣的故事，像是動物的故事、王子和公主的故事、魔法的故事、星星的故事，你想聽我講什麼樣的故事呢？";
     mStates[state_index].m_secDurationLimit = 100s;
 
+    //state_index = 9;
     state_index++;
     mStates[state_index].m_strStateName = "Say goodbye";
     mStates[state_index].m_strSystemMessage = R"(你是一台名叫凱比的醫療機器人，正在與一位年幼的兒童病患交談。請遵守以下規則：
@@ -134,31 +143,55 @@ void ThreadStateControl::NextState()
 void ThreadStateControl::run()
 {
 
-    mutex mtx_state_control;
-    unique_lock<std::mutex> lk(mtx_state_control);
+//    mutex mtx_state_control;
+//    unique_lock<std::mutex> lk(mtx_state_control);
+    chrono::time_point<chrono::system_clock> current_time;
     while(b_WhileLoop)
     {
-        cond_var_state_control.wait(lk);
+//        cond_var_state_control.wait(lk);
+        current_time = chrono::system_clock::now();
 
         if(mStates[m_iStateIndex].bInitial)
         {
             cout << "Enter state " << m_iStateIndex << endl;
             mStates[m_iStateIndex].bInitial = false;
             mStates[m_iStateIndex].m_Start_time = chrono::system_clock::now();
-            ollama::message response_message("assistant", mStates[m_iStateIndex].m_strFirstSentence);
-            mStates[m_iStateIndex].message_history.push_back(response_message);
-            RobotCommandProtobuf::RobotCommand command;
-            command.set_speak_sentence(mStates[m_iStateIndex].m_strFirstSentence);
-            m_pSendMessageManager->AddMessage(command);
+            if( mStates[m_iStateIndex].m_strFirstSentence != "")
+            {
+                ollama::message response_message("assistant", mStates[m_iStateIndex].m_strFirstSentence);
+                mStates[m_iStateIndex].message_history.push_back(response_message);
+                RobotCommandProtobuf::RobotCommand command;
+                command.set_speak_sentence(mStates[m_iStateIndex].m_strFirstSentence);
+                m_pSendMessageManager->AddMessage(command);
+            }
         }
         else  //following conversation
         {
             
 //            ollama::message message("user", mstrUserInput);
 //            message_history.push_back(message);
-            cout << "++++++++++++++++Call LLM++++++++++++++++++++++++\n\n";
+//            cout << "++++++++++++++++Call LLM++++++++++++++++++++++++\n\n";
 
         }
 
+        //Check if the time exceed the state limit
+        if(chrono::duration_cast<chrono::milliseconds>(current_time - mStates[m_iStateIndex].m_Start_time) > mStates[m_iStateIndex].m_secDurationLimit)
+        {
+            m_iStateIndex++;
+        }
+
+        //wait for the start command
+        if( m_iStateIndex == 0)
+        {
+            if( mpThreadWhisper->b_RobotSentence_End)
+            {
+                if( mpThreadWhisper->strRobotSentence.find("開始") != 0 )
+                {
+                    m_iStateIndex++;
+                }
+            }
+        }
+
+        this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }

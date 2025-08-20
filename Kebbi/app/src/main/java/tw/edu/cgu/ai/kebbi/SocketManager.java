@@ -48,8 +48,8 @@ public class SocketManager {
 
     byte[] mMessagePool = new byte[8192];
     int effective_length = 0;
-    String beginString = new String("BeginOfAMessage");
-    String endString = new String("EndOfAMessage");
+    String beginString = new String("BeginOfADataFrame");
+    String endString = new String("EndOfADataFrame");
 
     public NuwaRobotAPI mRobotAPI;
     ArrayList<RobotCommandOuterClass.RobotCommand> ArrayListCommand = new ArrayList<RobotCommandOuterClass.RobotCommand>();
@@ -497,7 +497,7 @@ public class SocketManager {
                              try {
                                  if (mSocket.isConnected()) {
                                      OutputStream os = mSocket.getOutputStream();
-                                     os.write("BeginOfAMessage".getBytes());
+                                     os.write("BeginOfADataFrame".getBytes());
 
                                      byte[] byteArray = message.toByteArray();
 
@@ -509,7 +509,7 @@ public class SocketManager {
 
                                      os.write(message.toByteArray());
 
-                                     os.write("EndOfAMessage".getBytes());
+                                     os.write("EndOfADataFrame".getBytes());
                                  }
                              } catch (Exception e) {
                                  e.printStackTrace();

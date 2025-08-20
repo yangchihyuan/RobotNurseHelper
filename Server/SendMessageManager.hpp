@@ -26,7 +26,7 @@ public:
     void Send();
 
 protected:
-    char str_results[4096];
+    char str_results[4096];     //is this buffer large enough?
     int str_results_len;
     mutex mutex_message_buffer;
     queue<RobotCommandProtobuf::RobotCommand> mQueue;

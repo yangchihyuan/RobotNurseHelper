@@ -146,7 +146,7 @@ class ImageListener implements OnImageAvailableListener {
         String JPEG_length = String.format("%05d", array_JPEG.length);
 
             int message_length = (int) (Timestamp.length() + 1 + 3 + 1 + JPEG_length.length() + 1 + array_JPEG.length);
-            int buffer_length = message_length + 15 + 4 + 13;     //"BeginOfAMessage" and messagelength (4 bytes) and "EndOfAMessage"
+            int buffer_length = message_length + 17 + 4 + 15;     //"BeginOfADataFrame" and messagelength (4 bytes) and "EndOfADataFrame"
             String PitchDegree;
             /*
             if (mActionRunnable.pitchDegree >= 0)
@@ -160,7 +160,7 @@ class ImageListener implements OnImageAvailableListener {
             ByteBuffer buffer = ByteBuffer.allocate(buffer_length);
             buffer.order(ByteOrder.LITTLE_ENDIAN); // Ubuntu byte order
 
-            buffer.put("BeginOfAMessage".getBytes());
+            buffer.put("BeginOfADataFrame".getBytes());
             buffer.putInt(message_length);
             buffer.put(Timestamp.getBytes());
             buffer.put("_".getBytes());
@@ -170,7 +170,7 @@ class ImageListener implements OnImageAvailableListener {
             buffer.put(JPEG_length.getBytes());
             buffer.put(Null.getBytes());
             buffer.put(array_JPEG);
-            buffer.put("EndOfAMessage".getBytes());
+            buffer.put("EndOfADataFrame".getBytes());
 
             socketManager.sendImage(buffer);
 

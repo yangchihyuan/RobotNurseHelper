@@ -6,6 +6,7 @@
 #include <QThread>
 #include "ollama.hpp"
 #include "SendMessageManager.hpp"
+#include "ThreadWhisper.hpp"
 
 using namespace std;
 
@@ -34,11 +35,12 @@ public:
     void NextState();
     condition_variable cond_var_state_control;
     SendMessageManager *m_pSendMessageManager;
+    ThreadWhisper *mpThreadWhisper;
 
 protected:
     void run();
     vector<State> mStates;
-    int m_iNumberOfStates = 9;
+    int m_iNumberOfStates = 10;
     int m_iStateIndex = 0;
 };
 

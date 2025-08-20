@@ -1049,5 +1049,5 @@ void ThreadProcessImage::run()
             cond_var_process_image.wait(lk);
         }
     }
-    cout << "Exit while loop." << endl;
+    cout << "Exit ThreadProcessImage loop." << endl;
 }

@@ -32,9 +32,9 @@ void SendMessageManager::Send()
                 str_results_len = message.ByteSizeLong();
                 message.SerializeToArray(str_results,message.ByteSizeLong());
 
-                pSocket->write("BeginOfAMessage");
+                pSocket->write("BeginOfADataFrame");
                 socketStream.writeRawData(str_results, str_results_len);
-                pSocket->write("EndOfAMessage");
+                pSocket->write("EndOfADataFrame");
                 //debug
                 //cout << "send a message " << endl;
 

@@ -97,10 +97,11 @@ MainWindow::~MainWindow()
       delete audioSrc;
 
     thread_ollama.b_WhileLoop = false;
-//    thread_ollama.cond_var_ollama.notify_one();
+    thread_ollama.cond_var_ollama.notify_one();
     thread_ollama.wait();
 
     thread_state_control.b_WhileLoop = false;
+    thread_state_control.cond_var_state_control.notify_one();
     thread_state_control.wait();
 
     delete ui;
