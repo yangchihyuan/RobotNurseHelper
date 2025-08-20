@@ -84,32 +84,32 @@ void SocketHandler::add_data(char* data_, size_t length)
             if( buffer_section_head != delimiter_head)
             {
                 cout << "Received Delimiter_head: " << buffer_section_head << endl;
-                cout << "Delimiter head is incorrect. Drop out this message" << endl;
+                cout << "Delimiter head is incorrect. Drop out this DataFrame" << endl;
                 continue;
             }
             else{
-                //check the message length
-                int message_length;
-                memcpy(&message_length, buffer.get() + delimiter_head.length(), sizeof(int));       //here is wrong, why?
+                //check the DataFrame length
+                int DataFrame_length;
+                memcpy(&DataFrame_length, buffer.get() + delimiter_head.length(), sizeof(int));       //here is wrong, why?
                 int length2 = length1 - delimiter_head.length() - delimiter_tail.length();
-                if( message_length != length2 - sizeof(int))
+                if( DataFrame_length != length2 - sizeof(int))
                 {
-                    cout << "message_length is incorrect. Drop out this message" << endl;
+                    cout << "DataFrame_length is incorrect. Drop out this DataFrame" << endl;
                     cout << "length1: " <<  length1 << endl;
                     cout << "length2: " <<  length2 << endl;
-                    cout << "message_length: " <<  message_length << endl;
+                    cout << "DataFrame_length: " <<  DataFrame_length << endl;
                     //On an emulator, there will no WiFi error. But on a real robot, there will be WiFi error.
                     //I need to skip this frame.
                 }
                 else
                 {
                     //copy buffer to queue
-                    Message this_message;
-                    this_message.data = shared_ptr<char[]>(new char[message_length]);
-                    this_message.length = message_length;
-                    memcpy(this_message.data.get(), buffer.get()+delimiter_head.length()+sizeof(int), message_length);
+                    DataFrame this_DataFrame;
+                    this_DataFrame.data = shared_ptr<char[]>(new char[DataFrame_length]);
+                    this_DataFrame.length = DataFrame_length;
+                    memcpy(this_DataFrame.data.get(), buffer.get()+delimiter_head.length()+sizeof(int), DataFrame_length);
                     queue_mutex.lock();
-                    messages_queue.push(this_message);
+                    DataFrames_queue.push(this_DataFrame);
                     queue_mutex.unlock();
                 }
             }
@@ -138,31 +138,31 @@ void SocketHandler::add_data(char* data_, size_t length)
 size_t SocketHandler::get_queue_length()
 {
     queue_mutex.lock();
-    size_t length = messages_queue.size();
+    size_t length = DataFrames_queue.size();
     queue_mutex.unlock();
     return length;
 }
 
-Message SocketHandler::get_head()
+DataFrame SocketHandler::get_head()
 {   
     queue_mutex.lock();
-    Message message = messages_queue.front();
+    DataFrame DataFrame = DataFrames_queue.front();
     queue_mutex.unlock();
-    return message;
+    return DataFrame;
 }
 
 void SocketHandler::pop_head()
 {
     queue_mutex.lock();
-    messages_queue.pop();
+    DataFrames_queue.pop();
     queue_mutex.unlock();
 }
 
 void SocketHandler::clear_queue()
 {
     queue_mutex.lock();
-    while( !messages_queue.empty())
-        messages_queue.pop();
+    while( !DataFrames_queue.empty())
+        DataFrames_queue.pop();
     queue_mutex.unlock();
 }
 

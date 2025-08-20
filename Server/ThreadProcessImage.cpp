@@ -650,13 +650,13 @@ void ThreadProcessImage::run()
             auto start = std::chrono::high_resolution_clock::now();
             //Get message from the queue
             //Only need the latest message
-            Message message;
+            DataFrame dataframe;
             while (pSocketHandler->get_queue_length() > 0)
             {
-                message = pSocketHandler->get_head();
+                dataframe = pSocketHandler->get_head();
                 pSocketHandler->pop_head();    
             }
-            char *data_ = message.data.get();
+            char *data_ = dataframe.data.get();
             
             //Here, I need to parse the protobuf object
             //I don't know why it does not work.
@@ -676,381 +676,378 @@ void ThreadProcessImage::run()
             string heading(data_);
 
             //Check the correctness of this frame buffer
-//            if( heading.length() != 17){
-//                cout << "heading length incorrect'" << endl;
-//                continue;
-//            }
+            if( heading.length() != 17){
+                cout << "heading length incorrect'" << endl;
+                continue;
+            }
 
 
-//            string sJPEG_length(data_+heading.length()+1);
-//            int iJPEG_length = 0;
-//            try{
-//                iJPEG_length = stoi(sJPEG_length);
-//            }
-//            catch(exception &e){
-//                cout << "Convert sJPEG_length to iJPEG_length fails" << endl;
-//                continue;
-//            }
+            string sJPEG_length(data_+heading.length()+1);
+            int iJPEG_length = 0;
+            try{
+                iJPEG_length = stoi(sJPEG_length);
+            }
+            catch(exception &e){
+                cout << "Convert sJPEG_length to iJPEG_length fails" << endl;
+                continue;
+            }
 
             //check JPEG signature
-//            int shift_length = 13 + 1 + 3 + 1 + sJPEG_length.length() + 1;
-//            if( !(static_cast<int>(static_cast<unsigned char>(data_[shift_length])) == 0xFF &&
-//                static_cast<int>(static_cast<unsigned char>(data_[shift_length+1])) == 0xD8 &&
-//                static_cast<int>(static_cast<unsigned char>(data_[shift_length+2])) == 0xFF 
-//                && static_cast<int>(static_cast<unsigned char>(data_[shift_length+iJPEG_length-2])) == 0xFF
-//               && static_cast<int>(static_cast<unsigned char>(data_[shift_length+iJPEG_length-1])) == 0xD9 
-//           ))
-//            {
-//                cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length])) << endl;
-//                cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length+1])) << endl;
-//                cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length+2])) << endl;
-//                cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length+iJPEG_length-2])) << endl;
-//               cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length+iJPEG_length-1])) << endl;
-//                cout << "JPEG signature does not match" << endl;
-//                continue;
-//            }
+            int shift_length = 13 + 1 + 3 + 1 + sJPEG_length.length() + 1;
+            if( !(static_cast<int>(static_cast<unsigned char>(data_[shift_length])) == 0xFF &&
+                static_cast<int>(static_cast<unsigned char>(data_[shift_length+1])) == 0xD8 &&
+                static_cast<int>(static_cast<unsigned char>(data_[shift_length+2])) == 0xFF 
+                && static_cast<int>(static_cast<unsigned char>(data_[shift_length+iJPEG_length-2])) == 0xFF
+               && static_cast<int>(static_cast<unsigned char>(data_[shift_length+iJPEG_length-1])) == 0xD9 
+           ))
+            {
+                cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length])) << endl;
+                cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length+1])) << endl;
+                cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length+2])) << endl;
+                cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length+iJPEG_length-2])) << endl;
+               cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length+iJPEG_length-1])) << endl;
+                cout << "JPEG signature does not match" << endl;
+                continue;
+            }
 
-//            string header(data_);
-//            string str_timestamp = header.substr(0,13);
-//            string str_is_dancing = header.substr(14,3);
+            string header(data_);
+            string str_timestamp = header.substr(0,13);
+            string str_is_dancing = header.substr(14,3);
 
-//            long timestamp = 0;
+            long timestamp = 0;
             is_dancing = 0;
-//            try{
-//                timestamp = stol(str_timestamp);                
-//                is_dancing = stoi(str_is_dancing);   //2025 Aug 5: Mohamed wants the server-side program to know that the robot is dancing.
-//            }
-//            catch(exception &e)
-//            {
-//                throw("cannot do stol");
-//            }
+            try{
+                timestamp = stol(str_timestamp);                
+                is_dancing = stoi(str_is_dancing);   //2025 Aug 5: Mohamed wants the server-side program to know that the robot is dancing.
+            }
+            catch(exception &e)
+            {
+                throw("cannot do stol");
+            }
             //2025/3/9 Bug note: my previous end argument is wrong: data_+iJPEG_length where "+30" is missing.
             //In OpenCV 4.6, imdecode still works, but in OpenCV 4.11 and 4.12, it fails.
             //That is the reason that in my imshow() output window, the bottom region is always blurred.
             //The reason is that the imdecode() function fails to decode the JPEG image. 
-//            vector<uchar> JPEG_Data(data_ + shift_length, data_+shift_length+iJPEG_length);
+            vector<uchar> JPEG_Data(data_ + shift_length, data_+shift_length+iJPEG_length);
 
-                try{
-                    inputImage = imdecode(strJPEG_Data.data(), IMREAD_COLOR);
-                    if( inputImage.data )
-                        bCorrectlyDecoded = true;
+            try{
+                inputImage = imdecode(JPEG_Data, IMREAD_COLOR);
+                if( inputImage.data )
+                    bCorrectlyDecoded = true;
+                else
+                {
+                    cout << "imdecode fails." << endl;
+                    continue;
+                }
+            }
+            catch(exception &e)
+            {
+                cout << "imdecode try catch exception." << endl;
+            }
+
+            if( bCorrectlyDecoded)
+            {
+                if(bSaveTransmittedImage)
+                {
+                    if(iFrameCount % image_save_every_N_frame == 0 )
+                    {
+                        string str_now = GetCurrentTimeString(true);
+
+                        string filename = ImageSaveDirectory + "/" + str_now + ".jpg";
+                        if(! m_bDirectoryCreated )
+                        {
+                            if( !CheckDirectoryExist(ImageSaveDirectory))
+                            {
+                                CreateDirectory(ImageSaveDirectory);
+                                m_bDirectoryCreated = true;
+                            }
+                        }
+//                        save_image_JPEG(data_ + shift_length, iJPEG_length , filename);
+//                        save_image_JPEG(JPEG_Data, filename);
+                        iFrameCount = 0; //reset the frame count
+                    }
                     else
                     {
-                        cout << "imdecode fails." << endl;
-                        continue;
+                        iFrameCount++;
                     }
                 }
-                catch(exception &e)
-                {
-                    cout << "imdecode try catch exception." << endl;
-//                    cout << e. << endl;
 
+                bool bShowTransmittedImage = false;
+                if( bShowTransmittedImage )
+                {
+                    auto stop = std::chrono::high_resolution_clock::now();
+                    auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+                    std::cout << "Elapsed time: " << duration_ms.count() << " milliseconds" << std::endl;
                 }
 
-                if( bCorrectlyDecoded)
+                if( b_HumanPoseEstimation)
                 {
-                    if(bSaveTransmittedImage)
-                    {
-                        if(iFrameCount % image_save_every_N_frame == 0 )
-                        {
-                            string str_now = GetCurrentTimeString(true);
+                    start = std::chrono::high_resolution_clock::now();
 
-                            string filename = ImageSaveDirectory + "/" + str_now + ".jpg";
-                            if(! m_bDirectoryCreated )
-                            {
-                                if( !CheckDirectoryExist(ImageSaveDirectory))
-                                {
-                                    CreateDirectory(ImageSaveDirectory);
-                                    m_bDirectoryCreated = true;
-                                }
-                            }
-    //                        save_image_JPEG(data_ + shift_length, iJPEG_length , filename);
-    //                        save_image_JPEG(JPEG_Data, filename);
-                            iFrameCount = 0; //reset the frame count
+                    mtx_Task.lock();
+                    //This Process function only works for the CPU mode because the GPU mode uses the GpuBuffer.
+                    if( Processor == "CPU" )
+                    {
+//                        if( !libmp->Process(inputImage.data, inputImage.cols, inputImage.rows, mediapipe::ImageFormat::SRGB) )
+                        if( !libmp->Process2(inputImage) )
+                        {
+                            std::cerr << "Process() failed!" << std::endl;
+                            break;
+                        }
+                    }
+                    else if( Processor == "GPU" )
+                    {
+                        if( !libmp->Process_GPU(inputImage.data, inputImage.cols, inputImage.rows, mediapipe::ImageFormat::SRGB) )
+                        {
+                            std::cerr << "Process_GPU() failed!" << std::endl;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        cout << "Processor is not supported." << endl;
+                    }
+
+                    if( Processor == "CPU" )
+                    {
+                        if( libmp->WriteOutputImage(outFrame.data, libmp->GetOutputPacket("output_video") ) )
+                        {
+                            bNewoutFrame = true;
                         }
                         else
                         {
-                            iFrameCount++;
+                            cout << "WriteOutputImage fails." << std::endl;
+                        }
+                        
+                    }
+                    else if( Processor == "GPU" )
+                    {
+                        if( libmp->WriteOutputImage_GPU(outFrame.data, libmp->GetOutputPacket("output_video")) )
+                        {
+                            bNewoutFrame = true;
+                        }
+                        else
+                        {
+                            cout << "WriteOutputImage fails." << std::endl;
                         }
                     }
 
-                    bool bShowTransmittedImage = false;
-                    if( bShowTransmittedImage )
+                    bool bShowProcessTime = false;
+                    if( bShowProcessTime )
                     {
                         auto stop = std::chrono::high_resolution_clock::now();
                         auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-                        std::cout << "Elapsed time: " << duration_ms.count() << " milliseconds" << std::endl;
+                        std::cout << "Process time: " << duration_ms.count() << " milliseconds" << std::endl;
                     }
-
-                    if( b_HumanPoseEstimation)
-                    {
-                        start = std::chrono::high_resolution_clock::now();
-
-                        mtx_Task.lock();
-                        //This Process function only works for the CPU mode because the GPU mode uses the GpuBuffer.
-                        if( Processor == "CPU" )
-                        {
-    //                        if( !libmp->Process(inputImage.data, inputImage.cols, inputImage.rows, mediapipe::ImageFormat::SRGB) )
-                            if( !libmp->Process2(inputImage) )
-                            {
-                                std::cerr << "Process() failed!" << std::endl;
-                                break;
-                            }
-                        }
-                        else if( Processor == "GPU" )
-                        {
-                            if( !libmp->Process_GPU(inputImage.data, inputImage.cols, inputImage.rows, mediapipe::ImageFormat::SRGB) )
-                            {
-                                std::cerr << "Process_GPU() failed!" << std::endl;
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            cout << "Processor is not supported." << endl;
-                        }
-
-                        if( Processor == "CPU" )
-                        {
-                            if( libmp->WriteOutputImage(outFrame.data, libmp->GetOutputPacket("output_video") ) )
-                            {
-                                bNewoutFrame = true;
-                            }
-                            else
-                            {
-                                cout << "WriteOutputImage fails." << std::endl;
-                            }
-                            
-                        }
-                        else if( Processor == "GPU" )
-                        {
-                            if( libmp->WriteOutputImage_GPU(outFrame.data, libmp->GetOutputPacket("output_video")) )
-                            {
-                                bNewoutFrame = true;
-                            }
-                            else
-                            {
-                                cout << "WriteOutputImage fails." << std::endl;
-                            }
-                        }
-
-                        bool bShowProcessTime = false;
-                        if( bShowProcessTime )
-                        {
-                            auto stop = std::chrono::high_resolution_clock::now();
-                            auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-                            std::cout << "Process time: " << duration_ms.count() << " milliseconds" << std::endl;
-                        }
-                            
-                        //2025/8/5 My holistic return value changes to a new structure HolisticLandmarks
-                        //The normalized_landmarks will serve only face and pose.
-                        std::vector<std::vector<std::array<float, 3>>> normalized_landmarks;
-                        HolisticLandmarks holistic_landmarks;
-                        if( Task == "Face" ) 
-                        {
-                            normalized_landmarks = get_landmarks_face(libmp);      //This is not the reason of memory leak
-
-                            // For each face, draw a circle at each landmark's position
-                            bool bDrawImageByOurOwn = false;        //2025/8/5: I didn't use it, why?
-                            if( bDrawImageByOurOwn )
-                            {
-                                size_t num_faces = normalized_landmarks.size();
-                                for (int face_num = 0; face_num < num_faces; face_num++) {
-                                    for (const std::array<float, 3>& norm_xyz : normalized_landmarks[face_num]) {
-                                        int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
-                                        int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
-                                        cv::circle(inputImage, cv::Point(x, y), 1, cv::Scalar(0, 255, 0), -1);
-                                    }
-                                }
-                                // Display the image with landmarks                    
-                                inputImage.copyTo(outFrame);
-                                bNewoutFrame = true;
-                            }
-                        }
-                        else if( Task == "Pose" )
-                        {
-                            normalized_landmarks = get_landmarks_pose(libmp);
-
-                            //2025/8/12 This is an experimental code to draw the landmarks by our own.
-                            //debug
-                            bool bDrawImageByOurOwn = false;
-                            if( bDrawImageByOurOwn )
-                            {
-                                size_t num_poses = normalized_landmarks.size();
-                                for (int pose_num = 0; pose_num < num_poses; pose_num++) {
-                                    for (const std::array<float, 3>& norm_xyz : normalized_landmarks[pose_num]) {
-                                        int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
-                                        int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
-                                        cv::circle(inputImage, cv::Point(x, y), 5, cv::Scalar(0, 255, 0), 1);
-                                    }
-                                }
-                                inputImage.copyTo(outFrame);
-                                bNewoutFrame = true;
-                            }
-                        }
-                        else if( Task == "Holistic" )
-                        {
-                            //2025/8/5 change to a return value
-                            holistic_landmarks = get_landmarks_holistic2(libmp);    
-                            normalized_landmarks.push_back( holistic_landmarks.pose );
-                            if( holistic_landmarks.right_hand.size() > 0 && holistic_landmarks.left_hand.size() > 0)
-                            {
-                                std::cout << "right hand / left hand landmark positions: " << std::endl;
-                                for( int i = 0; i < holistic_landmarks.left_hand.size(); i++)
-                                {
-                                    const std::array<float, 3>& norm_xyz_right = holistic_landmarks.right_hand[i];
-                                    int x_right = static_cast<int>(norm_xyz_right[0] * inputImage.cols);
-                                    int y_right = static_cast<int>(norm_xyz_right[1] * inputImage.rows);
-                                    std::cout << cv::Point(x_right, y_right);
-
-                                    const std::array<float, 3>& norm_xyz_left = holistic_landmarks.left_hand[i];
-                                    int x_left = static_cast<int>(norm_xyz_left[0] * inputImage.cols);
-                                    int y_left = static_cast<int>(norm_xyz_left[1] * inputImage.rows);
-                                    std::cout << cv::Point(x_left, y_left) << std::endl;
-                                    
-                                }
-                            }
-                            else if (holistic_landmarks.right_hand.size() > 0)
-                            {
-                                std::cout << "right hand position: " << std::endl;
-                                for (const std::array<float, 3>& norm_xyz : holistic_landmarks.right_hand) {
-                                    int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
-                                    int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
-                                    std::cout << cv::Point(x, y) << std::endl;
-                                }
-                            }
-                            else if( holistic_landmarks.left_hand.size() > 0 )
-                            {
-                                std::cout << "left hand position: " << std::endl;
-                                for (const std::array<float, 3>& norm_xyz : holistic_landmarks.left_hand) {
-                                    int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
-                                    int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
-                                    std::cout << cv::Point(x, y) << std::endl;
-                                }
-                            }
-                        }
-                        else if( Task == "Hand" )
-                        {
-                            //ToDo: I have not developed the Hand landmarks function yet.
-                            //normalized_landmarks = get_landmarks_holistic(libmp);
-                        }
-                        else
-                        {
-                            cout << "Task is not supported. (D)" << endl;
-                        }
                         
-                        //What is the difference between the if and else sections?
-                        //The difference is that the if section is used when the robot is dancing.
-                        //It appears that dancing is not playing mbkx files.
-    /*                    if (normalized_landmarks.empty() || is_dancing) {
+                    //2025/8/5 My holistic return value changes to a new structure HolisticLandmarks
+                    //The normalized_landmarks will serve only face and pose.
+                    std::vector<std::vector<std::array<float, 3>>> normalized_landmarks;
+                    HolisticLandmarks holistic_landmarks;
+                    if( Task == "Face" ) 
+                    {
+                        normalized_landmarks = get_landmarks_face(libmp);      //This is not the reason of memory leak
+
+                        // For each face, draw a circle at each landmark's position
+                        bool bDrawImageByOurOwn = false;        //2025/8/5: I didn't use it, why?
+                        if( bDrawImageByOurOwn )
+                        {
+                            size_t num_faces = normalized_landmarks.size();
+                            for (int face_num = 0; face_num < num_faces; face_num++) {
+                                for (const std::array<float, 3>& norm_xyz : normalized_landmarks[face_num]) {
+                                    int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
+                                    int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
+                                    cv::circle(inputImage, cv::Point(x, y), 1, cv::Scalar(0, 255, 0), -1);
+                                }
+                            }
+                            // Display the image with landmarks                    
+                            inputImage.copyTo(outFrame);
+                            bNewoutFrame = true;
+                        }
+                    }
+                    else if( Task == "Pose" )
+                    {
+                        normalized_landmarks = get_landmarks_pose(libmp);
+
+                        //2025/8/12 This is an experimental code to draw the landmarks by our own.
+                        //debug
+                        bool bDrawImageByOurOwn = false;
+                        if( bDrawImageByOurOwn )
+                        {
+                            size_t num_poses = normalized_landmarks.size();
+                            for (int pose_num = 0; pose_num < num_poses; pose_num++) {
+                                for (const std::array<float, 3>& norm_xyz : normalized_landmarks[pose_num]) {
+                                    int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
+                                    int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
+                                    cv::circle(inputImage, cv::Point(x, y), 5, cv::Scalar(0, 255, 0), 1);
+                                }
+                            }
+                            inputImage.copyTo(outFrame);
+                            bNewoutFrame = true;
+                        }
+                    }
+                    else if( Task == "Holistic" )
+                    {
+                        //2025/8/5 change to a return value
+                        holistic_landmarks = get_landmarks_holistic2(libmp);    
+                        normalized_landmarks.push_back( holistic_landmarks.pose );
+                        if( holistic_landmarks.right_hand.size() > 0 && holistic_landmarks.left_hand.size() > 0)
+                        {
+                            std::cout << "right hand / left hand landmark positions: " << std::endl;
+                            for( int i = 0; i < holistic_landmarks.left_hand.size(); i++)
+                            {
+                                const std::array<float, 3>& norm_xyz_right = holistic_landmarks.right_hand[i];
+                                int x_right = static_cast<int>(norm_xyz_right[0] * inputImage.cols);
+                                int y_right = static_cast<int>(norm_xyz_right[1] * inputImage.rows);
+                                std::cout << cv::Point(x_right, y_right);
+
+                                const std::array<float, 3>& norm_xyz_left = holistic_landmarks.left_hand[i];
+                                int x_left = static_cast<int>(norm_xyz_left[0] * inputImage.cols);
+                                int y_left = static_cast<int>(norm_xyz_left[1] * inputImage.rows);
+                                std::cout << cv::Point(x_left, y_left) << std::endl;
+                                
+                            }
+                        }
+                        else if (holistic_landmarks.right_hand.size() > 0)
+                        {
+                            std::cout << "right hand position: " << std::endl;
+                            for (const std::array<float, 3>& norm_xyz : holistic_landmarks.right_hand) {
+                                int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
+                                int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
+                                std::cout << cv::Point(x, y) << std::endl;
+                            }
+                        }
+                        else if( holistic_landmarks.left_hand.size() > 0 )
+                        {
+                            std::cout << "left hand position: " << std::endl;
+                            for (const std::array<float, 3>& norm_xyz : holistic_landmarks.left_hand) {
+                                int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
+                                int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
+                                std::cout << cv::Point(x, y) << std::endl;
+                            }
+                        }
+                    }
+                    else if( Task == "Hand" )
+                    {
+                        //ToDo: I have not developed the Hand landmarks function yet.
+                        //normalized_landmarks = get_landmarks_holistic(libmp);
+                    }
+                    else
+                    {
+                        cout << "Task is not supported. (D)" << endl;
+                    }
+                    
+                    //What is the difference between the if and else sections?
+                    //The difference is that the if section is used when the robot is dancing.
+                    //It appears that dancing is not playing mbkx files.
+/*                    if (normalized_landmarks.empty() || is_dancing) {
+                        auto current_time = std::chrono::high_resolution_clock::now();
+                        auto duration = std::chrono::duration_cast<std::chrono::seconds>(current_time - previous_time);
+//                        cout << "duration empty" << duration.count() << endl;
+                        if (duration.count() >= 1 && bLastLandmarksEffective) { //3 [MOHAMED]
+                            //bLastLandmarksEffective = false;  
+                            if( action_option.move_mode != action_option.MOVE_MANUAL)
+                            {
+                                std::vector<std::vector<std::array<float, 3>>> empty_landmarks; // [MOHAMED]
+                                RobotCommandProtobuf::RobotCommand message;
+                                if( Task == "Face" )
+                                {
+                                    FaceLandmarks_to_RobotAction(empty_landmarks, robot_status, action_option, message); // [MOHAMED]
+                                }
+                                else if( Task == "Pose" )
+                                {
+                                    PoseLandmarks_to_RobotAction(empty_landmarks, robot_status, action_option, message);
+                                }
+                                else if( Task == "Holistic" )
+                                {
+                                    //I use Pose, I haven't develop a new function for Holistic.
+                                    PoseLandmarks_to_RobotAction(empty_landmarks, robot_status, action_option, message);
+                                }
+                                else if( Task == "Hand" )
+                                {
+                                    //ToDo: I have not develop this function yet.
+                                    //PoseLandmarks_to_RobotAction(empty_landmarks, robot_status, action_option, message);
+                                }
+                                else
+                                {
+                                    cout << "Task is not supported. (E)" << endl;
+    //                                continue;
+                                }
+                                previous_time = current_time;
+                                pSendMessageManager->AddMessage(message);
+                            }
+
+                        }
+                    }
+                    else
+*/
+                    if( !is_dancing )
+                    {
+                        if( !normalized_landmarks.empty())
+                        {
+                            iNoPersonFrameCount = 0;
+
+                            //last_landmarks = normalized_landmarks;
+                            bLastLandmarksEffective = true;
+                            //use time control first, wait for 3 seconds
                             auto current_time = std::chrono::high_resolution_clock::now();
                             auto duration = std::chrono::duration_cast<std::chrono::seconds>(current_time - previous_time);
-    //                        cout << "duration empty" << duration.count() << endl;
-                            if (duration.count() >= 1 && bLastLandmarksEffective) { //3 [MOHAMED]
-                                //bLastLandmarksEffective = false;  
+    //                        cout << "duration " << duration.count() << endl;
+                            if (duration.count() >= 1) { //3 [MOHAMED]
                                 if( action_option.move_mode != action_option.MOVE_MANUAL)
                                 {
-                                    std::vector<std::vector<std::array<float, 3>>> empty_landmarks; // [MOHAMED]
                                     RobotCommandProtobuf::RobotCommand message;
                                     if( Task == "Face" )
                                     {
-                                        FaceLandmarks_to_RobotAction(empty_landmarks, robot_status, action_option, message); // [MOHAMED]
+                                        FaceLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, message);
                                     }
                                     else if( Task == "Pose" )
                                     {
-                                        PoseLandmarks_to_RobotAction(empty_landmarks, robot_status, action_option, message);
+                                        PoseLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, message);
                                     }
                                     else if( Task == "Holistic" )
                                     {
                                         //I use Pose, I haven't develop a new function for Holistic.
-                                        PoseLandmarks_to_RobotAction(empty_landmarks, robot_status, action_option, message);
-                                    }
-                                    else if( Task == "Hand" )
-                                    {
-                                        //ToDo: I have not develop this function yet.
-                                        //PoseLandmarks_to_RobotAction(empty_landmarks, robot_status, action_option, message);
+                                        PoseLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, message);
                                     }
                                     else
                                     {
-                                        cout << "Task is not supported. (E)" << endl;
+                                        cout << "Task is not supported. (F)" << endl;
         //                                continue;
                                     }
                                     previous_time = current_time;
                                     pSendMessageManager->AddMessage(message);
                                 }
-
                             }
                         }
                         else
-    */
-                        if( !is_dancing )
                         {
-                            if( !normalized_landmarks.empty())
+                            iNoPersonFrameCount++;
+                            if( iNoPersonFrameCount > 30)
                             {
+                                RobotCommandProtobuf::RobotCommand command;
+                                command.set_yaw(0);
+                                command.set_pitch(0);
+                                pSendMessageManager->AddMessage(command);
                                 iNoPersonFrameCount = 0;
-
-                                //last_landmarks = normalized_landmarks;
-                                bLastLandmarksEffective = true;
-                                //use time control first, wait for 3 seconds
-                                auto current_time = std::chrono::high_resolution_clock::now();
-                                auto duration = std::chrono::duration_cast<std::chrono::seconds>(current_time - previous_time);
-        //                        cout << "duration " << duration.count() << endl;
-                                if (duration.count() >= 1) { //3 [MOHAMED]
-                                    if( action_option.move_mode != action_option.MOVE_MANUAL)
-                                    {
-                                        RobotCommandProtobuf::RobotCommand message;
-                                        if( Task == "Face" )
-                                        {
-                                            FaceLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, message);
-                                        }
-                                        else if( Task == "Pose" )
-                                        {
-                                            PoseLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, message);
-                                        }
-                                        else if( Task == "Holistic" )
-                                        {
-                                            //I use Pose, I haven't develop a new function for Holistic.
-                                            PoseLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, message);
-                                        }
-                                        else
-                                        {
-                                            cout << "Task is not supported. (F)" << endl;
-            //                                continue;
-                                        }
-                                        previous_time = current_time;
-                                        pSendMessageManager->AddMessage(message);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                iNoPersonFrameCount++;
-                                if( iNoPersonFrameCount > 30)
-                                {
-                                    RobotCommandProtobuf::RobotCommand command;
-                                    command.set_yaw(0);
-                                    command.set_pitch(0);
-                                    pSendMessageManager->AddMessage(command);
-                                    iNoPersonFrameCount = 0;
-                                }
                             }
                         }
-                        mtx_Task.unlock();    
                     }
-                    else
-                    {
-                        inputImage.copyTo(outFrame);
-                        bNewoutFrame = true;
-                    }
-                }    //if bCorrectlyDecoded
-            }   //if this is an ImageFrame
+                    mtx_Task.unlock();    
+                }
+                else
+                {
+                    inputImage.copyTo(outFrame);
+                    bNewoutFrame = true;
+                }
+            }    //if bCorrectlyDecoded
         }
         else
         {
             //wait until being notified
-            std::unique_lock<std::mutex> lk(mtx);
+            unique_lock<mutex> lk(mtx);
             cond_var_process_image.wait(lk);
         }
     }
-    cout << "Exit while loop." << std::endl;
+    cout << "Exit while loop." << endl;
 }

@@ -1,10 +1,10 @@
 //2025/08/06 This is designed for Rachael's project. She need to use a tablet to get the level of uncomfortable of the child.
 
 #include "ThreadReceiveMessages.hpp"
-#include "utility_TimeRecorder.hpp"
-#include "utility_directory.hpp"
-#include "utility_string.hpp"
-#include "utility_directory.hpp"
+//#include "utility_TimeRecorder.hpp"
+//#include "utility_directory.hpp"
+//#include "utility_string.hpp"
+//#include "utility_directory.hpp"
 #ifdef USE_KEBBI
     #include "Kebbi/RobotCommand.pb.h"
 #elif USE_ZENBO
@@ -20,9 +20,9 @@ void ThreadReceiveMessages::run()
         {
 
             //Get message from the queue
-            Message message = pSocketHandler->get_head();
+            DataFrame dataframe = pSocketHandler->get_head();
             pSocketHandler->pop_head();
-            char *data_ = message.data.get();
+            char *data_ = dataframe.data.get();
 
             //Here, I need to parse the protobuf object
             RobotCommandProtobuf::RobotToServerMessage RTSmessage;

@@ -16,6 +16,7 @@
 #include "ThreadReceiveMessages.hpp"
 #include "ThreadWhisper.hpp"
 #include "ThreadOllama.hpp"
+#include "ThreadStateControl.hpp"
 #include <queue>
 #include <QMediaDevices>
 #include <QAudioDevice>
@@ -78,6 +79,7 @@ private:
     ThreadWhisper thread_whisper;
 
     ThreadOllama thread_ollama;
+    ThreadStateControl thread_state_control;
 
     QString QString_SentCommands;
     void send_move_body_command(float x, float y, int degree, int speed);

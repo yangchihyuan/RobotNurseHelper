@@ -17,7 +17,6 @@
 #include <QScrollBar>
 #include "RobotStatus.hpp"
 #include "ActionOption.hpp"
-#include "ThreadOllama.hpp"
 
 extern std::mutex gMutex_audio_buffer;
 extern std::queue<short> AudioBuffer;
@@ -239,6 +238,8 @@ MainWindow::MainWindow(QWidget *parent)
     thread_process_image.pSocketHandler = &socketHandler1;
     thread_receive_messages.pSocketHandler = &socketHandler4;
     thread_receive_messages.pSendMessageManager = &sendMessageManager;
+    thread_state_control.InitializeStates();
+    thread_state_control.m_pSendMessageManager = &sendMessageManager;
 }
 
 void MainWindow::on_pushButton_speak_clicked()

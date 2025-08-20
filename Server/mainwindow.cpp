@@ -44,6 +44,7 @@ void MainWindow::startThreads()
     thread_receive_messages.start();
     thread_whisper.start();
     thread_ollama.start();
+    thread_state_control.start();
 }
 
 
@@ -98,6 +99,9 @@ MainWindow::~MainWindow()
     thread_ollama.b_WhileLoop = false;
 //    thread_ollama.cond_var_ollama.notify_one();
     thread_ollama.wait();
+
+    thread_state_control.b_WhileLoop = false;
+    thread_state_control.wait();
 
     delete ui;
 }

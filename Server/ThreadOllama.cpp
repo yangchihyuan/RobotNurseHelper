@@ -171,12 +171,12 @@ bool ThreadOllama::stage_check(ollama::options options, ollama::options options_
 
 void ThreadOllama::run()
 {
-    ollama::options options;
+///    ollama::options options;
     options["seed"] = 1;      //I cannot fix the seed. Otherwise, the result is always the same.
     options["temperature"] = 0.3;
     options["num_ctx"] = 131072; //131072; //32768;//16384; number of context tokens, which is the maximum number of tokens the model can handle in a single request
 
-    ollama::options options_short;
+//    ollama::options options_short;
     options_short["seed"] = 1;
     options_short["temperature"] = 0.5;
     options_short["num_ctx"] = 16384; //131072; //32768;//16384; //This is the major difference.
@@ -242,8 +242,20 @@ void ThreadOllama::run()
     const int multiply_factor = 150;
     chrono::milliseconds ignore_timespan;
     std::chrono::time_point<std::chrono::system_clock> current_time = chrono::system_clock::now();
+
+    mutex mtx;
+    cond_var_ollama();
     while(b_WhileLoop)
     {
+        if(mqueue.size() > 0)
+        {
+
+        }
+        else
+        {
+            cout << "ThreadOllama mqueue.size() == 0" << endl;
+        }
+
         bool change_stage = 0;
         
 
@@ -502,8 +514,14 @@ void ThreadOllama::run()
         loop_cnt++;
         
         //wait for 100 ms to prevent the loop runs too frequently
-        this_thread::sleep_for(std::chrono::milliseconds(100));
+        this_thread::sleep_for(std::chrono::milliseconds(1));
+
     }
     
     cout << "Exit thread Ollama while loop." << endl;
+}
+
+void ThreadOllama::AddQueue(OllamaTask task)
+{
+    mqueue.push(task)
 }

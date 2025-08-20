@@ -6,6 +6,7 @@
 #include <mutex>
 #include <condition_variable>
 #include "ollama.hpp"
+#include "google/protobuf/timestamp.pb.h"
 
 using namespace std;
 
@@ -13,6 +14,12 @@ extern int dancing_status;
 extern vector<string> summary;
 extern vector<string> message_log;      //created by Mohamed, for debugging purpose.
 extern string chosen_face;
+
+struct OllamaTask
+{
+    ollama::messages message_history;
+    google::protobuf::Timestamp timestamp;
+};
 
 class ThreadOllama: public QThread
 {
@@ -30,7 +37,7 @@ public:
     bool b_WhileLoop = true;
     bool b_new_LLM_response = false;
     
-//    condition_variable cond_var_ollama;
+    condition_variable cond_var_ollama;
     string strPrompt;                       //The strPrompt is the user's input sentence, genrated by Whisper.
     string strResponse;
     string str_system_message;               
@@ -72,6 +79,8 @@ public:
 
     string chosen_action = "";
     int chosen_dance = 0;
+    string generateResponse(ollama::messages message_history);
+    void AddQueue(ollama::messages message_history);
 
 protected:
     void run();
@@ -80,6 +89,9 @@ protected:
     mutex mtx;
     chrono::time_point<chrono::high_resolution_clock> last_prompt_time;
     string mstrUserInput;
+    ollama::options options;
+    ollama::options options_short;
+    queue<OllamaTask> mqueue;
 };
 
 #endif
