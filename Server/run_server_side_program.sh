@@ -41,7 +41,6 @@ elif [[ "$1" = "4090" ]]; then
         --WhisperModel "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin" \
         --ImageSaveDirectory "$HOME/Downloads/raw_images" \
         --LanguageModel gemma3:12b \
-        --stage 0 \
         --ImageSaveEveryNFrame 1 \
         --Language Chinese \
         --DefaultSaveImage false

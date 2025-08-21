@@ -715,7 +715,7 @@ void ThreadProcessImage::run()
             string str_is_dancing = header.substr(14,3);
 
             long timestamp = 0;
-            is_dancing = 0;
+            is_dancing = 0;             //Here is a logical problem. While Kebbi is dancing, I won't receive image frames, and don't know if it is still dancing.
             try{
                 timestamp = stol(str_timestamp);                
                 is_dancing = stoi(str_is_dancing);   //2025 Aug 5: Mohamed wants the server-side program to know that the robot is dancing.
@@ -762,8 +762,8 @@ void ThreadProcessImage::run()
                                 m_bDirectoryCreated = true;
                             }
                         }
-//                        save_image_JPEG(data_ + shift_length, iJPEG_length , filename);
-//                        save_image_JPEG(JPEG_Data, filename);
+                        save_image_JPEG(data_ + shift_length, iJPEG_length , filename);
+                        save_image_JPEG(JPEG_Data, filename);
                         iFrameCount = 0; //reset the frame count
                     }
                     else
@@ -772,6 +772,8 @@ void ThreadProcessImage::run()
                     }
                 }
 
+                //debug code
+                /*
                 bool bShowTransmittedImage = false;
                 if( bShowTransmittedImage )
                 {
@@ -779,6 +781,7 @@ void ThreadProcessImage::run()
                     auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
                     std::cout << "Elapsed time: " << duration_ms.count() << " milliseconds" << std::endl;
                 }
+                */
 
                 if( b_HumanPoseEstimation)
                 {
@@ -832,6 +835,8 @@ void ThreadProcessImage::run()
                         }
                     }
 
+                    //debug code
+                    /*
                     bool bShowProcessTime = false;
                     if( bShowProcessTime )
                     {
@@ -839,7 +844,8 @@ void ThreadProcessImage::run()
                         auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
                         std::cout << "Process time: " << duration_ms.count() << " milliseconds" << std::endl;
                     }
-                        
+                    */
+
                     //2025/8/5 My holistic return value changes to a new structure HolisticLandmarks
                     //The normalized_landmarks will serve only face and pose.
                     std::vector<std::vector<std::array<float, 3>>> normalized_landmarks;
@@ -990,10 +996,9 @@ void ThreadProcessImage::run()
                             //last_landmarks = normalized_landmarks;
                             bLastLandmarksEffective = true;
                             //use time control first, wait for 3 seconds
-                            auto current_time = std::chrono::high_resolution_clock::now();
-                            auto duration = std::chrono::duration_cast<std::chrono::seconds>(current_time - previous_time);
-    //                        cout << "duration " << duration.count() << endl;
-                            if (duration.count() >= 1) { //3 [MOHAMED]
+                            auto current_time = chrono::high_resolution_clock::now();
+                            auto duration = chrono::duration_cast<chrono::seconds>(current_time - previous_time);
+                            if (duration.count() >= 1) {
                                 if( action_option.move_mode != action_option.MOVE_MANUAL)
                                 {
                                     RobotCommandProtobuf::RobotCommand message;

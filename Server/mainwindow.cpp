@@ -21,8 +21,6 @@
 #include "ThreadOllama.hpp"
 #include "LandmarkToRobotAction.hpp" //[MOHAMED]
 
-//#include "cppvader/include/cppvader.hpp" //[MOHAMED]
-
 extern std::mutex gMutex_audio_buffer;
 extern std::queue<short> AudioBuffer;
 extern std::condition_variable cond_var_audio;
@@ -102,6 +100,7 @@ MainWindow::~MainWindow()
     thread_ollama.wait();
 
     thread_state_control.b_WhileLoop = false;
+    thread_state_control.cond_var_state_control.notify_one();
     thread_state_control.wait();
 
     delete ui;
@@ -117,15 +116,10 @@ void MainWindow::setLanguageModelName( QString ModelName)
     thread_ollama.ModelName = ModelName.toStdString();
 }
 
-//2025/8/6 This is a debug function. Mohamed did not use it in the run_server_side_program.
-void MainWindow::setPreviousContextFile( QString filePath)
-{
-    thread_ollama.previous_context_path = filePath.toStdString();;
-}
 
 void MainWindow::setStage(int N)
 {
-    thread_ollama.start_stage_input = N;
+    //thread_ollama.start_stage_input = N;
 }
 
 void MainWindow::setImageSaveDirectory( QString ImageSaveDirectory)
@@ -343,6 +337,7 @@ void MainWindow::setImageSaveEveryNFrame(int N)
 void MainWindow::newConnection()
 {
     std::cout << "newConnction() 8895" << std::endl;
+    thread_state_control.cond_var_state_control.notify_one();
     //Because of the loop, it always waits for new connections.
     while (m_server_receive_image->hasPendingConnections())
         appendToSocketList(m_server_receive_image->nextPendingConnection());

@@ -515,7 +515,7 @@ void MainWindow::timer_event()
         thread_ollama.b_new_LLM_response = false;
         ui->plainTextEdit_LLM_response->setPlainText(QString::fromStdString(thread_ollama.strResponse));
         //speak out
-        bool bAutoSpeakOut = true;
+        bool bAutoSpeakOut = false;
         if( bAutoSpeakOut)
         {
             RobotCommandProtobuf::RobotCommand command;
