@@ -223,7 +223,7 @@ public class MainActivity extends Activity {
             @Override
             public void onWikiServiceStart () {
                 Log.d("KEBBI", "onWikiServiceStart");
-                mRobot.startTTS("Hello, I'm Kebbi.");
+//                mRobot.startTTS("Hello, I'm Kebbi.");
             }
 
             @Override

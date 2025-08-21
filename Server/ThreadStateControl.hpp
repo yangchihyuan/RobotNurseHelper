@@ -24,6 +24,9 @@ struct State
     bool bWaitForTTSComplete = true;
     int iNextStateIndex = -1;  //bug proofing
     bool bEndState = false;
+    int iStage = 0;
+    string sFace;
+    string sMotion;
 };
 
 class ThreadOllama; //Because ThreadOllama.hpp and ThreadStateControl.hpp include each other, I need to use forward declaration
@@ -44,6 +47,7 @@ public:
     ThreadWhisper *mpThreadWhisper;
     ThreadOllama *mpThreadOllama;
     void NotifyEvent(string description, chrono::time_point<chrono::system_clock> timestamp, string sLLMResult = "");
+    condition_variable cond_var_state_control;
 
 protected:
     void run();
@@ -59,6 +63,7 @@ protected:
     bool mbWaitForLLMResult = false;
     chrono::time_point<chrono::system_clock> mtimestamp_LLMResult;
     string msLLMResult;
+    int chosen_dance = 0;
 };
 
 #endif

@@ -63,27 +63,13 @@ void SendMessageManager::AddMessage(RobotCommandProtobuf::RobotCommand message)
         if (message.speak_sentence() != "")
         {
             //Debug
-//            cout << "OUTPUT: " << message.speak_sentence() << "\n";
-//            cout << "Add a Message to mQueue" << endl;
+            //cout << "(A) " << message.speak_sentence() << "\n";
+            //cout << "Add a Message to mQueue" << endl;
             mQueue.push(message);
         }
     }
     else
     {
-        // if (message.has_motion())
-        // {
-        //     cout << "HAS_MOTION\n";
-        // }
-        // else if (message.has_turnspeed())
-        // {
-        //     cout << "TURNSPEED_MESSAGE: " << message.turnspeed() << "\n";
-        // }
-        // else 
-        // {
-        //     cout << "UNKNOWN_MESSAGE: <<\n";
-        // }
-        //debug
-//        cout << "Add a Message to mQueue" << endl;
         mQueue.push(message);
     }
     //cout << "Add a Message to mQueue" << endl;

@@ -10,7 +10,6 @@ import android.os.HandlerThread;
 import android.util.Log;
 import android.content.Context;
 
-import com.google.protobuf.Timestamp;
 import com.nuwarobotics.service.agent.NuwaRobotAPI;
 
 import java.io.BufferedInputStream;
@@ -19,14 +18,11 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import RobotCommandProtobuf.RobotCommandOuterClass;
 
 public class SocketManager {
-    public static final int REQUEST_CODE = 201 ;
     public String mServerURL;
     public Integer mPortNumber;
 
@@ -39,8 +35,8 @@ public class SocketManager {
     private Handler handlerSendToServer;
     private HandlerThread threadReceiveCommand;
     private Handler handlerReceiveCommand;
-    private HandlerThread mThreadExecuteCommand;
-    private Handler mHandlerExecuteCommand;
+//    private HandlerThread mThreadExecuteCommand;
+//    private Handler mHandlerExecuteCommand;
     private boolean mbReceiveCommand;
 
     private HandlerThread threadCheckDiconnection;
@@ -48,14 +44,12 @@ public class SocketManager {
 
     byte[] mMessagePool = new byte[8192];
     int effective_length = 0;
-    String beginString = new String("BeginOfADataFrame");
-    String endString = new String("EndOfADataFrame");
+    String beginString = "BeginOfADataFrame";
+    String endString = "EndOfADataFrame";
 
     public NuwaRobotAPI mRobotAPI;
-    ArrayList<RobotCommandOuterClass.RobotCommand> ArrayListCommand = new ArrayList<RobotCommandOuterClass.RobotCommand>();
+//    ArrayList<RobotCommandOuterClass.RobotCommand> ArrayListCommand = new ArrayList<RobotCommandOuterClass.RobotCommand>();
     Converter converter;
-
-    public int done = 0;
 
     public long dancing_status = 0;
     public Activity activity;
@@ -64,7 +58,6 @@ public class SocketManager {
 //    public SocketManager(Context context) {
 //        this.mContext = context.getApplicationContext(); // safe to store
 //    }
-    public long currentTime = 0, startTime = 0, delayMillis = 0;
     private final Activity mActivity;
 
     // constructor:
@@ -80,193 +73,185 @@ public class SocketManager {
         intent.setComponent(comp);
         intent.setAction("com.nuwarobotics.app.nuwaplayer.action.PLAY_MBTX");
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        long delayMillis = 10000;
         if (dance_type == 1)
         {
             intent.putExtra("PlayId", "Egypt_Dance-v2");
-            delayMillis = 73000;
         }
         else if(dance_type == 2)
         {
             intent.putExtra("PlayId", "Dancing_Cowboy-v2");
-            delayMillis = 81000;
         }
         else if(dance_type == 3)
         {
             intent.putExtra("PlayId", "Short_Test_Project");
-            delayMillis = 5300;
         }
         else if(dance_type == 4)
         {
             intent.putExtra("PlayId", "Health_Video");
-            delayMillis = 60000;
         }
-        //intent.putExtra("PlayId", "Egypt_Dance");
-        //intent.putExtra("PlayId", "Short_Test_Project");
-        //intent.putExtra("PlayId", "Wendy_Safety_Video");
-        //mActivity.startActivity(intent);
-        //long currentTime = System.currentTimeMillis(), startTime = System.currentTimeMillis();
-        mRobotAPI.stopTTS();
-        mActivity.startActivityForResult(intent, 1001);
-        done = 1;
 
-        // Set 'done = 1' after the estimated duration
+        //Here I need an error proofing if the dance_type is wrong.
+//        mRobotAPI.stopTTS();          //Is this command kill the latest TTS?
+        mActivity.startActivityForResult(intent, 1001);
     }
 
     public void startReceiveCommands()
     {
         //Debug information 2025/4/17. I need to complete this runnable bofore post it again. If there are two runnables in a handler, behaviors become unknown.
-        handlerReceiveCommand.post(new Runnable() {
-            @Override
-            public void run() {
-                mbReceiveCommand = true;
-                //launchPlayer(3);
-                //mRobotAPI.hideFace();
-                //mRobotAPI.hideWindow(false);
+        handlerReceiveCommand.post(() -> {
+            mbReceiveCommand = true;
+            //launchPlayer(3);
+            //mRobotAPI.hideFace();
+            //mRobotAPI.hideWindow(false);
 //                mRobotAPI.showFace();                           //2025/8/19 Why do I change face here?
 //                mRobotAPI.playFaceAnimation("TTS_PeaceB");
-                while(mbReceiveCommand) {
+            while(mbReceiveCommand) {
 //                    Log.d ("mbReceiveCommand","still running");
-                    if (mSocketReceiveCommand != null && mSocketReceiveCommand.isConnected()) {
+                if (mSocketReceiveCommand != null && mSocketReceiveCommand.isConnected()) {
 //                        Log.d ("mbReceiveCommand","Enter if");
-                        try {
-                            BufferedInputStream dIn = new BufferedInputStream(mSocketReceiveCommand.getInputStream());
+                    try {
+                        BufferedInputStream dIn = new BufferedInputStream(mSocketReceiveCommand.getInputStream());
 //                            Log.d("BufferedInputStream", "created");
-                            int length = 4096;
-                            byte[] message = new byte[length];
-                            int bytesRead = dIn.read(message, 0, length);
+                        int length = 4096;
+                        byte[] message = new byte[length];
+                        int bytesRead = dIn.read(message, 0, length);
 //                            Log.d("bytesRead", Integer.toString((bytesRead)));
-                            if (bytesRead != -1) {
-                                System.arraycopy(message, 0, mMessagePool, effective_length, bytesRead);
-                                effective_length += bytesRead;
-                                String string = new String(mMessagePool, 0, effective_length, StandardCharsets.US_ASCII);
+                        if (bytesRead != -1) {
+                            System.arraycopy(message, 0, mMessagePool, effective_length, bytesRead);
+                            effective_length += bytesRead;
+                            String string = new String(mMessagePool, 0, effective_length, StandardCharsets.US_ASCII);
 
-                                int iBegin = string.indexOf(beginString);
-                                int iEnd = string.indexOf(endString);
-                                Log.d("iBegin", Integer.toString((iBegin)));
-                                Log.d("iEnd", Integer.toString((iEnd)));
-                                if (iBegin != -1 && iEnd != -1) {
-                                    byte[] slice = Arrays.copyOfRange(mMessagePool, iBegin + beginString.length(), iEnd);
-                                    int remaining = effective_length - (iEnd + endString.length());
-                                    if (remaining > 0) {
-                                        System.arraycopy(mMessagePool, (iEnd + endString.length()), mMessagePool, 0, remaining);
-                                    }
-                                    effective_length = remaining;
-
-                                    RobotCommandOuterClass.RobotCommand command = RobotCommandOuterClass.RobotCommand.parseFrom(slice);
-                                    Log.d("Debug", "Receive a message");
-                                    if (command.hasPitch()) {
-                                        Log.d("Pitch degree", "Pitch degree " + Integer.toString(command.getPitch()));
-                                        float neckspeed = 40f;      //default
-                                        if (command.hasHeadspeed()) {
-                                            neckspeed = (float) command.getHeadspeed();
-                                        }
-                                        mRobotAPI.ctlMotor(1, (float) command.getPitch(), neckspeed);
-                                    }
-                                    if (command.hasYaw()) {
-                                        Log.d("Yaw degree", "Yaw degree " + Integer.toString(command.getYaw()));
-                                        float neckspeed = 40f;          //default
-                                        if (command.hasHeadspeed()) {
-                                            neckspeed = (float) command.getHeadspeed();
-                                        }
-                                        mRobotAPI.ctlMotor(2, (float) command.getYaw(), neckspeed);
-                                    }
-
-                                    if (command.hasSpeakSentence()) {
-                                        mRobotAPI.startTTS(command.getSpeakSentence());
-//                                        mRobotAPI.showFace();
-                                    }
-
-                                    if (command.hasFace()) {
-                                        Log.d("Debug", "Receive a face command");
-                                        mRobotAPI.showFace();
-                                        //mRobotAPI.playFaceAnimation(command.getFace());    //it does not work.
-                                        String[] ttsArray = {"TTS_AngerA", "TTS_AngerB", "TTS_Contempt", "TTS_Disgust", "TTS_Fear", "TTS_JoyA", "TTS_JoyB", "TTS_JoyC", "TTS_PeaceA", "TTS_PeaceB", "TTS_PeaceC", "TTS_SadnessA", "TTS_SadnessB", "TTS_Surprise"};
-                                        mRobotAPI.playFaceAnimation(ttsArray[command.getFace()]);     //it works
-                                    }
-                                    if (command.hasHideface() && command.getHideface() == true) {
-                                        //I need both commands to hide the face and enable my own activity.
-                                        mRobotAPI.hideFace();
-                                        mRobotAPI.hideWindow(false);
-                                    }
-
-                                    if (command.hasStopmove()) {
-                                        /*
-                                        mRobotAPI.motion.stopMoving();   //this function does not work.
-
-                                         */
-                                    }
-                                    if (command.hasMotion()) {
-                                        String[] motionArray = {"666_TA_DictateL", "666_DA_Full", "666_EM_Mad02", "666_BA_Nodhead",
-                                                "666_SP_Swim02", "666_PE_RotateA", "666_SP_Karate", "666_RE_Cheer", "666_SP_Climb", "666_DA_Hit",
-                                                "666_TA_DictateR", "666_SP_Bowling", "666_SP_Walk", "666_SA_Find", "666_BA_TurnHead", "666_SA_Toothache",
-                                                "666_SA_Sick", "666_SA_Shocked", "666_SP_Dumbbell", "666_SA_Discover", "666_RE_Thanks", "666_PE_Changing",
-                                                "666_SP_HorizontalBar", "666_WO_Traffic", "666_RE_HiR", "666_RE_HiL", "666_DA_Brushteeth", "666_RE_Encourage",
-                                                "666_RE_Request", "666_PE_Brewing", "666_RE_Change", "666_PE_Phubbing", "666_RE_Baoquan", "666_SP_Cheer",
-                                                "666_RE_Ask", "666_PE_Triangel", "666_PE_Sorcery", "666_PE_Sneak", "666_PE_Singing", "666_LE_Yoyo", "666_SP_Throw",
-                                                "666_SP_RaceWalk", "666_PE_ShakeFart", "666_PE_RotateC", "666_PE_RotateB", "666_EM_Blush", "666_PE_Puff",
-                                                "666_PE_PlayCello", "666_PE_Pikachu"};
-                                        Log.d("Debug", "Receive an action command");
-                                        mRobotAPI.motionPlay(motionArray[command.getMotion()], true);
-                                    }
-
-                                    if (command.hasDancetype() && command.getDancetype() != 0) {
-                                        currentTime = System.currentTimeMillis();
-                                        startTime = System.currentTimeMillis();
-                                        launchPlayer(command.getDancetype());
-                                    }
-                                    else
-                                    {
-                                        dancing_status = 0;
-                                    }
-
-                                    if (command.hasTurnspeed())
-                                    {
-                                        mRobotAPI.turn(command.getTurnspeed());
-                                    }
-                                    else
-                                    {
-                                        mRobotAPI.turn(0.0f);
-                                    }
-                                    //float num1 = 10.2f;
-                                    //mRobotAPI.turn(num1); //command.getTurnspeed());
-                                    if( command.hasContent())
-                                    {
-                                        final int REQUEST_CODE = 201 ;
-                                        Intent intent = new Intent();
-                                        ComponentName comp = new ComponentName("com.nuwarobotics.app.nuwaplayer","com.nuwarobotics.app.nuwaplayer.PlayContentEditorActivity");
-                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        intent.setAction("com.nuwarobotics.app.nuwaplayer.action.PLAY_MBTX");
-                                        intent.setComponent(comp);
-                                        intent.putExtra("PlayId", command.getContent());//the file name put in  /sdcard/contenteditor/
-                                        Context context;
-                                        activity.startActivityForResult(intent, REQUEST_CODE);
-                                    }
-
-                                    if( command.hasKillapp() && command.getKillapp() == true)
-                                    {
-                                        android.os.Process.killProcess(android.os.Process.myPid());
-                                        // this function only kill this activity
-                                        //activity.finish();
-                                    }
+                            int iBegin = string.indexOf(beginString);
+                            int iEnd = string.indexOf(endString);
+                            Log.d("iBegin", Integer.toString((iBegin)));
+                            Log.d("iEnd", Integer.toString((iEnd)));
+                            if (iBegin != -1 && iEnd != -1) {
+                                byte[] slice = Arrays.copyOfRange(mMessagePool, iBegin + beginString.length(), iEnd);
+                                int remaining = effective_length - (iEnd + endString.length());
+                                if (remaining > 0) {
+                                    System.arraycopy(mMessagePool, (iEnd + endString.length()), mMessagePool, 0, remaining);
                                 }
-                            } else {
-                                //sleep 30 msecs;
-                                sleep(30);
+                                effective_length = remaining;
+
+                                RobotCommandOuterClass.RobotCommand command = RobotCommandOuterClass.RobotCommand.parseFrom(slice);
+                                Log.d("Debug", "Receive a message");
+                                if (command.hasPitch()) {
+                                    Log.d("Pitch degree", "Pitch degree " + Integer.toString(command.getPitch()));
+                                    float neckspeed = 40f;      //default
+                                    if (command.hasHeadspeed()) {
+                                        neckspeed = (float) command.getHeadspeed();
+                                    }
+                                    mRobotAPI.ctlMotor(1, (float) command.getPitch(), neckspeed);
+                                }
+                                if (command.hasYaw()) {
+                                    Log.d("Yaw degree", "Yaw degree " + Integer.toString(command.getYaw()));
+                                    float neckspeed = 40f;          //default
+                                    if (command.hasHeadspeed()) {
+                                        neckspeed = (float) command.getHeadspeed();
+                                    }
+                                    mRobotAPI.ctlMotor(2, (float) command.getYaw(), neckspeed);
+                                }
+
+                                if (command.hasSpeakSentence()) {
+                                    mRobotAPI.startTTS(command.getSpeakSentence());
+//                                        mRobotAPI.showFace();
+                                }
+
+                                if (command.hasFace()) {
+                                    Log.d("Debug", "Receive a face command");
+                                    mRobotAPI.showFace();
+                                    //mRobotAPI.playFaceAnimation(command.getFace());    //it does not work.
+                                    String[] ttsArray = {"TTS_AngerA", "TTS_AngerB", "TTS_Contempt", "TTS_Disgust", "TTS_Fear", "TTS_JoyA", "TTS_JoyB", "TTS_JoyC", "TTS_PeaceA", "TTS_PeaceB", "TTS_PeaceC", "TTS_SadnessA", "TTS_SadnessB", "TTS_Surprise"};
+                                    mRobotAPI.playFaceAnimation(ttsArray[command.getFace()]);     //it works
+                                }
+                                if( command.hasSface())
+                                {
+                                    mRobotAPI.showFace();
+                                    mRobotAPI.playFaceAnimation(command.getSface());
+                                }
+                                if (command.hasHideface() && command.getHideface() == true) {
+                                    //I need both commands to hide the face and enable my own activity.
+                                    mRobotAPI.hideFace();
+                                    mRobotAPI.hideWindow(false);
+                                }
+
+                                if (command.hasStopmove()) {
+                                    /*
+                                    mRobotAPI.motion.stopMoving();   //this function does not work.
+
+                                     */
+                                }
+                                if (command.hasMotion()) {
+                                    String[] motionArray = {"666_TA_DictateL", "666_DA_Full", "666_EM_Mad02", "666_BA_Nodhead",
+                                            "666_SP_Swim02", "666_PE_RotateA", "666_SP_Karate", "666_RE_Cheer", "666_SP_Climb", "666_DA_Hit",
+                                            "666_TA_DictateR", "666_SP_Bowling", "666_SP_Walk", "666_SA_Find", "666_BA_TurnHead", "666_SA_Toothache",
+                                            "666_SA_Sick", "666_SA_Shocked", "666_SP_Dumbbell", "666_SA_Discover", "666_RE_Thanks", "666_PE_Changing",
+                                            "666_SP_HorizontalBar", "666_WO_Traffic", "666_RE_HiR", "666_RE_HiL", "666_DA_Brushteeth", "666_RE_Encourage",
+                                            "666_RE_Request", "666_PE_Brewing", "666_RE_Change", "666_PE_Phubbing", "666_RE_Baoquan", "666_SP_Cheer",
+                                            "666_RE_Ask", "666_PE_Triangel", "666_PE_Sorcery", "666_PE_Sneak", "666_PE_Singing", "666_LE_Yoyo", "666_SP_Throw",
+                                            "666_SP_RaceWalk", "666_PE_ShakeFart", "666_PE_RotateC", "666_PE_RotateB", "666_EM_Blush", "666_PE_Puff",
+                                            "666_PE_PlayCello", "666_PE_Pikachu"};
+                                    Log.d("Debug", "Receive an action command");
+                                    mRobotAPI.motionPlay(motionArray[command.getMotion()], true);
+                                }
+                                if( command.hasSmotion())
+                                {
+                                    mRobotAPI.motionPlay(command.getSmotion(), true);
+                                }
+                                if (command.hasDancetype() && command.getDancetype() != 0) {
+                                    launchPlayer(command.getDancetype());
+                                }
+                                else
+                                {
+                                    dancing_status = 0;         //This is questionable. The app won't notify the server that the dance complete.
+                                }
+
+                                if (command.hasTurnspeed())
+                                {
+                                    mRobotAPI.turn(command.getTurnspeed());
+                                }
+                                else
+                                {
+                                    mRobotAPI.turn(0.0f);
+                                }
+                                //float num1 = 10.2f;
+                                //mRobotAPI.turn(num1); //command.getTurnspeed());
+                                if( command.hasContent())
+                                {
+                                    final int REQUEST_CODE = 201 ;
+                                    Intent intent = new Intent();
+                                    ComponentName comp = new ComponentName("com.nuwarobotics.app.nuwaplayer","com.nuwarobotics.app.nuwaplayer.PlayContentEditorActivity");
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    intent.setAction("com.nuwarobotics.app.nuwaplayer.action.PLAY_MBTX");
+                                    intent.setComponent(comp);
+                                    intent.putExtra("PlayId", command.getContent());//the file name put in  /sdcard/contenteditor/
+                                    Context context;
+                                    activity.startActivityForResult(intent, REQUEST_CODE);
+                                }
+
+                                if( command.hasKillapp() && command.getKillapp() == true)
+                                {
+                                    android.os.Process.killProcess(android.os.Process.myPid());
+                                    // this function only kill this activity
+                                    //activity.finish();
+                                }
                             }
-                        } catch (Exception e) {
-                            Log.e("Exception", e.getMessage());
-                            try {
-                                mSocketReceiveCommand.close();
-                            }
-                            catch( Exception e2)
-                            {
-                                Log.d("closing socket fails", "closing socket fails" + e2.getMessage()); //sendto failed: EPIPE (Broken pipe)
-                            }
-                            finally
-                            {
-                                mSocketReceiveCommand = null;
-                            }
+                        } else {
+                            //sleep 30 msecs;
+                            sleep(30);
+                        }
+                    } catch (Exception e) {
+                        Log.e("Exception", e.getMessage());
+                        try {
+                            mSocketReceiveCommand.close();
+                        }
+                        catch( Exception e2)
+                        {
+                            Log.d("closing socket fails", "closing socket fails" + e2.getMessage()); //sendto failed: EPIPE (Broken pipe)
+                        }
+                        finally
+                        {
+                            mSocketReceiveCommand = null;
                         }
                     }
                 }
@@ -371,9 +356,9 @@ public class SocketManager {
         threadReceiveCommand.start();
         handlerReceiveCommand = new Handler(threadReceiveCommand.getLooper());
 
-        mThreadExecuteCommand = new HandlerThread(("threadExecuteCommand"));
-        mThreadExecuteCommand.start();
-        mHandlerExecuteCommand = new Handler(mThreadExecuteCommand.getLooper(), new ExecuteCommandCallback());
+//        mThreadExecuteCommand = new HandlerThread(("threadExecuteCommand"));
+//        mThreadExecuteCommand.start();
+//        mHandlerExecuteCommand = new Handler(mThreadExecuteCommand.getLooper(), new ExecuteCommandCallback());
 
         threadCheckDiconnection = new HandlerThread(("threadCheckDisconnection"));
         threadCheckDiconnection.start();
@@ -458,7 +443,7 @@ public class SocketManager {
     public void stopThreads() {
         threadSendToServer.quitSafely();
         threadReceiveCommand.quitSafely();
-        mThreadExecuteCommand.quitSafely();
+//        mThreadExecuteCommand.quitSafely();
         threadCheckDiconnection.quitSafely();
         try {
             threadSendToServer.join();
@@ -469,9 +454,9 @@ public class SocketManager {
             threadReceiveCommand = null;
             handlerReceiveCommand = null;
 
-            mThreadExecuteCommand.join();
-            mThreadExecuteCommand = null;
-            mHandlerExecuteCommand = null;
+//            mThreadExecuteCommand.join();
+//            mThreadExecuteCommand = null;
+//            mHandlerExecuteCommand = null;
 
             threadCheckDiconnection.join();
             threadCheckDiconnection = null;

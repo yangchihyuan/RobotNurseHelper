@@ -21,36 +21,6 @@ void handle_sigint(int) {
     filename += ".txt";
     std::ofstream file(filename);
 
-    file << "Date and time at completion: " << dateTimeString << "\n\n";
-    if (file.is_open()) {
-        for (int i = 0; i < summary.size(); i++)
-        {
-            if (summary[i].size() == 0)
-            {
-                continue;
-            }
-            file << "STAGE " << i << ":\n\n" << summary[i] << "\n\n";
-        }
-        file.close();
-        cout << "\n" << "\nSaved Conversation_Summary on Ctrl+C\n";
-    }
-
-    string filename2 = "Complete_Logs/Complete_Log-";
-    filename2 += dateTimeString;
-    filename2 += ".txt";
-    std::ofstream file2(filename2);
-
-    file2 << "Date and time at completion: " << dateTimeString << "\n\n";
-    if (file2.is_open()) {
-        while(message_log.size())
-        {
-            file2 << message_log.front() << "\n\n";
-            message_log.erase(message_log.begin());
-        }
-        file2.close();
-        cout << "\n" << "\nSaved Complete_Log on Ctrl+C\n";
-    }
-
     //std::exit(0);  // Exit cleanly
     std::_Exit(0);
 }
@@ -151,7 +121,6 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.setWhisperModelFile(whisperModel);
     w.setLanguageModelName(languageModel);
-    w.setPreviousContextFile(previousContext);
     w.setStage(strstage.toInt());
     w.setImageSaveEveryNFrame(strimageSaveEveryNFrame.toInt());
     w.setLanguage(strLanguage);

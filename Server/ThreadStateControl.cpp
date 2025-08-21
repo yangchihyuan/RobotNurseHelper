@@ -22,6 +22,8 @@ void ThreadStateControl::InitializeStates()
     mStates[state_index].m_strFirstSentence = "我準備好了。";
     mStates[state_index].m_secDurationLimit = 500s;
     mStates[state_index].iNextStateIndex = 1;
+    mStates[state_index].sFace = "TTS_PeaceA";
+    mStates[state_index].sMotion = "666_BA_RArmR180";       //Raise Arm Right 180 degree
 
     //state_index = 1;
     state_index++;
@@ -34,8 +36,10 @@ void ThreadStateControl::InitializeStates()
         5. 請不要輸出任何括號。
         )";
     mStates[state_index].m_strFirstSentence = "你好，很高興見到你，你今天過得好嗎？";
-    mStates[state_index].m_secDurationLimit = 50s;
+    mStates[state_index].m_secDurationLimit = 30s;
     mStates[state_index].iNextStateIndex = 2;
+    mStates[state_index].sFace = "TTS_PeaceB";
+    mStates[state_index].sMotion = "666_SP_Cheer";
 
     //state_index = 2;
     state_index++;
@@ -47,8 +51,10 @@ void ThreadStateControl::InitializeStates()
         4. 請不要輸出任何括號。
         )";
     mStates[state_index].m_strFirstSentence = "請問你叫什麼名字？";
-    mStates[state_index].m_secDurationLimit = 30s;
+    mStates[state_index].m_secDurationLimit = 10s;
     mStates[state_index].iNextStateIndex = 3;
+    mStates[state_index].sFace = "TTS_PeaceA";
+    mStates[state_index].sMotion = "666_SA_Think";
 
     //state_index = 3;
     state_index++;
@@ -60,8 +66,10 @@ void ThreadStateControl::InitializeStates()
         4. 請不要輸出任何括號。
         )";
     mStates[state_index].m_strFirstSentence = "請問你幾歲了？";
-    mStates[state_index].m_secDurationLimit = 30s;
+    mStates[state_index].m_secDurationLimit = 10s;
     mStates[state_index].iNextStateIndex = 4;
+    mStates[state_index].sFace = "TTS_PeaceB";
+    mStates[state_index].sMotion = "666_BA_Nodhead";
 
     //state_index = 4;
     state_index++;
@@ -73,8 +81,10 @@ void ThreadStateControl::InitializeStates()
         4. 請不要輸出任何括號。
         )";
     mStates[state_index].m_strFirstSentence = "請問你生的是什麼病啊？";
-    mStates[state_index].m_secDurationLimit = 30s;
+    mStates[state_index].m_secDurationLimit = 10s;
     mStates[state_index].iNextStateIndex = 5;
+    mStates[state_index].sFace = "TTS_SadnessA";
+    mStates[state_index].sMotion = "666_DA_LookFor";
 
     //state_index = 5;
     state_index++;
@@ -86,8 +96,10 @@ void ThreadStateControl::InitializeStates()
         4. 請不要輸出任何括號。
         )";
     mStates[state_index].m_strFirstSentence = "請你用一到五的等級告訴我你現在的感覺如何？一是很不好，五是很好。";
-    mStates[state_index].m_secDurationLimit = 30s;
+    mStates[state_index].m_secDurationLimit = 10s;
     mStates[state_index].iNextStateIndex = 6;
+    mStates[state_index].sFace = "TTS_PeaceA";
+    mStates[state_index].sMotion = "666_DA_Take";
 
     //state_index = 6;
     state_index++;
@@ -99,8 +111,10 @@ void ThreadStateControl::InitializeStates()
         4. 請不要輸出任何括號。
         )";
     mStates[state_index].m_strFirstSentence = "我會跳舞喲，我會跳埃及舞和牛仔舞，你想看我跳哪一種舞？";
-    mStates[state_index].m_secDurationLimit = 30s;
+    mStates[state_index].m_secDurationLimit = 15s;
     mStates[state_index].iNextStateIndex = 7;
+    mStates[state_index].sFace = "TTS_Surprise";
+    mStates[state_index].sMotion = "666_PE_Drums";
 
     //state_index = 7;
     state_index++;
@@ -118,6 +132,8 @@ void ThreadStateControl::InitializeStates()
     mStates[state_index].m_strFirstSentence = "我們來玩一個遊戲吧。我來想一個動物，你來猜，好不好啊？";
     mStates[state_index].m_secDurationLimit = 60s;
     mStates[state_index].iNextStateIndex = 8;
+    mStates[state_index].sFace = "TTS_PeaceB";    
+    mStates[state_index].sMotion = "666_PE_Harmonica";
 
     //state_index = 8;
     state_index++;
@@ -131,6 +147,8 @@ void ThreadStateControl::InitializeStates()
     mStates[state_index].m_strFirstSentence = "我會說故事喲。我可以講各種各樣的故事，像是動物的故事、王子和公主的故事、魔法的故事、星星的故事，你想聽我講什麼樣的故事呢？";
     mStates[state_index].m_secDurationLimit = 100s;
     mStates[state_index].iNextStateIndex = 9;
+    mStates[state_index].sFace = "TTS_PeaceA";
+    mStates[state_index].sMotion = "666_PE_Sorcery";
 
     //state_index = 9;
     state_index++;
@@ -143,9 +161,11 @@ void ThreadStateControl::InitializeStates()
         5. 不要提問任何問題。
         )";
     mStates[state_index].m_strFirstSentence = "今天很高興認識你。跟你聊了很多話，我很開心。希望你的病很快就會好起來，你能高高興興的回家。下次還有機會再和你聊。";
-    mStates[state_index].m_secDurationLimit = 100s;
+    mStates[state_index].m_secDurationLimit = 40s;
     mStates[state_index].iNextStateIndex = -1;
     mStates[state_index].bEndState = true;
+    mStates[state_index].sFace = "TTS_PeaceB";
+    mStates[state_index].sMotion = "666_PE_Hug";
 }
 
 void ThreadStateControl::NextState()
@@ -157,13 +177,23 @@ void ThreadStateControl::run()
 {
     chrono::time_point<chrono::system_clock> current_time;
     bool bReadyToChangeState = false;
+    bool bOldStateComplete = false;
+    //something wrong here, ollama get sucked.
     //to Warmup Ollama
-    OllamaTask task;
-    task.message_history = mStates[1].message_history;
-    task.timestamp = chrono::system_clock::now();
-    mpThreadOllama->AddQueue(task);
-    mpThreadOllama->cond_var_ollama.notify_one();
+//    OllamaTask task;
+//    task.message_history = mStates[1].message_history;
+//    task.timestamp = chrono::system_clock::now();
+//    task.bNotify = false;
+//    mpThreadOllama->AddQueue(task);
+//    mpThreadOllama->cond_var_ollama.notify_one();
 
+    //wait until Kebbi is connected.
+    mutex mtx;
+    unique_lock<mutex> lk(mtx);
+    cond_var_state_control.wait(lk);
+    chrono::milliseconds tolerance_duration(1000);      //tolerance for onTTSComplete and patient's tSpeechStart
+    chrono::seconds dance_wait_duration;
+    chrono::time_point<chrono::system_clock> dance_start_time;
 
     while(b_WhileLoop)
     {
@@ -182,6 +212,9 @@ void ThreadStateControl::run()
                 mStates[m_iStateIndex].message_history.push_back(assistant_message);
                 RobotCommandProtobuf::RobotCommand command;
                 command.set_speak_sentence(mStates[m_iStateIndex].m_strFirstSentence);
+                command.set_sface(mStates[m_iStateIndex].sFace);
+                if(mStates[m_iStateIndex].sMotion != "")
+                    command.set_smotion(mStates[m_iStateIndex].sMotion);
                 m_pSendMessageManager->AddMessage(command);
                 mbTTSComplete = false;
 
@@ -190,6 +223,9 @@ void ThreadStateControl::run()
                 mpThreadOllama->b_new_LLM_response = true;
             }
             mbWaitForTTSComplete = mStates[m_iStateIndex].bWaitForTTSComplete; 
+            bOldStateComplete = false;
+            bReadyToChangeState = false;
+
         }
 
         if( mbWaitForTTSComplete)
@@ -197,15 +233,63 @@ void ThreadStateControl::run()
             if( mbTTSComplete)
             {
                 WhisperData WhisperResult = mpThreadWhisper->getLatestResult();
-                if( m_iStateIndex == 0)    //State 0's flow is different from other States
+                if( mStates[m_iStateIndex].m_strStateName == "Wait for start")
                 {
                     if( WhisperResult.sOutput.find("開始") != string::npos || WhisperResult.sOutput.find("开始") != string::npos)
                     {
                         bReadyToChangeState = true;
+                        bOldStateComplete = true;
+                    }
+                }
+                else if( mStates[m_iStateIndex].m_strStateName == "Ask dance")
+                {
+                    if( mStates[m_iStateIndex].iStage == 0 )  //Conversation
+                    {
+                        if( current_time - mStates[m_iStateIndex].m_Start_time > mStates[m_iStateIndex].m_secDurationLimit)
+                        {
+                            cout << "Time out, choose Egyptian dance." << endl;
+                            chosen_dance = 1;
+                            dance_wait_duration = chrono::seconds(73);
+                            cout << "CHOSEN_DANCE: " << chosen_dance << "\n"; 
+                        }
+                        else        //string comparison
+                        {
+                            if(WhisperResult.sOutput.find("及") != string::npos || WhisperResult.sOutput.find("吉") != string::npos || WhisperResult.sOutput.find("極") != string::npos || WhisperResult.sOutput.find("級") != string::npos)
+                            {
+                                chosen_dance = 1;
+                                dance_wait_duration = chrono::seconds(73);
+                            }
+                            else if (WhisperResult.sOutput.find("牛") != string::npos || WhisperResult.sOutput.find("仔") != string::npos )
+                            {
+                                chosen_dance = 2;
+                                dance_wait_duration = chrono::seconds(81);
+                            }
+                        }
+
+                        if( chosen_dance != 0 )
+                        {
+                            cout << "(J) chosen_dance " << chosen_dance << endl;
+                            RobotCommandProtobuf::RobotCommand dance_command;
+                            dance_command.set_dancetype(chosen_dance);
+                            m_pSendMessageManager->AddMessage(dance_command);
+                            mStates[m_iStateIndex].iStage = 1; //Waiting for Dance Complete
+                            dance_start_time = chrono::system_clock::now();
+                        }
+                    }
+                    else if( mStates[m_iStateIndex].iStage == 1 )  //Wait for dance completion
+                    {
+                        if(current_time - dance_start_time > dance_wait_duration)
+                        {
+                            bOldStateComplete = true;
+                        }
                     }
                 }
                 //What should I do if the patient does not say anything for a while?
-                else if( WhisperResult.tSpeechStart > mtimestamp_TTSComplete)
+                //Sometimes the patient starts to talk before receive the onTTSCompelete signal.
+                //The patient thinks he says, but the Robot does not respond.
+                //add a tolerance gap
+                //Or maybe I set the mtimestamp_TTSComplete slightly late before the actual Robot's TTSComplete timestamp
+                else if( WhisperResult.tSpeechStart > mtimestamp_TTSComplete - tolerance_duration)
                 {
                     //debug
                     cout << "(F)" << endl;
@@ -217,20 +301,15 @@ void ThreadStateControl::run()
                     ollama::message user_message("user", WhisperResult.sOutput);
                     mStates[m_iStateIndex].message_history.push_back(user_message);
 
-                    if( bReadyToChangeState)
+                    //generate LLM response
+                    if(bReadyToChangeState )
                     {
-                        if(mStates[m_iStateIndex].bEndState)
-                        {
-                            b_WhileLoop = false;
-                        }
-                        else
-                        {
-                            m_iStateIndex = mStates[m_iStateIndex].iNextStateIndex;
-                            bReadyToChangeState = false;
-                        }
+                        cout << "(G) bOldStateComplete = true;" << endl;
+                        bOldStateComplete = true;
                     }
-                    else   //generate LLM response
+                    else
                     {
+                        cout << "(H)" << endl;
                         DumpOllamaMessages(mStates[m_iStateIndex].message_history);
                         //generate LLM result;
                         mbWaitForTTSComplete = false;
@@ -238,6 +317,7 @@ void ThreadStateControl::run()
                         OllamaTask task;
                         task.message_history = mStates[m_iStateIndex].message_history;
                         task.timestamp = chrono::system_clock::now();
+                        task.bNotify = true;
                         mpThreadOllama->AddQueue(task);
                         mpThreadOllama->cond_var_ollama.notify_one();
                     }
@@ -252,8 +332,8 @@ void ThreadStateControl::run()
                 ollama::message assistant_message("assistant", msLLMResult);
                 mStates[m_iStateIndex].message_history.push_back(assistant_message);
                 //debug
-                //cout << "(D)" << endl;
-                //DumpOllamaMessages(mStates[m_iStateIndex].message_history);
+                cout << "(D)" << endl;
+                DumpOllamaMessages(mStates[m_iStateIndex].message_history);
 
                 RobotCommandProtobuf::RobotCommand command;
                 command.set_speak_sentence(msLLMResult);
@@ -266,9 +346,22 @@ void ThreadStateControl::run()
         }
 
         //Check if the time exceed the state limit
-        if(chrono::duration_cast<chrono::milliseconds>(current_time - mStates[m_iStateIndex].m_Start_time) > mStates[m_iStateIndex].m_secDurationLimit)
+        if(current_time - mStates[m_iStateIndex].m_Start_time > mStates[m_iStateIndex].m_secDurationLimit)
         {
             bReadyToChangeState = true;
+        }
+
+        if( bReadyToChangeState && bOldStateComplete)
+        {
+            if(mStates[m_iStateIndex].bEndState)
+            {
+                b_WhileLoop = false;
+            }
+            else
+            {
+                m_iStateIndex = mStates[m_iStateIndex].iNextStateIndex;
+                bReadyToChangeState = false;
+            }
         }
 
 
@@ -291,6 +384,9 @@ void ThreadStateControl::NotifyEvent(string description, chrono::time_point<chro
         mbLLMResult = true;
         mtimestamp_LLMResult = timestamp;
         msLLMResult = sLLMResult;
+        //debug
+        cout << "(H)" << endl;
+        cout << "NotifyEvent onLLMResult" << endl;
     }
     
 }

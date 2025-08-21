@@ -23,6 +23,7 @@ struct OllamaTask
 {
     ollama::messages message_history;
     chrono::time_point<std::chrono::system_clock> timestamp;
+    bool bNotify = true;        //Notify the ThreadStateControl
 };
 
 void DumpOllamaMessages(ollama::messages messages);
@@ -54,8 +55,6 @@ public:
     string check_stage_prompt;              //added by Mohamed
     string no_response, dance_complete;     //added by Mohamed
     string ModelName = "gemma3:12b";
-    string previous_context_path;           //added by Mohamed
-    int start_stage_input;
 
     string action_prompt = R"(Here is a list of available robot actions:
     
@@ -91,12 +90,6 @@ public:
 
 protected:
     void run();
-    string validate_conversation(ollama::options options, ollama::messages &message_history, string &prompt);
-    bool stage_check(ollama::options options, ollama::options options_short, ollama::messages &message_history, ollama::messages &recent_history, bool remove_message);
-    chrono::time_point<chrono::high_resolution_clock> last_prompt_time;
-    string mstrUserInput;
-    ollama::options options;
-    ollama::options options_short;
     queue<OllamaTask> mqueue;
 };
 
