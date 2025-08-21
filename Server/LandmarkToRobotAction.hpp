@@ -1,3 +1,6 @@
+#ifndef __LANDMRK_TO_ROBOT_ACTION_hpp__
+#define __LANDMRK_TO_ROBOT_ACTION_hpp__
+
 #include <vector>
 #include <array>
 
@@ -6,16 +9,20 @@
 #elif USE_ZENBO
     #include "Zenbo/RobotCommand.pb.h"
 #endif
+
 #include "RobotStatus.hpp"
 #include "ActionOption.hpp"
 
-int FaceLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
-    RobotStatus &status, 
-    ActionOption action_option,    
-    RobotCommandProtobuf::RobotCommand &message);
+using namespace std;
 
-int PoseLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
+int FaceLandmarks_to_RobotAction(vector<std::vector<array<float, 3>>> normalized_landmarks, 
     RobotStatus &status, 
     ActionOption action_option,    
-    RobotCommandProtobuf::RobotCommand &message);
+    RobotCommandProtobuf::RobotCommand &command);
+
+int PoseLandmarks_to_RobotAction(vector<vector<array<float, 3>>> normalized_landmarks, 
+    RobotStatus &status, 
+    ActionOption action_option,    
+    RobotCommandProtobuf::RobotCommand &command);
   
+#endif

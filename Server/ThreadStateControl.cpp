@@ -1,5 +1,6 @@
 #include "ThreadStateControl.hpp"
 #include "utility_time.hpp"
+#include <random>
 
 ThreadStateControl::ThreadStateControl()
 {
@@ -40,6 +41,10 @@ void ThreadStateControl::InitializeStates()
     mStates[state_index].iNextStateIndex = 2;
     mStates[state_index].sFace = "TTS_PeaceB";
     mStates[state_index].sMotion = "666_SP_Cheer";
+    mStates[state_index].vSmallMotion.push_back("666_BA_ArmSCircle");
+    mStates[state_index].vSmallMotion.push_back("666_BA_ArmSSquare");
+    mStates[state_index].vSmallMotion.push_back("666_BA_RArmCircleL");
+    mStates[state_index].vSmallMotion.push_back("666_BA_RArmCircleR");
 
     //state_index = 2;
     state_index++;
@@ -195,6 +200,10 @@ void ThreadStateControl::run()
     chrono::seconds dance_wait_duration;
     chrono::time_point<chrono::system_clock> dance_start_time;
 
+    unsigned seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    std::mt19937 generator(seed);
+    unique_ptr<uniform_int_distribution<int>> pDistribution;
+
     while(b_WhileLoop)
     {
         current_time = chrono::system_clock::now();
@@ -221,6 +230,10 @@ void ThreadStateControl::run()
                 //just for display on UI
                 mpThreadOllama->strResponse = mStates[m_iStateIndex].m_strFirstSentence;
                 mpThreadOllama->b_new_LLM_response = true;
+
+                //prepare random number
+                pDistribution = distribution.(0, 3);
+
             }
             mbWaitForTTSComplete = mStates[m_iStateIndex].bWaitForTTSComplete; 
             bOldStateComplete = false;
@@ -337,6 +350,11 @@ void ThreadStateControl::run()
 
                 RobotCommandProtobuf::RobotCommand command;
                 command.set_speak_sentence(msLLMResult);
+                //randomly choose a motion
+                int randomNumber = distribution(generator);
+                if( mStates[m_iStateIndex].vSmallMotion.size() > 0)
+                    command.set_smotion(mStates[m_iStateIndex].vSmallMotion.at(randomNumber));
+
                 m_pSendMessageManager->AddMessage(command);
                 mbTTSComplete = false;
                 mbWaitForTTSComplete = true;

@@ -27,6 +27,7 @@ struct State
     int iStage = 0;
     string sFace;
     string sMotion;
+    vector<string> vSmallMotion;
 };
 
 class ThreadOllama; //Because ThreadOllama.hpp and ThreadStateControl.hpp include each other, I need to use forward declaration

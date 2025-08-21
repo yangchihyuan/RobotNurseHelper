@@ -136,7 +136,7 @@ public class SocketManager {
                                 RobotCommandOuterClass.RobotCommand command = RobotCommandOuterClass.RobotCommand.parseFrom(slice);
                                 Log.d("Debug", "Receive a message");
                                 if (command.hasPitch()) {
-                                    Log.d("Pitch degree", "Pitch degree " + Integer.toString(command.getPitch()));
+                                    Log.d("Pitch degree", "Pitch degree " + command.getPitch());
                                     float neckspeed = 40f;      //default
                                     if (command.hasHeadspeed()) {
                                         neckspeed = (float) command.getHeadspeed();
@@ -144,7 +144,7 @@ public class SocketManager {
                                     mRobotAPI.ctlMotor(1, (float) command.getPitch(), neckspeed);
                                 }
                                 if (command.hasYaw()) {
-                                    Log.d("Yaw degree", "Yaw degree " + Integer.toString(command.getYaw()));
+                                    Log.d("Yaw degree", "Yaw degree " + command.getYaw());
                                     float neckspeed = 40f;          //default
                                     if (command.hasHeadspeed()) {
                                         neckspeed = (float) command.getHeadspeed();
@@ -169,7 +169,7 @@ public class SocketManager {
                                     mRobotAPI.showFace();
                                     mRobotAPI.playFaceAnimation(command.getSface());
                                 }
-                                if (command.hasHideface() && command.getHideface() == true) {
+                                if (command.hasHideface() && command.getHideface()) {
                                     //I need both commands to hide the face and enable my own activity.
                                     mRobotAPI.hideFace();
                                     mRobotAPI.hideWindow(false);
@@ -225,11 +225,10 @@ public class SocketManager {
                                     intent.setAction("com.nuwarobotics.app.nuwaplayer.action.PLAY_MBTX");
                                     intent.setComponent(comp);
                                     intent.putExtra("PlayId", command.getContent());//the file name put in  /sdcard/contenteditor/
-                                    Context context;
                                     activity.startActivityForResult(intent, REQUEST_CODE);
                                 }
 
-                                if( command.hasKillapp() && command.getKillapp() == true)
+                                if( command.hasKillapp() && command.getKillapp())
                                 {
                                     android.os.Process.killProcess(android.os.Process.myPid());
                                     // this function only kill this activity

@@ -21,8 +21,6 @@
 #include "ThreadOllama.hpp"
 #include "LandmarkToRobotAction.hpp" //[MOHAMED]
 
-//#include "cppvader/include/cppvader.hpp" //[MOHAMED]
-
 extern std::mutex gMutex_audio_buffer;
 extern std::queue<short> AudioBuffer;
 extern std::condition_variable cond_var_audio;

@@ -17,7 +17,7 @@ float euclidean_distance(const std::array<float, 3>& a, const std::array<float, 
 int FaceLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
     RobotStatus &status, 
     ActionOption action_option,
-    RobotCommandProtobuf::RobotCommand &message)
+    RobotCommandProtobuf::RobotCommand &command)
 {
     //If there are multiple faces, find the largest one.
     int num_faces = normalized_landmarks.size();
@@ -56,14 +56,14 @@ int FaceLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
         {
             float theta = -(x-0.5)*62.5;
             float pitch_shift = (y-0.5)*48.9;         //Kebbi's postive pitch degreee is downward
-//            message.set_degree(static_cast<int>(theta));
-            message.set_yaw(0);
+//            command.set_degree(static_cast<int>(theta));
+            command.set_yaw(0);
             status.yaw_degree = 0;
 
             int pitch = status.pitch_degree + static_cast<int>(pitch_shift);
             if( pitch < -20 ) pitch = -20;
             if( pitch > 20 ) pitch = 20;
-            message.set_pitch(pitch);
+            command.set_pitch(pitch);
             status.pitch_degree = pitch;
             
             if(num_faces == 1)
@@ -79,15 +79,15 @@ int FaceLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
                 //prev_time = current_time;
                 if(x > 0.55)
                 {
-                    message.set_turnspeed(-30.0f * mag);
+                    command.set_turnspeed(-30.0f * mag);
                 }
                 else if (x < 0.45)
                 {
-                    message.set_turnspeed(30.0f * mag);
+                    command.set_turnspeed(30.0f * mag);
                 }
                 else
                 {
-                    message.set_turnspeed(0.0f);
+                    command.set_turnspeed(0.0f);
                 }
 
             }
@@ -137,18 +137,18 @@ int FaceLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
                 //prev_time = current_time;
                 if(x > 0.7)
                 {
-                    message.set_turnspeed(-20.0f * mag);
+                    command.set_turnspeed(-20.0f * mag);
                 }
                 else if (x < 0.3)
                 {
-                    message.set_turnspeed(20.0f * mag);
+                    command.set_turnspeed(20.0f * mag);
                 }
                 else
                 {
-                    message.set_turnspeed(0.0f);
+                    command.set_turnspeed(0.0f);
                 }
             }   
-            message.set_turnspeed(0);
+            command.set_turnspeed(0);
             float yaw_shift = -(x-0.5)*62.5;
             float pitch_shift = (y-0.5)*48.9;         //Kebbi's postive pitch degree is downward
             //I need to know current yaw
@@ -157,29 +157,29 @@ int FaceLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
             yaw *= (1 - mag) * 1.5;
             if( yaw < -40) yaw = -40;
             if( yaw > 40) yaw = 40;
-            message.set_yaw(yaw);
+            command.set_yaw(yaw);
             status.yaw_degree = yaw;
             
             int pitch = status.pitch_degree + static_cast<int>(pitch_shift);
             pitch *= 0.4; //[MOHAMED]
             if( pitch < -20 ) pitch = -20;
             if( pitch > 20 ) pitch = 20;
-            message.set_pitch(pitch);
+            command.set_pitch(pitch);
             status.pitch_degree = pitch;
         }
     }
     if(num_faces == 0)
     {
-        message.set_turnspeed(40.0f);
+        command.set_turnspeed(40.0f);
     }
-    //message.set_turnspeed(5);
+    //command.set_turnspeed(5);
     return 1;
 }
 
 int PoseLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
     RobotStatus &status, 
     ActionOption action_option,
-    RobotCommandProtobuf::RobotCommand &message)
+    RobotCommandProtobuf::RobotCommand &command)
 {
     //If there are multiple faces, find the largest one.
     int num_poses = normalized_landmarks.size();
@@ -202,14 +202,14 @@ int PoseLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
         {
             float theta = -(x-0.5)*62.5;
             float pitch_shift = (y-0.5)*48.9;      //Kebbi's postive pitch degreee is downward
-//            message.set_degree(static_cast<int>(theta));
-            message.set_yaw(0);
+//            command.set_degree(static_cast<int>(theta));
+            command.set_yaw(0);
             status.yaw_degree = 0;
 
             int pitch = status.pitch_degree + static_cast<int>(pitch_shift);
             if( pitch < -20 ) pitch = -20;
             if( pitch > 20 ) pitch = 20;
-            message.set_pitch(pitch);
+            command.set_pitch(pitch);
             status.pitch_degree = pitch;
         }
         else  //move head
@@ -220,17 +220,17 @@ int PoseLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
             int yaw = status.yaw_degree + static_cast<int>(yaw_shift);
             if( yaw < -40) yaw = -40;
             if( yaw > 40) yaw = 40;
-            message.set_yaw(yaw);
+            command.set_yaw(yaw);
             status.yaw_degree = yaw;
 
             int pitch = status.pitch_degree + static_cast<int>(pitch_shift);
             if( pitch < -20 ) pitch = -20;
             if( pitch > 20 ) pitch = 20;
-            message.set_pitch(pitch);
-            message.set_headspeed(100);     //I need to associate with UI later.
+            command.set_pitch(pitch);
+            command.set_headspeed(100);     //I need to associate with UI later.
             status.pitch_degree = pitch;
         }
     }
-    //message.set_turnspeed(20);
+    //command.set_turnspeed(20);
     return 1;
 }
