@@ -1,4 +1,5 @@
 #include "ThreadStateControl.hpp"
+#include "utility_time.hpp"
 
 ThreadStateControl::ThreadStateControl()
 {
@@ -20,6 +21,7 @@ void ThreadStateControl::InitializeStates()
     mStates[state_index].m_strSystemMessage = "";
     mStates[state_index].m_strFirstSentence = "我準備好了。";
     mStates[state_index].m_secDurationLimit = 500s;
+    mStates[state_index].iNextStateIndex = 1;
 
     //state_index = 1;
     state_index++;
@@ -33,6 +35,7 @@ void ThreadStateControl::InitializeStates()
         )";
     mStates[state_index].m_strFirstSentence = "你好，很高興見到你，你今天過得好嗎？";
     mStates[state_index].m_secDurationLimit = 50s;
+    mStates[state_index].iNextStateIndex = 2;
 
     //state_index = 2;
     state_index++;
@@ -45,6 +48,7 @@ void ThreadStateControl::InitializeStates()
         )";
     mStates[state_index].m_strFirstSentence = "請問你叫什麼名字？";
     mStates[state_index].m_secDurationLimit = 30s;
+    mStates[state_index].iNextStateIndex = 3;
 
     //state_index = 3;
     state_index++;
@@ -57,6 +61,7 @@ void ThreadStateControl::InitializeStates()
         )";
     mStates[state_index].m_strFirstSentence = "請問你幾歲了？";
     mStates[state_index].m_secDurationLimit = 30s;
+    mStates[state_index].iNextStateIndex = 4;
 
     //state_index = 4;
     state_index++;
@@ -69,6 +74,7 @@ void ThreadStateControl::InitializeStates()
         )";
     mStates[state_index].m_strFirstSentence = "請問你生的是什麼病啊？";
     mStates[state_index].m_secDurationLimit = 30s;
+    mStates[state_index].iNextStateIndex = 5;
 
     //state_index = 5;
     state_index++;
@@ -81,6 +87,7 @@ void ThreadStateControl::InitializeStates()
         )";
     mStates[state_index].m_strFirstSentence = "請你用一到五的等級告訴我你現在的感覺如何？一是很不好，五是很好。";
     mStates[state_index].m_secDurationLimit = 30s;
+    mStates[state_index].iNextStateIndex = 6;
 
     //state_index = 6;
     state_index++;
@@ -93,6 +100,7 @@ void ThreadStateControl::InitializeStates()
         )";
     mStates[state_index].m_strFirstSentence = "我會跳舞喲，我會跳埃及舞和牛仔舞，你想看我跳哪一種舞？";
     mStates[state_index].m_secDurationLimit = 30s;
+    mStates[state_index].iNextStateIndex = 7;
 
     //state_index = 7;
     state_index++;
@@ -109,6 +117,7 @@ void ThreadStateControl::InitializeStates()
         )";
     mStates[state_index].m_strFirstSentence = "我們來玩一個遊戲吧。我來想一個動物，你來猜，好不好啊？";
     mStates[state_index].m_secDurationLimit = 60s;
+    mStates[state_index].iNextStateIndex = 8;
 
     //state_index = 8;
     state_index++;
@@ -121,6 +130,7 @@ void ThreadStateControl::InitializeStates()
         )";
     mStates[state_index].m_strFirstSentence = "我會說故事喲。我可以講各種各樣的故事，像是動物的故事、王子和公主的故事、魔法的故事、星星的故事，你想聽我講什麼樣的故事呢？";
     mStates[state_index].m_secDurationLimit = 100s;
+    mStates[state_index].iNextStateIndex = 9;
 
     //state_index = 9;
     state_index++;
@@ -134,6 +144,8 @@ void ThreadStateControl::InitializeStates()
         )";
     mStates[state_index].m_strFirstSentence = "今天很高興認識你。跟你聊了很多話，我很開心。希望你的病很快就會好起來，你能高高興興的回家。下次還有機會再和你聊。";
     mStates[state_index].m_secDurationLimit = 100s;
+    mStates[state_index].iNextStateIndex = -1;
+    mStates[state_index].bEndState = true;
 }
 
 void ThreadStateControl::NextState()
@@ -143,13 +155,18 @@ void ThreadStateControl::NextState()
 
 void ThreadStateControl::run()
 {
-
-//    mutex mtx_state_control;
-//    unique_lock<std::mutex> lk(mtx_state_control);
     chrono::time_point<chrono::system_clock> current_time;
+    bool bReadyToChangeState = false;
+    //to Warmup Ollama
+    OllamaTask task;
+    task.message_history = mStates[1].message_history;
+    task.timestamp = chrono::system_clock::now();
+    mpThreadOllama->AddQueue(task);
+    mpThreadOllama->cond_var_ollama.notify_one();
+
+
     while(b_WhileLoop)
     {
-//        cond_var_state_control.wait(lk);
         current_time = chrono::system_clock::now();
 
         if(mStates[m_iStateIndex].bInitial)
@@ -159,12 +176,18 @@ void ThreadStateControl::run()
             mStates[m_iStateIndex].m_Start_time = chrono::system_clock::now();
             if( mStates[m_iStateIndex].m_strFirstSentence != "")
             {
-                ollama::message response_message("assistant", mStates[m_iStateIndex].m_strFirstSentence);
-                mStates[m_iStateIndex].message_history.push_back(response_message);
+                ollama::message system_message("system", mStates[m_iStateIndex].m_strSystemMessage);
+                mStates[m_iStateIndex].message_history.push_back(system_message);
+                ollama::message assistant_message("assistant", mStates[m_iStateIndex].m_strFirstSentence);
+                mStates[m_iStateIndex].message_history.push_back(assistant_message);
                 RobotCommandProtobuf::RobotCommand command;
                 command.set_speak_sentence(mStates[m_iStateIndex].m_strFirstSentence);
                 m_pSendMessageManager->AddMessage(command);
                 mbTTSComplete = false;
+
+                //just for display on UI
+                mpThreadOllama->strResponse = mStates[m_iStateIndex].m_strFirstSentence;
+                mpThreadOllama->b_new_LLM_response = true;
             }
             mbWaitForTTSComplete = mStates[m_iStateIndex].bWaitForTTSComplete; 
         }
@@ -173,15 +196,50 @@ void ThreadStateControl::run()
         {
             if( mbTTSComplete)
             {
-                //check the new Whisper result by comparing the time
-                if( mpThreadWhisper->b_new_result )
+                WhisperData WhisperResult = mpThreadWhisper->getLatestResult();
+                if( m_iStateIndex == 0)    //State 0's flow is different from other States
                 {
-                    if( mpThreadWhisper->result.tStart > mtimestamp_TTSComplete)
+                    if( WhisperResult.sOutput.find("開始") != string::npos || WhisperResult.sOutput.find("开始") != string::npos)
                     {
-                        cout << "(A)" << mpThreadWhisper->result.sOutput << endl;
+                        bReadyToChangeState = true;
+                    }
+                }
+                //What should I do if the patient does not say anything for a while?
+                else if( WhisperResult.tSpeechStart > mtimestamp_TTSComplete)
+                {
+                    //debug
+                    cout << "(F)" << endl;
+                    cout << "mtimestamp_TTSComplete " << ConvertTimeToString(mtimestamp_TTSComplete) << endl;
+                    cout << "mpThreadWhisper->result.tSpeechStart " << ConvertTimeToString(WhisperResult.tSpeechStart) << endl;
+                    cout << "mpThreadWhisper->result.tSpeechEnd " << ConvertTimeToString(WhisperResult.tSpeechEnd) << endl;
+                    cout << "mpThreadWhisper->result.tSTTComplete " << ConvertTimeToString(WhisperResult.tSTTComplete) << endl;
+                    cout << "sOutput " << WhisperResult.sOutput << endl;
+                    ollama::message user_message("user", WhisperResult.sOutput);
+                    mStates[m_iStateIndex].message_history.push_back(user_message);
+
+                    if( bReadyToChangeState)
+                    {
+                        if(mStates[m_iStateIndex].bEndState)
+                        {
+                            b_WhileLoop = false;
+                        }
+                        else
+                        {
+                            m_iStateIndex = mStates[m_iStateIndex].iNextStateIndex;
+                            bReadyToChangeState = false;
+                        }
+                    }
+                    else   //generate LLM response
+                    {
+                        DumpOllamaMessages(mStates[m_iStateIndex].message_history);
                         //generate LLM result;
                         mbWaitForTTSComplete = false;
                         mbWaitForLLMResult = true;
+                        OllamaTask task;
+                        task.message_history = mStates[m_iStateIndex].message_history;
+                        task.timestamp = chrono::system_clock::now();
+                        mpThreadOllama->AddQueue(task);
+                        mpThreadOllama->cond_var_ollama.notify_one();
                     }
                 }
             }
@@ -191,48 +249,48 @@ void ThreadStateControl::run()
         {
             if( mbLLMResult)
             {
-                ollama::message response_message("assistant", mStates[m_iStateIndex].m_strFirstSentence);
-                mStates[m_iStateIndex].message_history.push_back(response_message);
+                ollama::message assistant_message("assistant", msLLMResult);
+                mStates[m_iStateIndex].message_history.push_back(assistant_message);
+                //debug
+                //cout << "(D)" << endl;
+                //DumpOllamaMessages(mStates[m_iStateIndex].message_history);
+
                 RobotCommandProtobuf::RobotCommand command;
-                command.set_speak_sentence(mStates[m_iStateIndex].m_strFirstSentence);
+                command.set_speak_sentence(msLLMResult);
                 m_pSendMessageManager->AddMessage(command);
                 mbTTSComplete = false;
+                mbWaitForTTSComplete = true;
+                mbWaitForLLMResult = false;
+                mbLLMResult = false;
             }
         }
 
         //Check if the time exceed the state limit
         if(chrono::duration_cast<chrono::milliseconds>(current_time - mStates[m_iStateIndex].m_Start_time) > mStates[m_iStateIndex].m_secDurationLimit)
         {
-            m_iStateIndex++;
+            bReadyToChangeState = true;
         }
 
-        //wait for the start command
-        if( m_iStateIndex == 0)
-        {
-            if( mpThreadWhisper->b_new_result)
-            {
-                if( mpThreadWhisper->result.sOutput.find("開始") != string::npos )
-                {
-                    m_iStateIndex++;
-                }
-            }
-        }
 
         this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
 
-void ThreadStateControl::NotifyEvent(string description, chrono::time_point<chrono::system_clock> timestamp)
+void ThreadStateControl::NotifyEvent(string description, chrono::time_point<chrono::system_clock> timestamp, string sLLMResult)
 {
     if( description == "onTTSComplete")
     {
         mbTTSComplete = true;
         mtimestamp_TTSComplete = timestamp;
+        //debug
+        //cout << "(E)" << endl;
+        //cout << "NotifyEvent mtimestamp_TTSComplete " << ConvertTimeToString(mtimestamp_TTSComplete) << endl;
     }
     else if( description == "onLLMResult")
     {
         mbLLMResult = true;
         mtimestamp_LLMResult = timestamp;
+        msLLMResult = sLLMResult;
     }
     
 }

@@ -194,7 +194,6 @@ void ThreadOllama::run()
     last_prompt_time = chrono::high_resolution_clock::now(); // time(0);
     auto last_response_time = chrono::high_resolution_clock::now();
 */
-    unique_lock<mutex> lk(mtx);
 /*    
     int loop_cnt = 0;
 */
@@ -230,11 +229,20 @@ void ThreadOllama::run()
     std::chrono::time_point<std::chrono::system_clock> current_time = chrono::system_clock::now();
 */
     mutex mtx;
+    unique_lock<mutex> lk(mtx);
     while(b_WhileLoop)
     {
-        unique_lock<mutex> lk(mtx);
         cond_var_ollama.wait(lk);
 
+        if(mqueue.size() > 0)
+        {
+            OllamaTask task = mqueue.front();
+            mqueue.pop();
+            ollama::response response = ollama::chat(ModelName, task.message_history, options);
+            strResponse = response.as_simple_string();        //The strResponse will be send to the robot to speak out.
+            b_new_LLM_response = true;
+            mpThreadStateControl->NotifyEvent("onLLMResult", chrono::system_clock::now() ,strResponse);
+        }
 /*        
         bool change_stage = 0;
 */        
@@ -501,7 +509,7 @@ void ThreadOllama::run()
 */
         
         //wait for 100 ms to prevent the loop runs too frequently
-        this_thread::sleep_for(std::chrono::milliseconds(1));
+//        this_thread::sleep_for(std::chrono::milliseconds(1));
 
     }
     

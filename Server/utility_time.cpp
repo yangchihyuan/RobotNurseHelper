@@ -3,21 +3,21 @@
 #include <ctime>    // For std::localtime
 #include <iomanip>  // For std::put_time and stream manipulators
 
-std::string GetCurrentTimeString(bool bMillisecond)
+string GetCurrentTimeString(bool bMillisecond)
 {
     // 1. Get the current time point with high precision
-    auto now = std::chrono::system_clock::now();
+    auto now = chrono::system_clock::now();
 
     // 2. Convert to time_t for std::localtime (whole seconds part)
-    std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+    time_t now_c = chrono::system_clock::to_time_t(now);
 
     // 3. Convert to tm structure (for use with strftime)
-    std::tm* ptm = std::localtime(&now_c); // Note: std::localtime is not thread-safe!
+    tm* ptm = localtime(&now_c); // Note: std::localtime is not thread-safe!
 
     // 4. Extract milliseconds (fractional part)
     auto duration_since_epoch = now.time_since_epoch();
-    auto seconds_duration = std::chrono::duration_cast<std::chrono::seconds>(duration_since_epoch);
-    auto milliseconds_remaining = std::chrono::duration_cast<std::chrono::milliseconds>(duration_since_epoch - seconds_duration);
+    auto seconds_duration = chrono::duration_cast<chrono::seconds>(duration_since_epoch);
+    auto milliseconds_remaining = chrono::duration_cast<chrono::milliseconds>(duration_since_epoch - seconds_duration);
 
     // Create a buffer for strftime output
     char buffer[80]; // Choose an appropriate size for your format
@@ -36,7 +36,7 @@ std::string GetCurrentTimeString(bool bMillisecond)
 }
 
 // Function to convert google::protobuf::Timestamp to std::chrono::time_point
-std::chrono::time_point<std::chrono::system_clock> 
+chrono::time_point<chrono::system_clock> 
 protobufTimestampToTimePoint(const google::protobuf::Timestamp& ts) {
     // Get seconds and nanos from the protobuf Timestamp
     std::chrono::seconds s{ts.seconds()};
@@ -48,4 +48,27 @@ protobufTimestampToTimePoint(const google::protobuf::Timestamp& ts) {
     tp += ns;
     
     return tp;
+}
+
+//Convert chrono system_time to string
+string ConvertTimeToString(chrono::time_point<chrono::system_clock> chrono_time, bool bMillisecond)
+{
+    // Convert time_point to std::time_t for date/time formatting
+    time_t time_t_now = chrono::system_clock::to_time_t(chrono_time);
+    
+    // Get the milliseconds component
+    auto duration_in_ms = chrono::duration_cast<chrono::milliseconds>(chrono_time.time_since_epoch());
+    
+    // Use stringstream to format the output
+    std::stringstream ss;
+    ss << std::put_time(std::localtime(&time_t_now), "%Y-%m-%d %H:%M:%S");
+    
+    // Append the milliseconds to the string
+    if( bMillisecond)
+    {
+        long long milliseconds = duration_in_ms.count() % 1000;
+        ss << "." << std::setfill('0') << std::setw(3) << milliseconds;
+    }
+    
+    return string(ss.str());
 }

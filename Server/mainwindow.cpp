@@ -83,6 +83,7 @@ MainWindow::~MainWindow()
     thread_receive_messages.b_WhileLoop = false;
     thread_receive_messages.cond_var_receive_messages.notify_one();
     thread_receive_messages.wait();
+    
     foreach (QTcpSocket* socket, connection_set4)
     {
         socket->close();
@@ -101,7 +102,6 @@ MainWindow::~MainWindow()
     thread_ollama.wait();
 
     thread_state_control.b_WhileLoop = false;
-    thread_state_control.cond_var_state_control.notify_one();
     thread_state_control.wait();
 
     delete ui;
@@ -810,7 +810,6 @@ void MainWindow::on_checkBox_stream_clicked(bool checked)
 {
     if( checked)
     {
-        thread_whisper.strFixed = "";
 //        thread_whisper.setStartTime();
         bstream_recognition = true;
     }

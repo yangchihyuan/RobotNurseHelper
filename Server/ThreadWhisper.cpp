@@ -80,10 +80,6 @@ void ThreadWhisper::run()
     wparams.language = strLanguage.c_str();        // "zh" for Chinese, "en" for English, "ar" for Arabic
     wparams.no_speech_thold = 0.02f; //0.6f; // silence threshold for VAD //[MOHAMED]
 
-//    int n_iter = 0;
-
-    const int n_step_in_length = !use_vad ? std::max(1, params.length_ms / params.step_ms) : 1; // number of steps to print new line
-
     while(b_WhileLoop)
     {
         // << n_iter << "R\n";
@@ -156,10 +152,11 @@ void ThreadWhisper::run()
 
             if( last_speech_end < pcmf32.size() - n_samples_silent)    //to ensure that there is a slience greater than 0.3 seconds.
             {
-                result.tEnd = chrono::system_clock::now();
+                WhisperData tempData;
+                tempData.tSpeechEnd = chrono::system_clock::now();
                 chrono::milliseconds period((last_speech_end - first_speech_start)*1000/WHISPER_SAMPLE_RATE);
-                result.tStart = result.tEnd - period;
-                // run the Whisper inference
+                tempData.tSpeechStart = tempData.tSpeechEnd - period;
+                // run the Whisper inference. It takes times
                 strTemp = "";
                 if (whisper_full(ctx, wparams, pcmf32.data(), pcmf32.size()) != 0) {
                     fprintf(stderr, "failed to process audio\n");
@@ -171,46 +168,16 @@ void ThreadWhisper::run()
                     const char * text = whisper_full_get_segment_text(ctx, i);
                         strTemp += text;
                 }
-                
-//                std::cout << strTemp << std::endl;
-
+               
                 //clean the pcmf32 buffer and the pcmf32_old buffer
                 pcmf32.clear();
-                result.sOutput = strTemp;
-                b_new_result = true;
-
-/*
-                strRobotSentence = strTemp;             //2025/8/13 This is not good enough. The sentence is incomplete.
-                b_new_RobotSentence = true;
-                b_RobotSentence_End = true;
-*/                
+                tempData.sOutput = strTemp;
+                tempData.tSTTComplete = chrono::system_clock::now();
+                mtx.lock();
+                mResult = tempData;
+                mtx.unlock();
             }
-            
 
-            // Add tokens of the last full length segment as the prompt
-            /*
-            if (!params.no_context) {
-                prompt_tokens.clear();
-
-                const int n_segments = whisper_full_n_segments(ctx);
-                for (int i = 0; i < n_segments; ++i) {
-                    const int token_count = whisper_full_n_tokens(ctx, i);
-                    for (int j = 0; j < token_count; ++j) {
-                        prompt_tokens.push_back(whisper_full_get_token_id(ctx, i, j));
-                    }
-                }
-            }
-            */
-
-            //check whether there is an end of the voice.
-            /*
-            bool b_vad_detected = ::vad_simple(pcmf32, WHISPER_SAMPLE_RATE, 1000, params.vad_thold, params.freq_thold, false);
-            if( b_vad_detected)
-            {
-                b_RobotSentence_End = true;
-                // send the sentence to the LLM, and reset the buffer
-            }
-            */
         }
         else
               std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -223,13 +190,13 @@ void ThreadWhisper::run()
 
 }
 
-/*
-void ThreadWhisper::setStartTime()
+WhisperData ThreadWhisper::getLatestResult()
 {
-    t_last = std::chrono::high_resolution_clock::now();
-    t_start = t_last;
+    mtx.lock();
+    WhisperData sendout = mResult;
+    mtx.unlock();
+    return sendout;
 }
-*/
 
 void ThreadWhisper::ClearBuffer()
 {
@@ -239,7 +206,6 @@ void ThreadWhisper::ClearBuffer()
     bufferlength = 0;
 //    strRobotSentence = "";
     strTemp = "";
-    strFixed = "";
     mtx_whisper_buffer.unlock();
 }
 

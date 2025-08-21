@@ -43,8 +43,9 @@ struct whisper_params {
 struct WhisperData
 {
     string sOutput;
-    chrono::time_point<chrono::system_clock> tStart;
-    chrono::time_point<chrono::system_clock> tEnd;
+    chrono::time_point<chrono::system_clock> tSpeechStart;
+    chrono::time_point<chrono::system_clock> tSpeechEnd;
+    chrono::time_point<chrono::system_clock> tSTTComplete;
 };
 
 class ThreadWhisper: public QThread
@@ -67,21 +68,16 @@ public:
     mutex mtx_whisper_buffer;
     string strOperatorSentence;
     bool b_new_OperatorSentence = false;
-//    string strRobotSentence;
-    WhisperData result;
-    bool b_new_result = false;
     string strTemp;
-    string strFixed;
-//    bool b_new_RobotSentence = false;
-//    bool b_RobotSentence_End = false;    
+  
     QString model_file_path;
     string strLanguage = "zh"; // default language is Chinese
 
-//    void setStartTime();
     void ClearBuffer();
 
     VadIterator *pVad = NULL;             //This is the silero vad iterator.
 
+    WhisperData getLatestResult();
 protected:
     void run();
     whisper_context* ctx = nullptr;
@@ -95,6 +91,7 @@ protected:
     mutex mtx;
 
     float ComputeVolume(const std::vector<float>& pcmf32);
+    WhisperData mResult;
 };
 
 #endif

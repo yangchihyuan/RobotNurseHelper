@@ -244,6 +244,9 @@ MainWindow::MainWindow(QWidget *parent)
     thread_state_control.InitializeStates();
     thread_state_control.m_pSendMessageManager = &sendMessageManager;
     thread_state_control.mpThreadWhisper = &thread_whisper;
+    thread_state_control.mpThreadOllama = &thread_ollama;
+
+    thread_ollama.mpThreadStateControl = &thread_state_control;
 }
 
 void MainWindow::on_pushButton_speak_clicked()
@@ -265,6 +268,11 @@ void MainWindow::on_pushButton_speak_clicked()
     QString_SentCommands.append(action + "\n");
     ui->plainTextEdit_SentCommands->document()->setPlainText(QString_SentCommands);
     ui->plainTextEdit_SentCommands->verticalScrollBar()->setValue(ui->plainTextEdit_SentCommands->verticalScrollBar()->maximum());
+}
+
+void MainWindow::on_pushButton_onTTSComplete_clicked()
+{
+    thread_state_control.NotifyEvent("onTTSComplete", chrono::system_clock::now());
 }
 
 void MainWindow::send_move_body_command(float x, float y, int degree, int speed)
@@ -344,10 +352,11 @@ void MainWindow::timer_event()
     }
     
     //If the voice recognition result is ready, update the plainTextEdit_received.
-    if( thread_whisper.b_new_result )
+    WhisperData thisWhisperData = thread_whisper.getLatestResult();
+    if( thisWhisperData.tSTTComplete != oldWhisperData.tSTTComplete)
     {
-//        thread_whisper.b_new_RobotSentence = false;
-        ui->plainTextEdit_received->setPlainText(QString::fromStdString(thread_whisper.result.sOutput));
+        ui->plainTextEdit_received->setPlainText(QString::fromStdString(thisWhisperData.sOutput));
+        oldWhisperData = thisWhisperData;
     }
                     
     int action_index = -1;

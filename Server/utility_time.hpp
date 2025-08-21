@@ -9,4 +9,5 @@ string GetCurrentTimeString(bool bMillisecond);
 chrono::time_point<chrono::system_clock> 
 protobufTimestampToTimePoint(const google::protobuf::Timestamp& ts);
 
+string ConvertTimeToString(chrono::time_point<chrono::system_clock> chrono_time, bool bMillisecond = true);
 #endif

@@ -826,6 +826,19 @@
      <string>Kill app</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_onTTSComplete">
+    <property name="geometry">
+     <rect>
+      <x>908</x>
+      <y>810</y>
+      <width>101</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>onTTSComplete</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

@@ -1,5 +1,5 @@
-#ifndef Ollama_hpp
-#define Ollama_hpp
+#ifndef __THREAD_OLLAMA_hpp__
+#define __THREAD_OLLAMA_hpp__
 
 #include <QThread>
 #include <iostream>
@@ -7,7 +7,8 @@
 #include <queue>
 #include <condition_variable>
 #include "ollama.hpp"
-#include "google/protobuf/timestamp.pb.h"
+#include <chrono>
+#include "ThreadStateControl.hpp"
 
 using namespace std;
 
@@ -16,11 +17,15 @@ extern vector<string> summary;
 extern vector<string> message_log;      //created by Mohamed, for debugging purpose.
 extern string chosen_face;
 
+class ThreadStateControl;       //Because ThreadOllama.hpp and ThreadStateControl.hpp include each other, I need to use forward declaration
+
 struct OllamaTask
 {
     ollama::messages message_history;
-    google::protobuf::Timestamp timestamp;
+    chrono::time_point<std::chrono::system_clock> timestamp;
 };
+
+void DumpOllamaMessages(ollama::messages messages);
 
 class ThreadOllama: public QThread
 {
@@ -82,12 +87,12 @@ public:
     int chosen_dance = 0;
     string generateResponse(ollama::messages message_history);
     void AddQueue(OllamaTask task);
+    ThreadStateControl *mpThreadStateControl;
 
 protected:
     void run();
     string validate_conversation(ollama::options options, ollama::messages &message_history, string &prompt);
     bool stage_check(ollama::options options, ollama::options options_short, ollama::messages &message_history, ollama::messages &recent_history, bool remove_message);
-    mutex mtx;
     chrono::time_point<chrono::high_resolution_clock> last_prompt_time;
     string mstrUserInput;
     ollama::options options;

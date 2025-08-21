@@ -88,6 +88,7 @@ private:
     SendMessageManager sendMessageManager;
     bool bstream_recognition = false;
 
+    WhisperData oldWhisperData;     //for timer_event update UI
 signals:
     void newMessage(QString);   //where is the connect for this signal?
     void addSendCommandMessage(RobotCommandProtobuf::RobotCommand);
@@ -119,6 +120,7 @@ private slots:
     void on_pushButton_stop_action_clicked();
     void on_pushButton_voice_to_text_clicked();
     void on_pushButton_killapp_clicked();
+    void on_pushButton_onTTSComplete_clicked();
 
     void on_listView_FacialExpressions_doubleClicked(const QModelIndex &index);
     void on_listView_PredefinedAction_doubleClicked(const QModelIndex &index);
