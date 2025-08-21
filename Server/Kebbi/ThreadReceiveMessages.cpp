@@ -32,8 +32,11 @@ void ThreadReceiveMessages::run()
             if( RTSmessage.has_description() && RTSmessage.description() == "onTTSComplete")
             {
                 //debug
+                {
                 google::protobuf::Timestamp timestamp = RTSmessage.event_time();
-                //cout << "Receive onTTSComplete signal at " << timestamp.seconds() << " " << timestamp.nanos() << endl;
+                cout << "Receive onTTSComplete signal, whose time is " << ConvertTimeToString(protobufTimestampToTimePoint(timestamp)) << endl;
+                cout << "On received moment, system time is" << GetCurrentTimeString() << endl;
+                }
                 //notify ThreadStateControl
                 //2025/8/20, The robot time is different from the server's time
                 //mpThreadStateControl->NotifyEvent("onTTSComplete", protobufTimestampToTimePoint(timestamp));
