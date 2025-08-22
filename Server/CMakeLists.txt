@@ -78,6 +78,7 @@ set(SOURCES JPEG.cpp
             utility_compute.cpp
             utility_string.cpp
             utility_time.cpp
+            utility_KebbiMotion.cpp
             main.cpp
             mainwindow.cpp
             ThreadPortAudio.cpp

@@ -7,7 +7,9 @@
 #include "ollama.hpp"
 #include "SendMessageManager.hpp"
 #include "ThreadWhisper.hpp"
-#include "ThreadOllama.hpp" 
+#include "ThreadOllama.hpp"
+#include "ThreadProcessImage.hpp"
+#include "utility_KebbiMotion.hpp" 
 
 using namespace std;
 
@@ -47,6 +49,7 @@ public:
     SendMessageManager *m_pSendMessageManager;
     ThreadWhisper *mpThreadWhisper;
     ThreadOllama *mpThreadOllama;
+    ThreadProcessImage *mpThreadProcessImage;
     void NotifyEvent(string description, chrono::time_point<chrono::system_clock> timestamp, string sLLMResult = "");
     condition_variable cond_var_state_control;
 

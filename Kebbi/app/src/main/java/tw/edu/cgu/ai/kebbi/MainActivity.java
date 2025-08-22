@@ -258,14 +258,32 @@ public class MainActivity extends Activity {
 
             @Override
             public void onCompleteOfMotionPlay (String s) {
-                Log.d("KEBBI", "onCompleteOfMotionPlay");
+                Log.d("KEBBI monitor", "onCompleteOfMotionPlay");
+                //When a motion completes
+                Instant instant = Instant.now();
 
+                Timestamp time = Timestamp.newBuilder()
+                        .setSeconds(instant.getEpochSecond())
+                        .setNanos(instant.getNano())
+                        .build();
+
+                float yaw = mRobot.getMotorPresentPositionInDegree(2);
+                float pitch = mRobot.getMotorPresentPositionInDegree(1);
+                RobotCommandOuterClass.RobotToServerMessage message =
+                        RobotCommandOuterClass.RobotToServerMessage.newBuilder()
+                                .setDescription("onCompleteOfMotionPlay")
+                                .setYaw(yaw)
+                                .setPitch(pitch)
+                                .setEventTime(time)
+                                .build();
+
+                socketManager.sendAMessage(message);
             }
 
             @Override
             public void onPlayBackOfMotionPlay (String s) {
                 //What is this?
-                Log.d("KEBBI", "onPlayBackOfMotionPlay");
+                Log.d("KEBBI monitor", "onPlayBackOfMotionPlay");
             }
 
             @Override

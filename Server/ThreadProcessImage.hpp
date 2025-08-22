@@ -41,6 +41,7 @@ public:
     void setProcessor(std::string processor);
     bool bNewoutFrame = false;
     int image_save_every_N_frame = 1; //default value is 1, which means every frame will be saved
+    void NotifyEvent(string description, chrono::time_point<chrono::system_clock> timestamp, float yaw = 0.0, float pitch = 0.0);
 
 protected:
     void run();
@@ -51,6 +52,7 @@ protected:
     mutex mtx_Task;
     mutex mtx;
     bool m_bDirectoryCreated = false;
+    bool mbWatchPatient = true;
 };
 
 #endif

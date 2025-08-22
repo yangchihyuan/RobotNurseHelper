@@ -238,7 +238,13 @@ void ThreadStateControl::run()
                 command.set_speak_sentence(mStates[m_iStateIndex].m_strFirstSentence);
                 command.set_sface(mStates[m_iStateIndex].sFace);
                 if(mStates[m_iStateIndex].sMotion != "")
+                {
                     command.set_smotion(mStates[m_iStateIndex].sMotion);
+                    if( KebbiResetHead(command.smotion()) )
+                    {
+                        mpThreadProcessImage->NotifyEvent("KebbiResetHead", chrono::system_clock::now()); //pause watching patient
+                    }
+                }
                 m_pSendMessageManager->AddMessage(command);
                 mbTTSComplete = false;
 

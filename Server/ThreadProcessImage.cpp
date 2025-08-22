@@ -813,6 +813,9 @@ void ThreadProcessImage::run()
 
                     if( Processor == "CPU" )
                     {
+                        //2025/8/22 In the very beginning (first frame), the libmp->GetOutputPacket("output_video") is still empty, and the
+                        //libmp->GetOutputPacket("output_video") will cause a segmentation fault.
+                        //I don't know how to fix it.
                         if( libmp->WriteOutputImage(outFrame.data, libmp->GetOutputPacket("output_video") ) )
                         {
                             bNewoutFrame = true;
@@ -821,7 +824,6 @@ void ThreadProcessImage::run()
                         {
                             cout << "WriteOutputImage fails." << std::endl;
                         }
-                        
                     }
                     else if( Processor == "GPU" )
                     {
@@ -987,7 +989,8 @@ void ThreadProcessImage::run()
                     }
                     else
 */
-                    if( !is_dancing )
+//                    if(!is_dancing )
+                    if( mbWatchPatient )
                     {
                         if( !normalized_landmarks.empty())
                         {
@@ -1008,6 +1011,7 @@ void ThreadProcessImage::run()
                                     }
                                     else if( Task == "Pose" )
                                     {
+                                        cout << "(B) PoseLandmarks_to_RobotAction" << endl;
                                         PoseLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, message);
                                     }
                                     else if( Task == "Holistic" )
@@ -1055,4 +1059,20 @@ void ThreadProcessImage::run()
         }
     }
     cout << "Exit ThreadProcessImage loop." << endl;
+}
+
+void ThreadProcessImage::NotifyEvent(string description, chrono::time_point<chrono::system_clock> timestamp, float yaw, float pitch )
+{
+    if( description == "onCompleteOfMotionPlay")
+    {
+        cout << "(A) onCompleteOfMotionPlay yaw " << yaw << " pitch " << pitch << endl;
+        robot_status.yaw_degree = (int)yaw;
+        robot_status.pitch_degree = (int)pitch;
+        mbWatchPatient = true;
+    }
+    else if(description == "KebbiResetHead")
+    {
+        cout << "(B) KebbiResetHead " << endl;
+        mbWatchPatient = false;
+    }
 }

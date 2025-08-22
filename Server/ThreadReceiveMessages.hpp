@@ -12,6 +12,7 @@
 #include "SendMessageManager.hpp"
 #include "SocketHandler.hpp"
 #include "ThreadStateControl.hpp"
+#include "ThreadProcessImage.hpp"
 
 #ifdef USE_KEBBI
     #include "Kebbi/RobotCommand.pb.h"
@@ -32,7 +33,7 @@ public:
     SendMessageManager *pSendMessageManager;
     SocketHandler *pSocketHandler;
     ThreadStateControl *mpThreadStateControl;
-
+    ThreadProcessImage *mpThreadProcessImage;
 protected:
     void run();
 

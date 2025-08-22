@@ -29,20 +29,30 @@ void ThreadReceiveMessages::run()
             RobotCommandProtobuf::RobotToServerMessage RTSmessage;
             RTSmessage.ParseFromString(data_);
 
-            if( RTSmessage.has_description() && RTSmessage.description() == "onTTSComplete")
+            if( RTSmessage.has_description())
             {
-                //debug
+                if(RTSmessage.description() == "onTTSComplete")
                 {
-                google::protobuf::Timestamp timestamp = RTSmessage.event_time();
-                cout << "Receive onTTSComplete signal, whose time is " << ConvertTimeToString(protobufTimestampToTimePoint(timestamp)) << endl;
-                cout << "On received moment, system time is" << GetCurrentTimeString() << endl;
+                    //debug
+                    {
+//                        google::protobuf::Timestamp timestamp = RTSmessage.event_time();
+//                        cout << "Receive Protobuf onTTSComplete signal, whose time is " << ConvertTimeToString(protobufTimestampToTimePoint(timestamp)) << endl;
+//                        cout << "On received moment, system time is " << GetCurrentTimeString() << endl;
+                        //They are not the same. It is difficult to control.
+                        //System time may be smaller than the Protobuf time, which shoes that the two clock is not synchronized.
+                    }
+                    //notify ThreadStateControl
+                    //2025/8/20, The robot time is different from the server's time
+                    //mpThreadStateControl->NotifyEvent("onTTSComplete", protobufTimestampToTimePoint(timestamp));
+                    //I have to use the server's time.
+                    mpThreadStateControl->NotifyEvent("onTTSComplete", chrono::system_clock::now());
                 }
-                //notify ThreadStateControl
-                //2025/8/20, The robot time is different from the server's time
-                //mpThreadStateControl->NotifyEvent("onTTSComplete", protobufTimestampToTimePoint(timestamp));
-                //I have to use the server's time.
-                mpThreadStateControl->NotifyEvent("onTTSComplete", chrono::system_clock::now());
+                else if(RTSmessage.description() == "onCompleteOfMotionPlay")
+                {
+                    mpThreadProcessImage->NotifyEvent("onCompleteOfMotionPlay", chrono::system_clock::now(), RTSmessage.yaw(), RTSmessage.pitch());
+                }
             }
+
 
             if( RTSmessage.has_numberpressed())
             {

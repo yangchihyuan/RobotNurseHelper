@@ -47,5 +47,7 @@ message RobotToServerMessage {
   optional bytes jpegdata = 3;
   optional string description = 4;
   optional int32 numberpressed = 5;
+  optional float yaw = 6;           //why I cannot use float in my message?
+  optional float pitch = 7;
 }
 

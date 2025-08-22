@@ -240,11 +240,13 @@ MainWindow::MainWindow(QWidget *parent)
     thread_receive_messages.pSocketHandler = &socketHandler4;
     thread_receive_messages.pSendMessageManager = &sendMessageManager;
     thread_receive_messages.mpThreadStateControl = &thread_state_control;
+    thread_receive_messages.mpThreadProcessImage = &thread_process_image;
 
     thread_state_control.InitializeStates();
     thread_state_control.m_pSendMessageManager = &sendMessageManager;
     thread_state_control.mpThreadWhisper = &thread_whisper;
     thread_state_control.mpThreadOllama = &thread_ollama;
+    thread_state_control.mpThreadProcessImage = &thread_process_image;
 
     thread_ollama.mpThreadStateControl = &thread_state_control;
 }
@@ -359,79 +361,9 @@ void MainWindow::timer_event()
         oldWhisperData = thisWhisperData;
     }
                     
-    int action_index = -1;
-    if (thread_ollama.chosen_action != "")
-    {
-        QString target = QString::fromStdString(thread_ollama.chosen_action);
-        QStringList strList_action;
-        strList_action.append("TA_DictateL");
-        strList_action.append("DA_Full");
-        strList_action.append("EM_Mad02");
-        strList_action.append("BA_Nodhead");
-        strList_action.append("SP_Swim02"); 
-        strList_action.append("PE_RotateA"); //5
-        strList_action.append("SP_Karate");
-        strList_action.append("RE_Cheer");
-        strList_action.append("SP_Climb");
-        strList_action.append("DA_Hit"); 
-        strList_action.append("TA_DictateR"); //10
-        strList_action.append("SP_Bowling");
-        strList_action.append("SP_Walk");
-        strList_action.append("SA_Find");
-        strList_action.append("BA_TurnHead");
-        strList_action.append("SA_Toothache"); //15
-        strList_action.append("SA_Sick");
-        strList_action.append("SA_Shocked");
-        strList_action.append("SP_Dumbbell");
-        strList_action.append("SA_Discover");
-        strList_action.append("RE_Thanks"); //15
-        strList_action.append("PE_Changing");
-        strList_action.append("SP_HorizontalBar");
-        strList_action.append("WO_Traffic");
-        strList_action.append("RE_HiR");
-        strList_action.append("RE_HiL"); //20
-        strList_action.append("DA_Brushteeth");
-        strList_action.append("RE_Encourage");
-        strList_action.append("RE_Request");
-        strList_action.append("PE_Brewing");
-        strList_action.append("RE_Change"); //25
-        strList_action.append("PE_Phubbing");
-        strList_action.append("RE_Baoquan");
-        strList_action.append("SP_Cheer");
-        strList_action.append("RE_Ask");
-        strList_action.append("PE_Triangel"); //30
-        strList_action.append("PE_Sorcery");
-        strList_action.append("PE_Sneak");
-        strList_action.append("PE_Singing");
-        strList_action.append("LE_Yoyo");
-        strList_action.append("SP_Throw"); //35
-        strList_action.append("SP_RaceWalk");
-        strList_action.append("PE_ShakeFart");
-        strList_action.append("PE_RotateC");
-        strList_action.append("PE_RotateB");
-        strList_action.append("EM_Blush"); //40
-        strList_action.append("PE_Puff");
-        strList_action.append("PE_PlayCello");
-        strList_action.append("PE_Pikachu");
-        for (int i = 0; i < strList_action.size(); ++i) {
-            if (strList_action[i].compare(target, Qt::CaseInsensitive) == 0) {
-                action_index = i;
-                //cout << "FOUND AN ACTION";
-                break;
-            }
-        }
-        
-        if(action_index != -1)
-        {
-            RobotCommandProtobuf::RobotCommand motion_command;
-            motion_command.set_motion(action_index);
-            sendMessageManager.AddMessage(motion_command);
-        }
-
-        thread_ollama.chosen_action = "";
-    }
 
     //2025/8/6 Mohamed uses this Timer_event to update Kebbi's face. LLM may generate a wrong command, so we need to check it.
+    /*
     if (chosen_face != "")
     {
         int face_index = -1; 
@@ -472,7 +404,8 @@ void MainWindow::timer_event()
         }
         chosen_face = "";
     }
-
+    */
+   
     //2025/8/12 This section of code looks like that Mohamed sends the dance command to the robot, and suppresses the server's action while the robot is dancing.
     if (thread_ollama.chosen_dance != 0)
     {
