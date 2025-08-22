@@ -258,12 +258,14 @@ public class MainActivity extends Activity {
 
             @Override
             public void onCompleteOfMotionPlay (String s) {
+                Log.d("KEBBI", "onCompleteOfMotionPlay");
 
             }
 
             @Override
             public void onPlayBackOfMotionPlay (String s) {
-
+                //What is this?
+                Log.d("KEBBI", "onPlayBackOfMotionPlay");
             }
 
             @Override

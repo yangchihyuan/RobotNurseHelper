@@ -1,7 +1,8 @@
 #include "ThreadStateControl.hpp"
 #include "utility_time.hpp"
-#include <random>
 
+#include <cstdlib> // For rand() and srand()
+#include <ctime>   // For time()
 ThreadStateControl::ThreadStateControl()
 {
 
@@ -139,6 +140,10 @@ void ThreadStateControl::InitializeStates()
     mStates[state_index].iNextStateIndex = 8;
     mStates[state_index].sFace = "TTS_PeaceB";    
     mStates[state_index].sMotion = "666_PE_Harmonica";
+    mStates[state_index].vSmallMotion.push_back("666_BA_ArmSCircle");
+    mStates[state_index].vSmallMotion.push_back("666_BA_ArmSSquare");
+    mStates[state_index].vSmallMotion.push_back("666_BA_RArmCircleL");
+    mStates[state_index].vSmallMotion.push_back("666_BA_RArmCircleR");
 
     //state_index = 8;
     state_index++;
@@ -154,6 +159,10 @@ void ThreadStateControl::InitializeStates()
     mStates[state_index].iNextStateIndex = 9;
     mStates[state_index].sFace = "TTS_PeaceA";
     mStates[state_index].sMotion = "666_PE_Sorcery";
+    mStates[state_index].vSmallMotion.push_back("666_BA_ArmSCircle");
+    mStates[state_index].vSmallMotion.push_back("666_BA_ArmSSquare");
+    mStates[state_index].vSmallMotion.push_back("666_BA_RArmCircleL");
+    mStates[state_index].vSmallMotion.push_back("666_BA_RArmCircleR");
 
     //state_index = 9;
     state_index++;
@@ -171,6 +180,10 @@ void ThreadStateControl::InitializeStates()
     mStates[state_index].bEndState = true;
     mStates[state_index].sFace = "TTS_PeaceB";
     mStates[state_index].sMotion = "666_PE_Hug";
+    mStates[state_index].vSmallMotion.push_back("666_BA_ArmSCircle");
+    mStates[state_index].vSmallMotion.push_back("666_BA_ArmSSquare");
+    mStates[state_index].vSmallMotion.push_back("666_BA_RArmCircleL");
+    mStates[state_index].vSmallMotion.push_back("666_BA_RArmCircleR");
 }
 
 void ThreadStateControl::NextState()
@@ -200,9 +213,11 @@ void ThreadStateControl::run()
     chrono::seconds dance_wait_duration;
     chrono::time_point<chrono::system_clock> dance_start_time;
 
-    unsigned seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-    std::mt19937 generator(seed);
-    unique_ptr<uniform_int_distribution<int>> pDistribution;
+    //initialize the random seed.
+    srand(time(0));
+//    unsigned seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+//    std::mt19937 generator(seed);
+//    unique_ptr<uniform_int_distribution<int>> pDistribution = make_unique<uniform_int_distribution<int>>();
 
     while(b_WhileLoop)
     {
@@ -232,8 +247,8 @@ void ThreadStateControl::run()
                 mpThreadOllama->b_new_LLM_response = true;
 
                 //prepare random number
-                pDistribution = distribution.(0, 3);
-
+                //if( mStates[m_iStateIndex].vSmallMotion.size() > 0 )
+                //    pDistribution = unique_ptr<uniform_int_distribution<int>>(new uniform_int_distribution<int>(0,mStates[m_iStateIndex].vSmallMotion.size()));
             }
             mbWaitForTTSComplete = mStates[m_iStateIndex].bWaitForTTSComplete; 
             bOldStateComplete = false;
@@ -351,9 +366,12 @@ void ThreadStateControl::run()
                 RobotCommandProtobuf::RobotCommand command;
                 command.set_speak_sentence(msLLMResult);
                 //randomly choose a motion
-                int randomNumber = distribution(generator);
                 if( mStates[m_iStateIndex].vSmallMotion.size() > 0)
+                {
+                    int randomNumber = (rand() % mStates[m_iStateIndex].vSmallMotion.size());
+//                    int randomNumber = *pDistribution(generator);
                     command.set_smotion(mStates[m_iStateIndex].vSmallMotion.at(randomNumber));
+                }
 
                 m_pSendMessageManager->AddMessage(command);
                 mbTTSComplete = false;
