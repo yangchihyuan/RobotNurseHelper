@@ -12,11 +12,6 @@
 
 using namespace std;
 
-extern int dancing_status;
-extern vector<string> summary;
-extern vector<string> message_log;      //created by Mohamed, for debugging purpose.
-extern string chosen_face;
-
 class ThreadStateControl;       //Because ThreadOllama.hpp and ThreadStateControl.hpp include each other, I need to use forward declaration
 
 struct OllamaTask
@@ -55,7 +50,6 @@ public:
     string no_response, dance_complete;     //added by Mohamed
     string ModelName = "gemma3:12b";
 
-    int chosen_dance = 0;
     string generateResponse(ollama::messages message_history);
     void AddQueue(OllamaTask task);
     ThreadStateControl *mpThreadStateControl;

@@ -26,16 +26,14 @@ void DumpOllamaMessages(ollama::messages messages)
     }
 }
 
-string chosen_face = "";            //added by Mohamed. Why did he use the global variable?
 string check_summary = "";
-int dancing_status = 0;             //added by Mohamed. This variable indicates whether the robot is playing a mbtx file.
 
 void ThreadOllama::run()
 {
     ollama::options options;
     options["seed"] = 1;      //I cannot fix the seed. Otherwise, the result is always the same.
     options["temperature"] = 0.3;
-    options["num_ctx"] = 131072; //131072; //32768;//16384; number of context tokens, which is the maximum number of tokens the model can handle in a single request
+    options["num_ctx"] = 131072; //number of context tokens, which is the maximum number of tokens the model can handle in a single request
 
     //preload the model
     std::vector<std::string> models = ollama::list_models();

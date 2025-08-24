@@ -302,7 +302,7 @@ void ThreadStateControl::run()
 
                         if( chosen_dance != 0 )
                         {
-                            cout << "(J) chosen_dance " << chosen_dance << endl;
+                            //cout << "(J) chosen_dance " << chosen_dance << endl;
                             RobotCommandProtobuf::RobotCommand dance_command;
                             dance_command.set_dancetype(chosen_dance);
                             m_pSendMessageManager->AddMessage(dance_command);
@@ -318,24 +318,25 @@ void ThreadStateControl::run()
                         }
                     }
                 }
-                //What should I do if the patient does not say anything for a while?
-                //Sometimes the patient starts to talk before receive the onTTSCompelete signal.
-                //The patient thinks he says, but the Robot does not respond.
-                //add a tolerance gap
-                //Or maybe I set the mtimestamp_TTSComplete slightly late before the actual Robot's TTSComplete timestamp
-                else if( WhisperResult.tSpeechStart > mtimestamp_TTSComplete - tolerance_duration)
+                //There are two cases I accept a patient's response
+                //1. The patient's tSpeechStart is within the tolerance_duration before the mtimestamp_TTSComplete 
+                //2. The patient's tSpeechEnd is after the mtimestamp_TTSComplete, and current_time is a few seconds after tSpeechEnd
+                else if( WhisperResult.tSpeechStart > mtimestamp_TTSComplete - tolerance_duration || 
+                         (WhisperResult.tSpeechEnd > mtimestamp_TTSComplete && current_time - WhisperResult.tSpeechEnd > 3s) )
                 {
                     //debug
-                    cout << "(F)" << endl;
-                    cout << "mtimestamp_TTSComplete " << ConvertTimeToString(mtimestamp_TTSComplete) << endl;
-                    cout << "mpThreadWhisper->result.tSpeechStart " << ConvertTimeToString(WhisperResult.tSpeechStart) << endl;
-                    cout << "mpThreadWhisper->result.tSpeechEnd " << ConvertTimeToString(WhisperResult.tSpeechEnd) << endl;
-                    cout << "mpThreadWhisper->result.tSTTComplete " << ConvertTimeToString(WhisperResult.tSTTComplete) << endl;
-                    cout << "sOutput " << WhisperResult.sOutput << endl;
+                    if(false)
+                    {
+                        cout << "(F)" << endl;
+                        cout << "mtimestamp_TTSComplete " << ConvertTimeToString(mtimestamp_TTSComplete) << endl;
+                        cout << "mpThreadWhisper->result.tSpeechStart " << ConvertTimeToString(WhisperResult.tSpeechStart) << endl;
+                        cout << "mpThreadWhisper->result.tSpeechEnd " << ConvertTimeToString(WhisperResult.tSpeechEnd) << endl;
+                        cout << "mpThreadWhisper->result.tSTTComplete " << ConvertTimeToString(WhisperResult.tSTTComplete) << endl;
+                        cout << "sOutput " << WhisperResult.sOutput << endl;
+                    }
                     ollama::message user_message("user", WhisperResult.sOutput);
                     mStates[m_iStateIndex].message_history.push_back(user_message);
 
-                    //generate LLM response
                     if(bReadyToChangeState )
                     {
                         cout << "(G) bOldStateComplete = true;" << endl;
@@ -343,7 +344,9 @@ void ThreadStateControl::run()
                     }
                     else
                     {
-                        cout << "(H)" << endl;
+                        //generate LLM response
+                        //debug
+                        //cout << "(H)" << endl;
                         DumpOllamaMessages(mStates[m_iStateIndex].message_history);
                         //generate LLM result;
                         mbWaitForTTSComplete = false;
@@ -366,16 +369,18 @@ void ThreadStateControl::run()
                 ollama::message assistant_message("assistant", msLLMResult);
                 mStates[m_iStateIndex].message_history.push_back(assistant_message);
                 //debug
-                cout << "(D)" << endl;
-                DumpOllamaMessages(mStates[m_iStateIndex].message_history);
-
+                if(false)
+                {
+                    cout << "(D)" << endl;
+                    DumpOllamaMessages(mStates[m_iStateIndex].message_history);
+                }
+                
                 RobotCommandProtobuf::RobotCommand command;
                 command.set_speak_sentence(msLLMResult);
                 //randomly choose a motion
                 if( mStates[m_iStateIndex].vSmallMotion.size() > 0)
                 {
                     int randomNumber = (rand() % mStates[m_iStateIndex].vSmallMotion.size());
-//                    int randomNumber = *pDistribution(generator);
                     command.set_smotion(mStates[m_iStateIndex].vSmallMotion.at(randomNumber));
                 }
 

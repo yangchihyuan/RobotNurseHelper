@@ -28,7 +28,6 @@ extern RobotStatus robot_status;
 extern ActionOption action_option;
 
 time_t start_dance_time = 0;
-time_t dance_period = 7;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -361,88 +360,6 @@ void MainWindow::timer_event()
         oldWhisperData = thisWhisperData;
     }
                     
-
-    //2025/8/6 Mohamed uses this Timer_event to update Kebbi's face. LLM may generate a wrong command, so we need to check it.
-    /*
-    if (chosen_face != "")
-    {
-        int face_index = -1; 
-        QString target = QString::fromStdString(chosen_face);
-        QStringList strList_face;
-        strList_face.append("TTS_AngerA");
-        strList_face.append("TTS_AngerB");
-        strList_face.append("TTS_Contempt");
-        strList_face.append("TTS_Disgust");
-        strList_face.append("TTS_Fear");
-        strList_face.append("TTS_JoyA"); //5
-        strList_face.append("TTS_JoyB");
-        strList_face.append("TTS_JoyC");
-        strList_face.append("TTS_PeaceA");
-        strList_face.append("TTS_PeaceB");
-        strList_face.append("TTS_PeaceC");
-        strList_face.append("TTS_SadnessA"); //11
-        strList_face.append("TTS_SadnessB");
-        strList_face.append("TTS_Surprise");
-
-        for (int i = 0; i < strList_face.size(); ++i) {
-            if (strList_face[i].compare(target, Qt::CaseInsensitive) == 0) {
-                face_index = i;
-                //cout << "FOUND AN FACE";
-                break;
-            }
-        }
-        if (face_index != -1)
-        {
-            //debug
-            //cout << "CHOSEN ACTION FACE" << face_index << ": " << strList_face[face_index].toStdString() << "\n";
-            //cout << "SPECIFIED FACE: " << target.toStdString() << "\n";
-            RobotCommandProtobuf::RobotCommand facial_command;
-            facial_command.set_face(face_index);
-            
-            sendMessageManager.AddMessage(facial_command);
-            //sendMessageManager.Send();
-        }
-        chosen_face = "";
-    }
-    */
-   
-    //2025/8/12 This section of code looks like that Mohamed sends the dance command to the robot, and suppresses the server's action while the robot is dancing.
-    if (thread_ollama.chosen_dance != 0)
-    {
-        RobotCommandProtobuf::RobotCommand dance_command;
-        dance_command.set_dancetype(thread_ollama.chosen_dance);
-        sendMessageManager.AddMessage(dance_command);
-        start_dance_time = time(0);
-        if (thread_ollama.chosen_dance == 1)     //Egyptian dance
-        {
-            dance_period = 73;
-        }
-        else if(thread_ollama.chosen_dance == 2)   //Cowboy dance
-        {
-            dance_period = 81;
-        }
-        else if(thread_ollama.chosen_dance == 3)   //What is this? chosen_dance = 3 is never used in the code.
-        {
-            dance_period = 5;
-        }
-        else if(thread_ollama.chosen_dance == 4)   //This is the health education video.
-        {
-            dance_period = 57;
-        }
-        dancing_status = 1;
-        thread_ollama.chosen_dance = 0;
-    }
-    
-    //2025/8/12 I need to revise this section of code because thread_whisper.b_RobotSentence_End is unstable.
-/*
-    if( thread_whisper.b_RobotSentence_End )
-    {
-        thread_whisper.b_RobotSentence_End = false;
-        //send a command as the push button clicked
-        ui->pushButton_generate_response->click();
-    }
-*/    
-    
     if( thread_ollama.b_new_LLM_response )
     {
         thread_ollama.b_new_LLM_response = false;
@@ -457,11 +374,4 @@ void MainWindow::timer_event()
         }
     }
     sendMessageManager.Send();
-    
-    time_t current_time = time(0);
-    //2025/8/12 This is the only place to use the variable dance_period.
-    if (dancing_status == 1 && current_time - start_dance_time > dance_period)
-    {  
-        dancing_status = 0;     //This variable indicates whether the robot is dancing or not.
-    }
 }
