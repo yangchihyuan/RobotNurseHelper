@@ -49,7 +49,7 @@ import android.os.IBinder;
 import android.util.Size;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import androidx.camera.view.PreviewView;        //Is this more useful?
+import androidx.camera.view.PreviewView;
 import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
@@ -126,8 +126,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 
     private CameraService cameraService;
     private boolean isBound = false;
-    //private SurfaceView surfaceView;
-    private PreviewView surfaceView;
+    private PreviewView previewView;
 
 
     private final ServiceConnection connection = new ServiceConnection() {
@@ -265,8 +264,8 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         socketManager.mRobotAPI = mRobot;
         socketManager.startThreads();
 
-        surfaceView = findViewById(R.id.camera_preview_surface);
-        surfaceView.getHolder().addCallback(this);
+        previewView = findViewById(R.id.camera_preview_surface);
+//        surfaceView.getHolder().addCallback(this);
 
 
 
@@ -864,8 +863,8 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
     }
     */
     private void startPreview() {
-        if (isBound && cameraService != null && surfaceView.getHolder().getSurface() != null) {
-            cameraService.startCameraPreview(surfaceView);
+        if (isBound && cameraService != null) {
+            cameraService.startCameraPreview(previewView);
         }
     }
 

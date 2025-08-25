@@ -48,7 +48,6 @@ public class SocketManager {
     String endString = "EndOfADataFrame";
 
     public NuwaRobotAPI mRobotAPI;
-//    ArrayList<RobotCommandOuterClass.RobotCommand> ArrayListCommand = new ArrayList<RobotCommandOuterClass.RobotCommand>();
     Converter converter;
 
     public long dancing_status = 0;
@@ -354,10 +353,6 @@ public class SocketManager {
         threadReceiveCommand = new HandlerThread(("threadReceiveCommand"));
         threadReceiveCommand.start();
         handlerReceiveCommand = new Handler(threadReceiveCommand.getLooper());
-
-//        mThreadExecuteCommand = new HandlerThread(("threadExecuteCommand"));
-//        mThreadExecuteCommand.start();
-//        mHandlerExecuteCommand = new Handler(mThreadExecuteCommand.getLooper(), new ExecuteCommandCallback());
 
         threadCheckDiconnection = new HandlerThread(("threadCheckDisconnection"));
         threadCheckDiconnection.start();
