@@ -24,7 +24,9 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
@@ -43,7 +45,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 
+import android.os.IBinder;
 import android.util.Size;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import androidx.camera.view.PreviewView;        //Is this more useful?
 import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
@@ -73,7 +79,17 @@ import android.widget.Button;
 import RobotCommandProtobuf.RobotCommandOuterClass;
 import tw.edu.cgu.ai.kebbi.env.Logger; //Where do I use the Logger?
 
-public class MainActivity extends Activity {
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+
+
+//public class MainActivity extends AppCompatActivity implements SurfaceHolder.Callback {
+public class MainActivity extends Activity implements SurfaceHolder.Callback {
+
     private static final int PERMISSIONS_REQUEST = 1;
 
     private static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
@@ -99,7 +115,6 @@ public class MainActivity extends Activity {
     private Handler handlerImageListener;
     private HandlerThread mThreadSendAudio;
     private Handler mHandlerSendAudio;
-//    private boolean mbReceiveCommand;
 
     private ImageReader mPreviewReader;
     private CaptureRequest.Builder mPreviewBuilder;
@@ -108,6 +123,28 @@ public class MainActivity extends Activity {
     private final ImageListener mPreviewListener = new ImageListener();
     private SocketManager socketManager;
     private Converter converter;
+
+    private CameraService cameraService;
+    private boolean isBound = false;
+    //private SurfaceView surfaceView;
+    private PreviewView surfaceView;
+
+
+    private final ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            CameraService.LocalBinder binder = (CameraService.LocalBinder) service;
+            cameraService = binder.getService();
+            isBound = true;
+            startPreview();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName className) {
+            isBound = false;
+        }
+    };
+
     /**
      * {@link android.view.TextureView.SurfaceTextureListener} handles several lifecycle events on a
      * {@link TextureView}.
@@ -190,6 +227,15 @@ public class MainActivity extends Activity {
     private boolean status = true;
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = new Intent(this, CameraService.class);
+        ContextCompat.startForegroundService(this, intent);             //it does not work, why? I don't have the ContextCompat?
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);              //connection is a ServiceConnection object.
+    }
+
+
+    @Override
     protected void onCreate(final Bundle savedInstanceState) {
         socketManager = new SocketManager(this);
         //socketManager.launchPlayer();
@@ -219,6 +265,12 @@ public class MainActivity extends Activity {
         socketManager.mRobotAPI = mRobot;
         socketManager.startThreads();
 
+        surfaceView = findViewById(R.id.camera_preview_surface);
+        surfaceView.getHolder().addCallback(this);
+
+
+
+        checkAndStartService();
         mRobot.registerRobotEventListener(new RobotEventListener() {
             @Override
             public void onWikiServiceStart () {
@@ -509,6 +561,8 @@ public class MainActivity extends Activity {
                 }
             }
         }
+        //Activity don't need this, AppCompatActivity does.
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
 
@@ -528,7 +582,8 @@ public class MainActivity extends Activity {
         if (checkSelfPermission(PERMISSION_CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, 100);
         } else {
-            openCamera();
+            //2025/8/24, here, the activity will use the camera. But now I want to use the camera in the background.
+            //openCamera();
         }
 //        if( checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED )
 //            openCamera();
@@ -611,6 +666,10 @@ public class MainActivity extends Activity {
         super.onStop();
         stopThreads();      //Which is better? onPause() or onStop()?
         socketManager.stopThreads();
+        if (isBound) {
+            unbindService(connection);
+            isBound = false;
+        }
     }
 
     @Override
@@ -769,6 +828,7 @@ public class MainActivity extends Activity {
     /**
      * Start the camera preview.
      */
+    /*
     private void startPreview() {
         if (null == mCameraDevice || null == mPreviewSize) {
             return;
@@ -801,6 +861,42 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
         mPreviewListener.initialize(socketManager, inputView);
+    }
+    */
+    private void startPreview() {
+        if (isBound && cameraService != null && surfaceView.getHolder().getSurface() != null) {
+            cameraService.startCameraPreview(surfaceView);
+        }
+    }
+
+
+    private void checkAndStartService() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED) {
+            startCameraService();
+        }
+    }
+
+    private void startCameraService() {
+        Intent intent = new Intent(this, CameraService.class);
+        // Note: For Android 8.0 (Oreo) and above, use startForegroundService()
+        // to start a foreground service.
+        ContextCompat.startForegroundService(this, intent);
+    }
+
+    @Override
+    public void surfaceCreated(@NonNull SurfaceHolder holder) {
+        startPreview();
+    }
+
+    @Override
+    public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
+        // Not used for this simple example
+    }
+
+    @Override
+    public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
+        // Not used for this simple example
     }
 
 }
