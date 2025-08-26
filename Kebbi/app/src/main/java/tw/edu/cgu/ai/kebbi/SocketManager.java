@@ -40,6 +40,9 @@ public class SocketManager {
     private HandlerThread threadCheckDiconnection;
     private Handler handlerCheckDiconnection;
 
+    private HandlerThread threadSendAudio;
+    public Handler handlerSendAudio;
+
     byte[] mMessagePool = new byte[8192];
     int effective_length = 0;
     String beginString = "BeginOfADataFrame";
@@ -48,76 +51,29 @@ public class SocketManager {
     public NuwaRobotAPI mRobotAPI;
     Converter converter;
 
+    CameraServeice cameraServeice;
+
     public long dancing_status = 0;
     public Activity activity;
     public boolean bAutoReconnection = true;
-//    private final Context mContext;
-//    public SocketManager(Context context) {
-//        this.mContext = context.getApplicationContext(); // safe to store
-//    }
-//    private final Activity mActivity;
 
-    // constructor:
-    /*
-    public SocketManager(Activity activity) {
-        this.mActivity = activity;
-    }
-    */
-    //This is Mohamed's code, and it should be changed. SocketManager will be part of the CameraService
-    //LaunchPlayer will be in the activity rather than in the SocketManager.
-    /*
-    public void launchPlayer(int dance_type) {
-        mRobotAPI.hideFace();
-        mRobotAPI.hideWindow(false);
-        dancing_status = 1;
-        Intent intent = new Intent();
-        ComponentName comp = new ComponentName("com.nuwarobotics.app.nuwaplayer","com.nuwarobotics.app.nuwaplayer.PlayContentEditorActivity");
-        intent.setComponent(comp);
-        intent.setAction("com.nuwarobotics.app.nuwaplayer.action.PLAY_MBTX");
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (dance_type == 1)
-        {
-            intent.putExtra("PlayId", "Egypt_Dance-v2");
-        }
-        else if(dance_type == 2)
-        {
-            intent.putExtra("PlayId", "Dancing_Cowboy-v2");
-        }
-        else if(dance_type == 3)
-        {
-            intent.putExtra("PlayId", "Short_Test_Project");
-        }
-        else if(dance_type == 4)
-        {
-            intent.putExtra("PlayId", "Health_Video");
-        }
 
-        //Here I need an error proofing if the dance_type is wrong.
-//        mRobotAPI.stopTTS();          //Is this command kill the latest TTS?
-        mActivity.startActivityForResult(intent, 1001);
+    public SocketManager(CameraServeice cameraServeice) {
+        this.cameraServeice = cameraServeice;
     }
-*/
+
     public void startReceiveCommands()
     {
         //Debug information 2025/4/17. I need to complete this runnable bofore post it again. If there are two runnables in a handler, behaviors become unknown.
         handlerReceiveCommand.post(() -> {
             mbReceiveCommand = true;
-            //launchPlayer(3);
-            //mRobotAPI.hideFace();
-            //mRobotAPI.hideWindow(false);
-//                mRobotAPI.showFace();                           //2025/8/19 Why do I change face here?
-//                mRobotAPI.playFaceAnimation("TTS_PeaceB");
             while(mbReceiveCommand) {
-//                    Log.d ("mbReceiveCommand","still running");
                 if (mSocketReceiveCommand != null && mSocketReceiveCommand.isConnected()) {
-//                        Log.d ("mbReceiveCommand","Enter if");
                     try {
                         BufferedInputStream dIn = new BufferedInputStream(mSocketReceiveCommand.getInputStream());
-//                            Log.d("BufferedInputStream", "created");
                         int length = 4096;
                         byte[] message = new byte[length];
                         int bytesRead = dIn.read(message, 0, length);
-//                            Log.d("bytesRead", Integer.toString((bytesRead)));
                         if (bytesRead != -1) {
                             System.arraycopy(message, 0, mMessagePool, effective_length, bytesRead);
                             effective_length += bytesRead;
@@ -201,8 +157,7 @@ public class SocketManager {
                                     mRobotAPI.motionPlay(command.getSmotion(), true);
                                 }
                                 if (command.hasDancetype() && command.getDancetype() != 0) {
-                                    //2025/8/23 I shoud notify the activity to launch the player
-//                                    launchPlayer(command.getDancetype());
+                                    cameraservice.doSomethingThatNotifiesActivity();
                                 }
                                 else
                                 {
@@ -361,6 +316,10 @@ public class SocketManager {
         threadCheckDiconnection = new HandlerThread(("threadCheckDisconnection"));
         threadCheckDiconnection.start();
         handlerCheckDiconnection = new Handler(threadCheckDiconnection.getLooper());
+
+        threadSendAudio = new HandlerThread(("threadSendAudio"));
+        threadSendAudio.start();
+        handlerSendAudio = new Handler(threadSendAudio.getLooper());
     }
 
     public void startDisconnectionChecker()

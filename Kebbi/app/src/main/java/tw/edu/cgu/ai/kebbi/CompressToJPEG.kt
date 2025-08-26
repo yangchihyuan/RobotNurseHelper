@@ -15,7 +15,7 @@ fun imageProxyToBitmap(imageProxy: ImageProxy): Bitmap {
     intBuffer.get(pixels)
 
     // Create a bitmap from the array of pixels
-    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)        //Android bitmap color order is RGB
     bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
 
     return bitmap

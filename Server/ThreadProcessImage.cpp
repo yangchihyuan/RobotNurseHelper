@@ -663,7 +663,7 @@ void ThreadProcessImage::run()
 //            RobotCommandProtobuf::RobotToServerMessage RTSmessage;
 //            RTSmessage.ParseFromString(data_);
             bool bCorrectlyDecoded = false;
-            Mat inputImage;
+            Mat inputImage;                 //BGR (Blue, Green, Red)
 //            if( RTSmessage.has_jpegdata() && RTSmessage.has_jpegdatalength())
 //            {
 //                google::protobuf::Timestamp timestamp = RTSmessage.event_time();
@@ -733,7 +733,10 @@ void ThreadProcessImage::run()
             try{
                 inputImage = imdecode(JPEG_Data, IMREAD_COLOR);
                 if( inputImage.data )
+                {
                     bCorrectlyDecoded = true;
+                    cv::cvtColor(inputImage, inputImage, cv::COLOR_RGB2BGR);
+                }
                 else
                 {
                     cout << "imdecode fails." << endl;

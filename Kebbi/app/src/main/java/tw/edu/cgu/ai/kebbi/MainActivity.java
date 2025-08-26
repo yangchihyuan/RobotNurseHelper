@@ -21,36 +21,21 @@
 package tw.edu.cgu.ai.kebbi;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.ImageFormat;
-import android.graphics.SurfaceTexture;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CameraMetadata;
-import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.params.StreamConfigurationMap;
-import android.media.ImageReader;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.HandlerThread;
 
 import android.os.IBinder;
-import android.util.Size;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+
+import androidx.annotation.RequiresPermission;
 import androidx.camera.view.PreviewView;
-import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
@@ -58,37 +43,18 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.protobuf.Timestamp;
-import com.nuwarobotics.service.IClientId;
 import com.nuwarobotics.service.agent.NuwaRobotAPI;
-import com.nuwarobotics.service.agent.RobotEventListener;
-import com.nuwarobotics.service.agent.VoiceEventListener;
 
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.Arrays;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
-
-import android.media.AudioFormat;
-import android.media.AudioRecord;
-import android.media.MediaRecorder;
 import android.util.Log;
 import android.widget.Button;
 
-import RobotCommandProtobuf.RobotCommandOuterClass;
 import tw.edu.cgu.ai.kebbi.env.Logger; //Where do I use the Logger?
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 
-import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
-
-//public class MainActivity extends AppCompatActivity implements SurfaceHolder.Callback {
-public class MainActivity extends Activity implements SurfaceHolder.Callback {
+public class MainActivity extends Activity implements CameraService.ServiceCallback {
 
     private static final int PERMISSIONS_REQUEST = 1;
 
@@ -109,19 +75,19 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 
     //Zenbo supports 1920x1080
     //Emulator only supports up to 1280x960
-    private Size mPreviewSize = new Size(640, 480);
-    private CameraDevice mCameraDevice;
-    private HandlerThread threadImageListener;
-    private Handler handlerImageListener;
-    private HandlerThread mThreadSendAudio;
-    private Handler mHandlerSendAudio;
+//    private Size mPreviewSize = new Size(640, 480);
+//    private CameraDevice mCameraDevice;
+//    private HandlerThread threadImageListener;
+//    private Handler handlerImageListener;
+//    private HandlerThread mThreadSendAudio;
+//    private Handler mHandlerSendAudio;
 
-    private ImageReader mPreviewReader;
-    private CaptureRequest.Builder mPreviewBuilder;
-    private final Semaphore cameraOpenCloseLock = new Semaphore(1);
-    private CameraCaptureSession mPreviewSession;
+//    private ImageReader mPreviewReader;
+//    private CaptureRequest.Builder mPreviewBuilder;
+//    private final Semaphore cameraOpenCloseLock = new Semaphore(1);
+//    private CameraCaptureSession mPreviewSession;
     private final ImageListener mPreviewListener = new ImageListener();
-    private SocketManager socketManager;
+//    private SocketManager socketManager;
     private Converter converter;
 
     private CameraService cameraService;
@@ -136,6 +102,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
             cameraService = binder.getService();
             isBound = true;
             startPreview();
+            binder.setCallback(MainActivity.this);
         }
 
         @Override
@@ -144,63 +111,6 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         }
     };
 
-    /**
-     * {@link android.view.TextureView.SurfaceTextureListener} handles several lifecycle events on a
-     * {@link TextureView}.
-     */
-    private final TextureView.SurfaceTextureListener surfaceTextureListener =
-            new TextureView.SurfaceTextureListener() {
-                @Override
-                public void  onSurfaceTextureAvailable(
-                        final SurfaceTexture texture, final int width, final int height) {
-                    if( checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED )
-                        openCamera();
-                }
-
-                @Override
-                public void onSurfaceTextureSizeChanged(
-                        final SurfaceTexture texture, final int width, final int height) {
-                }
-
-                @Override
-                public boolean onSurfaceTextureDestroyed(final SurfaceTexture texture) {
-                    return true;
-                }
-
-                @Override
-                public void onSurfaceTextureUpdated(final SurfaceTexture texture) {
-                }
-            };
-
-
-    /**
-     * {@link android.hardware.camera2.CameraDevice.StateCallback}
-     * is called when {@link CameraDevice} changes its state.
-     */
-    private final CameraDevice.StateCallback mStateCallback =
-            new CameraDevice.StateCallback() {
-                @Override
-                public void onOpened(final CameraDevice cameraDevice) {
-                    // This method is called when the camera is opened.  We start camera preview here.
-                    mCameraDevice = cameraDevice;
-                    startPreview();
-                    cameraOpenCloseLock.release();  //Chih-Yuan Yang 2024/6/16: The cameraOpenCloseLock is a semaphore.
-                }
-
-                @Override
-                public void onDisconnected(final CameraDevice cd) {
-                    cameraOpenCloseLock.release();
-                    cd.close();    //2025/1/6 This function is not called.
-                    mCameraDevice = null;
-                }
-
-                @Override
-                public void onError(final CameraDevice cd, final int error) {
-                    cameraOpenCloseLock.release();
-                    cd.close();
-                    mCameraDevice = null;
-                }
-            };
 
     private void showToast(final String text) {
         MainActivity.this.runOnUiThread(
@@ -213,17 +123,6 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         );
     }
 
-    AudioRecord recorder;
-
-//    private int audioSouce = MediaRecorder.AudioSource.MIC;
-    private int audioSouce = MediaRecorder.AudioSource.VOICE_RECOGNITION;
-//    private int sampleRate = 44100 ; // 44100 for music, however, for whisper, the sample rate is 16000
-    private int sampleRate = 16000;
-//    private int channelConfig = AudioFormat.CHANNEL_IN_STEREO;  //for whisper, the channel is mono
-    private int channelConfig = AudioFormat.CHANNEL_IN_MONO;  //for whisper, the channel is mono
-    private int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
-    int minBufSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);   //minBufSize = 5376, but larger is better.
-    private boolean status = true;
 
     @Override
     protected void onStart() {
@@ -236,8 +135,6 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
-//        socketManager = new SocketManager(this);
-        //socketManager.launchPlayer();
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main_activity);
@@ -255,19 +152,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         checkBox_enable_connection = (CheckBox) findViewById(R.id.checkBox_connect);
         Button button_close = (Button) findViewById(R.id.button_close);
         // init kiwi sdk
-        String your_app_package_name = getPackageName ();
-        IClientId id = new IClientId(your_app_package_name);
-        mRobot = new NuwaRobotAPI (this, id);
-        mRobot.hideWindow(false);
-        mRobot.controlAlwaysWakeup(true);
-        mRobot.hideFace();
-//        socketManager.mRobotAPI = mRobot;
-//        socketManager.startThreads();
-
         previewView = findViewById(R.id.camera_preview_surface);
-//        surfaceView.getHolder().addCallback(this);
-
-
 
         checkAndStartService();
 
@@ -280,32 +165,22 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         }
 
         checkBox_enable_connection.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @RequiresPermission(Manifest.permission.RECORD_AUDIO)
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     //Save the IP address to SharedPreferences
                     SharedPreferences sharedPref = getSharedPreferences("RobotNurseHelper_Preference", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.putString("ServerURL", editText_Server.getText().toString());
+                    String sServerURL = editText_Server.getText().toString();
+                    int iPortNumber = Integer.parseInt(editText_Port.getText().toString());
+                    editor.putString("ServerURL", sServerURL);
                     editor.apply();
 
-                    recorder.startRecording();    //The recorder means the audio recorder
-//                    socketManager.mServerURL = editText_Server.getText().toString();
-//                    socketManager.mPortNumber = Integer.parseInt(editText_Port.getText().toString());
-//                    Log.d("Record", "Before call connectSockets");
-//                    socketManager.connectSockets();
-//                    socketManager.startReceiveCommands();
-//                    socketManager.startDisconnectionChecker();
-
-                    //Pass the mServerURL and mPortNumber to the CameraService.kt
-                    cameraService.SetServerURLandPortNumber(socketManager.mServerURL, socketManager.mPortNumber);
+                    cameraService.startConnection(sServerURL, iPortNumber);
                 }
                 else {
-                    //2025/1/3 the recorder should stop in onPause()
-//                    mbReceiveCommand = false;   //the app should not mSocketReceiveResults.getInputStream()
-                    recorder.stop();
-                    socketManager.stopReceiveCommands();
-                    socketManager.disconnectSockets();
+                    cameraService.stopConnection();
                 }
             }
         });
@@ -319,14 +194,34 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
                                             }
                                         }
         );
+    }
 
-        Log.d("KEBBI", "End of OnCreate");
-        //The three commands do not work. Why?
-//        mRobot.startTTS("你好，我是凱比。");
-//        mRobot.ctlMotor(1,20, 40f);   //motor 1 is up and down, range -20 to 20
-//        mRobot.ctlMotor(2,40, 40f);   //motor 2 is left and right, range -40 to 40
+    @Override
+    public void launchPlayer(Integer dance_type) {
+            Intent intent = new Intent();
+            ComponentName comp = new ComponentName("com.nuwarobotics.app.nuwaplayer","com.nuwarobotics.app.nuwaplayer.PlayContentEditorActivity");
+            intent.setComponent(comp);
+            intent.setAction("com.nuwarobotics.app.nuwaplayer.action.PLAY_MBTX");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (dance_type == 1)
+            {
+                intent.putExtra("PlayId", "Egypt_Dance-v2");
+            }
+            else if(dance_type == 2)
+            {
+                intent.putExtra("PlayId", "Dancing_Cowboy-v2");
+            }
+            else if(dance_type == 3)
+            {
+                intent.putExtra("PlayId", "Short_Test_Project");
+            }
+            else if(dance_type == 4)
+            {
+                intent.putExtra("PlayId", "Health_Video");
+            }
 
-    }  //end of onCreate
+            this.startActivityForResult(intent, 1001);
+        }
 
     //2025/1/3 This is a call back function, using the same thread as onCreate(). Thus, it is only be called after the onCreated is completed.
     @Override
@@ -337,7 +232,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED
                         && grantResults[1] == PackageManager.PERMISSION_GRANTED
                         && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
-                    startThreads();
+//                    startThreads();
                 } else {
                     requestPermission();
                 }
@@ -351,16 +246,18 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
     @Override
     protected void onResume() {
         super.onResume();
-        startThreads();
+//        startThreads();
 
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
         decorView.setSystemUiVisibility(uiOptions);
 
-        if(recorder == null) {
+/*        if(recorder == null) {
             recorder = new AudioRecord(audioSouce, sampleRate, channelConfig, audioFormat, minBufSize * 10);   //5376* 10
             Log.d("VS", "Recorder initialized");
         }
+
+ */
         if (checkSelfPermission(PERMISSION_CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, 100);
         } else {
@@ -370,10 +267,11 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 //        if( checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED )
 //            openCamera();
 
-        StartAudioRecorder();
+//        StartAudioRecorder();
 //        socketManager.activity = this;
     }
 
+    /*
     private void StartAudioRecorder()
     {
         //Start audio recorder
@@ -401,7 +299,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
             }
         );
     }
-
+    */
     private boolean hasPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED &&
@@ -425,8 +323,8 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 
     @Override
     protected void onPause() {
-        socketManager.mRobotAPI.hideFace();
-        socketManager.mRobotAPI.hideWindow(false);
+//        socketManager.mRobotAPI.hideFace();
+//        socketManager.mRobotAPI.hideWindow(false);
         //closeCamera();
         //socketManager.disconnectSockets();
         //status = false;
@@ -443,11 +341,11 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
     protected void onStop()
     {
         //socketManager.disconnectSockets();
-        socketManager.mRobotAPI.hideFace();
-        socketManager.mRobotAPI.hideWindow(false);
+//        socketManager.mRobotAPI.hideFace();
+//        socketManager.mRobotAPI.hideWindow(false);
         super.onStop();
-        stopThreads();      //Which is better? onPause() or onStop()?
-        socketManager.stopThreads();
+//        stopThreads();      //Which is better? onPause() or onStop()?
+//        socketManager.stopThreads();
         if (isBound) {
             unbindService(connection);
             isBound = false;
@@ -465,6 +363,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 //    /**
 //     * Opens the camera specified by {@link CameraConnectionFragment#cameraId}.
 //     */
+/*
     @SuppressLint("MissingPermission")
     @TargetApi(Build.VERSION_CODES.P)
     private void openCamera() {
@@ -481,10 +380,11 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
             throw new RuntimeException("Interrupted while trying to lock camera opening.", e);
         }
     }
-
+*/
     /*
     2025/01/06 Chih-Yuan: This is an utility function. I did not use it for ZenboNurseHelper.
      */
+    /*
     private void listCameraSupportedFormats() {
         final CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         try {
@@ -518,11 +418,12 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
             throw new RuntimeException("Interrupted while trying to lock camera opening.", e);
         }
     }
-
+*/
 
     /**
      * Closes the current {@link CameraDevice}.
      */
+    /*
     private void closeCamera() {
         try {
             cameraOpenCloseLock.acquire();
@@ -546,10 +447,11 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
             cameraOpenCloseLock.release();
         }
     }
-
+*/
     /**
      * Starts a background thread and its {@link Handler}.
      */
+    /*
     private void startThreads() {
         threadImageListener = new HandlerThread("ImageListener");
         threadImageListener.start();
@@ -559,10 +461,11 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         mThreadSendAudio.start();
         mHandlerSendAudio = new Handler(mThreadSendAudio.getLooper());
     }
-
+*/
     /**
      * Stops the background thread and its {@link Handler}.
      */
+    /*
     private void stopThreads() {
         threadImageListener.quitSafely();
         mThreadSendAudio.quitSafely();
@@ -587,10 +490,11 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
             mPreviewSession = null;
         }
     }
-
+*/
     /**
      * Update the camera preview. {@link #startPreview()} needs to be called in advance.
      */
+    /*
     private void updatePreview() {
         if (null == mCameraDevice) {
             return;
@@ -606,7 +510,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
             e.printStackTrace();
         }
     }
-
+*/
     /**
      * Start the camera preview.
      */
@@ -665,20 +569,4 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         // to start a foreground service.
         ContextCompat.startForegroundService(this, intent);
     }
-
-    @Override
-    public void surfaceCreated(@NonNull SurfaceHolder holder) {
-        startPreview();
-    }
-
-    @Override
-    public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
-        // Not used for this simple example
-    }
-
-    @Override
-    public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-        // Not used for this simple example
-    }
-
 }
