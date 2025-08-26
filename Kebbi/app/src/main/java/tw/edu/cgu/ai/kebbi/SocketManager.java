@@ -35,8 +35,6 @@ public class SocketManager {
     private Handler handlerSendToServer;
     private HandlerThread threadReceiveCommand;
     private Handler handlerReceiveCommand;
-//    private HandlerThread mThreadExecuteCommand;
-//    private Handler mHandlerExecuteCommand;
     private boolean mbReceiveCommand;
 
     private HandlerThread threadCheckDiconnection;
@@ -57,12 +55,17 @@ public class SocketManager {
 //    public SocketManager(Context context) {
 //        this.mContext = context.getApplicationContext(); // safe to store
 //    }
-    private final Activity mActivity;
+//    private final Activity mActivity;
 
     // constructor:
+    /*
     public SocketManager(Activity activity) {
         this.mActivity = activity;
     }
+    */
+    //This is Mohamed's code, and it should be changed. SocketManager will be part of the CameraService
+    //LaunchPlayer will be in the activity rather than in the SocketManager.
+    /*
     public void launchPlayer(int dance_type) {
         mRobotAPI.hideFace();
         mRobotAPI.hideWindow(false);
@@ -93,7 +96,7 @@ public class SocketManager {
 //        mRobotAPI.stopTTS();          //Is this command kill the latest TTS?
         mActivity.startActivityForResult(intent, 1001);
     }
-
+*/
     public void startReceiveCommands()
     {
         //Debug information 2025/4/17. I need to complete this runnable bofore post it again. If there are two runnables in a handler, behaviors become unknown.
@@ -198,7 +201,8 @@ public class SocketManager {
                                     mRobotAPI.motionPlay(command.getSmotion(), true);
                                 }
                                 if (command.hasDancetype() && command.getDancetype() != 0) {
-                                    launchPlayer(command.getDancetype());
+                                    //2025/8/23 I shoud notify the activity to launch the player
+//                                    launchPlayer(command.getDancetype());
                                 }
                                 else
                                 {

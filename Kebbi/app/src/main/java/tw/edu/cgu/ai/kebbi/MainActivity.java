@@ -236,7 +236,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
-        socketManager = new SocketManager(this);
+//        socketManager = new SocketManager(this);
         //socketManager.launchPlayer();
         super.onCreate(savedInstanceState);
 
@@ -261,8 +261,8 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         mRobot.hideWindow(false);
         mRobot.controlAlwaysWakeup(true);
         mRobot.hideFace();
-        socketManager.mRobotAPI = mRobot;
-        socketManager.startThreads();
+//        socketManager.mRobotAPI = mRobot;
+//        socketManager.startThreads();
 
         previewView = findViewById(R.id.camera_preview_surface);
 //        surfaceView.getHolder().addCallback(this);
@@ -270,223 +270,6 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 
 
         checkAndStartService();
-        mRobot.registerRobotEventListener(new RobotEventListener() {
-            @Override
-            public void onWikiServiceStart () {
-                Log.d("KEBBI", "onWikiServiceStart");
-//                mRobot.startTTS("Hello, I'm Kebbi.");
-            }
-
-            @Override
-            public void onWikiServiceStop () {
-
-            }
-
-            @Override
-            public void onWikiServiceCrash () {
-
-            }
-
-            @Override
-            public void onWikiServiceRecovery () {
-
-            }
-
-            @Override
-            public void onStartOfMotionPlay (String s) {
-
-            }
-
-            @Override
-            public void onPauseOfMotionPlay (String s) {
-
-            }
-
-            @Override
-            public void onStopOfMotionPlay (String s) {
-
-            }
-
-            @Override
-            public void onCompleteOfMotionPlay (String s) {
-                Log.d("KEBBI monitor", "onCompleteOfMotionPlay");
-                //When a motion completes
-                Instant instant = Instant.now();
-
-                Timestamp time = Timestamp.newBuilder()
-                        .setSeconds(instant.getEpochSecond())
-                        .setNanos(instant.getNano())
-                        .build();
-
-                float yaw = mRobot.getMotorPresentPositionInDegree(2);
-                float pitch = mRobot.getMotorPresentPositionInDegree(1);
-                RobotCommandOuterClass.RobotToServerMessage message =
-                        RobotCommandOuterClass.RobotToServerMessage.newBuilder()
-                                .setDescription("onCompleteOfMotionPlay")
-                                .setYaw(yaw)
-                                .setPitch(pitch)
-                                .setEventTime(time)
-                                .build();
-
-                socketManager.sendAMessage(message);
-            }
-
-            @Override
-            public void onPlayBackOfMotionPlay (String s) {
-                //What is this?
-                Log.d("KEBBI monitor", "onPlayBackOfMotionPlay");
-            }
-
-            @Override
-            public void onErrorOfMotionPlay (int i) {
-
-            }
-
-            @Override
-            public void onPrepareMotion (boolean b, String s, float v) {
-
-            }
-
-            @Override
-            public void onCameraOfMotionPlay (String s) {
-
-            }
-
-            @Override
-            public void onGetCameraPose (float v, float v1, float v2, float v3, float v4, float v5, float v6, float v7, float v8, float v9, float v10, float v11) {
-
-            }
-
-            @Override
-            public void onTouchEvent (int i, int i1) {
-
-            }
-
-            @Override
-            public void onPIREvent (int i) {
-
-            }
-
-            @Override
-            public void onTap (int i) {
-
-            }
-
-            @Override
-            public void onLongPress (int i) {
-
-            }
-
-            @Override
-            public void onWindowSurfaceReady () {
-
-            }
-
-            @Override
-            public void onWindowSurfaceDestroy () {
-
-            }
-
-            @Override
-            public void onTouchEyes (int i, int i1) {
-
-            }
-
-            @Override
-            public void onRawTouch (int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onFaceSpeaker (float v) {
-
-            }
-
-            @Override
-            public void onActionEvent (int i, int i1) {
-
-            }
-
-            @Override
-            public void onDropSensorEvent (int i) {
-
-            }
-
-            @Override
-            public void onMotorErrorEvent (int i, int i1) {
-
-            }
-        });
-
-
-        mRobot.registerVoiceEventListener (new VoiceEventListener () {
-            @Override
-            public void onWakeup (boolean b, String s, float v) {
-
-            }
-
-            @Override
-            public void onTTSComplete (boolean b) {
-                //the boolean b means isError
-                Instant instant = Instant.now();
-
-                Timestamp time = Timestamp.newBuilder()
-                        .setSeconds(instant.getEpochSecond())
-                        .setNanos(instant.getNano())
-                        .build();
-
-                //Test, send a protocol buffer message here
-                RobotCommandOuterClass.RobotToServerMessage message =
-                        RobotCommandOuterClass.RobotToServerMessage.newBuilder()
-                                .setDescription("onTTSComplete")
-                                .setEventTime(time)
-                                .build();
-
-                socketManager.sendAMessage(message);
-            }
-
-            @Override
-            public void onSpeechRecognizeComplete (boolean b, ResultType resultType, String s) {
-
-            }
-
-            @Override
-            public void onSpeech2TextComplete (boolean b, String s) {
-
-            }
-
-            @Override
-            public void onMixUnderstandComplete (boolean b, ResultType resultType, String s) {
-
-            }
-
-            @Override
-            public void onSpeechState (ListenType listenType, SpeechState speechState) {
-                Log.d("SpeechState", "listenType: " + listenType + " speechState: " + speechState);
-            }
-
-            @Override
-            public void onSpeakState (SpeakType speakType, SpeakState speakState) {
-                //emulator does not call this function
-                Log.d("SpeakState", "speakType: " + speakType + " speakState: " + speakState);
-                //only START and SPEAKING is called
-            }
-
-            @Override
-            public void onGrammarState (boolean b, String s) {
-
-            }
-
-            @Override
-            public void onListenVolumeChanged (ListenType listenType, int i) {
-
-            }
-
-            @Override
-            public void onHotwordChange (HotwordState hotwordState, HotwordType hotwordType, String s) {
-
-            }
-        });
 
 
         //get the default ServerURL
@@ -500,8 +283,6 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    //socketManager.launchPlayer();
-
                     //Save the IP address to SharedPreferences
                     SharedPreferences sharedPref = getSharedPreferences("RobotNurseHelper_Preference", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPref.edit();
@@ -509,13 +290,15 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
                     editor.apply();
 
                     recorder.startRecording();    //The recorder means the audio recorder
-                    socketManager.mServerURL = editText_Server.getText().toString();
-                    socketManager.mPortNumber = Integer.parseInt(editText_Port.getText().toString());
-                    Log.d("Record", "Before call connectSockets");
-                    socketManager.connectSockets();
-                    socketManager.startReceiveCommands();
-                    socketManager.startDisconnectionChecker();
-                    long lastTimeMillis = System.currentTimeMillis();
+//                    socketManager.mServerURL = editText_Server.getText().toString();
+//                    socketManager.mPortNumber = Integer.parseInt(editText_Port.getText().toString());
+//                    Log.d("Record", "Before call connectSockets");
+//                    socketManager.connectSockets();
+//                    socketManager.startReceiveCommands();
+//                    socketManager.startDisconnectionChecker();
+
+                    //Pass the mServerURL and mPortNumber to the CameraService.kt
+                    cameraService.SetServerURLandPortNumber(socketManager.mServerURL, socketManager.mPortNumber);
                 }
                 else {
                     //2025/1/3 the recorder should stop in onPause()
@@ -588,7 +371,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 //            openCamera();
 
         StartAudioRecorder();
-        socketManager.activity = this;
+//        socketManager.activity = this;
     }
 
     private void StartAudioRecorder()
