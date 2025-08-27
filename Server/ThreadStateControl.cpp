@@ -196,7 +196,7 @@ void ThreadStateControl::run()
     chrono::time_point<chrono::system_clock> current_time;
     bool bReadyToChangeState = false;
     bool bOldStateComplete = false;
-    //something wrong here, ollama get sucked.
+    //something wrong here, ollama get sucked. I havn't figured out the reason.
     //to Warmup Ollama
 //    OllamaTask task;
 //    task.message_history = mStates[1].message_history;
@@ -215,9 +215,6 @@ void ThreadStateControl::run()
 
     //initialize the random seed.
     srand(time(0));
-//    unsigned seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-//    std::mt19937 generator(seed);
-//    unique_ptr<uniform_int_distribution<int>> pDistribution = make_unique<uniform_int_distribution<int>>();
 
     while(b_WhileLoop)
     {
@@ -312,7 +309,15 @@ void ThreadStateControl::run()
                     }
                     else if( mStates[m_iStateIndex].iStage == 1 )  //Wait for dance completion
                     {
+                        //Use time to control
+/*
                         if(current_time - dance_start_time > dance_wait_duration)
+                        {
+                            bOldStateComplete = true;
+                        }
+*/
+                        //Use signal to control
+                        if( mbActivity_mbtx_Complete )
                         {
                             bOldStateComplete = true;
                         }
@@ -432,8 +437,13 @@ void ThreadStateControl::NotifyEvent(string description, chrono::time_point<chro
         mtimestamp_LLMResult = timestamp;
         msLLMResult = sLLMResult;
         //debug
-        cout << "(H)" << endl;
-        cout << "NotifyEvent onLLMResult" << endl;
+        //cout << "(H)" << endl;
+        //cout << "NotifyEvent onLLMResult" << endl;
+    }
+    else if( description == "onActivityResult")
+    {
+        mbActivity_mbtx_Complete = true;
+        mtimestamp_Activity_mbtx_Complete = timestamp;
     }
     
 }

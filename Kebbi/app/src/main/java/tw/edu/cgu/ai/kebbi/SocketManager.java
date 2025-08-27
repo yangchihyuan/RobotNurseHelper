@@ -51,14 +51,15 @@ public class SocketManager {
     public NuwaRobotAPI mRobotAPI;
     Converter converter;
 
-    CameraServeice cameraServeice;
+    CameraService cameraServeice;
 
     public long dancing_status = 0;
     public Activity activity;
     public boolean bAutoReconnection = true;
+    private CameraService cameraService;
 
 
-    public SocketManager(CameraServeice cameraServeice) {
+    public SocketManager(CameraService cameraServeice) {
         this.cameraServeice = cameraServeice;
     }
 
@@ -157,7 +158,7 @@ public class SocketManager {
                                     mRobotAPI.motionPlay(command.getSmotion(), true);
                                 }
                                 if (command.hasDancetype() && command.getDancetype() != 0) {
-                                    cameraservice.doSomethingThatNotifiesActivity();
+                                    cameraService.doSomethingThatNotifiesActivity();
                                 }
                                 else
                                 {
@@ -395,13 +396,18 @@ public class SocketManager {
             Log.e("disconnectSockets SendAudio", e.getMessage());
         }
 
+        try {
+            mSocketSendMessages.close();
+        } catch (Exception e) {
+            Log.e("disconnectSockets SendMessages", e.getMessage());
+        }
     }
 
     public void stopThreads() {
         threadSendToServer.quitSafely();
         threadReceiveCommand.quitSafely();
-//        mThreadExecuteCommand.quitSafely();
         threadCheckDiconnection.quitSafely();
+        threadSendAudio.quitSafely();
         try {
             threadSendToServer.join();
             threadSendToServer = null;
@@ -411,13 +417,13 @@ public class SocketManager {
             threadReceiveCommand = null;
             handlerReceiveCommand = null;
 
-//            mThreadExecuteCommand.join();
-//            mThreadExecuteCommand = null;
-//            mHandlerExecuteCommand = null;
-
             threadCheckDiconnection.join();
             threadCheckDiconnection = null;
             handlerCheckDiconnection = null;
+
+            threadSendAudio.join();
+            threadSendAudio = null;
+            handlerSendAudio = null;
         } catch (final InterruptedException e) {
             Log.e("Exception stopThreads", e.getMessage());
         }

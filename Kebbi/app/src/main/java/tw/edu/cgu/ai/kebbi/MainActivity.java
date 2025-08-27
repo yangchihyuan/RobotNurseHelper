@@ -1,23 +1,3 @@
-/*
- * Copyright 2014 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-/*  This file has been modified by Nataniel Ruiz affiliated with Wall Lab
- *  at the Georgia Institute of Technology School of Interactive Computing
- */
-
 package tw.edu.cgu.ai.kebbi;
 
 import android.Manifest;
@@ -27,13 +7,13 @@ import android.content.Context;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.hardware.camera2.CameraDevice;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 
 import android.os.IBinder;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresPermission;
 import androidx.camera.view.PreviewView;
 import android.view.View;
@@ -43,12 +23,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.nuwarobotics.service.agent.NuwaRobotAPI;
-
-import android.util.Log;
 import android.widget.Button;
-
-import tw.edu.cgu.ai.kebbi.env.Logger; //Where do I use the Logger?
 
 import android.content.Intent;
 
@@ -62,38 +37,14 @@ public class MainActivity extends Activity implements CameraService.ServiceCallb
     private static final String PERMISSION_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     private static final String PERMISSION_RECORD_AUDIO = Manifest.permission.RECORD_AUDIO;
 
-    private NuwaRobotAPI mRobot;
-
-    private static final Logger LOGGER = new Logger();
-
-    private InputView inputView;     //2024/6/25 Chih-Yuan Yang: The purpose of the inputView is to get a frame from camera's preview.
-    //Thus, I can send the frame to a server.
-
-    private CheckBox checkBox_enable_connection;
     private EditText editText_Server;
     private EditText editText_Port;
-
-    //Zenbo supports 1920x1080
-    //Emulator only supports up to 1280x960
-//    private Size mPreviewSize = new Size(640, 480);
-//    private CameraDevice mCameraDevice;
-//    private HandlerThread threadImageListener;
-//    private Handler handlerImageListener;
-//    private HandlerThread mThreadSendAudio;
-//    private Handler mHandlerSendAudio;
-
-//    private ImageReader mPreviewReader;
-//    private CaptureRequest.Builder mPreviewBuilder;
-//    private final Semaphore cameraOpenCloseLock = new Semaphore(1);
-//    private CameraCaptureSession mPreviewSession;
-    private final ImageListener mPreviewListener = new ImageListener();
-//    private SocketManager socketManager;
-    private Converter converter;
 
     private CameraService cameraService;
     private boolean isBound = false;
     private PreviewView previewView;
 
+    private static final int LAUNCH_PLAYER_REQUEST = 1001;
 
     private final ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -114,16 +65,11 @@ public class MainActivity extends Activity implements CameraService.ServiceCallb
 
     private void showToast(final String text) {
         MainActivity.this.runOnUiThread(
-            new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(MainActivity.this, text, Toast.LENGTH_SHORT).show();
-                }
-            }
+                () -> Toast.makeText(MainActivity.this, text, Toast.LENGTH_SHORT).show()
         );
     }
 
-
+    //whenever an activity is about to become visible to the user.
     @Override
     protected void onStart() {
         super.onStart();
@@ -146,11 +92,10 @@ public class MainActivity extends Activity implements CameraService.ServiceCallb
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        inputView = (InputView) findViewById(R.id.inputview);
-        editText_Port = (EditText) findViewById(R.id.editText_Port);
-        editText_Server = (EditText) findViewById(R.id.editText_Server);
-        checkBox_enable_connection = (CheckBox) findViewById(R.id.checkBox_connect);
-        Button button_close = (Button) findViewById(R.id.button_close);
+        editText_Port = findViewById(R.id.editText_Port);
+        editText_Server = findViewById(R.id.editText_Server);
+        CheckBox checkBox_enable_connection = findViewById(R.id.checkBox_connect);
+        Button button_close = findViewById(R.id.button_close);
         // init kiwi sdk
         previewView = findViewById(R.id.camera_preview_surface);
 
@@ -189,40 +134,51 @@ public class MainActivity extends Activity implements CameraService.ServiceCallb
                                             @Override
                                             public void onClick(View v) {
                                                 android.os.Process.killProcess(android.os.Process.myPid());
-                                                //finsih only kill the activity
-                                                //finish();
                                             }
                                         }
         );
+
     }
 
     @Override
     public void launchPlayer(Integer dance_type) {
-            Intent intent = new Intent();
-            ComponentName comp = new ComponentName("com.nuwarobotics.app.nuwaplayer","com.nuwarobotics.app.nuwaplayer.PlayContentEditorActivity");
-            intent.setComponent(comp);
-            intent.setAction("com.nuwarobotics.app.nuwaplayer.action.PLAY_MBTX");
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            if (dance_type == 1)
-            {
-                intent.putExtra("PlayId", "Egypt_Dance-v2");
-            }
-            else if(dance_type == 2)
-            {
-                intent.putExtra("PlayId", "Dancing_Cowboy-v2");
-            }
-            else if(dance_type == 3)
-            {
-                intent.putExtra("PlayId", "Short_Test_Project");
-            }
-            else if(dance_type == 4)
-            {
-                intent.putExtra("PlayId", "Health_Video");
-            }
-
-            this.startActivityForResult(intent, 1001);
+        Intent intent = new Intent();
+        ComponentName comp = new ComponentName("com.nuwarobotics.app.nuwaplayer","com.nuwarobotics.app.nuwaplayer.PlayContentEditorActivity");
+        intent.setComponent(comp);
+        intent.setAction("com.nuwarobotics.app.nuwaplayer.action.PLAY_MBTX");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (dance_type == 1)
+        {
+            intent.putExtra("PlayId", "Egypt_Dance-v2");
+        }
+        else if(dance_type == 2)
+        {
+            intent.putExtra("PlayId", "Dancing_Cowboy-v2");
+        }
+        else if(dance_type == 3)
+        {
+            intent.putExtra("PlayId", "Short_Test_Project");
+        }
+        else if(dance_type == 4)
+        {
+            intent.putExtra("PlayId", "Health_Video");
         }
 
+        this.startActivityForResult(intent, LAUNCH_PLAYER_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Check if the result is from our specific request
+        if (requestCode == LAUNCH_PLAYER_REQUEST) {
+            if (resultCode == RESULT_OK ) {
+                //notify the server the dance complete
+                cameraService.NotifyServerActivityonActivityResult();
+            }
+        }
+    }
     //2025/1/3 This is a call back function, using the same thread as onCreate(). Thus, it is only be called after the onCreated is completed.
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -232,74 +188,27 @@ public class MainActivity extends Activity implements CameraService.ServiceCallb
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED
                         && grantResults[1] == PackageManager.PERMISSION_GRANTED
                         && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
-//                    startThreads();
                 } else {
                     requestPermission();
                 }
             }
         }
-        //Activity don't need this, AppCompatActivity does.
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-
+    //signifies the Activity becoming interactive, when the Activity is in the foreground and the user can interact with it.
     @Override
     protected void onResume() {
         super.onResume();
-//        startThreads();
-
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
         decorView.setSystemUiVisibility(uiOptions);
 
-/*        if(recorder == null) {
-            recorder = new AudioRecord(audioSouce, sampleRate, channelConfig, audioFormat, minBufSize * 10);   //5376* 10
-            Log.d("VS", "Recorder initialized");
-        }
-
- */
         if (checkSelfPermission(PERMISSION_CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, 100);
         } else {
-            //2025/8/24, here, the activity will use the camera. But now I want to use the camera in the background.
-            //openCamera();
         }
-//        if( checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED )
-//            openCamera();
-
-//        StartAudioRecorder();
-//        socketManager.activity = this;
     }
 
-    /*
-    private void StartAudioRecorder()
-    {
-        //Start audio recorder
-        mHandlerSendAudio.post(
-            new Runnable() {
-                @Override
-                public void run() {
-                    short[] buffer = new short[minBufSize];   //minBufSize = 5376
-                    Log.d("VS", "Buffer created of size " + minBufSize);           // every 5 second, the log message occurs. It does not make sense.
-
-                    int readSize;
-                    while (status) {
-                        //reading data from MIC into buffer
-                        readSize = recorder.read(buffer, 0, buffer.length);
-                        if( readSize >= 0) {
-                            byte[] byteBuffer = converter.ShortToByte_Twiddle_Method(buffer);
-                            socketManager.sendAudio(byteBuffer);
-                        }
-                        else
-                        {
-                            Log.e("recorder","recorder.read() error");
-                        }
-                    }
-                }
-            }
-        );
-    }
-    */
     private boolean hasPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED &&
@@ -323,29 +232,13 @@ public class MainActivity extends Activity implements CameraService.ServiceCallb
 
     @Override
     protected void onPause() {
-//        socketManager.mRobotAPI.hideFace();
-//        socketManager.mRobotAPI.hideWindow(false);
-        //closeCamera();
-        //socketManager.disconnectSockets();
-        //status = false;
-//        if( recorder != null) {
-//            recorder.release();     //It causes an exception. Why?
-//            recorder = null;
-//        }
-        Log.d("VS","Recorder released");
-
         super.onPause();
     }
 
     @Override
     protected void onStop()
     {
-        //socketManager.disconnectSockets();
-//        socketManager.mRobotAPI.hideFace();
-//        socketManager.mRobotAPI.hideWindow(false);
         super.onStop();
-//        stopThreads();      //Which is better? onPause() or onStop()?
-//        socketManager.stopThreads();
         if (isBound) {
             unbindService(connection);
             isBound = false;
@@ -355,200 +248,9 @@ public class MainActivity extends Activity implements CameraService.ServiceCallb
     @Override
     protected void onDestroy()
     {
-        if( mRobot != null)
-            mRobot.release();
         super.onDestroy();
     }
 
-//    /**
-//     * Opens the camera specified by {@link CameraConnectionFragment#cameraId}.
-//     */
-/*
-    @SuppressLint("MissingPermission")
-    @TargetApi(Build.VERSION_CODES.P)
-    private void openCamera() {
-        final CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-        try {
-            if (!cameraOpenCloseLock.tryAcquire(30000, TimeUnit.MILLISECONDS)) {
-                throw new RuntimeException("Time out waiting to lock camera opening.");
-            }
-            String cameraId = manager.getCameraIdList()[0];
-            manager.openCamera(cameraId, mStateCallback, handlerImageListener);
-        } catch (final CameraAccessException e) {
-            LOGGER.e(e, "Exception!");
-        } catch (final InterruptedException e) {
-            throw new RuntimeException("Interrupted while trying to lock camera opening.", e);
-        }
-    }
-*/
-    /*
-    2025/01/06 Chih-Yuan: This is an utility function. I did not use it for ZenboNurseHelper.
-     */
-    /*
-    private void listCameraSupportedFormats() {
-        final CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-        try {
-            if (!cameraOpenCloseLock.tryAcquire(30000, TimeUnit.MILLISECONDS)) {
-                throw new RuntimeException("Time out waiting to lock camera opening.");
-            }
-            String cameraId = manager.getCameraIdList()[0];    //Chih-Yuan Yang 2024/6/16: Use the first camera, and Zenbo has only 1 camera
-            // Choose the sizes for camera preview and video recording
-            CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
-            StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-
-            if (map == null) {
-                throw new RuntimeException("Cannot get available preview/video sizes");
-            }
-            else {
-                int format_list[] = map.getOutputFormats();
-                for( int format : format_list )
-                {
-                    Log.d("format",String.format("Support format %d", format));
-                    Size Sizes[] = map.getOutputSizes(format);
-                    for( Size size : Sizes)
-                    {
-                        Log.d("OutputSizes",String.format("width %d height %d", size.getWidth(), size.getHeight()));
-                    }
-                }
-            }
-
-        } catch (final CameraAccessException e) {
-            LOGGER.e(e, "Exception!");
-        } catch (final InterruptedException e) {
-            throw new RuntimeException("Interrupted while trying to lock camera opening.", e);
-        }
-    }
-*/
-
-    /**
-     * Closes the current {@link CameraDevice}.
-     */
-    /*
-    private void closeCamera() {
-        try {
-            cameraOpenCloseLock.acquire();
-            if (null != mPreviewSession) {
-                mPreviewSession.close();
-                mPreviewSession = null;
-            }
-            if (null != mCameraDevice) {
-//                mCameraDevice.close();      //2025/1/6 Here is an error message. Do I not need to close the camera again?
-                //When does the mCameraDevice object close?
-                //the mCameraDevice is close in the backback class's onDisconnected()
-                mCameraDevice = null;
-            }
-            if (null != mPreviewReader) {
-                mPreviewReader.close();
-                mPreviewReader = null;
-            }
-        } catch (final InterruptedException e) {
-            throw new RuntimeException("Interrupted while trying to lock camera closing.", e);
-        } finally {
-            cameraOpenCloseLock.release();
-        }
-    }
-*/
-    /**
-     * Starts a background thread and its {@link Handler}.
-     */
-    /*
-    private void startThreads() {
-        threadImageListener = new HandlerThread("ImageListener");
-        threadImageListener.start();
-        handlerImageListener = new Handler(threadImageListener.getLooper());
-
-        mThreadSendAudio = new HandlerThread(("threadSendAudio"));
-        mThreadSendAudio.start();
-        mHandlerSendAudio = new Handler(mThreadSendAudio.getLooper());
-    }
-*/
-    /**
-     * Stops the background thread and its {@link Handler}.
-     */
-    /*
-    private void stopThreads() {
-        threadImageListener.quitSafely();
-        mThreadSendAudio.quitSafely();
-
-        try {
-            threadImageListener.join();
-            threadImageListener = null;
-            handlerImageListener = null;
-
-            mThreadSendAudio.join();
-            mThreadSendAudio = null;
-            mHandlerSendAudio = null;
-        } catch (final InterruptedException e) {
-            LOGGER.e(e, "Exception!");
-        }
-    }
-
-
-    private void closePreviewSession() {
-        if (mPreviewSession != null) {
-            mPreviewSession.close();
-            mPreviewSession = null;
-        }
-    }
-*/
-    /**
-     * Update the camera preview. {@link #startPreview()} needs to be called in advance.
-     */
-    /*
-    private void updatePreview() {
-        if (null == mCameraDevice) {
-            return;
-        }
-        try {
-            //CaptureRequest.CONTROL_MODE: Overall mode of 3A
-            mPreviewBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-            mPreviewSession.setRepeatingRequest(mPreviewBuilder.build(), null, handlerImageListener);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-*/
-    /**
-     * Start the camera preview.
-     */
-    /*
-    private void startPreview() {
-        if (null == mCameraDevice || null == mPreviewSize) {
-            return;
-        }
-        try {
-            closePreviewSession();
-            mPreviewBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-
-            mPreviewReader = ImageReader.newInstance(mPreviewSize.getWidth(), mPreviewSize.getHeight(), ImageFormat.YUV_420_888, 2);
-//            mPreviewReader = ImageReader.newInstance(mPreviewSize.getWidth(), mPreviewSize.getHeight(), ImageFormat.JPEG, 2);
-            mPreviewReader.setOnImageAvailableListener(mPreviewListener, handlerImageListener);
-            mPreviewBuilder.addTarget(mPreviewReader.getSurface());
-
-            mCameraDevice.createCaptureSession(
-                   Arrays.asList(mPreviewReader.getSurface()),
-                   new CameraCaptureSession.StateCallback() {
-
-                        @Override
-                        public void onConfigured(CameraCaptureSession session) {
-                            mPreviewSession = session;
-                            updatePreview();
-                        }
-
-                        @Override
-                        public void onConfigureFailed(CameraCaptureSession session) {
-                            showToast("Failed");
-                        }
-                    }, handlerImageListener);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-        mPreviewListener.initialize(socketManager, inputView);
-    }
-    */
     private void startPreview() {
         if (isBound && cameraService != null) {
             cameraService.startCameraPreview(previewView);

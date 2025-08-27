@@ -68,6 +68,9 @@ protected:
     chrono::time_point<chrono::system_clock> mtimestamp_LLMResult;
     string msLLMResult;
     int chosen_dance = 0;
+
+    bool mbActivity_mbtx_Complete = false;
+    chrono::time_point<chrono::system_clock> mtimestamp_Activity_mbtx_Complete;
 };
 
 #endif

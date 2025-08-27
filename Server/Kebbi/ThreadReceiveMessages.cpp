@@ -51,6 +51,11 @@ void ThreadReceiveMessages::run()
                 {
                     mpThreadProcessImage->NotifyEvent("onCompleteOfMotionPlay", chrono::system_clock::now(), RTSmessage.yaw(), RTSmessage.pitch());
                 }
+                else if(RTSmessage.description() == "onActivityResult")   //The mbtx activity complete
+                {
+                    mpThreadStateControl->NotifyEvent("onActivityResult", chrono::system_clock::now());
+                }
+                
             }
 
 
