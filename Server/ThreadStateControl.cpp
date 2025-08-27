@@ -299,7 +299,7 @@ void ThreadStateControl::run()
 
                         if( chosen_dance != 0 )
                         {
-                            //cout << "(J) chosen_dance " << chosen_dance << endl;
+                            cout << "(J) chosen_dance " << chosen_dance << endl;
                             RobotCommandProtobuf::RobotCommand dance_command;
                             dance_command.set_dancetype(chosen_dance);
                             m_pSendMessageManager->AddMessage(dance_command);

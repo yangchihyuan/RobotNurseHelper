@@ -45,8 +45,7 @@ void ThreadWhisper::run()
     ctx = whisper_init_from_file_with_params(model_file_path.toUtf8().constData(), cparams);
     if (ctx == NULL) {
         std::cerr << "Failed to initialize whisper context" << std::endl;
-        //throw std::invalid_argument("Division by zero");
-        //raise exception("whiper loading model fails");
+        throw std::invalid_argument("whiper loading model fails");
     }
     cparams.flash_attn = params.flash_attn;
 
@@ -149,7 +148,9 @@ void ThreadWhisper::run()
                 last_speech_end = pVad->get_speech_timestamps().back().end;
                 first_speech_start = pVad->get_speech_timestamps().front().start;
             }
-
+            
+            //debug
+            //cout << "pcmf32.size() " << pcmf32.size() << endl;
             if( last_speech_end < pcmf32.size() - n_samples_silent)    //to ensure that there is a slience greater than 0.3 seconds.
             {
                 WhisperData tempData;

@@ -57,7 +57,7 @@ protected:
     void run();
     vector<State> mStates;
     int m_iNumberOfStates = 10;
-    int m_iStateIndex = 0;
+    int m_iStateIndex = 6;
 
     bool mbTTSComplete = false;
     bool mbWaitForTTSComplete = false;

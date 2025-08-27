@@ -47,9 +47,9 @@ elif [[ "$1" = "4090" ]]; then
 elif [[ "$1" = "debug" ]]; then
     # Ensure arguments are correctly passed to gdb via --args
     gdb --args build/RobotNurseHelper \
-        "--WhisperModel" "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-base.bin" \
+        "--WhisperModel" "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin" \
         "--ImageSaveDirectory" "$HOME/Downloads/raw_images" \
-        "--LanguageModel" "gemma3:4b" \
+        "--LanguageModel" "gemma3:1b" \
         "--stage" "0" \
         "--ImageSaveEveryNFrame" "5" \
         "--Language" "Chinese" \

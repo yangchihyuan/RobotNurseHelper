@@ -51,16 +51,16 @@ public class SocketManager {
     public NuwaRobotAPI mRobotAPI;
     Converter converter;
 
-    CameraService cameraServeice;
-
     public long dancing_status = 0;
     public Activity activity;
     public boolean bAutoReconnection = true;
     private CameraService cameraService;
 
 
-    public SocketManager(CameraService cameraServeice) {
-        this.cameraServeice = cameraServeice;
+    public SocketManager(CameraService cameraService) {
+        if( cameraService == null)
+            Log.d("debug (C)", "cameraServeice == null");
+        this.cameraService = cameraService;
     }
 
     public void startReceiveCommands()
@@ -158,7 +158,9 @@ public class SocketManager {
                                     mRobotAPI.motionPlay(command.getSmotion(), true);
                                 }
                                 if (command.hasDancetype() && command.getDancetype() != 0) {
-                                    cameraService.doSomethingThatNotifiesActivity();
+                                    cameraService.doSomethingThatNotifiesActivity(command.getDancetype());
+                                    //I need to hide face, otherwise, the face is still on top of the kebbi's activity.
+                                    mRobotAPI.hideFace();
                                 }
                                 else
                                 {
@@ -201,6 +203,8 @@ public class SocketManager {
                     } catch (Exception e) {
                         Log.e("Exception", e.getMessage());
                         try {
+                            //Is this the reason the robot kill its connection?
+                            Log.d("debug (A)", "mSocketReceiveCommand.close()");
                             mSocketReceiveCommand.close();
                         }
                         catch( Exception e2)

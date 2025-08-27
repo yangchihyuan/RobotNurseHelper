@@ -45,11 +45,15 @@ void MainWindow::startThreads()
 MainWindow::~MainWindow()
 {
     //kill the app
-    RobotCommandProtobuf::RobotCommand command;
-    command.set_killapp(true);
-    sendMessageManager.AddMessage(command);
-    sendMessageManager.Send();      //I can't wait for the timer_event.
-
+    //However, if the app has been killed, I don't need to kill it again.
+    if( sendMessageManager.pSocket->state() == QAbstractSocket::ConnectedState )
+    {
+        RobotCommandProtobuf::RobotCommand command;
+        command.set_hideface(1);
+        command.set_killapp(true);
+        sendMessageManager.AddMessage(command);
+        sendMessageManager.Send();      //I can't wait for the timer_event.
+    }
 
     //close thread's loop
     thread_process_image.b_WhileLoop = false;
