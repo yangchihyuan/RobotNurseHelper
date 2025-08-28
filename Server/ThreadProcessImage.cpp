@@ -642,9 +642,9 @@ void ThreadProcessImage::run()
     std::vector<std::vector<std::array<float, 3>>> last_landmarks;
     bool bLastLandmarksEffective = false;
     int iFrameCount = 0;
+    int iNoPersonFrameCount = 0;  //If cannot find a person for 30 frames, move the head to up right frontal
     while(b_WhileLoop)
     {
-        int iNoPersonFrameCount = 0;  //If cannot find a person for 30 frames, move the head to up right frontal
         if( pSocketHandler->get_queue_length() > 0 )    //here is an infinite loop
         {
             auto start = std::chrono::high_resolution_clock::now();
@@ -996,6 +996,8 @@ void ThreadProcessImage::run()
                                 command.set_yaw(0);
                                 command.set_pitch(0);
                                 pSendMessageManager->AddMessage(command);
+                                //debug
+                                cout << "(B) reset Kebbi's head to the yaw 0 pitch 0 because there in no person in the 30 continous frames." << endl;
                                 iNoPersonFrameCount = 0;
                             }
                         }

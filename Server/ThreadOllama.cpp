@@ -7,8 +7,9 @@
 #include <future>
 #include <chrono>
 #include <utility_string.hpp>
-extern cv::Mat outFrame; // [MOHAMED]       //2025/8/12 the variable is not used.
-
+//extern cv::Mat outFrame; // [MOHAMED]       //2025/8/12 the variable is not used.
+#include <cstdlib>
+#include <ctime>   // For time()
 ThreadOllama::ThreadOllama()
 {
 }
@@ -30,8 +31,11 @@ string check_summary = "";
 
 void ThreadOllama::run()
 {
+    srand(time(0));
+
     ollama::options options;
-    options["seed"] = 1;      //I cannot fix the seed. Otherwise, the result is always the same.
+    //options["seed"] = 1;      
+    options["seed"] = rand();
     options["temperature"] = 0.3;
     options["num_ctx"] = 131072; //number of context tokens, which is the maximum number of tokens the model can handle in a single request
 
