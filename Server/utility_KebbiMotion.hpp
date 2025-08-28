@@ -4,6 +4,6 @@
 #include <string>
 using namespace std;
 
-bool KebbiResetHead(string sMotionName);
+bool KebbiMoveHeadDuringMotion(string sMotionName);
 
 #endif

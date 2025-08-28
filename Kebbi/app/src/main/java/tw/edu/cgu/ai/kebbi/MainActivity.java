@@ -69,19 +69,27 @@ public class MainActivity extends Activity implements CameraService.ServiceCallb
         );
     }
 
-    //whenever an activity is about to become visible to the user.
+    //when the activity become visible
     @Override
     protected void onStart() {
         super.onStart();
-        Intent intent = new Intent(this, CameraService.class);
-        ContextCompat.startForegroundService(this, intent);             //it does not work, why? I don't have the ContextCompat?
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);              //connection is a ServiceConnection object.
+
+/*
+        View decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+        decorView.setSystemUiVisibility(uiOptions);
+ */
     }
 
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Launch service
+        Intent intent = new Intent(this, CameraService.class);
+        ContextCompat.startForegroundService(this, intent);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);              //connection is a ServiceConnection object.
 
         setContentView(R.layout.main_activity);
 
@@ -195,18 +203,17 @@ public class MainActivity extends Activity implements CameraService.ServiceCallb
         }
     }
 
-    //signifies the Activity becoming interactive, when the Activity is in the foreground and the user can interact with it.
+    //When the Activity get focus
     @Override
     protected void onResume() {
         super.onResume();
-        View decorView = getWindow().getDecorView();
-        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-        decorView.setSystemUiVisibility(uiOptions);
 
+        /*
         if (checkSelfPermission(PERMISSION_CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, 100);
-        } else {
         }
+        */
+
     }
 
     private boolean hasPermission() {
@@ -230,25 +237,27 @@ public class MainActivity extends Activity implements CameraService.ServiceCallb
         }
     }
 
+    //partially visible, but lost user focus
     @Override
     protected void onPause() {
         super.onPause();
     }
 
+    //when an activity is no longer visible to the user
     @Override
     protected void onStop()
     {
         super.onStop();
-        if (isBound) {
-            unbindService(connection);
-            isBound = false;
-        }
     }
 
     @Override
     protected void onDestroy()
     {
         super.onDestroy();
+        if (isBound) {
+            unbindService(connection);
+            isBound = false;
+        }
     }
 
     private void startPreview() {

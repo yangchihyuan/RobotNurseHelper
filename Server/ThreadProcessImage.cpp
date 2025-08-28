@@ -705,7 +705,7 @@ void ThreadProcessImage::run()
                 cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length+1])) << endl;
                 cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length+2])) << endl;
                 cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length+iJPEG_length-2])) << endl;
-               cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length+iJPEG_length-1])) << endl;
+                cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length+iJPEG_length-1])) << endl;
                 cout << "JPEG signature does not match" << endl;
                 continue;
             }
@@ -948,51 +948,6 @@ void ThreadProcessImage::run()
                         cout << "Task is not supported. (D)" << endl;
                     }
                     
-                    //What is the difference between the if and else sections?
-                    //The difference is that the if section is used when the robot is dancing.
-                    //It appears that dancing is not playing mbkx files.
-/*                    if (normalized_landmarks.empty() || is_dancing) {
-                        auto current_time = std::chrono::high_resolution_clock::now();
-                        auto duration = std::chrono::duration_cast<std::chrono::seconds>(current_time - previous_time);
-//                        cout << "duration empty" << duration.count() << endl;
-                        if (duration.count() >= 1 && bLastLandmarksEffective) { //3 [MOHAMED]
-                            //bLastLandmarksEffective = false;  
-                            if( action_option.move_mode != action_option.MOVE_MANUAL)
-                            {
-                                std::vector<std::vector<std::array<float, 3>>> empty_landmarks; // [MOHAMED]
-                                RobotCommandProtobuf::RobotCommand message;
-                                if( Task == "Face" )
-                                {
-                                    FaceLandmarks_to_RobotAction(empty_landmarks, robot_status, action_option, message); // [MOHAMED]
-                                }
-                                else if( Task == "Pose" )
-                                {
-                                    PoseLandmarks_to_RobotAction(empty_landmarks, robot_status, action_option, message);
-                                }
-                                else if( Task == "Holistic" )
-                                {
-                                    //I use Pose, I haven't develop a new function for Holistic.
-                                    PoseLandmarks_to_RobotAction(empty_landmarks, robot_status, action_option, message);
-                                }
-                                else if( Task == "Hand" )
-                                {
-                                    //ToDo: I have not develop this function yet.
-                                    //PoseLandmarks_to_RobotAction(empty_landmarks, robot_status, action_option, message);
-                                }
-                                else
-                                {
-                                    cout << "Task is not supported. (E)" << endl;
-    //                                continue;
-                                }
-                                previous_time = current_time;
-                                pSendMessageManager->AddMessage(message);
-                            }
-
-                        }
-                    }
-                    else
-*/
-//                    if(!is_dancing )
                     if( mbWatchPatient )
                     {
                         if( !normalized_landmarks.empty())
@@ -1073,9 +1028,9 @@ void ThreadProcessImage::NotifyEvent(string description, chrono::time_point<chro
         robot_status.pitch_degree = (int)pitch;
         mbWatchPatient = true;
     }
-    else if(description == "KebbiResetHead")
+    else if(description == "KebbiMoveHeadDuringMotion")
     {
-        cout << "(B) KebbiResetHead " << endl;
+        cout << "(B) KebbiMoveHeadDuringMotion " << endl;
         mbWatchPatient = false;
     }
 }

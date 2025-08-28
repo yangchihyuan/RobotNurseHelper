@@ -237,9 +237,9 @@ void ThreadStateControl::run()
                 if(mStates[m_iStateIndex].sMotion != "")
                 {
                     command.set_smotion(mStates[m_iStateIndex].sMotion);
-                    if( KebbiResetHead(command.smotion()) )
+                    if( KebbiMoveHeadDuringMotion(command.smotion()) )
                     {
-                        mpThreadProcessImage->NotifyEvent("KebbiResetHead", chrono::system_clock::now()); //pause watching patient
+                        mpThreadProcessImage->NotifyEvent("KebbiMoveHeadDuringMotion", chrono::system_clock::now()); //pause watching patient
                     }
                 }
                 m_pSendMessageManager->AddMessage(command);
@@ -299,7 +299,8 @@ void ThreadStateControl::run()
 
                         if( chosen_dance != 0 )
                         {
-                            cout << "(J) chosen_dance " << chosen_dance << endl;
+                            //debug
+                            //cout << "(J) chosen_dance " << chosen_dance << endl;
                             RobotCommandProtobuf::RobotCommand dance_command;
                             dance_command.set_dancetype(chosen_dance);
                             m_pSendMessageManager->AddMessage(dance_command);
@@ -316,10 +317,18 @@ void ThreadStateControl::run()
                             bOldStateComplete = true;
                         }
 */
-                        //Use signal to control
+                        //Use signal to control the state flow
+                        //debug 
+                        //cout << "(K) wait for mbActivity_mbtx_Complete as true" << endl;
                         if( mbActivity_mbtx_Complete )
                         {
                             bOldStateComplete = true;
+                            bReadyToChangeState = true;
+
+                            //turn of the face because the dance completes.
+                            RobotCommandProtobuf::RobotCommand command;
+                            command.set_hideface(0);
+                            m_pSendMessageManager->AddMessage(dance_command);
                         }
                     }
                 }
@@ -376,7 +385,8 @@ void ThreadStateControl::run()
                 //debug
                 if(false)
                 {
-                    cout << "(D)" << endl;
+                    //debug
+                    //cout << "(D)" << endl;
                     DumpOllamaMessages(mStates[m_iStateIndex].message_history);
                 }
                 
