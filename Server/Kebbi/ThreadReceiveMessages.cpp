@@ -53,6 +53,8 @@ void ThreadReceiveMessages::run()
                 }
                 else if(RTSmessage.description() == "onActivityResult")   //The mbtx activity complete
                 {
+                    //debug
+                    cout << "(C) Receive onActivityResult signal" << endl;
                     mpThreadStateControl->NotifyEvent("onActivityResult", chrono::system_clock::now());
                 }
                 

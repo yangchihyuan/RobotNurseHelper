@@ -328,7 +328,7 @@ void ThreadStateControl::run()
                             //turn of the face because the dance completes.
                             RobotCommandProtobuf::RobotCommand command;
                             command.set_hideface(0);
-                            m_pSendMessageManager->AddMessage(dance_command);
+                            m_pSendMessageManager->AddMessage(command);
                         }
                     }
                 }

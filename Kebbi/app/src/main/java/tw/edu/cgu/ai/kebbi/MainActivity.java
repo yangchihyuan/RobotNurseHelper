@@ -16,6 +16,8 @@ import android.os.IBinder;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresPermission;
 import androidx.camera.view.PreviewView;
+
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
@@ -175,18 +177,22 @@ public class MainActivity extends Activity implements CameraService.ServiceCallb
         this.startActivityForResult(intent, LAUNCH_PLAYER_REQUEST);
     }
 
+    //not be called. Nuwa's com.nuwarobotics.app.nuwaplayer.PlayContentEditorActivity does not use the setResult()
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Check if the result is from our specific request
         if (requestCode == LAUNCH_PLAYER_REQUEST) {
+            Log.d("onActivityResult", "onActivityResult");
             if (resultCode == RESULT_OK ) {
                 //notify the server the dance complete
+                Log.d("onActivityResult2", "onActivityResult2");
                 cameraService.NotifyServerActivityonActivityResult();
             }
         }
     }
+
     //2025/1/3 This is a call back function, using the same thread as onCreate(). Thus, it is only be called after the onCreated is completed.
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {

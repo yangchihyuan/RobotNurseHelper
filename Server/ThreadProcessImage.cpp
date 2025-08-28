@@ -969,7 +969,7 @@ void ThreadProcessImage::run()
                                     }
                                     else if( Task == "Pose" )
                                     {
-                                        cout << "(B) PoseLandmarks_to_RobotAction" << endl;
+//                                        cout << "(B) PoseLandmarks_to_RobotAction" << endl;
                                         PoseLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, message);
                                     }
                                     else if( Task == "Holistic" )
