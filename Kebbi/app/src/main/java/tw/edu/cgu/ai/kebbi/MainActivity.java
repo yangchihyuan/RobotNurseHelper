@@ -178,19 +178,24 @@ public class MainActivity extends Activity implements CameraService.ServiceCallb
     }
 
     //not be called. Nuwa's com.nuwarobotics.app.nuwaplayer.PlayContentEditorActivity does not use the setResult()
+    //Thus, I have to use onRestart to
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Check if the result is from our specific request
         if (requestCode == LAUNCH_PLAYER_REQUEST) {
-            Log.d("onActivityResult", "onActivityResult");
             if (resultCode == RESULT_OK ) {
                 //notify the server the dance complete
-                Log.d("onActivityResult2", "onActivityResult2");
-                cameraService.NotifyServerActivityonActivityResult();
+                cameraService.NotifyServer("onActivityResult");
             }
         }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        cameraService.NotifyServer("onActivityRestart");
     }
 
     //2025/1/3 This is a call back function, using the same thread as onCreate(). Thus, it is only be called after the onCreated is completed.

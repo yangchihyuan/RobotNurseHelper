@@ -51,11 +51,11 @@ void ThreadReceiveMessages::run()
                 {
                     mpThreadProcessImage->NotifyEvent("onCompleteOfMotionPlay", chrono::system_clock::now(), RTSmessage.yaw(), RTSmessage.pitch());
                 }
-                else if(RTSmessage.description() == "onActivityResult")   //The mbtx activity complete
+                else if(RTSmessage.description() == "onActivityRestart")   //The mbtx activity complete
                 {
                     //debug
-                    cout << "(C) Receive onActivityResult signal" << endl;
-                    mpThreadStateControl->NotifyEvent("onActivityResult", chrono::system_clock::now());
+                    cout << "(C) Receive onActivityRestart signal" << endl;
+                    mpThreadStateControl->NotifyEvent("onActivityRestart", chrono::system_clock::now());
                 }
                 
             }

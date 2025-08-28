@@ -450,7 +450,7 @@ void ThreadStateControl::NotifyEvent(string description, chrono::time_point<chro
         //cout << "(H)" << endl;
         //cout << "NotifyEvent onLLMResult" << endl;
     }
-    else if( description == "onActivityResult")
+    else if( description == "onActivityRestart")
     {
         mbActivity_mbtx_Complete = true;
         mtimestamp_Activity_mbtx_Complete = timestamp;
