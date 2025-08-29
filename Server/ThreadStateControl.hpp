@@ -52,6 +52,7 @@ public:
     ThreadProcessImage *mpThreadProcessImage;
     void NotifyEvent(string description, chrono::time_point<chrono::system_clock> timestamp, string sLLMResult = "");
     condition_variable cond_var_state_control;
+    void SetIntialStateIndex(int index);
 
 protected:
     void run();

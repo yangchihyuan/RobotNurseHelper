@@ -126,7 +126,7 @@ void MainWindow::setLanguageModelName( QString ModelName)
 
 void MainWindow::setStage(int N)
 {
-    //thread_ollama.start_stage_input = N;
+    thread_state_control.SetIntialStateIndex(N);
 }
 
 void MainWindow::setImageSaveDirectory( QString ImageSaveDirectory)

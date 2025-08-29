@@ -457,3 +457,10 @@ void ThreadStateControl::NotifyEvent(string description, chrono::time_point<chro
     }
     
 }
+
+//N is the initial state index
+void ThreadStateControl::SetIntialStateIndex(int N) { 
+    if( N < 0 || N >= m_iNumberOfStates)
+    throw "Invalid stage number: " + std::to_string(N);
+    m_iStateIndex = N; 
+}
