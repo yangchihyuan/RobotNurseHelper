@@ -7,7 +7,6 @@
 #include <future>
 #include <chrono>
 #include <utility_string.hpp>
-//extern cv::Mat outFrame; // [MOHAMED]       //2025/8/12 the variable is not used.
 #include <cstdlib>
 #include <ctime>   // For time()
 ThreadOllama::ThreadOllama()

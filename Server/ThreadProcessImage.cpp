@@ -11,7 +11,7 @@
     #include "Zenbo/RobotCommand.pb.h"
 #endif
 #include "utility_directory.hpp"
-#include <opencv2/opencv.hpp>
+
 #include "RobotStatus.hpp"
 #include "ActionOption.hpp"
 
@@ -24,14 +24,10 @@
 #include "GetLandmarks.hpp"
 #include "LandmarkToRobotAction.hpp"
 
-
-//using namespace human_pose_estimation;
-using namespace cv;
-
 RobotStatus robot_status;
 ActionOption action_option;
 
-cv::Mat outFrame;
+
 int is_dancing = 0;
 
 ThreadProcessImage::ThreadProcessImage()
@@ -643,6 +639,7 @@ void ThreadProcessImage::run()
     bool bLastLandmarksEffective = false;
     int iFrameCount = 0;
     int iNoPersonFrameCount = 0;  //If cannot find a person for 30 frames, move the head to up right frontal
+    Mat inputImage;                 //BGR (Blue, Green, Red)
     while(b_WhileLoop)
     {
         if( pSocketHandler->get_queue_length() > 0 )    //here is an infinite loop
@@ -663,7 +660,6 @@ void ThreadProcessImage::run()
 //            RobotCommandProtobuf::RobotToServerMessage RTSmessage;
 //            RTSmessage.ParseFromString(data_);
             bool bCorrectlyDecoded = false;
-            Mat inputImage;                 //BGR (Blue, Green, Red)
 //            if( RTSmessage.has_jpegdata() && RTSmessage.has_jpegdatalength())
 //            {
 //                google::protobuf::Timestamp timestamp = RTSmessage.event_time();
@@ -750,6 +746,11 @@ void ThreadProcessImage::run()
 
             if( bCorrectlyDecoded)
             {
+                if( iFrameCount == 0 )
+                { 
+                    inputImage.copyTo(outFrame);  //To let outFrame has buffer
+                }
+
                 if(bSaveTransmittedImage)
                 {
                     if(iFrameCount % image_save_every_N_frame == 0 )
@@ -816,9 +817,9 @@ void ThreadProcessImage::run()
 
                     if( Processor == "CPU" )
                     {
-                        //2025/8/22 In the very beginning (first frame), the libmp->GetOutputPacket("output_video") is still empty, and the
-                        //libmp->GetOutputPacket("output_video") will cause a segmentation fault.
-                        //I don't know how to fix it.
+                        //2025/8/22 bug note: outFrame needs to allocate buffer before the first call of WriteOutputImage()
+                        //or the WriteOutputImage() will fail.
+                        mtx_UpdateOutFrame.lock();
                         if( libmp->WriteOutputImage(outFrame.data, libmp->GetOutputPacket("output_video") ) )
                         {
                             bNewoutFrame = true;
@@ -827,9 +828,11 @@ void ThreadProcessImage::run()
                         {
                             cout << "WriteOutputImage fails." << std::endl;
                         }
+                        mtx_UpdateOutFrame.unlock();
                     }
                     else if( Processor == "GPU" )
                     {
+                        mtx_UpdateOutFrame.lock();
                         if( libmp->WriteOutputImage_GPU(outFrame.data, libmp->GetOutputPacket("output_video")) )
                         {
                             bNewoutFrame = true;
@@ -838,6 +841,7 @@ void ThreadProcessImage::run()
                         {
                             cout << "WriteOutputImage fails." << std::endl;
                         }
+                        mtx_UpdateOutFrame.unlock();
                     }
 
                     //debug code
@@ -871,9 +875,11 @@ void ThreadProcessImage::run()
                                     cv::circle(inputImage, cv::Point(x, y), 1, cv::Scalar(0, 255, 0), -1);
                                 }
                             }
-                            // Display the image with landmarks                    
+                            // Display the image with landmarks       
+                            mtx_UpdateOutFrame.lock();             
                             inputImage.copyTo(outFrame);
                             bNewoutFrame = true;
+                            mtx_UpdateOutFrame.unlock();
                         }
                     }
                     else if( Task == "Pose" )
@@ -893,8 +899,10 @@ void ThreadProcessImage::run()
                                     cv::circle(inputImage, cv::Point(x, y), 5, cv::Scalar(0, 255, 0), 1);
                                 }
                             }
+                            mtx_UpdateOutFrame.lock();
                             inputImage.copyTo(outFrame);
                             bNewoutFrame = true;
+                            mtx_UpdateOutFrame.unlock();
                         }
                     }
                     else if( Task == "Holistic" )
@@ -1006,14 +1014,17 @@ void ThreadProcessImage::run()
                 }
                 else
                 {
+                    mtx_UpdateOutFrame.lock();
                     inputImage.copyTo(outFrame);
                     bNewoutFrame = true;
+                    mtx_UpdateOutFrame.unlock();
                 }
             }    //if bCorrectlyDecoded
         }
         else
         {
             //wait until being notified
+            mutex mtx;
             unique_lock<mutex> lk(mtx);
             cond_var_process_image.wait(lk);
         }
@@ -1035,4 +1046,16 @@ void ThreadProcessImage::NotifyEvent(string description, chrono::time_point<chro
         cout << "(B) KebbiMoveHeadDuringMotion " << endl;
         mbWatchPatient = false;
     }
+}
+
+Mat ThreadProcessImage::getOutFrame()
+{
+    Mat frame;
+    mtx_UpdateOutFrame.lock();
+    if( bNewoutFrame )
+    {
+        outFrame.copyTo(frame);
+    }
+    mtx_UpdateOutFrame.unlock();
+    return frame;
 }

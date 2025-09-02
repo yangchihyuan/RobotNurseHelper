@@ -24,7 +24,6 @@
 extern std::mutex gMutex_audio_buffer;
 extern std::queue<short> AudioBuffer;
 extern std::condition_variable cond_var_audio;
-extern cv::Mat outFrame;
 extern int PortAudio_stop_and_terminate();
 extern bool gbPlayAudio;
 extern RobotStatus robot_status;

@@ -13,8 +13,8 @@ android {
         minSdk 28
     //    targetSdkVersion 28     //Chih-Yuan Yang: this targetSdkVersion item is used for Android 6 SDK.
         //   Android 9 no longer needs it.
-        versionCode 9
-        versionName 'v9 25.08.22'
+        versionCode 10
+        versionName 'v10 25.09.02'
         externalNativeBuild {
             cmake {
                 cppFlags ""

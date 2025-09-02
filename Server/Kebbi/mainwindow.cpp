@@ -21,7 +21,6 @@
 extern std::mutex gMutex_audio_buffer;
 extern std::queue<short> AudioBuffer;
 extern std::condition_variable cond_var_audio;
-extern cv::Mat outFrame;
 extern int PortAudio_stop_and_terminate();
 extern bool gbPlayAudio;
 extern RobotStatus robot_status;
@@ -337,10 +336,9 @@ void MainWindow::timer_event()
         //to the window such as mouse hovering. It seems caused by the hardward driver.
         //imshow is a high-level GUI. There is no extra argument for this function.
         //How to force the problem to update the window?
-        cv::imshow("Image", outFrame);
+        cv::imshow("Image", thread_process_image.getOutFrame());
         cv::waitKey(1);    //I miss this line so that Ubuntu does not update the window.
         thread_process_image.bNewoutFrame = false;
-        cv::imwrite("image_temp.jpg", outFrame); //[MOHAMED]   //Chih-Yuan: Do we still need this line? It seems that we do not use this image anymore.
         //update pitch and yaw
         ui->lineEdit_yaw_now->setText(QString::number(robot_status.yaw_degree));
         ui->lineEdit_pitch_now->setText(QString::number(robot_status.pitch_degree));

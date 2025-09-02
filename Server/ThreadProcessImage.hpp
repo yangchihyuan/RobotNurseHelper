@@ -11,6 +11,7 @@
 #include <condition_variable>
 #include "SocketHandler.hpp"
 #include "SendMessageManager.hpp"
+#include <opencv2/opencv.hpp>
 #ifdef USE_GPU
     #include "libmp_gpu.h"
 #else
@@ -19,6 +20,7 @@
 
 
 using namespace std;
+using namespace cv;
 extern int is_dancing;
 
 class ThreadProcessImage: public QThread
@@ -43,6 +45,7 @@ public:
     int image_save_every_N_frame = 1; //default value is 1, which means every frame will be saved
     void NotifyEvent(string description, chrono::time_point<chrono::system_clock> timestamp, float yaw = 0.0, float pitch = 0.0);
 
+    Mat getOutFrame();
 protected:
     void run();
     void reloadGraph();
@@ -50,9 +53,10 @@ protected:
     std::shared_ptr<mediapipe::LibMP> libmp;
     std::string Processor;
     mutex mtx_Task;
-    mutex mtx;
+    mutex mtx_UpdateOutFrame;
     bool m_bDirectoryCreated = false;
     bool mbWatchPatient = true;
+    Mat outFrame;
 };
 
 #endif
