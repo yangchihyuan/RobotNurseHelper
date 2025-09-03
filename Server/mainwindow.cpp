@@ -44,17 +44,24 @@ void MainWindow::startThreads()
 MainWindow::~MainWindow()
 {
     //kill the app
-    //However, if the app has been killed, I don't need to kill it again.
-    if( sendMessageManager.pSocket->state() == QAbstractSocket::ConnectedState )
+    if( sendMessageManager.pSocket != nullptr && sendMessageManager.pSocket->state() == QAbstractSocket::ConnectedState )
     {
         RobotCommandProtobuf::RobotCommand command;
         command.set_hideface(1);
-        command.set_killapp(true);
         sendMessageManager.AddMessage(command);
-        sendMessageManager.Send();      //I can't wait for the timer_event.
+        sendMessageManager.Send();
+
+        //I need to send 2 separate commands to ensure the first command is sent out.
+        RobotCommandProtobuf::RobotCommand command2;
+        command2.set_killapp(true);
+        sendMessageManager.AddMessage(command2);
+        sendMessageManager.Send();
+
+        sleep(0.1);  //wait for 1 second to ensure the command is sent out.
     }
 
-    //close thread's loop
+    //close thread_process_image's loop
+    cout << "Waiting for thread_process_image to exit" << endl;
     thread_process_image.b_WhileLoop = false;
     thread_process_image.cond_var_process_image.notify_one();
     thread_process_image.wait();
@@ -72,18 +79,7 @@ MainWindow::~MainWindow()
         socket->deleteLater();
     }
 
-    gbPlayAudio = false;
-    cond_var_audio.notify_one();      //I need to resume this thread.
-    PortAudio_stop_and_terminate();   //otherwise, this funtion will got stuck
-    thread_process_audio.wait();
-    foreach (QTcpSocket* socket, connection_set3)
-    {
-        socket->close();
-        socket->deleteLater();
-    }
-    m_server_receive_audio->close();
-    m_server_receive_audio->deleteLater();
-
+    cout << "Waiting for thread_recieve_message to exit" << endl;
     thread_receive_messages.b_WhileLoop = false;
     thread_receive_messages.cond_var_receive_messages.notify_one();
     thread_receive_messages.wait();
@@ -101,13 +97,31 @@ MainWindow::~MainWindow()
     if (audioSrc != nullptr)
       delete audioSrc;
 
+    cout << "Waiting for thread_ollama to exit" << endl;
     thread_ollama.b_WhileLoop = false;
     thread_ollama.cond_var_ollama.notify_one();
     thread_ollama.wait();
 
+    cout << "Waiting for thread_state_control to exit" << endl;
     thread_state_control.b_WhileLoop = false;
     thread_state_control.cond_var_state_control.notify_one();
     thread_state_control.wait();
+
+    //Bug: sometimes, the app got stuck here becuase thread_process_audio is waiting for cond_var_audio.
+    cout << "Waiting for thread_process_audio to exit" << endl;
+    gbPlayAudio = false;        //This variable does not work yet.
+    cond_var_audio.notify_one();      //I need to resume this thread.
+//    cond_var_audio.notify_one();        //I need to notify twice to ensure the thread is resumed.
+//    cond_var_audio.notify_one();        //I need to notify more to ensure the thread is resumed.
+    foreach (QTcpSocket* socket, connection_set3)
+    {
+        socket->close();
+        socket->deleteLater();
+    }
+    m_server_receive_audio->close();
+    m_server_receive_audio->deleteLater();
+    PortAudio_stop_and_terminate();   
+    thread_process_audio.wait();
 
     delete ui;
 }
@@ -340,7 +354,6 @@ void MainWindow::readSocket()
 
 void MainWindow::readSocket3()
 {
-    //cout << "HELLO\n";
     QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
 
     QDataStream socketStream(socket);

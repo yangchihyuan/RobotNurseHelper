@@ -21,18 +21,23 @@ static int patestCallback( const void *inputBuffer, void *outputBuffer,
     (void) statusFlags;
     (void) inputBuffer;
 
+
+    //This condition variable design is to reduce the CPU usage. Otherwise, it will keep running.
     std::mutex Mutex_enough_buffer;
     std::unique_lock<std::mutex> lock(Mutex_enough_buffer);
     if( data->size() < framesPerBuffer * 2)   //2 is the number of channels
     {
-        cond_var_audio.wait(lock);
+        cout << "Not enough audio data, wait. data->size(): " << data->size() << ", framesPerBuffer: " << framesPerBuffer << endl;
+        if( gbPlayAudio )
+            cond_var_audio.wait(lock);
     }
 
-    if( gbPlayAudio)
+    if( gbPlayAudio)        //I use this variable to return a paComplete to stop the stream.
     {
         gMutex_audio_buffer.lock();
         for( i=0; i<framesPerBuffer; i++ )
         {
+            //Move date from AudioBuffer to outputBuffer
             *out++ = data->front();  /* left */
             data->pop();
 
