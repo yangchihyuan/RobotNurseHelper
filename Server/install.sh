@@ -214,13 +214,14 @@ cd ~/RobotNurseHelper_build
 wget -O onnxruntime-linux-x64-1.12.1.tgz https://github.com/microsoft/onnxruntime/releases/download/v1.12.1/onnxruntime-linux-x64-1.12.1.tgz
 tar -xvzf onnxruntime-linux-x64-1.12.1.tgz
 
-#silero-vad
+#silero-v
 cd ~/RobotNurseHelper_build
 git clone https://github.com/snakers4/silero-vad.git
 
 #ollama
 sudo snap install curl
 cd ~/RobotNurseHelper_build/
+curl.snap-acked        #ollama changed its installation script. There is a text explanation in the script. It only accepts Snap-curand we need to use this command first
 curl -fsSL https://ollama.com/install.sh | sh
 if((VRAMSize<=2)); then
   ollama pull gemma3:1b
