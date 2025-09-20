@@ -70,7 +70,7 @@ find_package(ICU REQUIRED COMPONENTS uc)
 file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
 set(ROBOTNURSEHELPER_BUILD_DIR "$ENV{HOME}/RobotNurseHelper_build")
 set(OLLAMA_HPP_INCLUDE_DIR "${ROBOTNURSEHELPER_BUILD_DIR}/ollama-hpp/include")
-set(ONNX_HPP_INCLUDE_DIR "${ROBOTNURSEHELPER_BUILD_DIR}/onnxruntime-linux-x64-1.12.1/include")
+set(ONNX_HPP_INCLUDE_DIR "${ROBOTNURSEHELPER_BUILD_DIR}/onnxruntime-linux-x64-gpu-1.22.0/include")
 set(SILERO_HPP_INCLUDE_DIR "${ROBOTNURSEHELPER_BUILD_DIR}/silero-vad/examples/cpp")
 set(SOURCES JPEG.cpp
             utility_directory.cpp
@@ -150,8 +150,7 @@ target_link_libraries(RobotNurseHelper ${ICU_LIBRARIES})
 
 # ONNX
 add_library(LIBONNX SHARED IMPORTED)
-set(ONNX_DIR $ENV{HOME}/RobotNurseHelper_build/onnxruntime-linux-x64-1.12.1)
-set(ONNX_DIR $ENV{HOME}/RobotNurseHelper_build/onnxruntime-linux-x64-1.12.1)
+set(ONNX_DIR $ENV{HOME}/RobotNurseHelper_build/onnxruntime-linux-x64-gpu-1.22.0)
 set_target_properties(LIBONNX PROPERTIES
   IMPORTED_LOCATION "${ONNX_DIR}/lib/libonnxruntime.so")
 

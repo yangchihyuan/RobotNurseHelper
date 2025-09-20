@@ -211,12 +211,20 @@ fi
 
 #onnx
 cd ~/RobotNurseHelper_build
-wget -O onnxruntime-linux-x64-1.12.1.tgz https://github.com/microsoft/onnxruntime/releases/download/v1.12.1/onnxruntime-linux-x64-1.12.1.tgz
-tar -xvzf onnxruntime-linux-x64-1.12.1.tgz
+#wget -O onnxruntime-linux-x64-1.12.1.tgz https://github.com/microsoft/onnxruntime/releases/download/v1.12.1/onnxruntime-linux-x64-1.12.1.tgz
+#tar -xvzf onnxruntime-linux-x64-1.12.1.tgz
+wget -O onnxruntime-linux-x64-gpu-1.22.0.tgz https://github.com/microsoft/onnxruntime/releases/download/v1.22.0/onnxruntime-linux-x64-gpu-1.22.0.tgz
+tar -xvzf onnxruntime-linux-x64-gpu-1.22.0.tgz
 
 #silero-v
 cd ~/RobotNurseHelper_build
 git clone https://github.com/snakers4/silero-vad.git
+
+#EmotiEffLib
+cd ~/RobotNurseHelper_build
+git clone https://github.com/sb-ai-lab/EmotiEffLib.git
+cd EmotiEffLib
+git submodule update --init --recursive
 
 #ollama
 sudo snap install curl

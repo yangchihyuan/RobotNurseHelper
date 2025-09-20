@@ -27,7 +27,8 @@ static int patestCallback( const void *inputBuffer, void *outputBuffer,
     std::unique_lock<std::mutex> lock(Mutex_enough_buffer);
     if( data->size() < framesPerBuffer * 2)   //2 is the number of channels
     {
-        cout << "Not enough audio data, wait. data->size(): " << data->size() << ", framesPerBuffer: " << framesPerBuffer << endl;
+        //debug
+        //cout << "Not enough audio data, wait. data->size(): " << data->size() << ", framesPerBuffer: " << framesPerBuffer << endl;
         if( gbPlayAudio )
             cond_var_audio.wait(lock);
     }
