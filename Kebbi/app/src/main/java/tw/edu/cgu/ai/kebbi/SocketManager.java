@@ -169,6 +169,9 @@ public class SocketManager {
 
                                 if (command.hasTurnspeed())
                                 {
+                                    //Control Robot wheel turn left or right circularly
+                                    //a positive speed turns right, a negavie speed turns left
+                                    //range: -50~+50
                                     mRobotAPI.turn(command.getTurnspeed());
                                 }
                                 else

@@ -898,7 +898,7 @@ void ThreadProcessImage::run()
                         }
 
                         //Recognize facial expression
-                        if( !normalized_landmarks.empty() )
+                        if( m_bRecognizeFacialExpression && !normalized_landmarks.empty() )
                         {
                             //crop the face region.
                             Mat face = CropRegion(inputImage, normalized_landmarks[0]);
@@ -980,34 +980,37 @@ void ThreadProcessImage::run()
                         cout << "Task is not supported. (D)" << endl;
                     }
                     
+                    //This variable is used to prevent the robot from sending new commands while the previous command is being executed.
                     if( mbWatchPatient )
                     {
-                        if( !normalized_landmarks.empty())
+                        if( !normalized_landmarks.empty())      //If there is no person detected, the following code will not be executed.
                         {
                             iNoPersonFrameCount = 0;
 
                             //last_landmarks = normalized_landmarks;
                             bLastLandmarksEffective = true;
-                            //use time control first, wait for 3 seconds
+                            //use time control first, wait for 1 seconds
                             auto current_time = chrono::high_resolution_clock::now();
                             auto duration = chrono::duration_cast<chrono::seconds>(current_time - previous_time);
+                            //to prevent too many messages being sent to the robot, I set a time interval between two messages.
                             if (duration.count() >= 1) {
                                 if( action_option.move_mode != action_option.MOVE_MANUAL)
                                 {
-                                    RobotCommandProtobuf::RobotCommand message;
+                                    RobotCommandProtobuf::RobotCommand command;
                                     if( Task == "Face" )
                                     {
-                                        FaceLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, message);
+                                        //debug
+                                        cout << "Call FaceLandmarks_to_RobotAction" << endl;
+                                        FaceLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, command);
                                     }
                                     else if( Task == "Pose" )
                                     {
-//                                        cout << "(B) PoseLandmarks_to_RobotAction" << endl;
-                                        PoseLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, message);
+                                        PoseLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, command);
                                     }
                                     else if( Task == "Holistic" )
                                     {
                                         //I use Pose, I haven't develop a new function for Holistic.
-                                        PoseLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, message);
+                                        PoseLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, command);
                                     }
                                     else
                                     {
@@ -1015,7 +1018,7 @@ void ThreadProcessImage::run()
         //                                continue;
                                     }
                                     previous_time = current_time;
-                                    pSendMessageManager->AddMessage(message);
+                                    pSendMessageManager->AddMessage(command);       //The command is filled in the PoseLandmarks_to_RobotAction function
                                 }
                             }
                         }
@@ -1029,7 +1032,7 @@ void ThreadProcessImage::run()
                                 command.set_pitch(0);
                                 pSendMessageManager->AddMessage(command);
                                 //debug
-                                cout << "(B) reset Kebbi's head to the yaw 0 pitch 0 because there in no person in the 30 continous frames." << endl;
+                                //cout << "(B) reset Kebbi's head to the yaw 0 pitch 0 because there in no person in the 30 continous frames." << endl;
                                 iNoPersonFrameCount = 0;
                             }
                         }

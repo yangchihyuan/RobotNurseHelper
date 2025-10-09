@@ -36,6 +36,7 @@ public:
     bool b_HumanPoseEstimation = false;
     bool b_WhileLoop = true;
     bool bSaveTransmittedImage = false;
+    bool m_bRecognizeFacialExpression = true;
     string ImageSaveDirectory = ""; //default value is empty, which means not saving images
     condition_variable cond_var_process_image;
 

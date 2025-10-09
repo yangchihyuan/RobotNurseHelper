@@ -187,7 +187,7 @@ sudo make install
 sudo ldconfig
 
 #whisper.cpp
-#It is voice-to-text library and we utilize it on our server-side program to quickly generate sentences spoken by an operator, which will be sent to the robot to speak out. There is no package make for the Ubuntu system, and we need to compile it from it source file downloaded from its GitHub repository
+#It is a voice-to-text library and we utilize it on our server-side program to quickly generate sentences spoken by an operator, which will be sent to the robot to speak out. There is no package make for the Ubuntu system, and we need to compile it from it source file downloaded from its GitHub repository
 
 #Debug info 25/3/18,whisper.cpp v1.7.5 changes its install commands
 cd ~/RobotNurseHelper_build
