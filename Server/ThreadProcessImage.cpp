@@ -24,6 +24,12 @@
 #include "GetLandmarks.hpp"
 #include "LandmarkToRobotAction.hpp"
 
+//xt::argmax
+#include "xtensor/containers/xarray.hpp"
+#include "xtensor/io/xio.hpp"
+#include "xtensor/core/xmath.hpp"
+#include "xtensor/misc/xsort.hpp"
+
 RobotStatus robot_status;
 ActionOption action_option;
 
@@ -34,6 +40,15 @@ ThreadProcessImage::ThreadProcessImage()
 {
     Processor = "CPU";
     Task = "None";
+
+    //Initialize the EmotiEffLib
+    string backend = "onnx";
+    string modelName = EmotiEffLib::getSupportedModels(backend)[0];
+    string ext = ".onnx";
+    string Homepath(getenv("HOME"));
+    string emotiEffLibRootDir = Homepath + "/RobotNurseHelper_build/EmotiEffLib";
+    string modelPath = emotiEffLibRootDir + "/models/affectnet_emotions/onnx/" + modelName + ext;
+    fer = EmotiEffLib::EmotiEffLibRecognizer::createInstance(backend, modelPath);
 }
 
 void ThreadProcessImage::setProcessor(std::string processor)
@@ -864,7 +879,7 @@ void ThreadProcessImage::run()
                         normalized_landmarks = get_landmarks_face(libmp);      //This is not the reason of memory leak
 
                         // For each face, draw a circle at each landmark's position
-                        bool bDrawImageByOurOwn = false;        //2025/8/5: I didn't use it, why?
+                        bool bDrawImageByOurOwn = false;        //2025/8/5: I didn't use it.
                         if( bDrawImageByOurOwn )
                         {
                             size_t num_faces = normalized_landmarks.size();
@@ -880,6 +895,15 @@ void ThreadProcessImage::run()
                             inputImage.copyTo(outFrame);
                             bNewoutFrame = true;
                             mtx_UpdateOutFrame.unlock();
+                        }
+
+                        //Recognize facial expression
+                        if( !normalized_landmarks.empty() )
+                        {
+                            //crop the face region.
+                            Mat face = CropRegion(inputImage, normalized_landmarks[0]);
+                            auto res = fer->predictEmotions(face, true);
+                            cout << res.labels[0] << std::endl;
                         }
                     }
                     else if( Task == "Pose" )
@@ -1058,4 +1082,42 @@ Mat ThreadProcessImage::getOutFrame()
     }
     mtx_UpdateOutFrame.unlock();
     return frame;
+}
+
+Mat ThreadProcessImage::CropRegion(Mat inputImage, vector<array<float, 3>> normalized_landmarks)
+{
+    //Find the bounding box of the landmarks
+    float x_min = 1.0, x_max = 0.0, y_min = 1.0, y_max = 0.0;
+    for( const auto& norm_xyz : normalized_landmarks)
+    {
+        if( norm_xyz[0] < x_min ) x_min = norm_xyz[0];
+        if( norm_xyz[0] > x_max ) x_max = norm_xyz[0];
+        if( norm_xyz[1] < y_min ) y_min = norm_xyz[1];
+        if( norm_xyz[1] > y_max ) y_max = norm_xyz[1];
+    }
+
+    //Expand the bounding box a bit
+    float x_center = (x_min + x_max) / 2.0;
+    float y_center = (y_min + y_max) / 2.0;
+    float box_width = (x_max - x_min);
+    float box_height = (y_max - y_min);
+
+    //Convert to pixel coordinates
+    int img_width = inputImage.cols;
+    int img_height = inputImage.rows;
+    int x1 = static_cast<int>( (x_center - box_width/2.0) * img_width );
+    int y1 = static_cast<int>( (y_center - box_height/2.0) * img_height );
+    int x2 = static_cast<int>( (x_center + box_width/2.0) * img_width );
+    int y2 = static_cast<int>( (y_center + box_height/2.0) * img_height );
+
+    //Ensure the bounding box is within image boundaries
+    if( x1 < 0 ) x1 = 0;
+    if( y1 < 0 ) y1 = 0;
+    if( x2 > img_width ) x2 = img_width;
+    if( y2 > img_height ) y2 = img_height;
+
+    //Crop the region
+    Rect roi(x1, y1, x2 - x1, y2 - y1);
+    Mat cropped_face = inputImage(roi).clone(); //clone to ensure a deep copy
+    return cropped_face;
 }

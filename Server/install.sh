@@ -102,7 +102,10 @@ unzip opencv4.11.zip
 unzip opencv_contrib4.11.zip
 cd opencv-4.11.0
 mkdir -p build && cd build
-cmake -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-4.11.0/modules ..
+sudo apt install libvtk9-dev       #vtk is required to compile opencv_vis module, which is required by EmotiEffLib
+cmake  .. -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-4.11.0/modules \
+      -D WITH_VTK=ON \             #for emotiefflib
+      -D BUILD_opencv_viz=ON       #for emotiefflib
 cmake --build . -j $(nproc)
 sudo make install
 #to config the loading directories to let /usr/local/lib works
@@ -115,7 +118,7 @@ wget -O protobuf-all-3.19.1.zip https://github.com/protocolbuffers/protobuf/rele
 unzip protobuf-all-3.19.1.zip
 cd ~/RobotNurseHelper_build/protobuf-3.19.1
 ./configure
-#make -j $(nproc)   #why only 1 core is used?
+#if I use "make -j $(nproc)", there is a peak of memory usage, which exceeds the RAM+SWAP size on some laptops.
 make -j 10    #prevent memory peak usage
 make check     # this command will generate a peak memory usage
 sudo make install
@@ -225,6 +228,12 @@ cd ~/RobotNurseHelper_build
 git clone https://github.com/sb-ai-lab/EmotiEffLib.git
 cd EmotiEffLib
 git submodule update --init --recursive
+cd emotieffcpplib
+mkdir build && cd build
+#I am not sure if this command works. Check it later.
+cmake .. -DWITH_ONNX=~/RobotNurseHelper_build/onnxruntime-linux-x64-gpu-1.22.0 -DBUILD_SHARED_LIBS=ON
+make -j$(nproc)
+#The .so files are in ~/RobotNurseHelper_build/EmotiEffLib/emotieffcpplib/build/lib
 
 #ollama
 sudo snap install curl

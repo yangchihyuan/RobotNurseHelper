@@ -57,7 +57,7 @@ MainWindow::~MainWindow()
         sendMessageManager.AddMessage(command2);
         sendMessageManager.Send();
 
-        sleep(0.1);  //wait for 1 second to ensure the command is sent out.
+        sleep(1);  //wait for 1 second to ensure the command is sent out.
     }
 
     //close thread_process_image's loop

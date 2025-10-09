@@ -133,7 +133,7 @@ set_target_properties(LIBMP PROPERTIES
   IMPORTED_LOCATION "${LIBMP_SHARED_LIBRARY}"
 )
 set(LIBMP_HEADER_DIR ${MEDIAPIPE_DIR}/mediapipe/examples/desktop/libmp)
-include_directories(${LIBMP_HEADER_DIR})
+target_include_directories(LIBMP INTERFACE ${LIBMP_HEADER_DIR})
 
 # MediaPipe Formats
 file(GLOB_RECURSE MP_FORMATS_SRC "${MEDIAPIPE_DIR}/bazel-bin/mediapipe/framework/formats/*.cc")
@@ -144,7 +144,8 @@ target_link_libraries(MP_FORMATS libprotobuf)
 target_link_libraries(RobotNurseHelper MP_FORMATS)
 target_link_libraries(RobotNurseHelper LIBMP)
 
-#ICU
+#ICU, International Components for Unicode. Why do I need this?
+#It appears that I need to use the UTF-8 string in Qt6. Really?
 target_link_libraries(RobotNurseHelper ${ICU_LIBRARIES})
 
 
@@ -153,6 +154,15 @@ add_library(LIBONNX SHARED IMPORTED)
 set(ONNX_DIR $ENV{HOME}/RobotNurseHelper_build/onnxruntime-linux-x64-gpu-1.22.0)
 set_target_properties(LIBONNX PROPERTIES
   IMPORTED_LOCATION "${ONNX_DIR}/lib/libonnxruntime.so")
+
+#EmotiEffNet
+add_library(LIBEmotiEffNet SHARED IMPORTED)      #give the target a name
+set_target_properties(LIBEmotiEffNet PROPERTIES
+  IMPORTED_LOCATION "${ROBOTNURSEHELPER_BUILD_DIR}/EmotiEffLib/emotieffcpplib/build/lib/libemotiefflib.so")
+target_link_libraries(RobotNurseHelper LIBEmotiEffNet)
+target_include_directories(RobotNurseHelper PUBLIC "${ROBOTNURSEHELPER_BUILD_DIR}/EmotiEffLib/emotieffcpplib/include",
+  "${ROBOTNURSEHELPER_BUILD_DIR}/EmotiEffLib/emotieffcpplib/3rdparty/xtensor/include",
+  "${ROBOTNURSEHELPER_BUILD_DIR}/EmotiEffLib/emotieffcpplib/3rdparty/xtl/include")
 
 #Enalbe the debug mode
 if(COMPILE_WITH_G_FLAG)

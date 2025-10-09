@@ -12,6 +12,9 @@
 #include "SocketHandler.hpp"
 #include "SendMessageManager.hpp"
 #include <opencv2/opencv.hpp>
+//EmotiEffLib
+#include "emotiefflib/facial_analysis.h"
+
 #ifdef USE_GPU
     #include "libmp_gpu.h"
 #else
@@ -57,6 +60,8 @@ protected:
     bool m_bDirectoryCreated = false;
     bool mbWatchPatient = true;
     Mat outFrame;
+    Mat CropRegion(Mat inputImage, vector<array<float, 3>> normalized_landmarks);        //Crop the face region from inputImage according to the landmarks
+    unique_ptr<EmotiEffLib::EmotiEffLibRecognizer> fer;
 };
 
 #endif
