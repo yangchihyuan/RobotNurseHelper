@@ -164,6 +164,10 @@ target_include_directories(RobotNurseHelper PUBLIC "${ROBOTNURSEHELPER_BUILD_DIR
   "${ROBOTNURSEHELPER_BUILD_DIR}/EmotiEffLib/emotieffcpplib/3rdparty/xtensor/include",
   "${ROBOTNURSEHELPER_BUILD_DIR}/EmotiEffLib/emotieffcpplib/3rdparty/xtl/include")
 
+#dlib for face recognition
+add_subdirectory($ENV{HOME}/Downloads/dlib-20.0/dlib $ENV{HOME}/Downloads/dlib-20.0/examples/build/dlib_build)
+target_link_libraries(RobotNurseHelper dlib::dlib)
+
 #Enalbe the debug mode
 if(COMPILE_WITH_G_FLAG)
   set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")   

@@ -34,6 +34,8 @@ RobotStatus robot_status;
 ActionOption action_option;
 
 
+
+
 int is_dancing = 0;
 
 ThreadProcessImage::ThreadProcessImage()
@@ -49,6 +51,8 @@ ThreadProcessImage::ThreadProcessImage()
     string emotiEffLibRootDir = Homepath + "/RobotNurseHelper_build/EmotiEffLib";
     string modelPath = emotiEffLibRootDir + "/models/affectnet_emotions/onnx/" + modelName + ext;
     fer = EmotiEffLib::EmotiEffLibRecognizer::createInstance(backend, modelPath);
+
+    deserialize("dlib_face_recognition_resnet_model_v1.dat") >> net;
 }
 
 void ThreadProcessImage::setProcessor(std::string processor)
@@ -739,7 +743,7 @@ void ThreadProcessImage::run()
             //In OpenCV 4.6, imdecode still works, but in OpenCV 4.11 and 4.12, it fails.
             //That is the reason that in my imshow() output window, the bottom region is always blurred.
             //The reason is that the imdecode() function fails to decode the JPEG image. 
-            vector<uchar> JPEG_Data(data_ + shift_length, data_+shift_length+iJPEG_length);
+            std::vector<uchar> JPEG_Data(data_ + shift_length, data_+shift_length+iJPEG_length);
 
             try{
                 inputImage = imdecode(JPEG_Data, IMREAD_COLOR);
@@ -904,7 +908,12 @@ void ThreadProcessImage::run()
                             Mat face = CropRegion(inputImage, normalized_landmarks[0]);
                             auto res = fer->predictEmotions(face, true);
                             cout << res.labels[0] << std::endl;
+
+                            //Get face recognition features
+
+
                         }
+                        
                     }
                     else if( Task == "Pose" )
                     {
@@ -1087,7 +1096,7 @@ Mat ThreadProcessImage::getOutFrame()
     return frame;
 }
 
-Mat ThreadProcessImage::CropRegion(Mat inputImage, vector<array<float, 3>> normalized_landmarks)
+Mat ThreadProcessImage::CropRegion(Mat inputImage, std::vector<std::array<float, 3>> normalized_landmarks)
 {
     //Find the bounding box of the landmarks
     float x_min = 1.0, x_max = 0.0, y_min = 1.0, y_max = 0.0;

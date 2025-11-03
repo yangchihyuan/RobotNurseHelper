@@ -36,6 +36,21 @@ else
   exit
 fi
 
+if (( VRAMSize > 0 )); then
+  #echo "We will detect the GPU driver. If there is no driver, we will install the driver for you. But you need to restart your PC after the installation."
+  #Check if the GPU driver is installed
+  sudo apt update   #this command is required because Ubuntu's repositories URL changed after its release in 2024 April.
+  #ubuntu-drivers devices             #list available drivers
+  #Don't use this command. It sometimes downgrades the GPU driver to an older version, which causes boot-failure problems.
+  #sudo ubuntu-drivers autoinstall    #Sometimes the system need a reboot. Otherwise Ubuntu does not detect the GPU.
+  nvidia-smi
+  read -p "Can you see the nvidia-smi GPU usage messages? [y/n]" GPUDriverWork
+  if ! [[ "$GPUDriverWork" == "Y" || "$GPUDriverWork" == "y" ]]; then
+    echo "Your NVidia GPU driver is not ready yet. You need to install the NVidia GPU driver first, and then run this install.sh script again."
+    exit
+  fi
+
+fi
 
 #Check if the RobotModel is valid
 allowed_robot_models=("Zenbo" "Kebbi" "ZenboJrII")
@@ -58,21 +73,6 @@ if ! [[ "$is_valid_robot_model" = true ]]; then
   exit
 fi
 
-if (( VRAMSize > 0 )); then
-  echo "We will detect the GPU driver. If there is no driver, we will install the driver for you. But you need to restart your PC after the installation."
-  #Check if the GPU driver is installed
-  sudo apt update   #this command is required because Ubuntu's repositories URL changed after its release in 2024 April.
-  ubuntu-drivers devices             #list available drivers
-  sudo ubuntu-drivers autoinstall    #Sometimes the system need a reboot. Otherwise Ubuntu does not detect the GPU.
-  nvidia-smi
-  read -p "Can you see the nvidia-smi GPU usage messages? [y/n]" GPUDriverWork
-  if ! [[ "$GPUDriverWork" == "Y" || "$GPUDriverWork" == "y" ]]; then
-    echo "You need to reboot your PC to make the newly installed GPU driver enable."
-    echo "After rebooting your PC, launch the ./install.sh again."
-    exit
-  fi
-
-fi
 
 #Install the compiler
 sudo apt -y install build-essential
