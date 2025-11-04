@@ -223,6 +223,20 @@ tar -xvzf onnxruntime-linux-x64-gpu-1.22.0.tgz
 cd ~/RobotNurseHelper_build
 git clone https://github.com/snakers4/silero-vad.git
 
+#The EmotiEffLib uses a 3rd party library 3rdparty/xtl/CMakeLists.txt, which requires CMake 3.29 or above.
+sudo apt update
+sudo apt install software-properties-common wget apt-transport-https ca-certificates gnupg -y
+wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
+# Example: Replace <UBUNTU_CODENAME> with your actual codename
+echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ noble main' | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
+# Update your package list
+sudo apt update
+sudo apt install cmake -y
+cmake --version   #It should be 4.1.2
+
+#EmotiEffLib needs libopenblas-dev
+sudo apt install libopenblas-dev
+
 #EmotiEffLib
 cd ~/RobotNurseHelper_build
 git clone https://github.com/sb-ai-lab/EmotiEffLib.git
@@ -231,6 +245,11 @@ git submodule update --init --recursive
 cd emotieffcpplib
 mkdir build && cd build
 #I am not sure if this command works. Check it later.
+#Their CMakeLists.txt file needs /home/chihyuan/RobotNurseHelper_build/onnxruntime-linux-x64-gpu-1.22.0/lib64, but there is no lib64 folder in onnxruntime-linux-x64-gpu-1.22.0. There is only a lib folder.
+#So, I create a symbolic link lib64 to lib
+cd ~/RobotNurseHelper_build/onnxruntime-linux-x64-gpu-1.22.0
+ln -s lib lib64
+cd ~/RobotNurseHelper_build/EmotiEffLib/emotieffcpplib/build
 cmake .. -DWITH_ONNX=~/RobotNurseHelper_build/onnxruntime-linux-x64-gpu-1.22.0 -DBUILD_SHARED_LIBS=ON
 make -j$(nproc)
 #The .so files are in ~/RobotNurseHelper_build/EmotiEffLib/emotieffcpplib/build/lib
@@ -250,6 +269,17 @@ fi
 #ollama-hpp
 cd ~/RobotNurseHelper_build
 git clone https://github.com/jmont-dev/ollama-hpp.git
+cd ~/RobotNurseHelper_build/ollama-hpp
+git checkout v0.9.5
+#The ollama.hpp vesioin 0.9.7 has a conclict with c++13 std::hash. My previous verion is 0.9.5, does not have this problem.
+
+#dlib library for Facial expression recognition
+#The precompiled libdlib-dev does not work it enables the DLIB_NO_GUI_SUPPORT
+#sudo apt -y install libdlib-dev       #Ubuntu 24.04 has dlib version 19.24.0-1 available in its repository
+cd ~/RobotNurseHelper_build/
+#This command will go wrong in the future because new versions will changes its download URL
+curl https://dlib.net/files/dlib-20.0.tar.bz2 --output dlib-20.0.tar.bz2
+tar -xjvf dlib-20.0.tar.bz2
 
 #Build our own program
 cd ~/RobotNurseHelper/Server

@@ -7,7 +7,7 @@ if(NOT DEFINED ROBOT_MODEL)
   set(ROBOT_MODEL Kebbi)    #default robot model is Kebbi
 endif()
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)    #17 is not enough, EmotiEffLib's xtensor requires C++20
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #The three settings used by Qt
@@ -165,7 +165,7 @@ target_include_directories(RobotNurseHelper PUBLIC "${ROBOTNURSEHELPER_BUILD_DIR
   "${ROBOTNURSEHELPER_BUILD_DIR}/EmotiEffLib/emotieffcpplib/3rdparty/xtl/include")
 
 #dlib for face recognition
-add_subdirectory($ENV{HOME}/Downloads/dlib-20.0/dlib $ENV{HOME}/Downloads/dlib-20.0/examples/build/dlib_build)
+add_subdirectory(${ROBOTNURSEHELPER_BUILD_DIR}/dlib-20.0/dlib ${ROBOTNURSEHELPER_BUILD_DIR}/dlib-20.0/examples/build/dlib_build)
 target_link_libraries(RobotNurseHelper dlib::dlib)
 
 #Enalbe the debug mode

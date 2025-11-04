@@ -1,5 +1,5 @@
 {
-    "cmake.sourceDirectory": "/home/chihyuan/ZenboNurseHelper/Server3-Kebbi",
+    "cmake.sourceDirectory": "/home/chihyuan/RobotNurseHelper/Server",
     "files.associations": {
         "array": "cpp",
         "atomic": "cpp",
