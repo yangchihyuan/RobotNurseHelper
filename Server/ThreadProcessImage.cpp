@@ -376,6 +376,7 @@ void ThreadProcessImage::run()
                 if( iFrameCount == 0 )
                 { 
                     inputImage.copyTo(outFrame);  //To let outFrame has buffer
+                    inputImage.copyTo(tempFrame);  //To let tempFrame has buffer
                 }
 
                 if(bSaveTransmittedImage)
@@ -442,6 +443,15 @@ void ThreadProcessImage::run()
                         cout << "Processor is not supported." << endl;
                     }
 
+                    //limbp_face always uses CPU
+                    if( !libmp_face->Process2(inputImage) )
+                    {
+                        std::cerr << "Process() failed!" << std::endl;
+                        break;
+                    }
+
+
+
                     if( Processor == "CPU" )
                     {
                         //2025/8/22 bug note: outFrame needs to allocate buffer before the first call of WriteOutputImage()
@@ -471,6 +481,35 @@ void ThreadProcessImage::run()
                         mtx_UpdateOutFrame.unlock();
                     }
 
+                    //I don't need the frame because I only need the landmarks.
+                    if( libmp_face->WriteOutputImage(tempFrame.data, libmp_face->GetOutputPacket("output_video") ) )
+                    {
+                        bNewoutFrame = true;
+                    }
+                    else
+                    {
+                        cout << "WriteOutputImage fails." << std::endl;
+                    }
+                    std::vector<std::vector<std::array<float, 3>>> normalized_landmarks;
+                    normalized_landmarks = get_landmarks_face(libmp_face);      //This is not the reason of memory leak
+                    bool bDrawImageByOurOwn = true;        //2025/8/5: I didn't use it.
+                    if( bDrawImageByOurOwn )
+                    {
+                        size_t num_faces = normalized_landmarks.size();
+                        for (int face_num = 0; face_num < num_faces; face_num++) {
+                            for (const std::array<float, 3>& norm_xyz : normalized_landmarks[face_num]) {
+                                int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
+                                int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
+                                cv::circle(outFrame, cv::Point(x, y), 1, cv::Scalar(0, 255, 0), -1);
+                            }
+                        }
+                        // Display the image with landmarks       
+//                        mtx_UpdateOutFrame.lock();             
+//                        inputImage.copyTo(outFrame);
+//                        bNewoutFrame = true;
+//                        mtx_UpdateOutFrame.unlock();
+                    }
+
                     //debug code
                     /*
                     bool bShowProcessTime = false;
@@ -484,7 +523,6 @@ void ThreadProcessImage::run()
 
                     //2025/8/5 My holistic return value changes to a new structure HolisticLandmarks
                     //The normalized_landmarks will serve only face and pose.
-                    std::vector<std::vector<std::array<float, 3>>> normalized_landmarks;
                     HolisticLandmarks holistic_landmarks;
                     if( Task == "Face" ) 
                     {

@@ -139,7 +139,7 @@ protected:
     std::mutex mtx_UpdateOutFrame;
     bool m_bDirectoryCreated = false;
     bool mbWatchPatient = true;
-    Mat outFrame;
+    Mat outFrame, tempFrame;
     Mat CropRegion(Mat inputImage, std::vector<std::array<float, 3>> normalized_landmarks);   //dlib has the vector and array, too.       //Crop the face region from inputImage according to the landmarks
     unique_ptr<EmotiEffLib::EmotiEffLibRecognizer> fer;
 
