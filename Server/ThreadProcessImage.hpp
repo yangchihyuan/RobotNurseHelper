@@ -6,6 +6,7 @@
 #include <QTcpSocket>
 #include <QDebug>
 #include <iostream>
+#include <filesystem>
 #include <mutex>
 #include <thread>
 #include <condition_variable>
@@ -26,6 +27,8 @@
 #include <dlib/string.h>
 #include <dlib/image_io.h>
 #include <dlib/image_processing/frontal_face_detector.h>
+#include <dlib/image_processing.h>
+#include <dlib/opencv.h> // Essential for cv_image
 
 //using namespace dlib;
 using dlib::add_prev1;
@@ -128,6 +131,9 @@ protected:
     void reloadGraph();
     std::string Task;
     std::shared_ptr<mediapipe::LibMP> libmp;
+    //Can I create multiple libmp objects?
+    std::shared_ptr<mediapipe::LibMP> libmp_face;
+
     std::string Processor;
     std::mutex mtx_Task;                        //dlib::mutex has the same class mutex, so I add std::
     std::mutex mtx_UpdateOutFrame;

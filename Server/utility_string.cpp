@@ -4,6 +4,7 @@
 #include <regex> // C++11 standard library regex
 #include <iostream>
 
+
 string RemoveFileExtension(string fullname)
 {
     size_t lastindex = fullname.find_last_of("."); 
@@ -40,4 +41,23 @@ int GetChineseCharacterNumberWithoutPunctuationMarks(string input)
     }
 
     return char_count;
+}
+
+string LoadFileToString(string filepath)
+{
+    if( !std::filesystem::exists(filepath) )
+    {
+        std::cerr << "Cannot find: " << filepath << std::endl;
+        throw("Cannot find " + filepath);
+    }
+
+    std::ifstream file_stream(filepath);
+    if (!file_stream.is_open()) {
+        std::cerr << "Failed to open file: " << filepath << std::endl;
+        return "";
+    }
+    std::string content((std::istreambuf_iterator<char>(file_stream)),
+                         std::istreambuf_iterator<char>());
+    file_stream.close();
+    return content;
 }

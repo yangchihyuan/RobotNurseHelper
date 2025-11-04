@@ -1,7 +1,10 @@
 #include <vector>
 #include <string>
+#include <iostream>
+#include <filesystem>
 
 using namespace std;
+namespace fs = std::filesystem;
 
 //return 1 if successful, -1 if failed
 int ListFiles(const string& directory, const string& file_extension, vector<string>& file_list);

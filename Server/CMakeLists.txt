@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.5)
 project(RobotNurseHelper)
 
 option(USE_GPU "USE GPU" ON)
-option(COMPILE_WITH_G_FLAG "COMPILE WITH G FLAG" ON)
+option(COMPILE_WITH_G_FLAG "COMPILE WITH G FLAG" ON)   #if OFF, executable size 2.5MB; if ON, 88MB
 if(NOT DEFINED ROBOT_MODEL)
-  set(ROBOT_MODEL Zenbo)
+  set(ROBOT_MODEL Kebbi)    #default robot model is Kebbi
 endif()
 
 set(CMAKE_CXX_STANDARD 17)

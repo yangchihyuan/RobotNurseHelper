@@ -53,6 +53,13 @@ ThreadProcessImage::ThreadProcessImage()
     fer = EmotiEffLib::EmotiEffLibRecognizer::createInstance(backend, modelPath);
 
     deserialize("dlib_face_recognition_resnet_model_v1.dat") >> net;
+
+    string filepath = std::filesystem::current_path() / "mediapipe_addition/graph_strings/face_cpu.txt";
+    string graph_string_face = LoadFileToString(filepath);
+    libmp_face.reset(mediapipe::LibMP::Create(graph_string_face.c_str(), "input_video"));
+    libmp_face->AddOutputStream("multi_face_landmarks");
+    libmp_face->AddOutputStream("output_video");
+    libmp_face->Start();
 }
 
 void ThreadProcessImage::setProcessor(std::string processor)
@@ -162,291 +169,32 @@ void ThreadProcessImage::reloadGraph()
 {
     bool bChange = false;
     std::string graph_string;
+    string filepath;
     if( Task == "Face")
     {
-        graph_string = R"(
-            # MediaPipe graph that performs face mesh with TensorFlow Lite on CPU.
-    
-    
-            # Input image. (ImageFrame)
-            input_stream: "input_video"
-    
-    
-            # Output image with rendered results. (ImageFrame)
-            output_stream: "output_video"
-            # Collection of detected/processed faces, each represented as a list of
-            # landmarks. (std::vector<NormalizedLandmarkList>)
-            output_stream: "multi_face_landmarks"
-    
-    
-            # Throttles the images flowing downstream for flow control. It passes through
-            # the very first incoming image unaltered, and waits for downstream nodes
-            # (calculators and subgraphs) in the graph to finish their tasks before it
-            # passes through another image. All images that come in while waiting are
-            # dropped, limiting the number of in-flight images in most part of the graph to
-            # 1. This prevents the downstream nodes from queuing up incoming images and data
-            # excessively, which leads to increased latency and memory usage, unwanted in
-            # real-time mobile applications. It also eliminates unnecessarily computation,
-            # e.g., the output produced by a node may get dropped downstream if the
-            # subsequent nodes are still busy processing previous inputs.
-            node {
-                calculator: "FlowLimiterCalculator"
-                input_stream: "input_video"
-                input_stream: "FINISHED:output_video"
-                input_stream_info: {
-                    tag_index: "FINISHED"
-                    back_edge: true
-                }
-                output_stream: "throttled_input_video"
-            }
-    
-    
-            # Defines side packets for further use in the graph.
-            node {
-                calculator: "ConstantSidePacketCalculator"
-                output_side_packet: "PACKET:0:num_faces"
-                output_side_packet: "PACKET:1:use_prev_landmarks"
-                output_side_packet: "PACKET:2:with_attention"
-                node_options: {
-                    [type.googleapis.com/mediapipe.ConstantSidePacketCalculatorOptions]: {
-    #                   packet { int_value: 1 }
-                        packet { int_value: 3 }
-                        packet { bool_value: true }
-                        packet { bool_value: true }
-                    }
-                }
-            }
-            # Subgraph that detects faces and corresponding landmarks.
-            node {
-                calculator: "FaceLandmarkFrontCpu"
-                input_stream: "IMAGE:throttled_input_video"
-                input_side_packet: "NUM_FACES:num_faces"
-                input_side_packet: "USE_PREV_LANDMARKS:use_prev_landmarks"
-                input_side_packet: "WITH_ATTENTION:with_attention"
-                output_stream: "LANDMARKS:multi_face_landmarks"
-                output_stream: "ROIS_FROM_LANDMARKS:face_rects_from_landmarks"
-                output_stream: "DETECTIONS:face_detections"
-                output_stream: "ROIS_FROM_DETECTIONS:face_rects_from_detections"
-            }
-            # Subgraph that renders face-landmark annotation onto the input image.
-            node {
-                calculator: "FaceRendererCpu"
-                input_stream: "IMAGE:throttled_input_video"
-                input_stream: "LANDMARKS:multi_face_landmarks"
-                input_stream: "NORM_RECTS:face_rects_from_landmarks"
-                input_stream: "DETECTIONS:face_detections"
-                output_stream: "IMAGE:output_video"
-            }
-        )";
+        filepath = std::filesystem::current_path() / "mediapipe_addition/graph_strings/face_cpu.txt";
+        graph_string = LoadFileToString(filepath);
+        bChange = true;
+    }
+    else if (Task == "Hand")
+    {
+        // This graph_string is from graphs/hand_tracking/hand_tracking_desktop_live.pbtxt
+        filepath = std::filesystem::current_path() / "mediapipe_addition/graph_strings/hand_cpu.txt";
+        graph_string = LoadFileToString(filepath);
         bChange = true;
     }
     else if( Processor == "CPU" )
     {
         if( Task == "Pose" )
         {
-            graph_string = R"(
-                # MediaPipe graph that performs pose tracking with TensorFlow Lite on CPU.
-
-                # CPU buffer. (ImageFrame)
-                input_stream: "input_video"
-                
-                # Output image with rendered results. (ImageFrame)
-                output_stream: "output_video"
-                # Pose landmarks. (NormalizedLandmarkList)
-                output_stream: "pose_landmarks"
-                
-                # Generates side packet to enable segmentation.
-                node {
-                    calculator: "ConstantSidePacketCalculator"
-                    output_side_packet: "PACKET:enable_segmentation"
-                    node_options: {
-                        [type.googleapis.com/mediapipe.ConstantSidePacketCalculatorOptions]: {
-    #                    packet { bool_value: true }
-                        packet { bool_value: false }
-                        }
-                    }
-                }
-                
-                # Throttles the images flowing downstream for flow control. It passes through
-                # the very first incoming image unaltered, and waits for downstream nodes
-                # (calculators and subgraphs) in the graph to finish their tasks before it
-                # passes through another image. All images that come in while waiting are
-                # dropped, limiting the number of in-flight images in most part of the graph to
-                # 1. This prevents the downstream nodes from queuing up incoming images and data
-                # excessively, which leads to increased latency and memory usage, unwanted in
-                # real-time mobile applications. It also eliminates unnecessarily computation,
-                # e.g., the output produced by a node may get dropped downstream if the
-                # subsequent nodes are still busy processing previous inputs.
-                node {
-                    calculator: "FlowLimiterCalculator"
-                    input_stream: "input_video"
-                    input_stream: "FINISHED:output_video"
-                    input_stream_info: {
-                        tag_index: "FINISHED"
-                        back_edge: true
-                    }
-                    output_stream: "throttled_input_video"
-                }
-                
-                # Subgraph that detects poses and corresponding landmarks.
-                node {
-                    calculator: "PoseLandmarkCpu"
-                    input_side_packet: "ENABLE_SEGMENTATION:enable_segmentation"
-                    input_stream: "IMAGE:throttled_input_video"
-                    output_stream: "LANDMARKS:pose_landmarks"
-                    output_stream: "SEGMENTATION_MASK:segmentation_mask"
-                    output_stream: "DETECTION:pose_detection"
-                    output_stream: "ROI_FROM_LANDMARKS:roi_from_landmarks"
-                }
-                
-                # Subgraph that renders pose-landmark annotation onto the input image.
-                node {
-                    calculator: "PoseRendererCpu"
-                    input_stream: "IMAGE:throttled_input_video"
-                    input_stream: "LANDMARKS:pose_landmarks"
-                    input_stream: "SEGMENTATION_MASK:segmentation_mask"
-                    input_stream: "DETECTION:pose_detection"
-                    input_stream: "ROI:roi_from_landmarks"
-                    output_stream: "IMAGE:output_video"
-                }
-            )";
+            filepath = std::filesystem::current_path() / "mediapipe_addition/graph_strings/pose_cpu.txt";
+            graph_string = LoadFileToString(filepath);
             bChange = true;
         }
         else if (Task == "Holistic")
         {
-            graph_string = R"(
-                # Tracks and renders pose + hands + face landmarks.
-
-                # CPU image. (ImageFrame)
-                input_stream: "input_video"
-
-                # CPU image with rendered results. (ImageFrame)
-                output_stream: "face_landmarks"
-                output_stream: "pose_landmarks"
-                output_stream: "left_hand_landmarks"
-                output_stream: "right_hand_landmarks"
-
-                # Throttles the images flowing downstream for flow control. It passes through
-                # the very first incoming image unaltered, and waits for downstream nodes
-                # (calculators and subgraphs) in the graph to finish their tasks before it
-                # passes through another image. All images that come in while waiting are
-                # dropped, limiting the number of in-flight images in most part of the graph to
-                # 1. This prevents the downstream nodes from queuing up incoming images and data
-                # excessively, which leads to increased latency and memory usage, unwanted in
-                # real-time mobile applications. It also eliminates unnecessarily computation,
-                # e.g., the output produced by a node may get dropped downstream if the
-                # subsequent nodes are still busy processing previous inputs.
-                node {
-                calculator: "FlowLimiterCalculator"
-                input_stream: "input_video"
-                input_stream: "FINISHED:output_video"
-                input_stream_info: {
-                    tag_index: "FINISHED"
-                    back_edge: true
-                }
-                output_stream: "throttled_input_video"
-                node_options: {
-                    [type.googleapis.com/mediapipe.FlowLimiterCalculatorOptions] {
-                    max_in_flight: 1
-                    max_in_queue: 1
-                    # Timeout is disabled (set to 0) as first frame processing can take more
-                    # than 1 second.
-                    in_flight_timeout: 0
-                    }
-                }
-                }
-
-                node {
-                calculator: "HolisticLandmarkCpu"
-                input_stream: "IMAGE:throttled_input_video"
-                output_stream: "POSE_LANDMARKS:pose_landmarks"
-                output_stream: "POSE_ROI:pose_roi"
-                output_stream: "POSE_DETECTION:pose_detection"
-                output_stream: "FACE_LANDMARKS:face_landmarks"
-                output_stream: "LEFT_HAND_LANDMARKS:left_hand_landmarks"
-                output_stream: "RIGHT_HAND_LANDMARKS:right_hand_landmarks"
-                }
-
-                # Gets image size.
-                node {
-                calculator: "ImagePropertiesCalculator"
-                input_stream: "IMAGE:throttled_input_video"
-                output_stream: "SIZE:image_size"
-                }
-
-                # Converts pose, hands and face landmarks to a render data vector.
-                node {
-                calculator: "HolisticTrackingToRenderData"
-                input_stream: "IMAGE_SIZE:image_size"
-                input_stream: "POSE_LANDMARKS:pose_landmarks"
-                input_stream: "POSE_ROI:pose_roi"
-                input_stream: "LEFT_HAND_LANDMARKS:left_hand_landmarks"
-                input_stream: "RIGHT_HAND_LANDMARKS:right_hand_landmarks"
-                input_stream: "FACE_LANDMARKS:face_landmarks"
-                output_stream: "RENDER_DATA_VECTOR:render_data_vector"
-                }
-
-                # Draws annotations and overlays them on top of the input images.
-                node {
-                calculator: "AnnotationOverlayCalculator"
-                input_stream: "IMAGE:throttled_input_video"
-                input_stream: "VECTOR:render_data_vector"
-                output_stream: "IMAGE:output_video"
-                }
-            )";
-            bChange = true;
-        }
-        else if (Task == "Hand")
-        {
-            // This graph_string is from graphs/hand_tracking/hand_tracking_desktop_live.pbtxt
-            graph_string = R"(                
-                # MediaPipe graph that performs hands tracking on desktop with TensorFlow
-                # Lite on CPU.
-                # Used in the example in
-                # mediapipe/examples/desktop/hand_tracking:hand_tracking_cpu.
-
-                # CPU image. (ImageFrame)
-                input_stream: "input_video"
-
-                # CPU image. (ImageFrame)
-                output_stream: "output_video"
-
-                # Generates side packet cotaining max number of hands to detect/track.
-                node {
-                calculator: "ConstantSidePacketCalculator"
-                output_side_packet: "PACKET:num_hands"
-                node_options: {
-                    [type.googleapis.com/mediapipe.ConstantSidePacketCalculatorOptions]: {
-                    packet { int_value: 2 }
-                    }
-                }
-                }
-
-                # Detects/tracks hand landmarks.
-                node {
-                calculator: "HandLandmarkTrackingCpu"
-                input_stream: "IMAGE:input_video"
-                input_side_packet: "NUM_HANDS:num_hands"
-                output_stream: "LANDMARKS:landmarks"
-                output_stream: "HANDEDNESS:handedness"
-                output_stream: "PALM_DETECTIONS:multi_palm_detections"
-                output_stream: "HAND_ROIS_FROM_LANDMARKS:multi_hand_rects"
-                output_stream: "HAND_ROIS_FROM_PALM_DETECTIONS:multi_palm_rects"
-                }
-
-                # Subgraph that renders annotations and overlays them on top of the input
-                # images (see hand_renderer_cpu.pbtxt).
-                node {
-                calculator: "HandRendererSubgraph"
-                input_stream: "IMAGE:input_video"
-                input_stream: "DETECTIONS:multi_palm_detections"
-                input_stream: "LANDMARKS:landmarks"
-                input_stream: "HANDEDNESS:handedness"
-                input_stream: "NORM_RECTS:0:multi_palm_rects"
-                input_stream: "NORM_RECTS:1:multi_hand_rects"
-                output_stream: "IMAGE:output_video"
-                }            
-            )";
+            filepath = std::filesystem::current_path() / "mediapipe_addition/graph_strings/holistic_cpu.txt";
+            graph_string = LoadFileToString(filepath);
             bChange = true;
         }
         else
@@ -458,157 +206,14 @@ void ThreadProcessImage::reloadGraph()
     {
         if( Task == "Pose" )
         {
-            graph_string = R"(
-                # MediaPipe graph that performs pose tracking with TensorFlow Lite on GPU.
-
-                # GPU buffer. (GpuBuffer)
-                input_stream: "input_video"
-
-                # Output image with rendered results. (GpuBuffer)
-                output_stream: "output_video"
-                # Pose landmarks. (NormalizedLandmarkList)
-                output_stream: "pose_landmarks"
-
-                # Generates side packet to enable segmentation.
-                node {
-                calculator: "ConstantSidePacketCalculator"
-                output_side_packet: "PACKET:enable_segmentation"
-                node_options: {
-                    [type.googleapis.com/mediapipe.ConstantSidePacketCalculatorOptions]: {
-#                    packet { bool_value: true }
-                    packet { bool_value: false }
-                    }
-                }
-                }
-
-                # Throttles the images flowing downstream for flow control. It passes through
-                # the very first incoming image unaltered, and waits for downstream nodes
-                # (calculators and subgraphs) in the graph to finish their tasks before it
-                # passes through another image. All images that come in while waiting are
-                # dropped, limiting the number of in-flight images in most part of the graph to
-                # 1. This prevents the downstream nodes from queuing up incoming images and data
-                # excessively, which leads to increased latency and memory usage, unwanted in
-                # real-time mobile applications. It also eliminates unnecessarily computation,
-                # e.g., the output produced by a node may get dropped downstream if the
-                # subsequent nodes are still busy processing previous inputs.
-                node {
-                calculator: "FlowLimiterCalculator"
-                input_stream: "input_video"
-                input_stream: "FINISHED:output_video"
-                input_stream_info: {
-                    tag_index: "FINISHED"
-                    back_edge: true
-                }
-                output_stream: "throttled_input_video"
-                }
-
-                # Subgraph that detects poses and corresponding landmarks.
-                node {
-                calculator: "PoseLandmarkGpu"
-                input_side_packet: "ENABLE_SEGMENTATION:enable_segmentation"
-                input_stream: "IMAGE:throttled_input_video"
-                output_stream: "LANDMARKS:pose_landmarks"
-                output_stream: "SEGMENTATION_MASK:segmentation_mask"
-                output_stream: "DETECTION:pose_detection"
-                output_stream: "ROI_FROM_LANDMARKS:roi_from_landmarks"
-                }
-
-                # Subgraph that renders pose-landmark annotation onto the input image.
-                node {
-                calculator: "PoseRendererGpu"
-                input_stream: "IMAGE:throttled_input_video"
-                input_stream: "LANDMARKS:pose_landmarks"
-                input_stream: "SEGMENTATION_MASK:segmentation_mask"
-                input_stream: "DETECTION:pose_detection"
-                input_stream: "ROI:roi_from_landmarks"
-                output_stream: "IMAGE:output_video"
-                }
-            )";
+            filepath = std::filesystem::current_path() / "mediapipe_addition/graph_strings/pose_gpu.txt";
+            graph_string = LoadFileToString(filepath);
             bChange = true;
         }
         else if (Task == "Holistic")
         {
-            graph_string = R"(
-                # Tracks and renders pose + hands + face landmarks.
-
-                # GPU buffer. (GpuBuffer)
-                input_stream: "input_video"
-
-                # GPU image with rendered results. (GpuBuffer)
-                output_stream: "output_video"
-                output_stream: "face_landmarks"
-                output_stream: "pose_landmarks"
-                output_stream: "left_hand_landmarks"
-                output_stream: "right_hand_landmarks"
-
-                # Throttles the images flowing downstream for flow control. It passes through
-                # the very first incoming image unaltered, and waits for downstream nodes
-                # (calculators and subgraphs) in the graph to finish their tasks before it
-                # passes through another image. All images that come in while waiting are
-                # dropped, limiting the number of in-flight images in most part of the graph to
-                # 1. This prevents the downstream nodes from queuing up incoming images and data
-                # excessively, which leads to increased latency and memory usage, unwanted in
-                # real-time mobile applications. It also eliminates unnecessarily computation,
-                # e.g., the output produced by a node may get dropped downstream if the
-                # subsequent nodes are still busy processing previous inputs.
-                node {
-                    calculator: "FlowLimiterCalculator"
-                    input_stream: "input_video"
-                    input_stream: "FINISHED:output_video"
-                    input_stream_info: {
-                        tag_index: "FINISHED"
-                        back_edge: true
-                    }
-                    output_stream: "throttled_input_video"
-                    node_options: {
-                        [type.googleapis.com/mediapipe.FlowLimiterCalculatorOptions] {
-                        max_in_flight: 1
-                        max_in_queue: 1
-                        # Timeout is disabled (set to 0) as first frame processing can take more
-                        # than 1 second.
-                        in_flight_timeout: 0
-                        }
-                    }
-                }
-
-                node {
-                calculator: "HolisticLandmarkGpu"
-                input_stream: "IMAGE:throttled_input_video"
-                output_stream: "POSE_LANDMARKS:pose_landmarks"
-                output_stream: "POSE_ROI:pose_roi"
-                output_stream: "POSE_DETECTION:pose_detection"
-                output_stream: "FACE_LANDMARKS:face_landmarks"
-                output_stream: "LEFT_HAND_LANDMARKS:left_hand_landmarks"
-                output_stream: "RIGHT_HAND_LANDMARKS:right_hand_landmarks"
-                }
-
-                # Gets image size.
-                node {
-                calculator: "ImagePropertiesCalculator"
-                input_stream: "IMAGE_GPU:throttled_input_video"
-                output_stream: "SIZE:image_size"
-                }
-
-                # Converts pose, hands and face landmarks to a render data vector.
-                node {
-                calculator: "HolisticTrackingToRenderData"
-                input_stream: "IMAGE_SIZE:image_size"
-                input_stream: "POSE_LANDMARKS:pose_landmarks"
-                input_stream: "POSE_ROI:pose_roi"
-                input_stream: "LEFT_HAND_LANDMARKS:left_hand_landmarks"
-                input_stream: "RIGHT_HAND_LANDMARKS:right_hand_landmarks"
-                input_stream: "FACE_LANDMARKS:face_landmarks"
-                output_stream: "RENDER_DATA_VECTOR:render_data_vector"
-                }
-
-                # Draws annotations and overlays them on top of the input images.
-                node {
-                calculator: "AnnotationOverlayCalculator"
-                input_stream: "IMAGE_GPU:throttled_input_video"
-                input_stream: "VECTOR:render_data_vector"
-                output_stream: "IMAGE_GPU:output_video"
-                }
-            )";
+            filepath = std::filesystem::current_path() / "mediapipe_addition/graph_strings/holistic_gpu.txt";
+            graph_string = LoadFileToString(filepath);
             bChange = true;
         }
         else
@@ -622,7 +227,10 @@ void ThreadProcessImage::reloadGraph()
         if(Processor == "GPU")
             libmp.reset(mediapipe::LibMP::Create_gpu(graph_string.c_str(), "input_video"));
         else if(Processor == "CPU")
+        {
             libmp.reset(mediapipe::LibMP::Create(graph_string.c_str(), "input_video"));
+        }
+
 
         if(Task == "Face")
         {
@@ -910,8 +518,23 @@ void ThreadProcessImage::run()
                             cout << res.labels[0] << std::endl;
 
                             //Get face recognition features
-
-
+                            //Although there is only one face, the dlib face recognition model needs a vector of faces as input.
+                            std::vector<dlib::matrix<dlib::rgb_pixel>> faces;
+                            dlib::matrix<dlib::rgb_pixel> dlib_face;
+                            dlib::assign_image(dlib_face, dlib::cv_image<dlib::bgr_pixel>(face));
+                            faces.push_back(dlib_face);
+                            
+                            //Here is a restriction. The input size needs to be 150x150
+                            //So we need to resize the face image first.
+                            // Temporary workaround: skip this step if the face size is not correct.
+                            /*
+                            std::vector<matrix<float,0,1>> face_descriptors = net(faces);
+                            //It is a vector of 128D
+                            //print it out
+                            cout << "face descriptor for one face: " << dlib::trans(face_descriptors[0]) << endl;
+                            */
+                            //how to create a cluster of the face descriptors for face recognition?
+                            //no idea now.
                         }
                         
                     }
