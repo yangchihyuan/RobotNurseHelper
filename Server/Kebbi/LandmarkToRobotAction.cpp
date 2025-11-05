@@ -135,8 +135,9 @@ int PoseLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
 
         if (action_option.move_mode == action_option.MOVE_BODY)
         {
-            float theta = -(x-0.5)*62.5;
-            float pitch_shift = (y-0.5)*48.9;      //Kebbi's postive pitch degreee is downward
+            //Only Zenbo has theta, Kebbi does not have it.
+//            float theta = -(x-0.5)*62.5;
+            float pitch_shift = (y-0.5)*48.9;         //Kebbi's postive pitch degreee is downward
 //            command.set_degree(static_cast<int>(theta));
             command.set_yaw(0);
             status.yaw_degree = 0;
@@ -146,6 +147,28 @@ int PoseLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
             if( pitch > 20 ) pitch = 20;
             command.set_pitch(pitch);
             status.pitch_degree = pitch;
+
+            //Mohamed's code works.
+            //What is this?
+            //std::cout << "Error: " << x - 0.5 << "\n";
+            //std::cout << "Previous_X: " << prev_x << "\n";
+            //std::cout << "Change: " << (x - prev_x) << "\n";
+            int k_p = 2, k_d = 1.5;     //What is ths k_p and k_d?
+            float mag = abs(x - 0.5) * k_p;
+            mag += (prev_x - x) * k_d; // / (current_time - prev_time + 0.1) * k_d;
+            prev_x = x;
+            if(x > 0.55)
+            {
+                command.set_turnspeed(-30.0f * mag);
+            }
+            else if (x < 0.45)
+            {
+                command.set_turnspeed(30.0f * mag);
+            }
+            else
+            {
+                command.set_turnspeed(0.0f);
+            }
         }
         else  //move head
         {

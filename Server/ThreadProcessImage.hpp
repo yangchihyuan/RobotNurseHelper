@@ -12,7 +12,10 @@
 #include <condition_variable>
 #include "SocketHandler.hpp"
 #include "SendMessageManager.hpp"
+#include "ActionOption.hpp"
 #include <opencv2/opencv.hpp>
+
+
 //EmotiEffLib
 #include "emotiefflib/facial_analysis.h"
 
@@ -125,14 +128,16 @@ public:
     int image_save_every_N_frame = 1; //default value is 1, which means every frame will be saved
     void NotifyEvent(string description, chrono::time_point<chrono::system_clock> timestamp, float yaw = 0.0, float pitch = 0.0);
 
+    ActionOption action_option;
     Mat getOutFrame();
 protected:
     void run();
     void reloadGraph();
     std::string Task;
     std::shared_ptr<mediapipe::LibMP> libmp;
-    //Can I create multiple libmp objects?
     std::shared_ptr<mediapipe::LibMP> libmp_face;
+    std::shared_ptr<mediapipe::LibMP> libmp_hand;
+    std::shared_ptr<mediapipe::LibMP> libmp_pose;
 
     std::string Processor;
     std::mutex mtx_Task;                        //dlib::mutex has the same class mutex, so I add std::

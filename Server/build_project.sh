@@ -17,4 +17,6 @@ if [ $# == 1 ]; then
         cmake -S . -B build -DROBOT_MODEL=Kebbi
     fi
 fi
-cmake --build build -j $(nproc)
+#Here is a project. If I use too many threads to compile, the computer may freeze becuase of the swapping.
+#cmake --build build -j $(nproc)
+cmake --build build -j 8

@@ -13,7 +13,6 @@
 #include "utility_directory.hpp"
 
 #include "RobotStatus.hpp"
-#include "ActionOption.hpp"
 
 // Compiled protobuf headers for MediaPipe types used
 #include "mediapipe/framework/formats/landmark.pb.h"
@@ -31,10 +30,6 @@
 #include "xtensor/misc/xsort.hpp"
 
 RobotStatus robot_status;
-ActionOption action_option;
-
-
-
 
 int is_dancing = 0;
 
@@ -55,11 +50,26 @@ ThreadProcessImage::ThreadProcessImage()
     deserialize("dlib_face_recognition_resnet_model_v1.dat") >> net;
 
     string filepath = std::filesystem::current_path() / "mediapipe_addition/graph_strings/face_cpu.txt";
-    string graph_string_face = LoadFileToString(filepath);
-    libmp_face.reset(mediapipe::LibMP::Create(graph_string_face.c_str(), "input_video"));
+    string graph_string = LoadFileToString(filepath);
+    libmp_face.reset(mediapipe::LibMP::Create(graph_string.c_str(), "input_video"));
     libmp_face->AddOutputStream("multi_face_landmarks");
     libmp_face->AddOutputStream("output_video");
     libmp_face->Start();
+
+    filepath = std::filesystem::current_path() / "mediapipe_addition/graph_strings/hand_cpu.txt";
+    graph_string = LoadFileToString(filepath);
+    libmp_hand.reset(mediapipe::LibMP::Create(graph_string.c_str(), "input_video"));
+    libmp_hand->AddOutputStream("landmarks");
+    libmp_hand->AddOutputStream("output_video");
+    libmp_hand->Start();
+
+    filepath = std::filesystem::current_path() / "mediapipe_addition/graph_strings/pose_gpu.txt";
+    graph_string = LoadFileToString(filepath);
+    libmp_pose.reset(mediapipe::LibMP::Create(graph_string.c_str(), "input_video"));
+    libmp_pose->AddOutputStream("pose_landmarks");
+    libmp_pose->AddOutputStream("output_video");
+    libmp_pose->Start();
+
 }
 
 void ThreadProcessImage::setProcessor(std::string processor)
@@ -423,7 +433,6 @@ void ThreadProcessImage::run()
                     //This Process function only works for the CPU mode because the GPU mode uses the GpuBuffer.
                     if( Processor == "CPU" )
                     {
-//                        if( !libmp->Process(inputImage.data, inputImage.cols, inputImage.rows, mediapipe::ImageFormat::SRGB) )
                         if( !libmp->Process2(inputImage) )
                         {
                             std::cerr << "Process() failed!" << std::endl;
@@ -450,6 +459,12 @@ void ThreadProcessImage::run()
                         break;
                     }
 
+                    //limbp_hand always uses CPU
+                    if( !libmp_hand->Process2(inputImage) )
+                    {
+                        std::cerr << "libmp_hand Process() failed!" << std::endl;
+                        break;
+                    }
 
 
                     if( Processor == "CPU" )
@@ -503,12 +518,34 @@ void ThreadProcessImage::run()
                                 cv::circle(outFrame, cv::Point(x, y), 1, cv::Scalar(0, 255, 0), -1);
                             }
                         }
-                        // Display the image with landmarks       
-//                        mtx_UpdateOutFrame.lock();             
-//                        inputImage.copyTo(outFrame);
-//                        bNewoutFrame = true;
-//                        mtx_UpdateOutFrame.unlock();
                     }
+
+                    //Draw hand landmarks
+                    //I don't need the frame because I only need the landmarks.
+                    if( libmp_hand->WriteOutputImage(tempFrame.data, libmp_hand->GetOutputPacket("output_video") ) )
+                    {
+                        bNewoutFrame = true;
+                    }
+                    else
+                    {
+                        cout << "libmp_hand WriteOutputImage fails." << std::endl;
+                    }
+//                    std::vector<std::vector<std::array<float, 3>>> normalized_landmarks;
+                   //I need this new function to get hand landmarks
+                    normalized_landmarks = get_landmarks_hand(libmp_hand);
+//                    bool bDrawImageByOurOwn = true;
+                    if( bDrawImageByOurOwn )
+                    {
+                        size_t num_hands = normalized_landmarks.size();
+                        for (int hand_num = 0; hand_num < num_hands; hand_num++) {
+                            for (const std::array<float, 3>& norm_xyz : normalized_landmarks[hand_num]) {
+                                int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
+                                int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
+                                cv::circle(outFrame, cv::Point(x, y), 5, cv::Scalar(0, 0, 255), -1);
+                            }
+                        }
+                    }
+
 
                     //debug code
                     /*

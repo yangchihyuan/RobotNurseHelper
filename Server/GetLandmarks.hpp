@@ -16,6 +16,7 @@ struct HolisticLandmarks {
 };
 
 std::vector<std::vector<std::array<float, 3>>> get_landmarks_face(const std::shared_ptr<mediapipe::LibMP>& libmp);
+std::vector<std::vector<std::array<float, 3>>> get_landmarks_hand(const std::shared_ptr<mediapipe::LibMP>& libmp);
 std::vector<std::vector<std::array<float, 3>>> get_landmarks_pose(const std::shared_ptr<mediapipe::LibMP>& libmp);
 std::vector<std::vector<std::array<float, 3>>> get_landmarks_holistic(const std::shared_ptr<mediapipe::LibMP>& libmp);
 HolisticLandmarks get_landmarks_holistic2(const std::shared_ptr<mediapipe::LibMP>& libmp);

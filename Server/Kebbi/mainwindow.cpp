@@ -193,6 +193,7 @@ MainWindow::MainWindow(QWidget *parent)
                                      "Move body",
                                      "Move head"});
     connect(ui->comboBox_MoveMode,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),this,&MainWindow::comboBox_MoveMode_changed);
+    ui->comboBox_MoveMode->setCurrentIndex(1);  //Move body
 
     ui->comboBox_DetectionMode->addItems({"None",
         "Face",
@@ -200,6 +201,7 @@ MainWindow::MainWindow(QWidget *parent)
         "Holistic",
         "Hand"});
     connect(ui->comboBox_DetectionMode,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),this,&MainWindow::comboBox_DetectionMode_changed);
+    ui->comboBox_DetectionMode->setCurrentIndex(2);  //Pose
 
     ui->comboBox_Processor->addItems({"CPU",
         "GPU"});

@@ -27,7 +27,7 @@ extern std::condition_variable cond_var_audio;
 extern int PortAudio_stop_and_terminate();
 extern bool gbPlayAudio;
 extern RobotStatus robot_status;
-extern ActionOption action_option;
+//extern ActionOption action_option;
 
 void MainWindow::startThreads()
 {
@@ -584,17 +584,19 @@ void MainWindow::comboBox_MoveMode_changed()
     switch(ui->comboBox_MoveMode->currentIndex())
     {
         case 0:
-            action_option.move_mode = ActionOption::MOVE_MANUAL;
+            thread_process_image.action_option.move_mode = ActionOption::MOVE_MANUAL;
             break;
         case 1:     //move body
-            action_option.move_mode = ActionOption::MOVE_BODY;
+            thread_process_image.action_option.move_mode = ActionOption::MOVE_BODY;
             break;
         case 2:     //move head
-            action_option.move_mode = ActionOption::MOVE_HEAD;
+            thread_process_image.action_option.move_mode = ActionOption::MOVE_HEAD;
             break;
     }
 }
 
+//Control the detection mode
+//This will no longer need because I can simutaneously detect face, pose, hand
 void MainWindow::comboBox_DetectionMode_changed()
 {
     switch(ui->comboBox_DetectionMode->currentIndex())

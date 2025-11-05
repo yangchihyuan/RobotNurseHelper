@@ -48,6 +48,50 @@ std::vector<std::vector<std::array<float, 3>>> get_landmarks_face(const std::sha
 	return normalized_landmarks;
 }
 
+std::vector<std::vector<std::array<float, 3>>> get_landmarks_hand(const std::shared_ptr<mediapipe::LibMP>& libmp) {
+	std::vector<std::vector<std::array<float, 3>>> normalized_landmarks;
+
+	// I use a unique_ptr for convenience, so that DeletePacket is called automatically
+	// You could also manage deletion yourself, manually:
+	// const void* packet = face_mesh->GetOutputPacket("multi_face_landmarks");
+	// mediapipe::LibMP::DeletePacket(packet);
+	std::unique_ptr<const void, decltype(&mediapipe::LibMP::DeletePacket)> lm_packet_ptr(nullptr, mediapipe::LibMP::DeletePacket);
+
+	// Keep getting packets from queue until empty
+	while (libmp->GetOutputQueueSize("landmarks") > 0) {
+		lm_packet_ptr.reset(libmp->GetOutputPacket("landmarks"));
+	}
+	if (lm_packet_ptr.get() == nullptr || mediapipe::LibMP::PacketIsEmpty(lm_packet_ptr.get())) {
+		return normalized_landmarks; // return empty vector if no output packets or packet is invalid
+	}
+
+	// Create multi_face_landmarks from packet's protobuf data
+	size_t num_hands = mediapipe::LibMP::GetPacketProtoMsgVecSize(lm_packet_ptr.get());
+	for (int hand_num = 0; hand_num < num_hands; hand_num++) {
+		// Get reference to protobuf message for face
+		const void* lm_list_proto = mediapipe::LibMP::GetPacketProtoMsgAt(lm_packet_ptr.get(), hand_num);
+		// Get byte size of protobuf message
+		size_t lm_list_proto_size = mediapipe::LibMP::GetProtoMsgByteSize(lm_list_proto);
+
+		// Create buffer to hold protobuf message data; copy data to buffer
+		std::shared_ptr<uint8_t[]> proto_data(new uint8_t[lm_list_proto_size]);
+		mediapipe::LibMP::WriteProtoMsgData(proto_data.get(), lm_list_proto, static_cast<int>(lm_list_proto_size));
+
+		// Initialize a mediapipe::NormalizedLandmarkList object from the buffer
+		mediapipe::NormalizedLandmarkList hand_landmarks;
+		hand_landmarks.ParseFromArray(proto_data.get(), static_cast<int>(lm_list_proto_size));
+
+		// Copy the landmark data to our custom data structure
+		normalized_landmarks.emplace_back();
+		for (const mediapipe::NormalizedLandmark& lm : hand_landmarks.landmark()) {
+			normalized_landmarks[hand_num].push_back({ lm.x(), lm.y(), lm.z() });
+		}
+	}
+
+	return normalized_landmarks;
+}
+
+
 //The pose tracking module always returns a single pose, so we don't need to loop over multiple poses.
 std::vector<std::vector<std::array<float, 3>>> get_landmarks_pose(const std::shared_ptr<mediapipe::LibMP>& libmp) {
 	std::vector<std::vector<std::array<float, 3>>> normalized_landmarks;
