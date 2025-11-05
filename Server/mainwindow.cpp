@@ -601,34 +601,19 @@ void MainWindow::comboBox_DetectionMode_changed()
 {
     switch(ui->comboBox_DetectionMode->currentIndex())
     {
-        case 0:
+        case 0:     //Off
             thread_process_image.b_HumanPoseEstimation = false;
-            thread_process_image.setTask("None");
             break;
-        case 1:     //Face
-            //change the Processor mode to CPU, because the face detection model is not supported by GPU
-            ui->comboBox_Processor->setCurrentIndex(0);
-            thread_process_image.setProcessor("CPU");
-            thread_process_image.setTask("Face");
-            thread_process_image.b_HumanPoseEstimation = true;
-            break;
-        case 2:     //Pose
-            thread_process_image.setTask("Pose");
-            thread_process_image.b_HumanPoseEstimation = true;
-            break;
-        case 3:     //Holistic
-            thread_process_image.setTask("Holistic");
-            thread_process_image.b_HumanPoseEstimation = true;
-            break;
-        case 4:     //Hand
-            thread_process_image.setTask("Hand");
+        case 1:     //On
             thread_process_image.b_HumanPoseEstimation = true;
             break;
     }
 }
 
+//No longer needed
 void MainWindow::comboBox_Processor_changed()
 {
+    /*
     switch(ui->comboBox_Processor->currentIndex())
     {
         case 0:     //CPU
@@ -644,6 +629,7 @@ void MainWindow::comboBox_Processor_changed()
             thread_process_image.setProcessor("GPU");
             break;
     }
+    */
 }
 
 void MainWindow::comboBox_Language_changed()

@@ -35,8 +35,8 @@ int is_dancing = 0;
 
 ThreadProcessImage::ThreadProcessImage()
 {
-    Processor = "CPU";
-    Task = "None";
+//    Processor = "CPU";
+//    Task = "None";
 
     //Initialize the EmotiEffLib
     string backend = "onnx";
@@ -63,7 +63,7 @@ ThreadProcessImage::ThreadProcessImage()
     libmp_hand->AddOutputStream("output_video");
     libmp_hand->Start();
 
-    filepath = std::filesystem::current_path() / "mediapipe_addition/graph_strings/pose_gpu.txt";
+    filepath = std::filesystem::current_path() / "mediapipe_addition/graph_strings/pose_cpu.txt";
     graph_string = LoadFileToString(filepath);
     libmp_pose.reset(mediapipe::LibMP::Create(graph_string.c_str(), "input_video"));
     libmp_pose->AddOutputStream("pose_landmarks");
@@ -72,201 +72,6 @@ ThreadProcessImage::ThreadProcessImage()
 
 }
 
-void ThreadProcessImage::setProcessor(std::string processor)
-{
-    bool ChangeProcessor = false;
-    //2025/4/16 Debug info: This function also needs protection from mtx_Task. Otherwise, there will be an error terminate called after throwing an instance of 'std::out_of_range'
-    //what():  [Thread 0x7ffd92fee000 (LWP 9345) exited]
-    //unordered_map::at
-    //Because the graph is still running
-    mtx_Task.lock();
-    if( processor == "CPU" )
-    {
-        if( Processor != "CPU" )
-        {
-            ChangeProcessor = true;
-        }
-        Processor = "CPU";
-    }
-    else if( processor == "GPU" )
-    {
-        if( Processor != "GPU" )
-        {
-            ChangeProcessor = true;
-        }
-        Processor = "GPU";
-    }
-    else
-    {
-        cout << "Processor is not supported." << endl;
-    }
-
-    if( ChangeProcessor )
-    {
-        reloadGraph();
-    }
-    else
-    {
-        cout << "Processor is not changed." << endl;
-    }
-    mtx_Task.unlock();
-}
-
-void ThreadProcessImage::setTask(std::string task)
-{
-    bool ChangeTask = false;
-    //2025/4/5 Debug info: the setTask() function is called by the main thread. Thus, the Task member variable can change immeidately even when
-    //the ThreadProcessImage thread is running. As a result, the get_landmarks() and get_landmarks_pose() may be wrongly called and lead
-    //to an out-of-range exception from unordered_map.at()
-    mtx_Task.lock();
-    if( task == "Pose" )
-    {
-        if( Task != "Pose" )
-        {
-            ChangeTask = true;
-        }
-        Task = "Pose";
-    }
-    else if(task == "Face")
-    {
-        if( Task != "Face" )
-        {
-            ChangeTask = true;
-        }
-        Task = "Face";
-    }
-    else if(task == "Holistic")
-    {
-        if( Task != "Holistic" )
-        {
-            ChangeTask = true;
-        }
-        Task = "Holistic";
-    }
-    else if(task == "Hand")
-    {
-        if( Task != "Hand" )
-        {
-            ChangeTask = true;
-        }
-        Task = "Hand";
-    }
-    else if(task == "None")
-    {
-        if( Task != "None" )
-        {
-            ChangeTask = true;
-        }
-        Task = "None";
-    }
-    else
-    {
-        cout << "Task is not supported. (A)" << endl;
-    }
-
-    if( ChangeTask )
-    {
-        reloadGraph();
-    }
-    else
-    {
-        cout << "Task is not changed." << endl;
-    }
-    mtx_Task.unlock();
-}
-
-void ThreadProcessImage::reloadGraph()
-{
-    bool bChange = false;
-    std::string graph_string;
-    string filepath;
-    if( Task == "Face")
-    {
-        filepath = std::filesystem::current_path() / "mediapipe_addition/graph_strings/face_cpu.txt";
-        graph_string = LoadFileToString(filepath);
-        bChange = true;
-    }
-    else if (Task == "Hand")
-    {
-        // This graph_string is from graphs/hand_tracking/hand_tracking_desktop_live.pbtxt
-        filepath = std::filesystem::current_path() / "mediapipe_addition/graph_strings/hand_cpu.txt";
-        graph_string = LoadFileToString(filepath);
-        bChange = true;
-    }
-    else if( Processor == "CPU" )
-    {
-        if( Task == "Pose" )
-        {
-            filepath = std::filesystem::current_path() / "mediapipe_addition/graph_strings/pose_cpu.txt";
-            graph_string = LoadFileToString(filepath);
-            bChange = true;
-        }
-        else if (Task == "Holistic")
-        {
-            filepath = std::filesystem::current_path() / "mediapipe_addition/graph_strings/holistic_cpu.txt";
-            graph_string = LoadFileToString(filepath);
-            bChange = true;
-        }
-        else
-        {
-            cout << "Task is not supported. (B)" << endl;
-        }
-    }
-    else if(Processor == "GPU")
-    {
-        if( Task == "Pose" )
-        {
-            filepath = std::filesystem::current_path() / "mediapipe_addition/graph_strings/pose_gpu.txt";
-            graph_string = LoadFileToString(filepath);
-            bChange = true;
-        }
-        else if (Task == "Holistic")
-        {
-            filepath = std::filesystem::current_path() / "mediapipe_addition/graph_strings/holistic_gpu.txt";
-            graph_string = LoadFileToString(filepath);
-            bChange = true;
-        }
-        else
-        {
-            cout << "Task is not supported. (C)" << endl;
-        }
-    }
-
-    if( bChange)
-    {
-        if(Processor == "GPU")
-            libmp.reset(mediapipe::LibMP::Create_gpu(graph_string.c_str(), "input_video"));
-        else if(Processor == "CPU")
-        {
-            libmp.reset(mediapipe::LibMP::Create(graph_string.c_str(), "input_video"));
-        }
-
-
-        if(Task == "Face")
-        {
-            libmp->AddOutputStream("multi_face_landmarks");
-            libmp->AddOutputStream("output_video");
-        }
-        else if(Task == "Pose")
-        {
-            libmp->AddOutputStream("pose_landmarks");
-            libmp->AddOutputStream("output_video");
-        }
-        else if(Task == "Holistic")
-        {
-            libmp->AddOutputStream("pose_landmarks");
-            libmp->AddOutputStream("left_hand_landmarks");
-            libmp->AddOutputStream("right_hand_landmarks");
-            libmp->AddOutputStream("face_landmarks");
-            libmp->AddOutputStream("output_video");
-        }
-        else if(Task == "Hand")
-        {
-            libmp->AddOutputStream("output_video");
-        }
-        libmp->Start();
-    }
-}
 
 void ThreadProcessImage::run()
 {
@@ -430,32 +235,17 @@ void ThreadProcessImage::run()
                     start = std::chrono::high_resolution_clock::now();
 
                     mtx_Task.lock();
-                    //This Process function only works for the CPU mode because the GPU mode uses the GpuBuffer.
-                    if( Processor == "CPU" )
+                    //try CPU first
+                    if( !libmp_pose->Process2(inputImage) )
                     {
-                        if( !libmp->Process2(inputImage) )
-                        {
-                            std::cerr << "Process() failed!" << std::endl;
-                            break;
-                        }
-                    }
-                    else if( Processor == "GPU" )
-                    {
-                        if( !libmp->Process_GPU(inputImage.data, inputImage.cols, inputImage.rows, mediapipe::ImageFormat::SRGB) )
-                        {
-                            std::cerr << "Process_GPU() failed!" << std::endl;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        cout << "Processor is not supported." << endl;
+                        std::cerr << "Libmp_pose Proces() failed!" << std::endl;
+                        break;
                     }
 
                     //limbp_face always uses CPU
                     if( !libmp_face->Process2(inputImage) )
                     {
-                        std::cerr << "Process() failed!" << std::endl;
+                        std::cerr << "libmp_face Process() failed!" << std::endl;
                         break;
                     }
 
@@ -467,36 +257,23 @@ void ThreadProcessImage::run()
                     }
 
 
-                    if( Processor == "CPU" )
+                    //Draw Pose landmarks
+                    mtx_UpdateOutFrame.lock();
+                    //2025 Nov 5. Debug: MediaPipe cannot run GPU and CPU at the same time.
+                    if( libmp_pose->WriteOutputImage(outFrame.data, libmp_pose->GetOutputPacket("output_video")) )
                     {
-                        //2025/8/22 bug note: outFrame needs to allocate buffer before the first call of WriteOutputImage()
-                        //or the WriteOutputImage() will fail.
-                        mtx_UpdateOutFrame.lock();
-                        if( libmp->WriteOutputImage(outFrame.data, libmp->GetOutputPacket("output_video") ) )
-                        {
-                            bNewoutFrame = true;
-                        }
-                        else
-                        {
-                            cout << "WriteOutputImage fails." << std::endl;
-                        }
-                        mtx_UpdateOutFrame.unlock();
+                        bNewoutFrame = true;
                     }
-                    else if( Processor == "GPU" )
+                    else
                     {
-                        mtx_UpdateOutFrame.lock();
-                        if( libmp->WriteOutputImage_GPU(outFrame.data, libmp->GetOutputPacket("output_video")) )
-                        {
-                            bNewoutFrame = true;
-                        }
-                        else
-                        {
-                            cout << "WriteOutputImage fails." << std::endl;
-                        }
-                        mtx_UpdateOutFrame.unlock();
+                        cout << "WriteOutputImage fails." << std::endl;
                     }
 
-                    //I don't need the frame because I only need the landmarks.
+                    std::vector<std::vector<std::array<float, 3>>> NL_pose;   //normalized_landmarks;
+                    NL_pose = get_landmarks_pose(libmp_pose);      //I use this to guide robot's movement
+
+
+                    //Draw face
                     if( libmp_face->WriteOutputImage(tempFrame.data, libmp_face->GetOutputPacket("output_video") ) )
                     {
                         bNewoutFrame = true;
@@ -530,10 +307,8 @@ void ThreadProcessImage::run()
                     {
                         cout << "libmp_hand WriteOutputImage fails." << std::endl;
                     }
-//                    std::vector<std::vector<std::array<float, 3>>> normalized_landmarks;
-                   //I need this new function to get hand landmarks
+
                     normalized_landmarks = get_landmarks_hand(libmp_hand);
-//                    bool bDrawImageByOurOwn = true;
                     if( bDrawImageByOurOwn )
                     {
                         size_t num_hands = normalized_landmarks.size();
@@ -546,155 +321,15 @@ void ThreadProcessImage::run()
                         }
                     }
 
+                    mtx_UpdateOutFrame.unlock();
 
-                    //debug code
-                    /*
-                    bool bShowProcessTime = false;
-                    if( bShowProcessTime )
-                    {
-                        auto stop = std::chrono::high_resolution_clock::now();
-                        auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-                        std::cout << "Process time: " << duration_ms.count() << " milliseconds" << std::endl;
-                    }
-                    */
-
-                    //2025/8/5 My holistic return value changes to a new structure HolisticLandmarks
-                    //The normalized_landmarks will serve only face and pose.
-                    HolisticLandmarks holistic_landmarks;
-                    if( Task == "Face" ) 
-                    {
-                        normalized_landmarks = get_landmarks_face(libmp);      //This is not the reason of memory leak
-
-                        // For each face, draw a circle at each landmark's position
-                        bool bDrawImageByOurOwn = false;        //2025/8/5: I didn't use it.
-                        if( bDrawImageByOurOwn )
-                        {
-                            size_t num_faces = normalized_landmarks.size();
-                            for (int face_num = 0; face_num < num_faces; face_num++) {
-                                for (const std::array<float, 3>& norm_xyz : normalized_landmarks[face_num]) {
-                                    int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
-                                    int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
-                                    cv::circle(inputImage, cv::Point(x, y), 1, cv::Scalar(0, 255, 0), -1);
-                                }
-                            }
-                            // Display the image with landmarks       
-                            mtx_UpdateOutFrame.lock();             
-                            inputImage.copyTo(outFrame);
-                            bNewoutFrame = true;
-                            mtx_UpdateOutFrame.unlock();
-                        }
-
-                        //Recognize facial expression
-                        if( m_bRecognizeFacialExpression && !normalized_landmarks.empty() )
-                        {
-                            //crop the face region.
-                            Mat face = CropRegion(inputImage, normalized_landmarks[0]);
-                            auto res = fer->predictEmotions(face, true);
-                            cout << res.labels[0] << std::endl;
-
-                            //Get face recognition features
-                            //Although there is only one face, the dlib face recognition model needs a vector of faces as input.
-                            std::vector<dlib::matrix<dlib::rgb_pixel>> faces;
-                            dlib::matrix<dlib::rgb_pixel> dlib_face;
-                            dlib::assign_image(dlib_face, dlib::cv_image<dlib::bgr_pixel>(face));
-                            faces.push_back(dlib_face);
-                            
-                            //Here is a restriction. The input size needs to be 150x150
-                            //So we need to resize the face image first.
-                            // Temporary workaround: skip this step if the face size is not correct.
-                            /*
-                            std::vector<matrix<float,0,1>> face_descriptors = net(faces);
-                            //It is a vector of 128D
-                            //print it out
-                            cout << "face descriptor for one face: " << dlib::trans(face_descriptors[0]) << endl;
-                            */
-                            //how to create a cluster of the face descriptors for face recognition?
-                            //no idea now.
-                        }
-                        
-                    }
-                    else if( Task == "Pose" )
-                    {
-                        normalized_landmarks = get_landmarks_pose(libmp);
-
-                        //2025/8/12 This is an experimental code to draw the landmarks by our own.
-                        //debug
-                        bool bDrawImageByOurOwn = false;
-                        if( bDrawImageByOurOwn )
-                        {
-                            size_t num_poses = normalized_landmarks.size();
-                            for (int pose_num = 0; pose_num < num_poses; pose_num++) {
-                                for (const std::array<float, 3>& norm_xyz : normalized_landmarks[pose_num]) {
-                                    int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
-                                    int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
-                                    cv::circle(inputImage, cv::Point(x, y), 5, cv::Scalar(0, 255, 0), 1);
-                                }
-                            }
-                            mtx_UpdateOutFrame.lock();
-                            inputImage.copyTo(outFrame);
-                            bNewoutFrame = true;
-                            mtx_UpdateOutFrame.unlock();
-                        }
-                    }
-                    else if( Task == "Holistic" )
-                    {
-                        //2025/8/5 change to a return value
-                        holistic_landmarks = get_landmarks_holistic2(libmp);    
-                        normalized_landmarks.push_back( holistic_landmarks.pose );
-                        if( holistic_landmarks.right_hand.size() > 0 && holistic_landmarks.left_hand.size() > 0)
-                        {
-                            std::cout << "right hand / left hand landmark positions: " << std::endl;
-                            for( int i = 0; i < holistic_landmarks.left_hand.size(); i++)
-                            {
-                                const std::array<float, 3>& norm_xyz_right = holistic_landmarks.right_hand[i];
-                                int x_right = static_cast<int>(norm_xyz_right[0] * inputImage.cols);
-                                int y_right = static_cast<int>(norm_xyz_right[1] * inputImage.rows);
-                                std::cout << cv::Point(x_right, y_right);
-
-                                const std::array<float, 3>& norm_xyz_left = holistic_landmarks.left_hand[i];
-                                int x_left = static_cast<int>(norm_xyz_left[0] * inputImage.cols);
-                                int y_left = static_cast<int>(norm_xyz_left[1] * inputImage.rows);
-                                std::cout << cv::Point(x_left, y_left) << std::endl;
-                                
-                            }
-                        }
-                        else if (holistic_landmarks.right_hand.size() > 0)
-                        {
-                            std::cout << "right hand position: " << std::endl;
-                            for (const std::array<float, 3>& norm_xyz : holistic_landmarks.right_hand) {
-                                int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
-                                int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
-                                std::cout << cv::Point(x, y) << std::endl;
-                            }
-                        }
-                        else if( holistic_landmarks.left_hand.size() > 0 )
-                        {
-                            std::cout << "left hand position: " << std::endl;
-                            for (const std::array<float, 3>& norm_xyz : holistic_landmarks.left_hand) {
-                                int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
-                                int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
-                                std::cout << cv::Point(x, y) << std::endl;
-                            }
-                        }
-                    }
-                    else if( Task == "Hand" )
-                    {
-                        //ToDo: I have not developed the Hand landmarks function yet.
-                        //normalized_landmarks = get_landmarks_holistic(libmp);
-                    }
-                    else
-                    {
-                        cout << "Task is not supported. (D)" << endl;
-                    }
-                    
                     //This variable is used to prevent the robot from sending new commands while the previous command is being executed.
                     if( mbWatchPatient )
                     {
-                        if( !normalized_landmarks.empty())      //If there is no person detected, the following code will not be executed.
+                        if( !NL_pose.empty())      //If there is no person detected, the following code will not be executed.
                         {
                             iNoPersonFrameCount = 0;
 
-                            //last_landmarks = normalized_landmarks;
                             bLastLandmarksEffective = true;
                             //use time control first, wait for 1 seconds
                             auto current_time = chrono::high_resolution_clock::now();
@@ -704,26 +339,7 @@ void ThreadProcessImage::run()
                                 if( action_option.move_mode != action_option.MOVE_MANUAL)
                                 {
                                     RobotCommandProtobuf::RobotCommand command;
-                                    if( Task == "Face" )
-                                    {
-                                        //debug
-                                        cout << "Call FaceLandmarks_to_RobotAction" << endl;
-                                        FaceLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, command);
-                                    }
-                                    else if( Task == "Pose" )
-                                    {
-                                        PoseLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, command);
-                                    }
-                                    else if( Task == "Holistic" )
-                                    {
-                                        //I use Pose, I haven't develop a new function for Holistic.
-                                        PoseLandmarks_to_RobotAction(normalized_landmarks, robot_status, action_option, command);
-                                    }
-                                    else
-                                    {
-                                        cout << "Task is not supported. (F)" << endl;
-        //                                continue;
-                                    }
+                                    PoseLandmarks_to_RobotAction(NL_pose, robot_status, action_option, command);
                                     previous_time = current_time;
                                     pSendMessageManager->AddMessage(command);       //The command is filled in the PoseLandmarks_to_RobotAction function
                                 }

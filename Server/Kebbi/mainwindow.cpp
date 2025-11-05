@@ -195,17 +195,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->comboBox_MoveMode,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),this,&MainWindow::comboBox_MoveMode_changed);
     ui->comboBox_MoveMode->setCurrentIndex(1);  //Move body
 
-    ui->comboBox_DetectionMode->addItems({"None",
-        "Face",
-        "Pose",
-        "Holistic",
-        "Hand"});
+    ui->comboBox_DetectionMode->addItems({"Off",
+        "On"});
     connect(ui->comboBox_DetectionMode,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),this,&MainWindow::comboBox_DetectionMode_changed);
-    ui->comboBox_DetectionMode->setCurrentIndex(2);  //Pose
-
-    ui->comboBox_Processor->addItems({"CPU",
-        "GPU"});
-    connect(ui->comboBox_Processor,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),this,&MainWindow::comboBox_Processor_changed);
+    ui->comboBox_DetectionMode->setCurrentIndex(1);  //On
 
     ui->comboBox_Language->addItems({"Chinese",
         "English",
@@ -257,12 +250,6 @@ void MainWindow::on_pushButton_speak_clicked()
     QString text = ui->plainTextEdit_speak->toPlainText();   //This line causes an exception. Why?
     RobotCommandProtobuf::RobotCommand command;
     command.set_speak_sentence(text.toStdString());
-    if( ui->checkBox_withface->isChecked() )
-    {
-        QModelIndex index = ui->listView_FacialExpressions->currentIndex();
-        command.set_face(index.row());
-    }
-
     sendMessageManager.AddMessage(command);
 
     QString action;
