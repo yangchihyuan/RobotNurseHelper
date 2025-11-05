@@ -35,9 +35,6 @@ int is_dancing = 0;
 
 ThreadProcessImage::ThreadProcessImage()
 {
-//    Processor = "CPU";
-//    Task = "None";
-
     //Initialize the EmotiEffLib
     string backend = "onnx";
     string modelName = EmotiEffLib::getSupportedModels(backend)[0];
@@ -69,7 +66,6 @@ ThreadProcessImage::ThreadProcessImage()
     libmp_pose->AddOutputStream("pose_landmarks");
     libmp_pose->AddOutputStream("output_video");
     libmp_pose->Start();
-
 }
 
 
@@ -274,6 +270,7 @@ void ThreadProcessImage::run()
 
 
                     //Draw face
+                    //Do I need the output_video of libmp_face? I only need the landmarks.
                     if( libmp_face->WriteOutputImage(tempFrame.data, libmp_face->GetOutputPacket("output_video") ) )
                     {
                         bNewoutFrame = true;
@@ -282,14 +279,14 @@ void ThreadProcessImage::run()
                     {
                         cout << "WriteOutputImage fails." << std::endl;
                     }
-                    std::vector<std::vector<std::array<float, 3>>> normalized_landmarks;
-                    normalized_landmarks = get_landmarks_face(libmp_face);      //This is not the reason of memory leak
-                    bool bDrawImageByOurOwn = true;        //2025/8/5: I didn't use it.
+                    std::vector<std::vector<std::array<float, 3>>> NL_faces;   //normalized_landmarks;
+                    NL_faces = get_landmarks_face(libmp_face);
+                    bool bDrawImageByOurOwn = true;
                     if( bDrawImageByOurOwn )
                     {
-                        size_t num_faces = normalized_landmarks.size();
+                        size_t num_faces = NL_faces.size();
                         for (int face_num = 0; face_num < num_faces; face_num++) {
-                            for (const std::array<float, 3>& norm_xyz : normalized_landmarks[face_num]) {
+                            for (const std::array<float, 3>& norm_xyz : NL_faces[face_num]) {
                                 int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
                                 int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
                                 cv::circle(outFrame, cv::Point(x, y), 1, cv::Scalar(0, 255, 0), -1);
@@ -308,16 +305,57 @@ void ThreadProcessImage::run()
                         cout << "libmp_hand WriteOutputImage fails." << std::endl;
                     }
 
-                    normalized_landmarks = get_landmarks_hand(libmp_hand);
+                    std::vector<std::vector<std::array<float, 3>>> NL_hands;   //normalized_landmarks;
+                    NL_hands = get_landmarks_hand(libmp_hand);
                     if( bDrawImageByOurOwn )
                     {
-                        size_t num_hands = normalized_landmarks.size();
+                        size_t num_hands = NL_hands.size();
                         for (int hand_num = 0; hand_num < num_hands; hand_num++) {
-                            for (const std::array<float, 3>& norm_xyz : normalized_landmarks[hand_num]) {
+                            for (const std::array<float, 3>& norm_xyz : NL_hands[hand_num]) {
                                 int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
                                 int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
                                 cv::circle(outFrame, cv::Point(x, y), 5, cv::Scalar(0, 0, 255), -1);
                             }
+                        }
+                    }
+
+                    //Crop the face regions and do facial expression recognition
+                    if( m_bRecognizeFacialExpression && !NL_faces.empty() )
+                    {
+                        size_t num_faces = NL_faces.size();
+                        for (int face_num = 0; face_num < num_faces; face_num++) {
+                            //crop the face region.
+                            //Why is the cropped region too small?
+                            Mat face = CropRegion(inputImage, NL_faces[face_num]);
+
+                            cv::imshow("Cropped face", face);
+
+                            auto res = fer->predictEmotions(face, false);       //false will return the softmax scores
+                            Rect roi = GetBoundingBoxFromLandmarks(NL_faces[face_num], inputImage.cols, inputImage.rows);
+                            //not very accurate, the cropped face is too small, around 135x156.
+                            cout << "Cropped size: " << face.cols << " " << face.rows << endl;
+                            cv::putText(outFrame, res.labels[0] + std::format("{:.3f}", res.scores[0]) , Point(roi.x, roi.y) , cv::FONT_HERSHEY_SIMPLEX, 1. , cv::Scalar(0,255,0), 2);
+
+
+
+                            //Get face recognition features
+                            //Although there is only one face, the dlib face recognition model needs a vector of faces as input.
+                            std::vector<dlib::matrix<dlib::rgb_pixel>> faces;
+                            dlib::matrix<dlib::rgb_pixel> dlib_face;
+                            dlib::assign_image(dlib_face, dlib::cv_image<dlib::bgr_pixel>(face));
+                            faces.push_back(dlib_face);
+                            
+                            //Here is a restriction. The input size needs to be 150x150
+                            //So we need to resize the face image first.
+                            // Temporary workaround: skip this step if the face size is not correct.
+                            /*
+                            std::vector<matrix<float,0,1>> face_descriptors = net(faces);
+                            //It is a vector of 128D
+                            //print it out
+                            cout << "face descriptor for one face: " << dlib::trans(face_descriptors[0]) << endl;
+                            */
+                            //how to create a cluster of the face descriptors for face recognition?
+                            //no idea now.
                         }
                     }
 
@@ -355,7 +393,6 @@ void ThreadProcessImage::run()
                                 command.set_pitch(0);
                                 pSendMessageManager->AddMessage(command);
                                 //debug
-                                //cout << "(B) reset Kebbi's head to the yaw 0 pitch 0 because there in no person in the 30 continous frames." << endl;
                                 iNoPersonFrameCount = 0;
                             }
                         }
@@ -412,6 +449,13 @@ Mat ThreadProcessImage::getOutFrame()
 
 Mat ThreadProcessImage::CropRegion(Mat inputImage, std::vector<std::array<float, 3>> normalized_landmarks)
 {
+    Rect roi = GetBoundingBoxFromLandmarks(normalized_landmarks, inputImage.cols, inputImage.rows);
+    Mat cropped_face = inputImage(roi).clone(); //clone to ensure a deep copy
+    return cropped_face;
+}
+
+cv::Rect ThreadProcessImage::GetBoundingBoxFromLandmarks(const std::vector<std::array<float, 3>>& normalized_landmarks, int img_width, int img_height)
+{
     //Find the bounding box of the landmarks
     float x_min = 1.0, x_max = 0.0, y_min = 1.0, y_max = 0.0;
     for( const auto& norm_xyz : normalized_landmarks)
@@ -422,19 +466,11 @@ Mat ThreadProcessImage::CropRegion(Mat inputImage, std::vector<std::array<float,
         if( norm_xyz[1] > y_max ) y_max = norm_xyz[1];
     }
 
-    //Expand the bounding box a bit
-    float x_center = (x_min + x_max) / 2.0;
-    float y_center = (y_min + y_max) / 2.0;
-    float box_width = (x_max - x_min);
-    float box_height = (y_max - y_min);
-
     //Convert to pixel coordinates
-    int img_width = inputImage.cols;
-    int img_height = inputImage.rows;
-    int x1 = static_cast<int>( (x_center - box_width/2.0) * img_width );
-    int y1 = static_cast<int>( (y_center - box_height/2.0) * img_height );
-    int x2 = static_cast<int>( (x_center + box_width/2.0) * img_width );
-    int y2 = static_cast<int>( (y_center + box_height/2.0) * img_height );
+    int x1 = static_cast<int>( x_min * img_width );
+    int y1 = static_cast<int>( y_min * img_height );
+    int x2 = static_cast<int>( x_max * img_width );
+    int y2 = static_cast<int>( y_max * img_height );
 
     //Ensure the bounding box is within image boundaries
     if( x1 < 0 ) x1 = 0;
@@ -442,8 +478,6 @@ Mat ThreadProcessImage::CropRegion(Mat inputImage, std::vector<std::array<float,
     if( x2 > img_width ) x2 = img_width;
     if( y2 > img_height ) y2 = img_height;
 
-    //Crop the region
-    Rect roi(x1, y1, x2 - x1, y2 - y1);
-    Mat cropped_face = inputImage(roi).clone(); //clone to ensure a deep copy
-    return cropped_face;
+    //Return the bounding box
+    return Rect(x1, y1, x2 - x1, y2 - y1);
 }

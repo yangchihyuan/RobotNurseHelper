@@ -610,28 +610,6 @@ void MainWindow::comboBox_DetectionMode_changed()
     }
 }
 
-//No longer needed
-void MainWindow::comboBox_Processor_changed()
-{
-    /*
-    switch(ui->comboBox_Processor->currentIndex())
-    {
-        case 0:     //CPU
-            thread_process_image.setProcessor("CPU");
-            break;
-        case 1:     //GPU
-            if( ui->comboBox_DetectionMode->currentIndex() == 1 )
-            {
-                QMessageBox::warning(this, "Warning", "The Face detection model is not supported by GPU. Please select CPU.");
-                ui->comboBox_Processor->setCurrentIndex(0);
-                return;
-            }
-            thread_process_image.setProcessor("GPU");
-            break;
-    }
-    */
-}
-
 void MainWindow::comboBox_Language_changed()
 {
     QString language = ui->comboBox_Language->currentText();
