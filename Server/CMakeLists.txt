@@ -63,7 +63,7 @@ set(PROTO_FILE ${ROBOT_MODEL}/RobotCommand.proto)
 my_protobuf_generate_cpp(PROTO_SRC PROTO_HDR ${PROTO_FILE})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-find_package(OpenCV COMPONENTS core highgui videoio imgproc imgcodecs REQUIRED)
+find_package(OpenCV COMPONENTS core highgui videoio imgproc imgcodecs dnn REQUIRED)
 find_package(Qt6 COMPONENTS Core Widgets Network Multimedia REQUIRED)   
 find_package(ICU REQUIRED COMPONENTS uc)
 
@@ -89,7 +89,8 @@ set(SOURCES JPEG.cpp
             SocketHandler.cpp
             SendMessageManager.cpp
             GetLandmarks.cpp
-            silero-vad-onnx.cpp            
+            silero-vad-onnx.cpp
+            Yolo11Pose.cpp 
     )
 
 # robot-specific files    

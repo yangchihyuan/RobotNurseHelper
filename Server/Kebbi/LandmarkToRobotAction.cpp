@@ -192,3 +192,82 @@ int PoseLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
     //command.set_turnspeed(20);
     return 1;
 }
+
+int PoseLandmarks_to_RobotAction_yolo(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
+    RobotStatus &status, 
+    ActionOption action_option,
+    RobotCommandProtobuf::RobotCommand &command)
+{
+    //Currently, Mediapipe only detects one person.
+    int num_poses = normalized_landmarks.size();
+
+    for(int i=0; i<num_poses; i++)
+    {
+        std::vector<std::array<float, 3>> pose_landmarks = normalized_landmarks[i];
+
+        //index 0 is the nose
+        float x = pose_landmarks[0][0];
+        float y = pose_landmarks[0][1];
+
+//        std::cout << "Pose node 0 Normalized position: (" << x << ", " << y << ")" << std::endl;
+        // Calculate the distance between the eyes
+
+        if (action_option.move_mode == action_option.MOVE_BODY)
+        {
+            //Only Zenbo has theta, Kebbi does not have it.
+//            float theta = -(x-0.5)*62.5;
+            float pitch_shift = (y-0.5)*48.9;         //Kebbi's postive pitch degreee is downward
+//            command.set_degree(static_cast<int>(theta));
+            command.set_yaw(0);
+            status.yaw_degree = 0;
+
+            int pitch = status.pitch_degree + static_cast<int>(pitch_shift);
+            if( pitch < -20 ) pitch = -20;
+            if( pitch > 20 ) pitch = 20;
+            command.set_pitch(pitch);
+            status.pitch_degree = pitch;
+
+            //Mohamed's code works.
+            //What is this?
+            //std::cout << "Error: " << x - 0.5 << "\n";
+            //std::cout << "Previous_X: " << prev_x << "\n";
+            //std::cout << "Change: " << (x - prev_x) << "\n";
+            int k_p = 2, k_d = 1.5;     //What is ths k_p and k_d?
+            float mag = abs(x - 0.5) * k_p;
+            mag += (prev_x - x) * k_d; // / (current_time - prev_time + 0.1) * k_d;
+            prev_x = x;
+            if(x > 0.55)
+            {
+                command.set_turnspeed(-30.0f * mag);
+            }
+            else if (x < 0.45)
+            {
+                command.set_turnspeed(30.0f * mag);
+            }
+            else
+            {
+                command.set_turnspeed(0.0f);
+            }
+        }
+        else  //move head
+        {
+            float yaw_shift = -(x-0.5)*62.5;        //The 62.5 and 48.9 are Zenbo's camera horizontal and vertical view angle
+            float pitch_shift = (y-0.5)*48.9;       //Kebbi's postive pitch degreee is downward
+            //I need to know current yaw
+            int yaw = status.yaw_degree + static_cast<int>(yaw_shift);
+            if( yaw < -40) yaw = -40;
+            if( yaw > 40) yaw = 40;
+            command.set_yaw(yaw);
+            status.yaw_degree = yaw;
+
+            int pitch = status.pitch_degree + static_cast<int>(pitch_shift);
+            if( pitch < -20 ) pitch = -20;
+            if( pitch > 20 ) pitch = 20;
+            command.set_pitch(pitch);
+            command.set_headspeed(100);     //I need to associate with UI later.
+            status.pitch_degree = pitch;
+        }
+    }
+    //command.set_turnspeed(20);
+    return 1;
+}

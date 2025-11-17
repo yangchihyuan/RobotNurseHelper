@@ -33,6 +33,9 @@
 #include <dlib/image_processing.h>
 #include <dlib/opencv.h> // Essential for cv_image
 
+//Yolo11pse
+#include "Yolo11Pose.hpp"   
+
 //using namespace dlib;
 using dlib::add_prev1;
 using dlib::add_prev2;
@@ -145,6 +148,8 @@ protected:
 
     //I need to create a dlib::face_recognition_model_v1 object to extract face recognition features
     anet_type net;
+
+    Yolo11Pose yolo11pose;
 };
 
 #endif

@@ -24,5 +24,11 @@ int PoseLandmarks_to_RobotAction(vector<vector<array<float, 3>>> normalized_land
     RobotStatus &status, 
     ActionOption action_option,    
     RobotCommandProtobuf::RobotCommand &command);
-  
+
+int PoseLandmarks_to_RobotAction_yolo(vector<vector<array<float, 3>>> normalized_landmarks, 
+    RobotStatus &status, 
+    ActionOption action_option,    
+    RobotCommandProtobuf::RobotCommand &command);
+    
+
 #endif
