@@ -359,7 +359,8 @@ void ThreadProcessImage::run()
                             //crop the face region.
                             //Why is the cropped region too small?
                             Mat face = CropRegion(inputImage, NL_faces[face_num]);
-
+                            //Debug 2025 Nov 5: Here is the reason that Hinton frozens.
+                            //I sitll don't know why. But if I disable this imshow(), Hinton works fine.
 //                            cv::imshow("Cropped face", face);
 
                             auto res = fer->predictEmotions(face, false);       //false will return the softmax scores
