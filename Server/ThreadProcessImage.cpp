@@ -238,28 +238,23 @@ void ThreadProcessImage::run()
 
                     mtx_Task.lock();
                     //try CPU first
-                    /*
-                    if( !libmp_pose->Process2(inputImage) )
-                    {
-                        std::cerr << "Libmp_pose Proces() failed!" << std::endl;
-                        break;
-                    }
-                    */
+                    std::vector<std::vector<std::array<float, 3>>> NL_pose;   //normalized_landmarks;
+                    bool use_Yolo11n_Pose = true;
+                    //2025/11/18 ToDo: Yolo11n-pose is computational expensive, and it cause cv::imshow() to frozen on Hinton. I don't know why.
 
-                    std::vector<std::vector<std::array<float, 3>>> NL_pose_yolo = yolo11pose.Process(inputImage);    //process the inputImage and draw the pose on inputImage
-                    inputImage.copyTo(outFrame);
-                    size_t num_poses = NL_pose_yolo.size();
-                    //debug
-                    //cout << "Number of poses detected by Yolo11n-pose: " << num_poses << endl;
-                    for (int pose_num = 0; pose_num < num_poses; pose_num++) {
-                        for (const std::array<float, 3>& norm_xyz : NL_pose_yolo[pose_num]) {
-                            int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
-                            int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
-                            cv::circle(outFrame, cv::Point(x, y), 3, cv::Scalar(255, 255, 0), -1);
+                    if( use_Yolo11n_Pose)
+                    {
+                        NL_pose = yolo11pose.Process(inputImage);    //process the inputImage and draw the pose on inputImage
+                    }
+                    else
+                    {
+                        if( !libmp_pose->Process2(inputImage) )
+                        {
+                            std::cerr << "Libmp_pose Proces() failed!" << std::endl;
+                            break;
                         }
                     }
-
-
+                    
                     //limbp_face always uses CPU
                     if( !libmp_face->Process2(inputImage) )
                     {
@@ -278,19 +273,32 @@ void ThreadProcessImage::run()
                     //Draw Pose landmarks
                     mtx_UpdateOutFrame.lock();
                     //2025 Nov 5. Debug: MediaPipe cannot run GPU and CPU at the same time.
-                    /*
-                    if( libmp_pose->WriteOutputImage(outFrame.data, libmp_pose->GetOutputPacket("output_video")) )
+                    if( use_Yolo11n_Pose)
                     {
-                        bNewoutFrame = true;
+                        inputImage.copyTo(outFrame);
+                        size_t num_poses = NL_pose.size();
+                        for (int pose_num = 0; pose_num < num_poses; pose_num++) {
+                            for (const std::array<float, 3>& norm_xyz : NL_pose[pose_num]) {
+                                int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
+                                int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
+                                cv::circle(outFrame, cv::Point(x, y), 3, cv::Scalar(255, 255, 0), -1);
+                            }
+                        }
                     }
                     else
                     {
-                        cout << "WriteOutputImage fails." << std::endl;
-                    }
+                        if( libmp_pose->WriteOutputImage(outFrame.data, libmp_pose->GetOutputPacket("output_video")) )
+                        {
+                            bNewoutFrame = true;
+                        }
+                        else
+                        {
+                            cout << "WriteOutputImage fails." << std::endl;
+                        }
 
-                    std::vector<std::vector<std::array<float, 3>>> NL_pose;   //normalized_landmarks;
-                    NL_pose = get_landmarks_pose(libmp_pose);      //I use this to guide robot's movement
-                    */
+                        NL_pose = get_landmarks_pose(libmp_pose);      //I use this to guide robot's movement
+                    }
+                    
 
                     //Draw face
                     //Do I need the output_video of libmp_face? I only need the landmarks.
@@ -388,8 +396,7 @@ void ThreadProcessImage::run()
                     //This variable is used to prevent the robot from sending new commands while the previous command is being executed.
                     if( mbWatchPatient )
                     {
-//                        if( !NL_pose.empty())      //If there is no person detected, the following code will not be executed.
-                        if( !NL_pose_yolo.empty())      //If there is no person detected, the following code will not be executed.
+                        if( !NL_pose.empty())      //If there is no person detected, the following code will not be executed.
                         {
                             iNoPersonFrameCount = 0;
 
@@ -402,7 +409,7 @@ void ThreadProcessImage::run()
                                 if( action_option.move_mode != action_option.MOVE_MANUAL)
                                 {
                                     RobotCommandProtobuf::RobotCommand command;
-                                    PoseLandmarks_to_RobotAction_yolo(NL_pose_yolo, robot_status, action_option, command);
+                                    PoseLandmarks_to_RobotAction_yolo(NL_pose, robot_status, action_option, command);
                                     previous_time = current_time;
                                     pSendMessageManager->AddMessage(command);       //The command is filled in the PoseLandmarks_to_RobotAction function
                                 }

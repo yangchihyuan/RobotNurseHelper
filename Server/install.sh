@@ -261,6 +261,8 @@ curl.snap-acked        #ollama changed its installation script. There is a text 
 curl -fsSL https://ollama.com/install.sh | sh
 if((VRAMSize<=2)); then
   ollama pull gemma3:1b
+elif((VRAMSize=12)); then
+  ollama pull gemma3:12b
 else
   ollama pull gemma3:4b
 fi

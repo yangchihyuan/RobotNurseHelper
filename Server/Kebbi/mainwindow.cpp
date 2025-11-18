@@ -318,6 +318,8 @@ void MainWindow::on_listView_Content_doubleClicked(const QModelIndex &index)
 
 void MainWindow::timer_event()
 {
+    //debug
+//    cout << "Timer event." << endl;
     if(thread_process_image.bNewoutFrame )
     {
         //2024/12/30, Debug info: I use a timer to update the frame. On some low-end PC, 
@@ -325,8 +327,11 @@ void MainWindow::timer_event()
         //to the window such as mouse hovering. It seems caused by the hardward driver.
         //imshow is a high-level GUI. There is no extra argument for this function.
         //How to force the problem to update the window?
+        //debug
+        cout << "call imshow()." << endl;
         cv::imshow("Image", thread_process_image.getOutFrame());
-        cv::waitKey(1);    //I miss this line so that Ubuntu does not update the window.
+        cv::waitKey(3);    //On Hinton, the frame frozes. Why?
+//        cv::waitKey(1);    //I miss this line so that Ubuntu does not update the window.
         thread_process_image.bNewoutFrame = false;
         //update pitch and yaw
         ui->lineEdit_yaw_now->setText(QString::number(robot_status.yaw_degree));
