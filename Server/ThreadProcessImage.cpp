@@ -360,12 +360,12 @@ void ThreadProcessImage::run()
                             //Why is the cropped region too small?
                             Mat face = CropRegion(inputImage, NL_faces[face_num]);
 
-                            cv::imshow("Cropped face", face);
+//                            cv::imshow("Cropped face", face);
 
                             auto res = fer->predictEmotions(face, false);       //false will return the softmax scores
                             Rect roi = GetBoundingBoxFromLandmarks(NL_faces[face_num], inputImage.cols, inputImage.rows);
                             //not very accurate, the cropped face is too small, around 135x156.
-                            cout << "Cropped size: " << face.cols << " " << face.rows << endl;
+//                            cout << "Cropped size: " << face.cols << " " << face.rows << endl;
                             cv::putText(outFrame, res.labels[0] + std::format("{:.3f}", res.scores[0]) , Point(roi.x, roi.y) , cv::FONT_HERSHEY_SIMPLEX, 1. , cv::Scalar(0,255,0), 2);
 
 
