@@ -275,8 +275,31 @@ void ThreadProcessImage::run()
                     //2025 Nov 5. Debug: MediaPipe cannot run GPU and CPU at the same time.
                     if( use_Yolo11n_Pose)
                     {
+                        int num_kps = 17;    //for pose
+                        const float KP_CONF_THRES = 0.4f;
                         inputImage.copyTo(outFrame);
                         size_t num_poses = NL_pose.size();
+                        for (int pose_num = 0; pose_num < num_poses; pose_num++) {
+                            //draw skeleton
+                            for (auto& pr : yolo11pose.skeleton) {
+                                int a = pr.first;
+                                int b2 = pr.second;
+                                float kp_conf_a = NL_pose[pose_num][a][2];
+                                float kp_conf_b2 = NL_pose[pose_num][b2][2];
+                                if (a < num_kps && b2 < num_kps &&
+                                    kp_conf_a > KP_CONF_THRES && kp_conf_b2 > KP_CONF_THRES) {
+                                    cv::Scalar col = yolo11pose.pair_color(a, b2);
+                                    int a_x = static_cast<int>(NL_pose[pose_num][a][0] * inputImage.cols);
+                                    int a_y = static_cast<int>(NL_pose[pose_num][a][1] * inputImage.rows);
+                                    int b2_x = static_cast<int>(NL_pose[pose_num][b2][0] * inputImage.cols);
+                                    int b2_y = static_cast<int>(NL_pose[pose_num][b2][1] * inputImage.rows);
+                                    cv::line(outFrame, cv::Point(a_x, a_y), cv::Point(b2_x, b2_y), col, 3, cv::LINE_AA);
+                                }
+                            }
+                        }
+
+                        //only draw points
+                        /*
                         for (int pose_num = 0; pose_num < num_poses; pose_num++) {
                             for (const std::array<float, 3>& norm_xyz : NL_pose[pose_num]) {
                                 int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
@@ -284,6 +307,7 @@ void ThreadProcessImage::run()
                                 cv::circle(outFrame, cv::Point(x, y), 3, cv::Scalar(255, 255, 0), -1);
                             }
                         }
+                        */
                     }
                     else
                     {

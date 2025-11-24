@@ -230,6 +230,8 @@ std::vector<std::vector<std::array<float, 3>>> Yolo11Pose::Process(cv::Mat& fram
                         }
                         return_keypoints.push_back(keypoints_per_person);
 
+                        //Here is the code to draw skeleton
+                        //skeleton is defined in the hpp file.
                         /*
                         for (auto& pr : skeleton) {
                             int a = pr.first, b2 = pr.second;
