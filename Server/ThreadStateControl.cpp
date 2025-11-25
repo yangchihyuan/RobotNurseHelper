@@ -20,13 +20,24 @@ void ThreadStateControl::InitializeStates()
 
     //state_index = 0;
     mStates[state_index].m_strStateName = "Wait for start";
-    mStates[state_index].m_strSystemMessage = "";
+    mStates[state_index].m_strSystemMessage = R"(你是一台名叫凱比的機器人，正在和一位高中生聊天，你非常愛聊天，什麼都會說，而且很愛說。
+    請遵守以下規則：
+        1. 請主動和對方聊天，問問題也可以，但不要問得太頻繁，要適中。
+        2. 請不要輸出任何表情符號。
+        3. 請不要輸出任何括號。
+        )";
     mStates[state_index].m_strFirstSentence = "我準備好了。";
-    mStates[state_index].m_secDurationLimit = 500s;
+    mStates[state_index].m_secDurationLimit = 600s;
     mStates[state_index].iNextStateIndex = 1;
     mStates[state_index].sFace = "TTS_PeaceA";
     mStates[state_index].sMotion = "666_BA_RArmR180";       //Raise Arm Right 180 degree
-
+    mStates[state_index].vSmallMotion.push_back("666_BA_ArmSCircle");
+    mStates[state_index].vSmallMotion.push_back("666_BA_ArmSSquare");
+    mStates[state_index].vSmallMotion.push_back("666_BA_RArmCircleL");
+    mStates[state_index].vSmallMotion.push_back("666_BA_RArmCircleR");
+    mStates[state_index].vSmallMotion.push_back("666_BA_Nodhead");
+    mStates[state_index].vSmallMotion.push_back("666_SA_Think");
+    mStates[state_index].vSmallMotion.push_back("666_SP_Cheer");
     //state_index = 1;
     state_index++;
     mStates[state_index].m_strStateName = "Warm up";
@@ -264,15 +275,7 @@ void ThreadStateControl::run()
             if( mbTTSComplete)
             {
                 WhisperData WhisperResult = mpThreadWhisper->getLatestResult();
-                if( mStates[m_iStateIndex].m_strStateName == "Wait for start")
-                {
-                    if( WhisperResult.sOutput.find("開始") != string::npos || WhisperResult.sOutput.find("开始") != string::npos)
-                    {
-                        bReadyToChangeState = true;
-                        bOldStateComplete = true;
-                    }
-                }
-                else if( mStates[m_iStateIndex].m_strStateName == "Ask dance")
+                if( mStates[m_iStateIndex].m_strStateName == "Ask dance")
                 {
                     if( mStates[m_iStateIndex].iStage == 0 )  //Conversation
                     {
@@ -338,6 +341,16 @@ void ThreadStateControl::run()
                 else if( WhisperResult.tSpeechStart > mtimestamp_TTSComplete - tolerance_duration || 
                          (WhisperResult.tSpeechEnd > mtimestamp_TTSComplete && current_time - WhisperResult.tSpeechEnd > 3s) )
                 {
+
+                    if( mStates[m_iStateIndex].m_strStateName == "Wait for start")
+                    {
+                        if( WhisperResult.sOutput.find("開始") != string::npos || WhisperResult.sOutput.find("开始") != string::npos)
+                        {
+                            bReadyToChangeState = true;
+                            bOldStateComplete = true;
+                        }
+                    }
+                                    
                     //debug
                     if(false)
                     {
