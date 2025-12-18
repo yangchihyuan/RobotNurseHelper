@@ -86,16 +86,17 @@ set(SOURCES JPEG.cpp
             ThreadStateControl.cpp
             ThreadWhisper.cpp
             ThreadOllama.cpp
-            SocketHandler.cpp
+            SocketBufferParser.cpp
             SendMessageManager.cpp
             GetLandmarks.cpp
             silero-vad-onnx.cpp
             Yolo11Pose.cpp 
+            SocketClientHandler.cpp
     )
 
 # robot-specific files    
 set(SOURCES2 ${ROBOT_MODEL}/LandmarkToRobotAction.cpp
-             ${ROBOT_MODEL}/ThreadReceiveMessages.cpp
+             ${ROBOT_MODEL}/ThreadReceiveMessage.cpp
              ${ROBOT_MODEL}/mainwindow.cpp
              ${ROBOT_MODEL}/mainwindow.ui
              ${PROTO_SRC})

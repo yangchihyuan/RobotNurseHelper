@@ -4,14 +4,19 @@
 //may occur in the DataFrame content even though the probablity is low.
 //Thus, the sender (robot) needs to follow the same protocol.
 
+#ifndef SocketBufferParser_HPP
+#define SocketBufferParser_HPP
+
 #include <string>
 #include <memory>  // for unique_ptr
 #include <queue>
 #include <mutex>
+//#include "ThreadProcessImage.hpp"
+#include "ThreadSafeQueue.hpp"
 using namespace std;
 
-#ifndef SocketHandler_hpp
-#define SocketHandler_hpp
+class ThreadProcessImage;
+class ThreadReceiveMessage;
 
 struct DataFrame
 {
@@ -19,18 +24,18 @@ struct DataFrame
     size_t length;
 };
 
-class SocketHandler
+class SocketBufferParser
 {
 public:
-    SocketHandler();
-    SocketHandler(size_t buffer_size);
-    SocketHandler(string delimiter_head, string delimiter_tail);
-    ~SocketHandler();
+    SocketBufferParser();
+    SocketBufferParser(size_t buffer_size);
+    SocketBufferParser(string delimiter_head, string delimiter_tail);
+    ~SocketBufferParser();
     void add_data(char* data_, size_t length);
-    size_t get_queue_length();
-    DataFrame get_head();
-    void pop_head();
-    void clear_queue();
+//    size_t get_queue_length();
+//    DataFrame get_head();
+//    void pop_head();
+//    void clear_queue();
     void set_delimiter(string delimiter_head, string delimiter_tail);
     string get_delimiter_head();
     string get_delimiter_tail();
@@ -38,14 +43,38 @@ public:
     char* get_buffer();
     size_t get_buffer_length();
     size_t get_buffer_size();
-    queue<DataFrame> DataFrames_queue;
-private:
+    ThreadSafeQueue<DataFrame> *pDataFrames_queue = nullptr;      
+protected:
     unique_ptr<char[]> buffer;
     size_t buffer_length = 0;       //buffer_length is the length of the data in buffer
     string delimiter_head = "BeginOfADataFrame";
     string delimiter_tail = "EndOfADataFrame";
     size_t buffer_size = 0;
-    mutex queue_mutex;
+//    mutex queue_mutex;
+
+    virtual void notify_thread();
+};
+
+class SocketBufferParser_Image : public SocketBufferParser
+{
+public:
+    SocketBufferParser_Image();
+    virtual ~SocketBufferParser_Image();
+
+    virtual void notify_thread();
+
+    ThreadProcessImage* thread_process_image = nullptr;
+};
+
+class SocketBufferParser_Message : public SocketBufferParser
+{
+public:
+    SocketBufferParser_Message();
+    virtual ~SocketBufferParser_Message();
+
+    virtual void notify_thread();
+
+    ThreadReceiveMessage* thread_receive_message = nullptr;
 };
 
 #endif

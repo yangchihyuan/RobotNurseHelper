@@ -1,10 +1,4 @@
-//2025/08/06 This is designed for Rachael's project. She need to use a tablet to get the level of uncomfortable of the child.
-
-#include "ThreadReceiveMessages.hpp"
-//#include "utility_TimeRecorder.hpp"
-//#include "utility_directory.hpp"
-//#include "utility_string.hpp"
-//#include "utility_directory.hpp"
+#include "ThreadReceiveMessage.hpp"
 #include "utility_time.hpp"
 #ifdef USE_KEBBI
     #include "Kebbi/RobotCommand.pb.h"
@@ -13,16 +7,18 @@
 #endif
 
 
-void ThreadReceiveMessages::run()
+void ThreadReceiveMessage::run()
 {
     while(b_WhileLoop)
     {
-        if( pSocketHandler->get_queue_length() > 0 )    //here is an infinite loop
-        {
+        std::unique_lock<std::mutex> lk(mtx);
+        cond_var_receive_messages.wait(lk);
 
+        while(DataFrames_queue.size() > 0 )    //process all messages in the queue{
+        {
             //Get message from the queue
-            DataFrame dataframe = pSocketHandler->get_head();
-            pSocketHandler->pop_head();
+            DataFrame dataframe;// = DataFrames_queue.front();
+            DataFrames_queue.pop(dataframe);
             char *data_ = dataframe.data.get();
 
             //Here, I need to parse the protobuf object
@@ -96,12 +92,6 @@ void ThreadReceiveMessages::run()
                 robot_command.set_face(RobotExpressionIndex);
                 pSendMessageManager->AddMessage(robot_command);
             }
-        }
-        else
-        {
-            //wait until being notified
-            std::unique_lock<std::mutex> lk(mtx);
-            cond_var_receive_messages.wait(lk);
         }
     }
     cout << "Exit ReceiveMessages loop." << std::endl;

@@ -13,7 +13,7 @@
 #include <QTcpSocket>
 #include "ThreadProcessImage.hpp"
 #include "ThreadPortAudio.hpp"
-#include "ThreadReceiveMessages.hpp"
+#include "ThreadReceiveMessage.hpp"
 #include "ThreadWhisper.hpp"
 #include "ThreadOllama.hpp"
 #include "ThreadStateControl.hpp"
@@ -22,8 +22,9 @@
 #include <QAudioDevice>
 #include <QAudioSource>
 #include "utility_directory.hpp"
-#include "SocketHandler.hpp"
+#include "SocketBufferParser.hpp"
 #include "SendMessageManager.hpp"
+#include "SocketClientHandler.hpp"
  
 using namespace std;
 
@@ -57,11 +58,11 @@ protected:
 
 private:
     Ui::MainWindow *ui;
+    QTimer *timer;
 
     QTcpServer* m_server_receive_image;
     QSet<QTcpSocket*> connection_set;
     ThreadProcessImage thread_process_image;
-    SocketHandler socketHandler1;
 
     QTcpServer* m_server_send_command;
     QSet<QTcpSocket*> connection_set2;   //for send back command
@@ -70,10 +71,12 @@ private:
     QSet<QTcpSocket*> connection_set3;   //for receive audio
     ThreadProcessAudio thread_process_audio;
 
-    QTcpServer* m_server_receive_messages;
+    QTcpServer* m_server_receive_message;
     QSet<QTcpSocket*> connection_set4;   //for receive messages
-    SocketHandler socketHandler4;
-    ThreadReceiveMessages thread_receive_messages;
+    SocketBufferParser socketHandler4;
+    ThreadReceiveMessage thread_receive_message;
+
+    QSet<SocketClientHandler*> Handler_set;
 
     ThreadWhisper thread_whisper;
 
@@ -93,25 +96,20 @@ signals:
     void addSendCommandMessage(RobotCommandProtobuf::RobotCommand);
 
 private slots:
-    void newConnection();
-    void appendToSocketList(QTcpSocket* socket);
-    void appendToSocketList2(QTcpSocket* socket);
-    void appendToSocketList3(QTcpSocket* socket);
-    void appendToSocketList4(QTcpSocket* socket);
-
-    void readSocket();
-    void readSocket3();
-    void readSocket4();
-
-    void discardSocket();
-    void discardSocket2();
-    void discardSocket3();
-    void discardSocket4();
-    void displayError(QAbstractSocket::SocketError socketError);
-
+    void newConnection_receive_image();
     void newConnection_send_command();
     void newConnection_receive_audio();
-    void newConnection_Tablet();
+    void newConnection_receive_message();
+    void appendToSocketList2(QTcpSocket* socket);
+    void appendToSocketList3(QTcpSocket* socket);
+
+    void readSocket3();
+
+    void discardSocket2();
+    void discardSocket3();
+
+    void displayError(QAbstractSocket::SocketError socketError);
+
 
     void on_pushButton_speak_clicked();
     void on_pushButton_movebody_clicked();

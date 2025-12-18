@@ -38,6 +38,10 @@ int is_dancing = 0;
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 
+#include "SocketBufferParser.hpp"   //DataFrame is defined in this hpp file
+#include "ThreadSafeQueue.hpp"
+
+
 ThreadProcessImage::ThreadProcessImage()
 {
     //Initialize the EmotiEffLib
@@ -86,16 +90,19 @@ void ThreadProcessImage::run()
 
     while(b_WhileLoop)
     {
-        if( pSocketHandler->get_queue_length() > 0 )    //here is an infinite loop
+        mutex mtx;
+        unique_lock<mutex> lk(mtx);
+        cond_var_process_image.wait(lk);
+        if( DataFrames_queue.size() > 0 )
         {
             auto start = std::chrono::high_resolution_clock::now();
-            //Get message from the queue
-            //Only need the latest message
             DataFrame dataframe;
-            while (pSocketHandler->get_queue_length() > 0)
+            //It takes 68 to 138 ms to process a frame, so I need to clear the queue to reduce latency.
+            //Maybe it takes less time if I use a faster PC.
+            while (DataFrames_queue.size() > 0)
             {
-                dataframe = pSocketHandler->get_head();
-                pSocketHandler->pop_head();    
+//                dataframe = DataFrames_queue.front();
+                DataFrames_queue.pop(dataframe);
             }
             char *data_ = dataframe.data.get();
             
@@ -221,20 +228,9 @@ void ThreadProcessImage::run()
                     }
                 }
 
-                //debug code
-                /*
-                bool bShowTransmittedImage = false;
-                if( bShowTransmittedImage )
-                {
-                    auto stop = std::chrono::high_resolution_clock::now();
-                    auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-                    std::cout << "Elapsed time: " << duration_ms.count() << " milliseconds" << std::endl;
-                }
-                */
-
                 if( b_HumanPoseEstimation)
                 {
-                    start = std::chrono::high_resolution_clock::now();
+//                    start = std::chrono::high_resolution_clock::now();
 
                     mtx_Task.lock();
                     //try CPU first
@@ -464,15 +460,18 @@ void ThreadProcessImage::run()
                     mtx_UpdateOutFrame.unlock();
                 }
             }    //if bCorrectlyDecoded
-        }
-        else
-        {
-            //wait until being notified
-            mutex mtx;
-            unique_lock<mutex> lk(mtx);
-            cond_var_process_image.wait(lk);
-        }
-    }
+
+            //debug code, to messure the processing time
+            bool bShowTransmittedImage = true;
+            if( bShowTransmittedImage )
+            {
+                auto stop = std::chrono::high_resolution_clock::now();
+                auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+                std::cout << "Elapsed time: " << duration_ms.count() << " milliseconds" << std::endl;
+            }
+
+        } //if( pSocketBufferParser->get_queue_length() > 0 )
+    } //while(b_WhileLoop)
     cout << "Exit ThreadProcessImage loop." << endl;
 }
 

@@ -21,7 +21,7 @@
 #include <QAudioDevice>
 #include <QAudioSource>
 #include "utility_directory.hpp"
-#include "SocketHandler.hpp"
+#include "SocketBufferParser.hpp"
 #include "SendMessageManager.hpp"
  
 using namespace std;

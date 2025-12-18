@@ -143,7 +143,7 @@ MainWindow::MainWindow(QWidget *parent)
     //2024/12/27 The port number is also hard-coded. I need to modify it in the future.
     if(m_server_receive_image->listen(QHostAddress::Any, 8895))
     {
-       connect(m_server_receive_image, &QTcpServer::newConnection, this, &MainWindow::newConnection);
+       connect(m_server_receive_image, &QTcpServer::newConnection, this, &MainWindow::newConnection_receive_image);
     }
     else
     {
@@ -170,10 +170,10 @@ MainWindow::MainWindow(QWidget *parent)
         exit(EXIT_FAILURE);
     }
 
-    m_server_receive_messages = new QTcpServer();
-    if(m_server_receive_messages->listen(QHostAddress::Any, 8898))
+    m_server_receive_message = new QTcpServer();
+    if(m_server_receive_message->listen(QHostAddress::Any, 8898))
     {
-       connect(m_server_receive_messages, &QTcpServer::newConnection, this, &MainWindow::newConnection_Tablet);
+       connect(m_server_receive_message, &QTcpServer::newConnection, this, &MainWindow::newConnection_receive_message);
        cout << "Listening port 8898" << endl;
     }
     else
@@ -182,10 +182,10 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
 
-    QTimer *timer = new QTimer(this);
+    timer = new QTimer(this);
     connect( timer, &QTimer::timeout, this, &MainWindow::timer_event);
     timer->start(10);
-
+    
     //add move mode items
     QStringList strList_MoveMode;
 
@@ -228,12 +228,12 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     thread_process_image.pSendMessageManager = &sendMessageManager;
-    thread_process_image.pSocketHandler = &socketHandler1;
+//    thread_process_image.pSocketBufferParser = &SocketBufferParser1;
 
-    thread_receive_messages.pSocketHandler = &socketHandler4;
-    thread_receive_messages.pSendMessageManager = &sendMessageManager;
-    thread_receive_messages.mpThreadStateControl = &thread_state_control;
-    thread_receive_messages.mpThreadProcessImage = &thread_process_image;
+//    thread_receive_message.pSocketHandler = &socketHandler4;
+    thread_receive_message.pSendMessageManager = &sendMessageManager;
+    thread_receive_message.mpThreadStateControl = &thread_state_control;
+    thread_receive_message.mpThreadProcessImage = &thread_process_image;
 
     thread_state_control.InitializeStates();
     thread_state_control.m_pSendMessageManager = &sendMessageManager;

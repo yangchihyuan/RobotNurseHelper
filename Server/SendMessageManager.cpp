@@ -18,39 +18,32 @@ void SendMessageManager::Send()
     
     if( mQueue.size() > 0)
     {
-        if( pSocket != NULL)          //socket can disconnect any time, it is in another thread
+        if( pSocket && pSocket->isValid())          //socket can disconnect any time, it is in another thread
         {
-            if( pSocket->isValid())
+            while(mQueue.size() > 2)
             {
-                while(mQueue.size() > 2)
-                {
-                    mQueue.pop();
-                }
-                QDataStream socketStream(pSocket);
-                RobotCommandProtobuf::RobotCommand message = mQueue.front();
                 mQueue.pop();
-                str_results_len = message.ByteSizeLong();
-                message.SerializeToArray(str_results,message.ByteSizeLong());
-
-                pSocket->write("BeginOfADataFrame");
-                socketStream.writeRawData(str_results, str_results_len);
-                pSocket->write("EndOfADataFrame");
-                //debug
-                //cout << "send a message " << endl;
-
-                //The robot may close the connection suddenly.
-                //pSocket->isValid cannot prevent it.
-                //The only way is to igoore the SIGPIPE signal.
-                pSocket->flush();       //This command is required to send out data in the buffer.
             }
-            else
-            {
-                cout << "Socket is not valid" << endl;
-            }
+            QDataStream socketStream(pSocket);
+            RobotCommandProtobuf::RobotCommand message = mQueue.front();
+            mQueue.pop();
+            str_results_len = message.ByteSizeLong();
+            message.SerializeToArray(str_results,message.ByteSizeLong());
+
+            pSocket->write("BeginOfADataFrame");
+            socketStream.writeRawData(str_results, str_results_len);
+            pSocket->write("EndOfADataFrame");
+            //debug
+            //cout << "send a message " << endl;
+
+            //The robot may close the connection suddenly.
+            //pSocket->isValid cannot prevent it.
+            //The only way is to igoore the SIGPIPE signal.
+            pSocket->flush();       //This command is required to send out data in the buffer.
         }
         else
         {
-            //2025/8/19 temporarily disable it cout << "Socket is NULL" << endl;
+            cout << "Socket is NULL or is not valid" << endl;
         }
     }
 }

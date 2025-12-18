@@ -10,11 +10,14 @@
 #include <mutex>
 #include <thread>
 #include <condition_variable>
-#include "SocketHandler.hpp"
+//#include "SocketBufferParser.hpp"
+#include "ThreadSafeQueue.hpp"
 #include "SendMessageManager.hpp"
 #include "ActionOption.hpp"
 #include <opencv2/opencv.hpp>
 
+class SocketBufferParser;
+struct DataFrame;
 
 //EmotiEffLib
 #include "emotiefflib/facial_analysis.h"
@@ -123,7 +126,8 @@ public:
     condition_variable cond_var_process_image;
 
     SendMessageManager *pSendMessageManager;
-    SocketHandler *pSocketHandler;
+    //This queue is not thread-safe. Need to use mutex when accessing it.
+    ThreadSafeQueue<DataFrame> DataFrames_queue;
 
     bool bNewoutFrame = false;
     int image_save_every_N_frame = 1; //default value is 1, which means every frame will be saved

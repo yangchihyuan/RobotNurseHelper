@@ -10,9 +10,10 @@
 #include <thread>
 #include <condition_variable>
 #include "SendMessageManager.hpp"
-#include "SocketHandler.hpp"
+#include "SocketBufferParser.hpp"
 #include "ThreadStateControl.hpp"
 #include "ThreadProcessImage.hpp"
+#include "ThreadSafeQueue.hpp"
 
 #ifdef USE_KEBBI
     #include "Kebbi/RobotCommand.pb.h"
@@ -22,7 +23,7 @@
 
 using namespace std;
 
-class ThreadReceiveMessages: public QThread
+class ThreadReceiveMessage: public QThread
 {
     Q_OBJECT
 
@@ -31,7 +32,8 @@ public:
     condition_variable cond_var_receive_messages;
 
     SendMessageManager *pSendMessageManager;
-    SocketHandler *pSocketHandler;
+    //Because there are two clients connecting to this port: Tablet and Robot app, te DataFrames_queue should be inside the ThreadReceiveMessage class.
+    ThreadSafeQueue<DataFrame> DataFrames_queue;
     ThreadStateControl *mpThreadStateControl;
     ThreadProcessImage *mpThreadProcessImage;
 protected:

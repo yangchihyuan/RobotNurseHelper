@@ -34,7 +34,7 @@ void MainWindow::startThreads()
     //run threads
     thread_process_image.start();
     thread_process_audio.start();
-    thread_receive_messages.start();
+    thread_receive_message.start();
     thread_whisper.start();
     thread_ollama.start();
     thread_state_control.start();
@@ -43,6 +43,8 @@ void MainWindow::startThreads()
 
 MainWindow::~MainWindow()
 {
+    timer->stop(); // Stop the timer immediately
+
     //kill the app
     if( sendMessageManager.pSocket != nullptr && sendMessageManager.pSocket->state() == QAbstractSocket::ConnectedState )
     {
@@ -80,17 +82,17 @@ MainWindow::~MainWindow()
     }
 
     cout << "Waiting for thread_recieve_message to exit" << endl;
-    thread_receive_messages.b_WhileLoop = false;
-    thread_receive_messages.cond_var_receive_messages.notify_one();
-    thread_receive_messages.wait();
+    thread_receive_message.b_WhileLoop = false;
+    thread_receive_message.cond_var_receive_messages.notify_one();
+    thread_receive_message.wait();
     
     foreach (QTcpSocket* socket, connection_set4)
     {
         socket->close();
         socket->deleteLater();
     }
-    m_server_receive_messages->close();
-    m_server_receive_messages->deleteLater();
+    m_server_receive_message->close();
+    m_server_receive_message->deleteLater();
   
     thread_whisper.b_WhileLoop = false;
     thread_whisper.wait();
@@ -173,18 +175,9 @@ void MainWindow::setLanguage( QString Language)
         SentenceFileName = "Sentence_Chinese.txt";
 
         //2025/8/13 I no longer use this prompt.
-/*
-        thread_ollama.bio_summary_prompt = R"(請總結目前收集到的關於病患的重要資訊。格式如下（僅為範例）：
-        **病患摘要：**
-        - 年齡：8
-        - 姓名：楊智淵
-        - 主要症狀：胃痛
-        - 部位：胃部
-        - 疼痛強度與其他問題：感覺胃在喉嚨裡。)";
-*/
-        thread_ollama.check_stage_prompt = "是否已完整收集病患的年齡、姓名、疼痛強度（或等級）以及症狀／主要主訴資訊？這對於判斷是否繼續提問非常重要。請回答是或否。如果是否，請說明缺失的資訊。";
-        thread_ollama.no_response = "病患沒有回應。請繼續你正在說的內容。";
-        thread_ollama.dance_complete = "病人選擇的舞蹈已經完成";
+//        thread_ollama.check_stage_prompt = "是否已完整收集病患的年齡、姓名、疼痛強度（或等級）以及症狀／主要主訴資訊？這對於判斷是否繼續提問非常重要。請回答是或否。如果是否，請說明缺失的資訊。";
+//        thread_ollama.no_response = "病患沒有回應。請繼續你正在說的內容。";
+//        thread_ollama.dance_complete = "病人選擇的舞蹈已經完成";
     }
     else if( Language == "English")
     {
@@ -269,16 +262,19 @@ void MainWindow::setImageSaveEveryNFrame(int N)
     }
 }
 
-
-
-//This funciton is called when socket is connected.
-void MainWindow::newConnection()
+void MainWindow::newConnection_receive_image()
 {
-    std::cout << "newConnction() 8895" << std::endl;
     thread_state_control.cond_var_state_control.notify_one();
-    //Because of the loop, it always waits for new connections.
-    while (m_server_receive_image->hasPendingConnections())
-        appendToSocketList(m_server_receive_image->nextPendingConnection());
+  
+    while (m_server_receive_image->hasPendingConnections()) {
+        QTcpSocket* socket = m_server_receive_image->nextPendingConnection();
+        
+        SocketClientHandler_Image* handler = new SocketClientHandler_Image(socket, this);
+        Handler_set.insert(handler);
+        handler->socketBufferParser_Image.pDataFrames_queue = &thread_process_image.DataFrames_queue;
+        handler->socketBufferParser_Image.thread_process_image = &thread_process_image;
+        qDebug() << "New connection 8895 from:" << socket->peerAddress().toString();
+    }    
 }
 
 void MainWindow::newConnection_send_command()
@@ -295,20 +291,17 @@ void MainWindow::newConnection_receive_audio()
         appendToSocketList3(m_server_receive_audio->nextPendingConnection());
 }
 
-void MainWindow::newConnection_Tablet()
+void MainWindow::newConnection_receive_message()
 {
-    std::cout << "newConnction() 8898" << std::endl;
-    while (m_server_receive_messages->hasPendingConnections())
-        appendToSocketList4(m_server_receive_messages->nextPendingConnection());
-}
-
-//Define the behavior of a socket.
-void MainWindow::appendToSocketList(QTcpSocket* socket)
-{
-    connection_set.insert(socket);
-    connect(socket, &QTcpSocket::readyRead, this, &MainWindow::readSocket);
-    connect(socket, &QTcpSocket::disconnected, this, &MainWindow::discardSocket);
-    connect(socket, &QAbstractSocket::errorOccurred, this, &MainWindow::displayError);
+    while (m_server_receive_message->hasPendingConnections()) {
+        QTcpSocket* socket = m_server_receive_message->nextPendingConnection();
+        
+        SocketClientHandler_Message* handler = new SocketClientHandler_Message(socket, this);
+        Handler_set.insert(handler);
+        handler->socketBufferParser_Message.pDataFrames_queue = &thread_receive_message.DataFrames_queue;
+        handler->socketBufferParser_Message.thread_receive_message = &thread_receive_message;
+        qDebug() << "New connection 8898 from:" << socket->peerAddress().toString();
+    }    
 }
 
 //There is no readSocket because I only use this connection to send commands.
@@ -328,30 +321,7 @@ void MainWindow::appendToSocketList3(QTcpSocket* socket)
     connect(socket, &QAbstractSocket::errorOccurred, this, &MainWindow::displayError);
 }
 
-void MainWindow::appendToSocketList4(QTcpSocket* socket)
-{
-    connection_set4.insert(socket);
-    connect(socket, &QTcpSocket::readyRead, this, &MainWindow::readSocket4);
-    connect(socket, &QTcpSocket::disconnected, this, &MainWindow::discardSocket4);
-    connect(socket, &QAbstractSocket::errorOccurred, this, &MainWindow::displayError);
-}
-
-void MainWindow::readSocket()
-{
-    //sender() is a function of Qt to get the data source of this function.
-    QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
-
-    QDataStream socketStream(socket);
-    qint64 byteAvailable = socket->bytesAvailable();
-
-
-    unique_ptr<char[]> pReadData = std::make_unique<char[]>(byteAvailable);
-    qint64 readlength = socketStream.readRawData(pReadData.get(), byteAvailable);
-    socketHandler1.add_data(pReadData.get(), byteAvailable);
-    //If there is no image in the queue, I don't want the thread run.
-    thread_process_image.cond_var_process_image.notify_one();
-}
-
+//read audio data from socket
 void MainWindow::readSocket3()
 {
     QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
@@ -400,30 +370,6 @@ void MainWindow::readSocket3()
 
 }
 
-void MainWindow::readSocket4()
-{
-    QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
-
-    QDataStream socketStream(socket);
-    qint64 byteAvailable = socket->bytesAvailable();
-
-    unique_ptr<char[]> pReadData = std::make_unique<char[]>(byteAvailable);
-    qint64 readlength = socketStream.readRawData(pReadData.get(), byteAvailable);
-    socketHandler4.add_data(pReadData.get(), byteAvailable);
-    thread_receive_messages.cond_var_receive_messages.notify_one();
-}
-
-void MainWindow::discardSocket()
-{
-    QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
-    QSet<QTcpSocket*>::iterator it = connection_set.find(socket);
-    if (it != connection_set.end()){
-        cout << "INFO :: A client has just left the room 8895" << endl;
-        connection_set.remove(*it);
-    }
-    
-    socket->deleteLater();
-}
 
 void MainWindow::discardSocket2()
 {
@@ -434,6 +380,7 @@ void MainWindow::discardSocket2()
         connection_set2.remove(*it);
     }
     socket->deleteLater();
+    sendMessageManager.pSocket = nullptr;
 }
 
 void MainWindow::discardSocket3()
@@ -443,18 +390,6 @@ void MainWindow::discardSocket3()
     if (it != connection_set3.end()){
         cout << "INFO :: A client has just left the room 8897" << endl;
         connection_set3.remove(*it);
-    }
-    
-    socket->deleteLater();
-}
-
-void MainWindow::discardSocket4()
-{
-    QTcpSocket* socket = reinterpret_cast<QTcpSocket*>(sender());
-    QSet<QTcpSocket*>::iterator it = connection_set4.find(socket);
-    if (it != connection_set4.end()){
-        cout << "INFO :: A client has just left the room 8898" << endl;
-        connection_set4.remove(*it);
     }
     
     socket->deleteLater();

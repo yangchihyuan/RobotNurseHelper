@@ -1,4 +1,7 @@
-#include "SocketHandler.hpp"
+#include "SocketBufferParser.hpp"
+#include "ThreadProcessImage.hpp"
+#include "ThreadReceiveMessage.hpp"
+
 #define _DEFAULT_BUFFER_SIZE 5000000
 #include <iostream>  // for cout and endl
 #include <string>  // for string
@@ -8,18 +11,18 @@
 #include <string.h>   // for memcpy
 using namespace std;
 
-SocketHandler::SocketHandler()
+SocketBufferParser::SocketBufferParser()
 {
     buffer_size = _DEFAULT_BUFFER_SIZE;
     buffer = make_unique<char[]>(buffer_size);
 }
 
-SocketHandler::SocketHandler(size_t buffer_size)
+SocketBufferParser::SocketBufferParser(size_t buffer_size)
 {
     buffer = make_unique<char[]>(buffer_size);
 }
 
-SocketHandler::SocketHandler(string delimiter_head, string delimiter_tail)
+SocketBufferParser::SocketBufferParser(string delimiter_head, string delimiter_tail)
 {
     buffer_size = _DEFAULT_BUFFER_SIZE;
     buffer = make_unique<char[]>(buffer_size);
@@ -27,17 +30,17 @@ SocketHandler::SocketHandler(string delimiter_head, string delimiter_tail)
     this->delimiter_tail = delimiter_tail;
 }
 
-SocketHandler::~SocketHandler()
+SocketBufferParser::~SocketBufferParser()
 {
 }
 
-void SocketHandler::set_delimiter(string delimiter_head, string delimiter_tail)
+void SocketBufferParser::set_delimiter(string delimiter_head, string delimiter_tail)
 {
     this->delimiter_head = delimiter_head;
     this->delimiter_tail = delimiter_tail;
 }
 
-void SocketHandler::add_data(char* data_, size_t length)
+void SocketBufferParser::add_data(char* data_, size_t length)
 {
     size_t buffer_length_old = buffer_length;
 
@@ -108,9 +111,9 @@ void SocketHandler::add_data(char* data_, size_t length)
                     this_DataFrame.data = shared_ptr<char[]>(new char[DataFrame_length]);
                     this_DataFrame.length = DataFrame_length;
                     memcpy(this_DataFrame.data.get(), buffer.get()+delimiter_head.length()+sizeof(int), DataFrame_length);
-                    queue_mutex.lock();
-                    DataFrames_queue.push(this_DataFrame);
-                    queue_mutex.unlock();
+                    pDataFrames_queue->push(this_DataFrame);
+
+                    notify_thread();
                 }
             }
  
@@ -135,65 +138,72 @@ void SocketHandler::add_data(char* data_, size_t length)
 
 }
 
-size_t SocketHandler::get_queue_length()
-{
-    queue_mutex.lock();
-    size_t length = DataFrames_queue.size();
-    queue_mutex.unlock();
-    return length;
-}
-
-DataFrame SocketHandler::get_head()
-{   
-    queue_mutex.lock();
-    DataFrame DataFrame = DataFrames_queue.front();
-    queue_mutex.unlock();
-    return DataFrame;
-}
-
-void SocketHandler::pop_head()
-{
-    queue_mutex.lock();
-    DataFrames_queue.pop();
-    queue_mutex.unlock();
-}
-
-void SocketHandler::clear_queue()
-{
-    queue_mutex.lock();
-    while( !DataFrames_queue.empty())
-        DataFrames_queue.pop();
-    queue_mutex.unlock();
-}
-
-string SocketHandler::get_delimiter_head()
+string SocketBufferParser::get_delimiter_head()
 {
     return delimiter_head;
 }
 
-string SocketHandler::get_delimiter_tail()
+string SocketBufferParser::get_delimiter_tail()
 {
     return delimiter_tail;
 }
 
-void SocketHandler::set_buffer(char* data_, size_t length)
+void SocketBufferParser::set_buffer(char* data_, size_t length)
 {
     copy(data_, data_+length, buffer.get());
     buffer_length = length;
 }
 
-char* SocketHandler::get_buffer()
+char* SocketBufferParser::get_buffer()
 {
     return buffer.get();
 }
 
-size_t SocketHandler::get_buffer_length()
+size_t SocketBufferParser::get_buffer_length()
 {
     return buffer_length;
 }
 
-size_t SocketHandler::get_buffer_size()
+size_t SocketBufferParser::get_buffer_size()
 {
     return buffer_size;
 }
 
+void SocketBufferParser::notify_thread()
+{
+    // Default implementation: do nothing
+}
+
+SocketBufferParser_Image::SocketBufferParser_Image()
+    : SocketBufferParser()
+{
+}  
+
+SocketBufferParser_Image::~SocketBufferParser_Image()
+{
+}
+
+void SocketBufferParser_Image::notify_thread()
+{
+    if( thread_process_image != nullptr )
+    {
+        thread_process_image->cond_var_process_image.notify_one();
+    }
+}
+
+SocketBufferParser_Message::SocketBufferParser_Message()
+    : SocketBufferParser()
+{
+}  
+
+SocketBufferParser_Message::~SocketBufferParser_Message()
+{
+}
+
+void SocketBufferParser_Message::notify_thread()
+{
+    if( thread_receive_message != nullptr )
+    {
+        thread_receive_message->cond_var_receive_messages.notify_one();
+    }
+}
