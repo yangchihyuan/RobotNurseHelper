@@ -90,9 +90,7 @@ void ThreadProcessImage::run()
 
     while(b_WhileLoop)
     {
-        mutex mtx;
-        unique_lock<mutex> lk(mtx);
-        cond_var_process_image.wait(lk);
+        
         if( DataFrames_queue.size() > 0 )
         {
             auto start = std::chrono::high_resolution_clock::now();
@@ -101,7 +99,6 @@ void ThreadProcessImage::run()
             //Maybe it takes less time if I use a faster PC.
             while (DataFrames_queue.size() > 0)
             {
-//                dataframe = DataFrames_queue.front();
                 DataFrames_queue.pop(dataframe);
             }
             char *data_ = dataframe.data.get();
@@ -471,6 +468,7 @@ void ThreadProcessImage::run()
             }
 
         } //if( pSocketBufferParser->get_queue_length() > 0 )
+        msleep(1);   //to prevent CPU usage too high
     } //while(b_WhileLoop)
     cout << "Exit ThreadProcessImage loop." << endl;
 }

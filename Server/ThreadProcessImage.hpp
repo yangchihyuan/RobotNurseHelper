@@ -10,13 +10,11 @@
 #include <mutex>
 #include <thread>
 #include <condition_variable>
-//#include "SocketBufferParser.hpp"
 #include "ThreadSafeQueue.hpp"
 #include "SendMessageManager.hpp"
 #include "ActionOption.hpp"
 #include <opencv2/opencv.hpp>
 
-class SocketBufferParser;
 struct DataFrame;
 
 //EmotiEffLib
@@ -123,10 +121,8 @@ public:
     bool bSaveTransmittedImage = false;
     bool m_bRecognizeFacialExpression = true;
     string ImageSaveDirectory = ""; //default value is empty, which means not saving images
-    condition_variable cond_var_process_image;
 
     SendMessageManager *pSendMessageManager;
-    //This queue is not thread-safe. Need to use mutex when accessing it.
     ThreadSafeQueue<DataFrame> DataFrames_queue;
 
     bool bNewoutFrame = false;

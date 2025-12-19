@@ -12,7 +12,7 @@ void ThreadReceiveMessage::run()
     while(b_WhileLoop)
     {
         std::unique_lock<std::mutex> lk(mtx);
-        cond_var_receive_messages.wait(lk);
+        cond_var_receive_message.wait(lk);
 
         while(DataFrames_queue.size() > 0 )    //process all messages in the queue{
         {

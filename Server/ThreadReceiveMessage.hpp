@@ -29,7 +29,7 @@ class ThreadReceiveMessage: public QThread
 
 public:
     bool b_WhileLoop = true;
-    condition_variable cond_var_receive_messages;
+    condition_variable cond_var_receive_message;
 
     SendMessageManager *pSendMessageManager;
     //Because there are two clients connecting to this port: Tablet and Robot app, te DataFrames_queue should be inside the ThreadReceiveMessage class.

@@ -112,8 +112,8 @@ void SocketBufferParser::add_data(char* data_, size_t length)
                     this_DataFrame.length = DataFrame_length;
                     memcpy(this_DataFrame.data.get(), buffer.get()+delimiter_head.length()+sizeof(int), DataFrame_length);
                     pDataFrames_queue->push(this_DataFrame);
-
-                    notify_thread();
+                    if( pNofitiedCondVar != nullptr )
+                        pNofitiedCondVar->notify_one();
                 }
             }
  
@@ -167,43 +167,4 @@ size_t SocketBufferParser::get_buffer_length()
 size_t SocketBufferParser::get_buffer_size()
 {
     return buffer_size;
-}
-
-void SocketBufferParser::notify_thread()
-{
-    // Default implementation: do nothing
-}
-
-SocketBufferParser_Image::SocketBufferParser_Image()
-    : SocketBufferParser()
-{
-}  
-
-SocketBufferParser_Image::~SocketBufferParser_Image()
-{
-}
-
-void SocketBufferParser_Image::notify_thread()
-{
-    if( thread_process_image != nullptr )
-    {
-        thread_process_image->cond_var_process_image.notify_one();
-    }
-}
-
-SocketBufferParser_Message::SocketBufferParser_Message()
-    : SocketBufferParser()
-{
-}  
-
-SocketBufferParser_Message::~SocketBufferParser_Message()
-{
-}
-
-void SocketBufferParser_Message::notify_thread()
-{
-    if( thread_receive_message != nullptr )
-    {
-        thread_receive_message->cond_var_receive_messages.notify_one();
-    }
 }

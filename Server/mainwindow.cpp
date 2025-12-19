@@ -65,7 +65,6 @@ MainWindow::~MainWindow()
     //close thread_process_image's loop
     cout << "Waiting for thread_process_image to exit" << endl;
     thread_process_image.b_WhileLoop = false;
-    thread_process_image.cond_var_process_image.notify_one();
     thread_process_image.wait();
     foreach (QTcpSocket* socket, connection_set)
     {
@@ -83,7 +82,7 @@ MainWindow::~MainWindow()
 
     cout << "Waiting for thread_recieve_message to exit" << endl;
     thread_receive_message.b_WhileLoop = false;
-    thread_receive_message.cond_var_receive_messages.notify_one();
+    thread_receive_message.cond_var_receive_message.notify_one();
     thread_receive_message.wait();
     
     foreach (QTcpSocket* socket, connection_set4)
@@ -113,8 +112,6 @@ MainWindow::~MainWindow()
     cout << "Waiting for thread_process_audio to exit" << endl;
     gbPlayAudio = false;        //This variable does not work yet.
     cond_var_audio.notify_one();      //I need to resume this thread.
-//    cond_var_audio.notify_one();        //I need to notify twice to ensure the thread is resumed.
-//    cond_var_audio.notify_one();        //I need to notify more to ensure the thread is resumed.
     foreach (QTcpSocket* socket, connection_set3)
     {
         socket->close();
@@ -173,11 +170,6 @@ void MainWindow::setLanguage( QString Language)
         
         thread_whisper.strLanguage = "zh"; // set language to Chinese (可維持此行不變)
         SentenceFileName = "Sentence_Chinese.txt";
-
-        //2025/8/13 I no longer use this prompt.
-//        thread_ollama.check_stage_prompt = "是否已完整收集病患的年齡、姓名、疼痛強度（或等級）以及症狀／主要主訴資訊？這對於判斷是否繼續提問非常重要。請回答是或否。如果是否，請說明缺失的資訊。";
-//        thread_ollama.no_response = "病患沒有回應。請繼續你正在說的內容。";
-//        thread_ollama.dance_complete = "病人選擇的舞蹈已經完成";
     }
     else if( Language == "English")
     {
@@ -269,10 +261,11 @@ void MainWindow::newConnection_receive_image()
     while (m_server_receive_image->hasPendingConnections()) {
         QTcpSocket* socket = m_server_receive_image->nextPendingConnection();
         
-        SocketClientHandler_Image* handler = new SocketClientHandler_Image(socket, this);
+//        SocketClientHandler_Image* handler = new SocketClientHandler_Image(socket, this);
+        SocketClientHandler* handler = new SocketClientHandler(socket, this);
         Handler_set.insert(handler);
-        handler->socketBufferParser_Image.pDataFrames_queue = &thread_process_image.DataFrames_queue;
-        handler->socketBufferParser_Image.thread_process_image = &thread_process_image;
+        handler->socketBufferParser.pDataFrames_queue = &thread_process_image.DataFrames_queue;
+//        handler->socketBufferParser_Image.thread_process_image = &thread_process_image;
         qDebug() << "New connection 8895 from:" << socket->peerAddress().toString();
     }    
 }
@@ -296,10 +289,10 @@ void MainWindow::newConnection_receive_message()
     while (m_server_receive_message->hasPendingConnections()) {
         QTcpSocket* socket = m_server_receive_message->nextPendingConnection();
         
-        SocketClientHandler_Message* handler = new SocketClientHandler_Message(socket, this);
+        SocketClientHandler* handler = new SocketClientHandler(socket, this);
         Handler_set.insert(handler);
-        handler->socketBufferParser_Message.pDataFrames_queue = &thread_receive_message.DataFrames_queue;
-        handler->socketBufferParser_Message.thread_receive_message = &thread_receive_message;
+        handler->socketBufferParser.pDataFrames_queue = &thread_receive_message.DataFrames_queue;
+        handler->socketBufferParser.pNofitiedCondVar = &thread_receive_message.cond_var_receive_message;
         qDebug() << "New connection 8898 from:" << socket->peerAddress().toString();
     }    
 }
