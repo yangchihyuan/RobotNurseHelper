@@ -103,20 +103,25 @@ void ThreadProcessImage::run()
             }
             char *data_ = dataframe.data.get();
             
+            bool bCorrectlyDecoded = false;
+
             //Here, I need to parse the protobuf object
             //I don't know why it does not work.
-//            RobotCommandProtobuf::RobotToServerMessage RTSmessage;
-//            RTSmessage.ParseFromString(data_);
-            bool bCorrectlyDecoded = false;
-//            if( RTSmessage.has_jpegdata() && RTSmessage.has_jpegdatalength())
-//            {
-//                google::protobuf::Timestamp timestamp = RTSmessage.event_time();
-//                cout << "Receive an Image at " << timestamp.seconds() << " " << timestamp.nanos() << endl;
-//                string strJPEG_Data = RTSmessage.jpegdata();
-//                vector<uchar> JPEG_Data(strJPEG_Data.begin(), strJPEG_Data.end());
-//                int iJPEG_length = RTSmessage.jpegdatalength();
+            /*
+            RobotCommandProtobuf::RobotToServerMessage RTSmessage;
+            RTSmessage.ParseFromString(data_);
+            std::vector<uchar> JPEG_Data;
+            if( RTSmessage.has_jpegdata() && RTSmessage.has_jpegdatalength())
+            {
+                google::protobuf::Timestamp timestamp = RTSmessage.event_time();
+                cout << "Receive an Image at " << timestamp.seconds() << " " << timestamp.nanos() << endl;
+                string strJPEG_Data = RTSmessage.jpegdata();
+                vector<uchar> JPEG_Data(strJPEG_Data.begin(), strJPEG_Data.end());
+                int iJPEG_length = RTSmessage.jpegdatalength();
+            }
+                */
 
-
+            
             string heading(data_);
 
             //Check the correctness of this frame buffer
@@ -215,7 +220,7 @@ void ThreadProcessImage::run()
                                 m_bDirectoryCreated = true;
                             }
                         }
-                        save_image_JPEG(data_ + shift_length, iJPEG_length , filename);
+//                        save_image_JPEG(data_ + shift_length, iJPEG_length , filename);
                         save_image_JPEG(JPEG_Data, filename);
                         iFrameCount = 0; //reset the frame count
                     }
