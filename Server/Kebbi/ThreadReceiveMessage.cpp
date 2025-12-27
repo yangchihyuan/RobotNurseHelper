@@ -20,10 +20,11 @@ void ThreadReceiveMessage::run()
             DataFrame dataframe;// = DataFrames_queue.front();
             DataFrames_queue.pop(dataframe);
             char *data_ = dataframe.data.get();
+            size_t data_length = dataframe.length;
 
             //Here, I need to parse the protobuf object
             RobotCommandProtobuf::RobotToServerMessage RTSmessage;
-            RTSmessage.ParseFromString(data_);
+            RTSmessage.ParseFromArray(data_, static_cast<int>(data_length));
 
             if( RTSmessage.has_description())
             {

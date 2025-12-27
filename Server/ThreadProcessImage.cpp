@@ -102,26 +102,42 @@ void ThreadProcessImage::run()
                 DataFrames_queue.pop(dataframe);
             }
             char *data_ = dataframe.data.get();
+            size_t data_length = dataframe.length;
             
             bool bCorrectlyDecoded = false;
 
             //Here, I need to parse the protobuf object
             //I don't know why it does not work.
-            /*
+            
             RobotCommandProtobuf::RobotToServerMessage RTSmessage;
-            RTSmessage.ParseFromString(data_);
-            std::vector<uchar> JPEG_Data;
+            cout << "RTSmessage size: " << RTSmessage.ByteSizeLong() << endl;
+            //2025/12/27 Debug, to parse socket buffer data, I should use ParseFromArray instead of ParseFromString.
+            bool parseSuccess = RTSmessage.ParseFromArray(data_, static_cast<int>(data_length));
+            if (!parseSuccess) {
+                cout << "Failed to parse protobuf message" << endl;
+                continue;
+            }
+            std::vector<uchar> JPEG_Data;  //2025/12/27 Debug: I declare the JPEG_Data twice. I copy the RTSmessage.jpegdata to the second one in the if section. The first one before the if section is still empty.
             if( RTSmessage.has_jpegdata() && RTSmessage.has_jpegdatalength())
             {
-                google::protobuf::Timestamp timestamp = RTSmessage.event_time();
-                cout << "Receive an Image at " << timestamp.seconds() << " " << timestamp.nanos() << endl;
+            //    google::protobuf::Timestamp timestamp = RTSmessage.event_time();
+            //    cout << "Receive an Image at " << timestamp.seconds() << " " << timestamp.nanos() << endl;
                 string strJPEG_Data = RTSmessage.jpegdata();
-                vector<uchar> JPEG_Data(strJPEG_Data.begin(), strJPEG_Data.end());
+                if (strJPEG_Data.length() == 0) {
+                    cout << "Warning: jpegdata is empty" << endl;
+                }
+                JPEG_Data.assign(strJPEG_Data.begin(), strJPEG_Data.end());
                 int iJPEG_length = RTSmessage.jpegdatalength();
+                cout << "JPEG length: " << iJPEG_length << " JPEG_Data length: " << JPEG_Data.size() << " string length: " << strJPEG_Data.length() << endl;
             }
-                */
-
+            else
+            {
+                cout << "No jpegdata or jpegdatalength in the protobuf message" << endl;
+                continue;
+            }
             
+
+            /*
             string heading(data_);
 
             //Check the correctness of this frame buffer
@@ -179,7 +195,12 @@ void ThreadProcessImage::run()
             //The reason is that the imdecode() function fails to decode the JPEG image. 
             std::vector<uchar> JPEG_Data(data_ + shift_length, data_+shift_length+iJPEG_length);
 
+            */
             try{
+                if (JPEG_Data.empty()) {
+                    cout << "JPEG_Data is empty, skipping imdecode." << endl;
+                    continue;
+                }
                 inputImage = imdecode(JPEG_Data, IMREAD_COLOR);
                 if( inputImage.data )
                 {
@@ -194,7 +215,7 @@ void ThreadProcessImage::run()
             }
             catch(exception &e)
             {
-                cout << "imdecode try catch exception." << endl;
+                cout << "imdecode try catch exception: " << e.what() << endl;
             }
 
             if( bCorrectlyDecoded)

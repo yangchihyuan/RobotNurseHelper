@@ -436,41 +436,43 @@ public class SocketManager {
         }
     }
 
+    //This is used by 8898. 8895 does not use it.
     public void sendAMessage( RobotCommandOuterClass.RobotToServerMessage message)
     {
         sendAMessage(message, mSocketSendMessages);
     }
 
+    //This function is used by sendAMessage and sendAImage. The only difference is the Socket parameter
     public void sendAMessage( RobotCommandOuterClass.RobotToServerMessage message, Socket mSocket)
     {
         HandlerThread thread = new HandlerThread("SocketProcess");
         thread.start();
         Handler handler = new Handler(thread.getLooper());
         handler.post(new Runnable() {
-                         @Override
-                         public void run() {
-                             try {
-                                 if (mSocket.isConnected()) {
-                                     OutputStream os = mSocket.getOutputStream();
-                                     os.write("BeginOfADataFrame".getBytes());
+            @Override
+            public void run() {
+                try {
+                    if (mSocket.isConnected()) {
+                        OutputStream os = mSocket.getOutputStream();
+                        os.write("BeginOfADataFrame".getBytes());
 
-                                     byte[] byteArray = message.toByteArray();
+                        byte[] byteArray = message.toByteArray();
 
-                                     int message_length = byteArray.length;
-                                     ByteBuffer message_length_buffer = ByteBuffer.allocate(4);
-                                     message_length_buffer.order(ByteOrder.LITTLE_ENDIAN); // Ubuntu byte order
-                                     message_length_buffer.putInt(message_length);
-                                     os.write(message_length_buffer.array());
+                        int message_length = byteArray.length;
+                        ByteBuffer message_length_buffer = ByteBuffer.allocate(4);
+                        message_length_buffer.order(ByteOrder.LITTLE_ENDIAN); // Ubuntu byte order
+                        message_length_buffer.putInt(message_length);
+                        os.write(message_length_buffer.array());
 
-                                     os.write(message.toByteArray());
-
-                                     os.write("EndOfADataFrame".getBytes());
-                                 }
-                             } catch (Exception e) {
-                                 e.printStackTrace();
-                             }
-                         }
-                     }
+                        os.write(message.toByteArray());
+                        Log.d("Debug", "message length: " + message.getSerializedSize());
+                        os.write("EndOfADataFrame".getBytes());
+                    }
+                } catch (Exception e) {
+                 e.printStackTrace();
+                }
+            }
+        }
         );
     }
 
