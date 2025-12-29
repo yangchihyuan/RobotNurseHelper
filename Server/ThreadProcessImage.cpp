@@ -106,11 +106,7 @@ void ThreadProcessImage::run()
             
             bool bCorrectlyDecoded = false;
 
-            //Here, I need to parse the protobuf object
-            //I don't know why it does not work.
-            
             RobotCommandProtobuf::RobotToServerMessage RTSmessage;
-            cout << "RTSmessage size: " << RTSmessage.ByteSizeLong() << endl;
             //2025/12/27 Debug, to parse socket buffer data, I should use ParseFromArray instead of ParseFromString.
             bool parseSuccess = RTSmessage.ParseFromArray(data_, static_cast<int>(data_length));
             if (!parseSuccess) {
@@ -120,15 +116,11 @@ void ThreadProcessImage::run()
             std::vector<uchar> JPEG_Data;  //2025/12/27 Debug: I declare the JPEG_Data twice. I copy the RTSmessage.jpegdata to the second one in the if section. The first one before the if section is still empty.
             if( RTSmessage.has_jpegdata() && RTSmessage.has_jpegdatalength())
             {
-            //    google::protobuf::Timestamp timestamp = RTSmessage.event_time();
-            //    cout << "Receive an Image at " << timestamp.seconds() << " " << timestamp.nanos() << endl;
                 string strJPEG_Data = RTSmessage.jpegdata();
                 if (strJPEG_Data.length() == 0) {
                     cout << "Warning: jpegdata is empty" << endl;
                 }
                 JPEG_Data.assign(strJPEG_Data.begin(), strJPEG_Data.end());
-                int iJPEG_length = RTSmessage.jpegdatalength();
-                cout << "JPEG length: " << iJPEG_length << " JPEG_Data length: " << JPEG_Data.size() << " string length: " << strJPEG_Data.length() << endl;
             }
             else
             {
@@ -136,66 +128,6 @@ void ThreadProcessImage::run()
                 continue;
             }
             
-
-            /*
-            string heading(data_);
-
-            //Check the correctness of this frame buffer
-            if( heading.length() != 17){
-                cout << "heading length incorrect'" << endl;
-                continue;
-            }
-
-
-            string sJPEG_length(data_+heading.length()+1);
-            int iJPEG_length = 0;
-            try{
-                iJPEG_length = stoi(sJPEG_length);
-            }
-            catch(exception &e){
-                cout << "Convert sJPEG_length to iJPEG_length fails" << endl;
-                continue;
-            }
-
-            //check JPEG signature
-            int shift_length = 13 + 1 + 3 + 1 + sJPEG_length.length() + 1;
-            if( !(static_cast<int>(static_cast<unsigned char>(data_[shift_length])) == 0xFF &&
-                static_cast<int>(static_cast<unsigned char>(data_[shift_length+1])) == 0xD8 &&
-                static_cast<int>(static_cast<unsigned char>(data_[shift_length+2])) == 0xFF 
-                && static_cast<int>(static_cast<unsigned char>(data_[shift_length+iJPEG_length-2])) == 0xFF
-               && static_cast<int>(static_cast<unsigned char>(data_[shift_length+iJPEG_length-1])) == 0xD9 
-           ))
-            {
-                cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length])) << endl;
-                cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length+1])) << endl;
-                cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length+2])) << endl;
-                cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length+iJPEG_length-2])) << endl;
-                cout << static_cast<int>(static_cast<unsigned char>(data_[shift_length+iJPEG_length-1])) << endl;
-                cout << "JPEG signature does not match" << endl;
-                continue;
-            }
-
-            string header(data_);
-            string str_timestamp = header.substr(0,13);
-            string str_is_dancing = header.substr(14,3);
-
-            long timestamp = 0;
-            is_dancing = 0;             //Here is a logical problem. While Kebbi is dancing, I won't receive image frames, and don't know if it is still dancing.
-            try{
-                timestamp = stol(str_timestamp);                
-                is_dancing = stoi(str_is_dancing);   //2025 Aug 5: Mohamed wants the server-side program to know that the robot is dancing.
-            }
-            catch(exception &e)
-            {
-                throw("cannot do stol");
-            }
-            //2025/3/9 Bug note: my previous end argument is wrong: data_+iJPEG_length where "+30" is missing.
-            //In OpenCV 4.6, imdecode still works, but in OpenCV 4.11 and 4.12, it fails.
-            //That is the reason that in my imshow() output window, the bottom region is always blurred.
-            //The reason is that the imdecode() function fails to decode the JPEG image. 
-            std::vector<uchar> JPEG_Data(data_ + shift_length, data_+shift_length+iJPEG_length);
-
-            */
             try{
                 if (JPEG_Data.empty()) {
                     cout << "JPEG_Data is empty, skipping imdecode." << endl;
@@ -485,7 +417,7 @@ void ThreadProcessImage::run()
             }    //if bCorrectlyDecoded
 
             //debug code, to messure the processing time
-            bool bShowTransmittedImage = true;
+            bool bShowTransmittedImage = false;
             if( bShowTransmittedImage )
             {
                 auto stop = std::chrono::high_resolution_clock::now();

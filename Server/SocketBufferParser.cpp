@@ -71,26 +71,33 @@ void SocketBufferParser::add_data(char* data_, size_t length)
     else
         buffer_section.assign(buffer.get(), buffer_length); 
 
+    //The incoming data may contain multiple DataFrames
     bool bloop_find = true;
     while( bloop_find )
     {
         size_t n = buffer_section.find(delimiter_tail);
 
-        //if found, check the delimiter_head and prefixed length
-        if (n != string::npos)
+        if(n == string::npos)  //not found
+        {
+            bloop_find = false;         //exit this while loop
+        }
+        else          //if found, check the delimiter_head and prefixed length
         {
             //length1 means the length between two delimiter_tail, including the delimiter_tail.
             int length1 = begin_pos + n + delimiter_tail.length();
 
             //check the delimiter_head
-            string buffer_section_head(buffer.get(), delimiter_head.length());
-            if( buffer_section_head != delimiter_head)
+            string buffer_section_head(buffer.get(), delimiter_head.length());      
+            if( buffer_section_head != delimiter_head)        //This may fail, check reason.
             {
-                cout << "Received Delimiter_head: " << buffer_section_head << endl;
+//                cout << "Received Delimiter_head: " << buffer_section_head << endl;
                 cout << "Delimiter head is incorrect. Drop out this DataFrame" << endl;
-                continue;
+                cout << "Expected Delimiter_head: " << delimiter_head << " buffer_section_head: " << buffer_section_head << endl;
+                //Bug: this should not continue, otherwise, it will fall into an infinite loop.
+//                continue;
             }
-            else{
+            else
+            {
                 //check the DataFrame length
                 int DataFrame_length;
                 memcpy(&DataFrame_length, buffer.get() + delimiter_head.length(), sizeof(int));       //here is wrong, why?
@@ -129,10 +136,6 @@ void SocketBufferParser::add_data(char* data_, size_t length)
             //update buffer_section and begin_pos
             buffer_section.assign(buffer.get(), buffer_length);
             begin_pos = 0;
-        }
-        else
-        {
-            bloop_find = false;
         }
     }
 
