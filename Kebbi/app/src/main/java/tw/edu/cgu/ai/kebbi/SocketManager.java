@@ -292,24 +292,27 @@ public class SocketManager {
     //Main thread will call this function. Thus, I need to create a new thread to execute it
     public void connectSockets()
     {
-        HandlerThread thread = new HandlerThread("Connect Sockets");
-        thread.start();
-        Handler handler = new Handler(thread.getLooper());
+//        HandlerThread thread = new HandlerThread("Connect Sockets");
+//        thread.start();
+//        Handler handler = new Handler(thread.getLooper());
 
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    mSocketSendImages = new Socket(mServerURL, mPortNumber);
-                    mSocketReceiveCommand = new Socket(mServerURL, mPortNumber+1);
-                    mSocketSendAudio =  new Socket(mServerURL, mPortNumber+2);
-                    mSocketSendMessages =  new Socket(mServerURL, mPortNumber+3);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.e("new sockets fail", "new sockets fail" + e.getMessage());
+//        handler.post(new Runnable() {
+        if( handlerCheckDiconnection != null) {
+            handlerCheckDiconnection.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        mSocketSendImages = new Socket(mServerURL, mPortNumber);
+                        mSocketReceiveCommand = new Socket(mServerURL, mPortNumber + 1);
+                        mSocketSendAudio = new Socket(mServerURL, mPortNumber + 2);
+                        mSocketSendMessages = new Socket(mServerURL, mPortNumber + 3);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e("new sockets fail", "new sockets fail" + e.getMessage());
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     public void startThreads() {
@@ -445,35 +448,37 @@ public class SocketManager {
     //This function is used by sendAMessage and sendAImage. The only difference is the Socket parameter
     public void sendAMessage( RobotCommandOuterClass.RobotToServerMessage message, Socket mSocket)
     {
-        HandlerThread thread = new HandlerThread("SocketProcess");
-        thread.start();
-        Handler handler = new Handler(thread.getLooper());
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (mSocket.isConnected()) {
-                        OutputStream os = mSocket.getOutputStream();
-                        os.write("BeginOfADataFrame".getBytes());
+        //HandlerThread thread = new HandlerThread("SocketProcess");
+        //thread.start();
+        //Handler handler = new Handler(thread.getLooper());
+        //handler.post(new Runnable() {
+        if( handlerSendToServer != null){
+            handlerSendToServer.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (mSocket.isConnected()) {
+                            OutputStream os = mSocket.getOutputStream();
+                            os.write("BeginOfADataFrame".getBytes());
 
-                        byte[] byteArray = message.toByteArray();
+                            byte[] byteArray = message.toByteArray();
 
-                        int message_length = byteArray.length;
-                        ByteBuffer message_length_buffer = ByteBuffer.allocate(4);
-                        message_length_buffer.order(ByteOrder.LITTLE_ENDIAN); // Ubuntu byte order
-                        message_length_buffer.putInt(message_length);
-                        os.write(message_length_buffer.array());
+                            int message_length = byteArray.length;
+                            ByteBuffer message_length_buffer = ByteBuffer.allocate(4);
+                            message_length_buffer.order(ByteOrder.LITTLE_ENDIAN); // Ubuntu byte order
+                            message_length_buffer.putInt(message_length);
+                            os.write(message_length_buffer.array());
 
-                        os.write(message.toByteArray());
-                        Log.d("Debug", "message length: " + message.getSerializedSize());
-                        os.write("EndOfADataFrame".getBytes());
+                            os.write(message.toByteArray());
+                            Log.d("Debug", "message length: " + message.getSerializedSize());
+                            os.write("EndOfADataFrame".getBytes());
+                            }
+                    } catch (Exception e) {
+                     e.printStackTrace();
                     }
-                } catch (Exception e) {
-                 e.printStackTrace();
                 }
-            }
+            });
         }
-        );
     }
 
 }

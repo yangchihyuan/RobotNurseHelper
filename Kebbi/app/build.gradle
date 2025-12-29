@@ -84,6 +84,9 @@ dependencies {
     implementation "androidx.camera:camera-lifecycle:1.5.0"
     implementation "androidx.camera:camera-view:1.5.0"
     implementation "androidx.lifecycle:lifecycle-service:2.9.4"
+
+    //2025/12/29 debug memory leak
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:2.13"
 }
 
 repositories {
