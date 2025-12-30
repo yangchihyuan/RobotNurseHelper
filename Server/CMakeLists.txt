@@ -64,7 +64,7 @@ my_protobuf_generate_cpp(PROTO_SRC PROTO_HDR ${PROTO_FILE})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 find_package(OpenCV COMPONENTS core highgui videoio imgproc imgcodecs dnn REQUIRED)
-find_package(Qt6 COMPONENTS Core Widgets Network Multimedia REQUIRED)   
+find_package(Qt6 COMPONENTS Core Widgets Network Multimedia MultimediaWidgets REQUIRED)   
 find_package(ICU REQUIRED COMPONENTS uc)
 
 file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
@@ -181,7 +181,7 @@ set_target_properties(${TARGET_NAME} PROPERTIES "CMAKE_CXX_FLAGS" "${CMAKE_CXX_F
 
 target_link_libraries(RobotNurseHelper LIBWHISPER
     Qt::Core Qt::Widgets Qt::Network
-    Qt::Multimedia ${OpenCV_LIBS} portaudio LIBONNX)
+    Qt::Multimedia Qt::MultimediaWidgets ${OpenCV_LIBS} portaudio LIBONNX)
 
 #set the compile definition
 if(ROBOT_MODEL STREQUAL "Kebbi")

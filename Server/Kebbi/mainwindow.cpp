@@ -17,6 +17,7 @@
 #include <QScrollBar>
 #include "RobotStatus.hpp"
 #include "ActionOption.hpp"
+#include <memory>
 
 extern std::mutex gMutex_audio_buffer;
 extern std::queue<short> AudioBuffer;
@@ -243,8 +244,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     thread_ollama.mpThreadStateControl = &thread_state_control;
 
-    VideoWindow *pVideoWindow = new VideoWindow();
-
+    pVideoWindow = std::make_unique<VideoWindow>(this);
+    pVideoWindow->show();
+    pVideoWindow->raise();
+    pVideoWindow->activateWindow();
+    pVideoWindow->move(820, 0);  //move to the right side of the main window
+    pVideoWindow->setFocus();
+    pVideoWindow->playVideo("cataract_postop_v1.mp4");
 }
 
 void MainWindow::on_pushButton_speak_clicked()

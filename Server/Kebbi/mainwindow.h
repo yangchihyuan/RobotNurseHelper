@@ -25,6 +25,8 @@
 #include "SocketBufferParser.hpp"
 #include "SendMessageManager.hpp"
 #include "SocketClientHandler.hpp"
+#include <memory>
+#include "../VideoWindow.hpp"
  
 using namespace std;
 
@@ -82,6 +84,8 @@ private:
 
     ThreadOllama thread_ollama;
     ThreadStateControl thread_state_control;
+
+    std::unique_ptr<VideoWindow> pVideoWindow;
 
     QString QString_SentCommands;
     void send_move_body_command(float x, float y, int degree, int speed);

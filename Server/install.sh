@@ -167,6 +167,10 @@ sudo apt -y install qt6-multimedia-dev
 sudo apt -y install qtcreator
 #The Qt creator takes more than 1G disk space because it requires many libraries. Once installed, you can launch the program to open the mainwindow.ui file with Qt Designer.
 
+#Qt Multimedia Plugins
+#We need to install these plugins to let Qt Multimedia module play audio and video files properly
+sudo apt install -y gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav
+
 #PortAudio
 #We use it to play voice on the server transmitted from the Android app and received from the robot's microphone. There is no package made for the Ubuntu system, and we need to compile it from downloaded source files, which are available on its GitHub page
 cd ~/RobotNurseHelper_build
