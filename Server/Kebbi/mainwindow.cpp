@@ -242,6 +242,9 @@ MainWindow::MainWindow(QWidget *parent)
     thread_state_control.mpThreadProcessImage = &thread_process_image;
 
     thread_ollama.mpThreadStateControl = &thread_state_control;
+
+    VideoWindow *pVideoWindow = new VideoWindow();
+
 }
 
 void MainWindow::on_pushButton_speak_clicked()

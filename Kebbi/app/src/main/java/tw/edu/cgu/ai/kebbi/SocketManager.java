@@ -292,11 +292,6 @@ public class SocketManager {
     //Main thread will call this function. Thus, I need to create a new thread to execute it
     public void connectSockets()
     {
-//        HandlerThread thread = new HandlerThread("Connect Sockets");
-//        thread.start();
-//        Handler handler = new Handler(thread.getLooper());
-
-//        handler.post(new Runnable() {
         if( handlerCheckDiconnection != null) {
             handlerCheckDiconnection.post(new Runnable() {
                 @Override
@@ -448,10 +443,6 @@ public class SocketManager {
     //This function is used by sendAMessage and sendAImage. The only difference is the Socket parameter
     public void sendAMessage( RobotCommandOuterClass.RobotToServerMessage message, Socket mSocket)
     {
-        //HandlerThread thread = new HandlerThread("SocketProcess");
-        //thread.start();
-        //Handler handler = new Handler(thread.getLooper());
-        //handler.post(new Runnable() {
         if( handlerSendToServer != null){
             handlerSendToServer.post(new Runnable() {
                 @Override

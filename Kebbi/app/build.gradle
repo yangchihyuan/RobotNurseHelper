@@ -14,7 +14,7 @@ android {
     //    targetSdkVersion 28     //Chih-Yuan Yang: this targetSdkVersion item is used for Android 6 SDK.
         //   Android 9 no longer needs it.
         versionCode 13
-        versionName 'v13 25.12.28'
+        versionName 'v13 25.12.30'
         externalNativeBuild {
             cmake {
                 cppFlags ""

@@ -1,0 +1,76 @@
+{
+	"abstract" : true,
+	"backtrace" : 3,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"include",
+			"set_target_properties"
+		],
+		"files" : 
+		[
+			"/usr/share/cmake-4.2/Modules/FindX11.cmake",
+			"/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 405,
+				"parent" : 0
+			},
+			{
+				"file" : 0,
+				"parent" : 1
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 942,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 943,
+				"parent" : 2
+			}
+		]
+	},
+	"codemodelVersion" : 
+	{
+		"major" : 2,
+		"minor" : 9
+	},
+	"id" : "X11::xcb_render::@61bd949a9c044cee969a",
+	"imported" : true,
+	"interfaceCompileDependencies" : 
+	[
+		{
+			"backtrace" : 4,
+			"id" : "X11::xcb::@61bd949a9c044cee969a"
+		}
+	],
+	"interfaceLinkLibraries" : 
+	[
+		{
+			"backtrace" : 4,
+			"id" : "X11::xcb::@61bd949a9c044cee969a"
+		}
+	],
+	"local" : true,
+	"name" : "X11::xcb_render",
+	"paths" : 
+	{
+		"build" : "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build",
+		"source" : "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib"
+	},
+	"sources" : [],
+	"type" : "UNKNOWN_LIBRARY"
+}

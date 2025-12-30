@@ -1,0 +1,115 @@
+{
+	"abstract" : true,
+	"artifacts" : 
+	[
+		{
+			"path" : "/usr/lib/x86_64-linux-gnu/qt6/plugins/multimedia/libgstreamermediaplugin.so"
+		}
+	],
+	"backtrace" : 12,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"include",
+			"__qt_internal_include_plugin_packages",
+			"find_package"
+		],
+		"files" : 
+		[
+			"/usr/lib/x86_64-linux-gnu/cmake/Qt6Multimedia/Qt6QGstreamerMediaPluginTargets.cmake",
+			"/usr/lib/x86_64-linux-gnu/cmake/Qt6Multimedia/Qt6QGstreamerMediaPluginConfig.cmake",
+			"/usr/lib/x86_64-linux-gnu/cmake/Qt6/QtPublicPluginHelpers.cmake",
+			"/usr/lib/x86_64-linux-gnu/cmake/Qt6Multimedia/Qt6MultimediaPlugins.cmake",
+			"/usr/lib/x86_64-linux-gnu/cmake/Qt6Multimedia/Qt6MultimediaConfig.cmake",
+			"/usr/lib/x86_64-linux-gnu/cmake/Qt6/Qt6Config.cmake",
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 6
+			},
+			{
+				"command" : 3,
+				"file" : 6,
+				"line" : 67,
+				"parent" : 0
+			},
+			{
+				"file" : 5,
+				"parent" : 1
+			},
+			{
+				"command" : 3,
+				"file" : 5,
+				"line" : 167,
+				"parent" : 2
+			},
+			{
+				"file" : 4,
+				"parent" : 3
+			},
+			{
+				"command" : 1,
+				"file" : 4,
+				"line" : 133,
+				"parent" : 4
+			},
+			{
+				"file" : 3,
+				"parent" : 5
+			},
+			{
+				"command" : 2,
+				"file" : 3,
+				"line" : 5,
+				"parent" : 6
+			},
+			{
+				"command" : 1,
+				"file" : 2,
+				"line" : 439,
+				"parent" : 7
+			},
+			{
+				"file" : 1,
+				"parent" : 8
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 61,
+				"parent" : 9
+			},
+			{
+				"file" : 0,
+				"parent" : 10
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 69,
+				"parent" : 11
+			}
+		]
+	},
+	"codemodelVersion" : 
+	{
+		"major" : 2,
+		"minor" : 9
+	},
+	"id" : "Qt6::QGstreamerMediaPlugin::@6890427a1f51a3e7e1df",
+	"imported" : true,
+	"local" : true,
+	"name" : "Qt6::QGstreamerMediaPlugin",
+	"nameOnDisk" : "libgstreamermediaplugin.so",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sources" : [],
+	"type" : "MODULE_LIBRARY"
+}

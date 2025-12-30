@@ -1,0 +1,67 @@
+{
+	"abstract" : true,
+	"backtrace" : 5,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"find_package",
+			"include"
+		],
+		"files" : 
+		[
+			"/usr/share/cmake-4.2/Modules/FindJPEG.cmake",
+			"/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/find_libjpeg.cmake",
+			"/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 511,
+				"parent" : 0
+			},
+			{
+				"file" : 1,
+				"parent" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 17,
+				"parent" : 2
+			},
+			{
+				"file" : 0,
+				"parent" : 3
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 148,
+				"parent" : 4
+			}
+		]
+	},
+	"codemodelVersion" : 
+	{
+		"major" : 2,
+		"minor" : 9
+	},
+	"id" : "JPEG::JPEG::@61bd949a9c044cee969a",
+	"imported" : true,
+	"local" : true,
+	"name" : "JPEG::JPEG",
+	"paths" : 
+	{
+		"build" : "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build",
+		"source" : "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib"
+	},
+	"sources" : [],
+	"type" : "UNKNOWN_LIBRARY"
+}

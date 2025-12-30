@@ -1,0 +1,10 @@
+# Hashes of file build rules.
+68abd8a50ec419c2a2134285bdfbd48c /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/CMakeFiles/dlib_autogen
+d80eaf72352495f11a6357a3165c5dab /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/dlib_autogen/timestamp
+4b1e0d41a4c96a5e03f7344db4da610a CMakeFiles/MP_FORMATS_autogen
+4b1e0d41a4c96a5e03f7344db4da610a CMakeFiles/RobotNurseHelper_autogen
+4b1e0d41a4c96a5e03f7344db4da610a CMakeFiles/libprotobuf_autogen
+c77bf92abf75f31de0373b65ab4a835c Kebbi/RobotCommand.pb.cc
+2a3c3490c1315099bdc4e851f510a5e4 MP_FORMATS_autogen/timestamp
+7481f85c599a05cfdbc26992e3a2fb78 RobotNurseHelper_autogen/timestamp
+cf14a713ce1f17389fb25e091a209803 libprotobuf_autogen/timestamp

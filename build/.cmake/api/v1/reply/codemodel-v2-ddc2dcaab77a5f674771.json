@@ -1,0 +1,1665 @@
+{
+	"configurations" : 
+	[
+		{
+			"abstractTargets" : 
+			[
+				{
+					"directoryIndex" : 1,
+					"id" : "Fontconfig::Fontconfig::@61bd949a9c044cee969a",
+					"jsonFile" : "target-Fontconfig__Fontconfig-Debug-f588df8965945f6cee9f.json",
+					"name" : "Fontconfig::Fontconfig",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "Freetype::Freetype::@61bd949a9c044cee969a",
+					"jsonFile" : "target-Freetype__Freetype-Debug-3f0c696b3f0d348e7e45.json",
+					"name" : "Freetype::Freetype",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ICU::uc::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ICU__uc-Debug-799b324058ac6140bc6d.json",
+					"name" : "ICU::uc",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "JPEG::JPEG::@61bd949a9c044cee969a",
+					"jsonFile" : "target-JPEG__JPEG-Debug-e196190d7a4460d01335.json",
+					"name" : "JPEG::JPEG",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "LIBEmotiEffNet::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-LIBEmotiEffNet-Debug-b8a86eb501368912ff39.json",
+					"name" : "LIBEmotiEffNet",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "LIBMP::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-LIBMP-Debug-d4cccbd704b787e32b57.json",
+					"name" : "LIBMP",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "LIBONNX::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-LIBONNX-Debug-4a3334eb1709a225e896.json",
+					"name" : "LIBONNX",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "LIBWHISPER::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-LIBWHISPER-Debug-157c3a2e3a90a503ad52.json",
+					"name" : "LIBWHISPER",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "OpenGL::EGL::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-OpenGL__EGL-Debug-7c281daa1c3c36159d23.json",
+					"name" : "OpenGL::EGL",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "OpenGL::GL::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-OpenGL__GL-Debug-847aa23e4e33a81dc769.json",
+					"name" : "OpenGL::GL",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "OpenGL::GLES2::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-OpenGL__GLES2-Debug-e77cc279bede7b40a5d9.json",
+					"name" : "OpenGL::GLES2",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "OpenGL::GLES3::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-OpenGL__GLES3-Debug-39664476eb80b795e00f.json",
+					"name" : "OpenGL::GLES3",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "OpenGL::GLX::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-OpenGL__GLX-Debug-869cb776f398f69396dd.json",
+					"name" : "OpenGL::GLX",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "OpenGL::OpenGL::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-OpenGL__OpenGL-Debug-d76bdb8fccc14f4fb655.json",
+					"name" : "OpenGL::OpenGL",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "PNG::PNG::@61bd949a9c044cee969a",
+					"jsonFile" : "target-PNG__PNG-Debug-3d89b9cfa3893b3e5f6a.json",
+					"name" : "PNG::PNG",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::Core::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__Core-Debug-176584b279157d1b5360.json",
+					"name" : "Qt6::Core",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::CorePrivate::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__CorePrivate-Debug-9db7d458c0d5915c6adb.json",
+					"name" : "Qt6::CorePrivate",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::DBus::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__DBus-Debug-65a95ff5693b70cf9723.json",
+					"name" : "Qt6::DBus",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::DBusPrivate::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__DBusPrivate-Debug-74d2025cdfd2e6dadc27.json",
+					"name" : "Qt6::DBusPrivate",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::GlobalConfig::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__GlobalConfig-Debug-9fcf602a468d9ba2a58d.json",
+					"name" : "Qt6::GlobalConfig",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::GlobalConfigPrivate::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__GlobalConfigPrivate-Debug-0ea46b27cfbe8ac10b1f.json",
+					"name" : "Qt6::GlobalConfigPrivate",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::Gui::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__Gui-Debug-fe460fb0487837541502.json",
+					"name" : "Qt6::Gui",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::GuiPrivate::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__GuiPrivate-Debug-edcc0313ed1f097062e5.json",
+					"name" : "Qt6::GuiPrivate",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::Multimedia::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__Multimedia-Debug-1640712cf0635a4b0110.json",
+					"name" : "Qt6::Multimedia",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::MultimediaPrivate::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__MultimediaPrivate-Debug-05c3460e6f62862735bd.json",
+					"name" : "Qt6::MultimediaPrivate",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::Network::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__Network-Debug-771c823ba4cca56624e8.json",
+					"name" : "Qt6::Network",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::NetworkPrivate::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__NetworkPrivate-Debug-35bef83cc135d4cb5045.json",
+					"name" : "Qt6::NetworkPrivate",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::Platform::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__Platform-Debug-89b89ccf95a7959166bf.json",
+					"name" : "Qt6::Platform",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::PlatformAppInternal::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__PlatformAppInternal-Debug-6208dd238b595a7973c1.json",
+					"name" : "Qt6::PlatformAppInternal",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::PlatformCommonInternal::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__PlatformCommonInternal-Debug-7289ecb669fb2c95300f.json",
+					"name" : "Qt6::PlatformCommonInternal",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::PlatformModuleInternal::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__PlatformModuleInternal-Debug-138a22165905c972f023.json",
+					"name" : "Qt6::PlatformModuleInternal",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::PlatformPluginInternal::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__PlatformPluginInternal-Debug-860ae4bc170fc6de90aa.json",
+					"name" : "Qt6::PlatformPluginInternal",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::PlatformToolInternal::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__PlatformToolInternal-Debug-2a804272953318794183.json",
+					"name" : "Qt6::PlatformToolInternal",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::QGstreamerMediaPlugin::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__QGstreamerMediaPlugin-Debug-b71bfc567d7dd305c67c.json",
+					"name" : "Qt6::QGstreamerMediaPlugin",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::Widgets::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__Widgets-Debug-03cdaaa9bb594cbb9a67.json",
+					"name" : "Qt6::Widgets",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::WidgetsPrivate::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__WidgetsPrivate-Debug-69d9b3d68143d7252a21.json",
+					"name" : "Qt6::WidgetsPrivate",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::androiddeployqt::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__androiddeployqt-Debug-52d272e8a863690b7142.json",
+					"name" : "Qt6::androiddeployqt",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::androidtestrunner::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__androidtestrunner-Debug-def5d78d41dac34307c4.json",
+					"name" : "Qt6::androidtestrunner",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::cmake_automoc_parser::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__cmake_automoc_parser-Debug-e6ec6c0aadbb290fb760.json",
+					"name" : "Qt6::cmake_automoc_parser",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::moc::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__moc-Debug-20e971b635e1696517b0.json",
+					"name" : "Qt6::moc",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::qdbuscpp2xml::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__qdbuscpp2xml-Debug-5b236ea202fb206c9b10.json",
+					"name" : "Qt6::qdbuscpp2xml",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::qdbusxml2cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__qdbusxml2cpp-Debug-ad97f5fcadf6c8b3ad48.json",
+					"name" : "Qt6::qdbusxml2cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::qlalr::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__qlalr-Debug-33d2f0f736a959cb8cae.json",
+					"name" : "Qt6::qlalr",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::qmake::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__qmake-Debug-f840eaab5f10210671e3.json",
+					"name" : "Qt6::qmake",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::qtpaths::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__qtpaths-Debug-894a91f88c45e74d06f5.json",
+					"name" : "Qt6::qtpaths",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::qvkgen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__qvkgen-Debug-8a9a1e304c2d40dfdcfb.json",
+					"name" : "Qt6::qvkgen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::rcc::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__rcc-Debug-a4059405f4edb795921f.json",
+					"name" : "Qt6::rcc",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::tracegen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__tracegen-Debug-54399a04b0d45515c490.json",
+					"name" : "Qt6::tracegen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt6::uic::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt6__uic-Debug-0d971897ec640bed4a75.json",
+					"name" : "Qt6::uic",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::Core::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__Core-Debug-65f4bd4a4856eaa79ee0.json",
+					"name" : "Qt::Core",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::CorePrivate::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__CorePrivate-Debug-19fb864039a9867bcfa0.json",
+					"name" : "Qt::CorePrivate",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::DBus::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__DBus-Debug-c09c9ca3db06790d84d3.json",
+					"name" : "Qt::DBus",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::DBusPrivate::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__DBusPrivate-Debug-943ba1041fc21cde6be0.json",
+					"name" : "Qt::DBusPrivate",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::GlobalConfig::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__GlobalConfig-Debug-96eb53c21b37d474b4ab.json",
+					"name" : "Qt::GlobalConfig",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::GlobalConfigPrivate::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__GlobalConfigPrivate-Debug-2ac7e00fd98ba430ff29.json",
+					"name" : "Qt::GlobalConfigPrivate",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::Gui::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__Gui-Debug-db7f0682d13e458de462.json",
+					"name" : "Qt::Gui",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::GuiPrivate::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__GuiPrivate-Debug-c0e6c1be1c537e7e0c30.json",
+					"name" : "Qt::GuiPrivate",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::Multimedia::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__Multimedia-Debug-33afd0711037cde66c34.json",
+					"name" : "Qt::Multimedia",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::MultimediaPrivate::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__MultimediaPrivate-Debug-6148d1d5421971be59bb.json",
+					"name" : "Qt::MultimediaPrivate",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::Network::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__Network-Debug-beadd1e58c79180a2193.json",
+					"name" : "Qt::Network",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::NetworkPrivate::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__NetworkPrivate-Debug-c51941a7ee50f1d0f2aa.json",
+					"name" : "Qt::NetworkPrivate",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::Platform::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__Platform-Debug-a423bd6b150f2b85cbbf.json",
+					"name" : "Qt::Platform",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::PlatformAppInternal::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__PlatformAppInternal-Debug-43c2bd86f6ef853b0340.json",
+					"name" : "Qt::PlatformAppInternal",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::PlatformCommonInternal::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__PlatformCommonInternal-Debug-942a9658aa5206310e40.json",
+					"name" : "Qt::PlatformCommonInternal",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::PlatformModuleInternal::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__PlatformModuleInternal-Debug-64b7318a2a5437548107.json",
+					"name" : "Qt::PlatformModuleInternal",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::PlatformPluginInternal::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__PlatformPluginInternal-Debug-79e8a46e8777552717d8.json",
+					"name" : "Qt::PlatformPluginInternal",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::PlatformToolInternal::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__PlatformToolInternal-Debug-b7aa33b8c4b2f42bd150.json",
+					"name" : "Qt::PlatformToolInternal",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::Widgets::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__Widgets-Debug-f78fce66d50c78fce011.json",
+					"name" : "Qt::Widgets",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::WidgetsPrivate::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__WidgetsPrivate-Debug-4998e61b97f49d6458d8.json",
+					"name" : "Qt::WidgetsPrivate",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::androiddeployqt::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__androiddeployqt-Debug-9faf2f986f0efc66059e.json",
+					"name" : "Qt::androiddeployqt",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::androidtestrunner::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__androidtestrunner-Debug-f60e5d48e89b12d391f6.json",
+					"name" : "Qt::androidtestrunner",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::cmake_automoc_parser::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__cmake_automoc_parser-Debug-19371de1406b3444510e.json",
+					"name" : "Qt::cmake_automoc_parser",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::moc::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__moc-Debug-c26b324b9a4f67e6dbea.json",
+					"name" : "Qt::moc",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::qdbuscpp2xml::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__qdbuscpp2xml-Debug-6e26b47d1fe9c2fab2dd.json",
+					"name" : "Qt::qdbuscpp2xml",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::qdbusxml2cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__qdbusxml2cpp-Debug-dc5446f684db786afddc.json",
+					"name" : "Qt::qdbusxml2cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::qlalr::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__qlalr-Debug-b82ae81028b30f0d8cf0.json",
+					"name" : "Qt::qlalr",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::qmake::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__qmake-Debug-7de9585697487c22ec73.json",
+					"name" : "Qt::qmake",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::qtpaths::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__qtpaths-Debug-633e259f30f7b0e5916d.json",
+					"name" : "Qt::qtpaths",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::qvkgen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__qvkgen-Debug-0b79d9013c6007b5c0e6.json",
+					"name" : "Qt::qvkgen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::rcc::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__rcc-Debug-ecf9bb419d5df5c7ba67.json",
+					"name" : "Qt::rcc",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::tracegen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__tracegen-Debug-7d737b3cb5fb18358fe4.json",
+					"name" : "Qt::tracegen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Qt::uic::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Qt__uic-Debug-ac4092dd499e30a6ab73.json",
+					"name" : "Qt::uic",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Threads::Threads::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Threads__Threads-Debug-647a369f0cf50a845f1a.json",
+					"name" : "Threads::Threads",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Vulkan::Headers::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Vulkan__Headers-Debug-c6c717a08f7f2f331aa1.json",
+					"name" : "Vulkan::Headers",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Vulkan::Vulkan::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Vulkan__Vulkan-Debug-9d9f16d1a83683b30d5c.json",
+					"name" : "Vulkan::Vulkan",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "WrapAtomic::WrapAtomic::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-WrapAtomic__WrapAtomic-Debug-ff2d8ae6aca3dfdaa0c3.json",
+					"name" : "WrapAtomic::WrapAtomic",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "WrapOpenGL::WrapOpenGL::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-WrapOpenGL__WrapOpenGL-Debug-8710e5ecae5aadc267fe.json",
+					"name" : "WrapOpenGL::WrapOpenGL",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "WrapVulkanHeaders::WrapVulkanHeaders::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-WrapVulkanHeaders__WrapVulkanHeaders-Debug-608c4a4e7926c357ea8b.json",
+					"name" : "WrapVulkanHeaders::WrapVulkanHeaders",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "X11::ICE::@61bd949a9c044cee969a",
+					"jsonFile" : "target-X11__ICE-Debug-6fc21054104c2a852a10.json",
+					"name" : "X11::ICE",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "X11::SM::@61bd949a9c044cee969a",
+					"jsonFile" : "target-X11__SM-Debug-9a61aa790c2a3d2edaba.json",
+					"name" : "X11::SM",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "X11::X11::@61bd949a9c044cee969a",
+					"jsonFile" : "target-X11__X11-Debug-6755ad20f8a2427de275.json",
+					"name" : "X11::X11",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "X11::Xau::@61bd949a9c044cee969a",
+					"jsonFile" : "target-X11__Xau-Debug-1b0e1345bb4fdfe47467.json",
+					"name" : "X11::Xau",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "X11::Xcomposite::@61bd949a9c044cee969a",
+					"jsonFile" : "target-X11__Xcomposite-Debug-95f23d365d8335083bf1.json",
+					"name" : "X11::Xcomposite",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "X11::Xcursor::@61bd949a9c044cee969a",
+					"jsonFile" : "target-X11__Xcursor-Debug-4e1757531fad0f172fa5.json",
+					"name" : "X11::Xcursor",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "X11::Xdamage::@61bd949a9c044cee969a",
+					"jsonFile" : "target-X11__Xdamage-Debug-65a8321de6f0404cf3bb.json",
+					"name" : "X11::Xdamage",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "X11::Xdmcp::@61bd949a9c044cee969a",
+					"jsonFile" : "target-X11__Xdmcp-Debug-cdac7e719bf2e8a78ca3.json",
+					"name" : "X11::Xdmcp",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "X11::Xext::@61bd949a9c044cee969a",
+					"jsonFile" : "target-X11__Xext-Debug-d9679c7ab8487d31cd9b.json",
+					"name" : "X11::Xext",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "X11::Xfixes::@61bd949a9c044cee969a",
+					"jsonFile" : "target-X11__Xfixes-Debug-5791bb921bc9e65e2eac.json",
+					"name" : "X11::Xfixes",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "X11::Xft::@61bd949a9c044cee969a",
+					"jsonFile" : "target-X11__Xft-Debug-e338b284049ed7b1069d.json",
+					"name" : "X11::Xft",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "X11::Xi::@61bd949a9c044cee969a",
+					"jsonFile" : "target-X11__Xi-Debug-6a4d97fe9f2b2793b6f2.json",
+					"name" : "X11::Xi",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "X11::Xinerama::@61bd949a9c044cee969a",
+					"jsonFile" : "target-X11__Xinerama-Debug-b94be09f68c4f8818eb6.json",
+					"name" : "X11::Xinerama",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "X11::Xkb::@61bd949a9c044cee969a",
+					"jsonFile" : "target-X11__Xkb-Debug-83afab97f40c5ceb2bd3.json",
+					"name" : "X11::Xkb",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "X11::Xrandr::@61bd949a9c044cee969a",
+					"jsonFile" : "target-X11__Xrandr-Debug-4bbdb69ef247a9af6cc6.json",
+					"name" : "X11::Xrandr",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "X11::Xrender::@61bd949a9c044cee969a",
+					"jsonFile" : "target-X11__Xrender-Debug-7efaef4b2d27447c8fee.json",
+					"name" : "X11::Xrender",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "X11::Xutil::@61bd949a9c044cee969a",
+					"jsonFile" : "target-X11__Xutil-Debug-81f096c1267e1252a8ae.json",
+					"name" : "X11::Xutil",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "X11::xcb::@61bd949a9c044cee969a",
+					"jsonFile" : "target-X11__xcb-Debug-1b743c6519e4f769bc3b.json",
+					"name" : "X11::xcb",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "X11::xcb_render::@61bd949a9c044cee969a",
+					"jsonFile" : "target-X11__xcb_render-Debug-2b33eae37f29f2d215b1.json",
+					"name" : "X11::xcb_render",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "X11::xcb_shm::@61bd949a9c044cee969a",
+					"jsonFile" : "target-X11__xcb_shm-Debug-91766e7a6f75ac9f9370.json",
+					"name" : "X11::xcb_shm",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "ZLIB::ZLIB::@61bd949a9c044cee969a",
+					"jsonFile" : "target-ZLIB__ZLIB-Debug-a1ca13251c352c2de34f.json",
+					"name" : "ZLIB::ZLIB",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_aruco::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_aruco-Debug-1a52d57abca7b99b6f2d.json",
+					"name" : "opencv_aruco",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_bgsegm::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_bgsegm-Debug-1fdd284d2cdbea1f9505.json",
+					"name" : "opencv_bgsegm",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_bioinspired::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_bioinspired-Debug-605461c2220302de3b23.json",
+					"name" : "opencv_bioinspired",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_calib3d::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_calib3d-Debug-24791ae7d2dfe5366ce1.json",
+					"name" : "opencv_calib3d",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_ccalib::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_ccalib-Debug-0b3dd4eab84e3e4a06a8.json",
+					"name" : "opencv_ccalib",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_core::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_core-Debug-2e6cf4e81f15b0a9edf5.json",
+					"name" : "opencv_core",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_datasets::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_datasets-Debug-a75b6938cab02c5adc9c.json",
+					"name" : "opencv_datasets",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_dnn::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_dnn-Debug-36ee462fe3260190ad8d.json",
+					"name" : "opencv_dnn",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_dnn_objdetect::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_dnn_objdetect-Debug-3a5ec2941232b9e14a3c.json",
+					"name" : "opencv_dnn_objdetect",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_dnn_superres::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_dnn_superres-Debug-79cb12d2cc212fe02907.json",
+					"name" : "opencv_dnn_superres",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_dpm::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_dpm-Debug-aa78acc2eadc87a03ff0.json",
+					"name" : "opencv_dpm",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_face::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_face-Debug-df36a32f5174f61e5500.json",
+					"name" : "opencv_face",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_features2d::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_features2d-Debug-e7e3bf9d90acd80157a9.json",
+					"name" : "opencv_features2d",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_flann::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_flann-Debug-fc99bdd71d25c0aec1af.json",
+					"name" : "opencv_flann",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_freetype::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_freetype-Debug-4fa63f8d492597471145.json",
+					"name" : "opencv_freetype",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_fuzzy::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_fuzzy-Debug-11d990b2d7df7ec5a2b9.json",
+					"name" : "opencv_fuzzy",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_gapi::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_gapi-Debug-b28817eeb5d973a1b41e.json",
+					"name" : "opencv_gapi",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_hfs::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_hfs-Debug-09ba7bfa047e3cc3c73d.json",
+					"name" : "opencv_hfs",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_highgui::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_highgui-Debug-d4a6584f48080ced753b.json",
+					"name" : "opencv_highgui",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_img_hash::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_img_hash-Debug-605376c6c0a8206c73d8.json",
+					"name" : "opencv_img_hash",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_imgcodecs::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_imgcodecs-Debug-00dc0ad7222fe8871eeb.json",
+					"name" : "opencv_imgcodecs",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_imgproc::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_imgproc-Debug-815bf2d6e26a312d3590.json",
+					"name" : "opencv_imgproc",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_intensity_transform::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_intensity_transform-Debug-6eb7f59a3d47f003f32e.json",
+					"name" : "opencv_intensity_transform",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_line_descriptor::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_line_descriptor-Debug-39c8e5be41fbe8c175b3.json",
+					"name" : "opencv_line_descriptor",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_mcc::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_mcc-Debug-d1336cc760ecb47afe2e.json",
+					"name" : "opencv_mcc",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_ml::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_ml-Debug-b18a2393b9b1985ff4b1.json",
+					"name" : "opencv_ml",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_objdetect::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_objdetect-Debug-8f4bbaa7de450ef1f9aa.json",
+					"name" : "opencv_objdetect",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_optflow::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_optflow-Debug-805e7cf91991dbc38ff6.json",
+					"name" : "opencv_optflow",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_phase_unwrapping::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_phase_unwrapping-Debug-77e13f836e870c252ca5.json",
+					"name" : "opencv_phase_unwrapping",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_photo::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_photo-Debug-4f2476e8a544e83636f9.json",
+					"name" : "opencv_photo",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_plot::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_plot-Debug-f4d415ee096cb7f467f2.json",
+					"name" : "opencv_plot",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_quality::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_quality-Debug-df6f5d0066cc7b3b94be.json",
+					"name" : "opencv_quality",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_rapid::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_rapid-Debug-7301836bbe421bc15a88.json",
+					"name" : "opencv_rapid",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_reg::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_reg-Debug-1022e6b24af51eed4cf1.json",
+					"name" : "opencv_reg",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_rgbd::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_rgbd-Debug-ec22c5a6ac9fc08bc17e.json",
+					"name" : "opencv_rgbd",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_saliency::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_saliency-Debug-d547d3cdf61831ad8ec1.json",
+					"name" : "opencv_saliency",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_shape::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_shape-Debug-b7c857c0795ed5e4755b.json",
+					"name" : "opencv_shape",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_signal::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_signal-Debug-0d1cf5574ccc49baab42.json",
+					"name" : "opencv_signal",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_stereo::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_stereo-Debug-283653330eea966921a3.json",
+					"name" : "opencv_stereo",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_stitching::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_stitching-Debug-e9e0dfedc779bf8566ae.json",
+					"name" : "opencv_stitching",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_structured_light::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_structured_light-Debug-0e3a81ce28b0460fcd15.json",
+					"name" : "opencv_structured_light",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_superres::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_superres-Debug-590fd3f6e458712b6627.json",
+					"name" : "opencv_superres",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_surface_matching::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_surface_matching-Debug-3d17caf27ad31deee442.json",
+					"name" : "opencv_surface_matching",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_text::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_text-Debug-8df64d4d6ab1f6ef127a.json",
+					"name" : "opencv_text",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_tracking::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_tracking-Debug-c1d2302c84344f6466e0.json",
+					"name" : "opencv_tracking",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_video::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_video-Debug-216091a1c43c873e5a05.json",
+					"name" : "opencv_video",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_videoio::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_videoio-Debug-aae06cd317eb65d27475.json",
+					"name" : "opencv_videoio",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_videostab::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_videostab-Debug-b0938f1226e2fab46589.json",
+					"name" : "opencv_videostab",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_wechat_qrcode::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_wechat_qrcode-Debug-815b31139009fb7c1989.json",
+					"name" : "opencv_wechat_qrcode",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_xfeatures2d::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_xfeatures2d-Debug-384eafa0dcce48fa5962.json",
+					"name" : "opencv_xfeatures2d",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_ximgproc::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_ximgproc-Debug-0abd16d929aacc7c53cb.json",
+					"name" : "opencv_ximgproc",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_xobjdetect::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_xobjdetect-Debug-46ce1c88fa71b0f73e61.json",
+					"name" : "opencv_xobjdetect",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "opencv_xphoto::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-opencv_xphoto-Debug-fa5b55687dbe318e984d.json",
+					"name" : "opencv_xphoto",
+					"projectIndex" : 0
+				}
+			],
+			"directories" : 
+			[
+				{
+					"abstractTargetIndexes" : 
+					[
+						2,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						15,
+						16,
+						17,
+						18,
+						19,
+						20,
+						21,
+						22,
+						23,
+						24,
+						25,
+						26,
+						27,
+						28,
+						29,
+						30,
+						31,
+						32,
+						33,
+						34,
+						35,
+						36,
+						37,
+						38,
+						39,
+						40,
+						41,
+						42,
+						43,
+						44,
+						45,
+						46,
+						47,
+						48,
+						49,
+						50,
+						51,
+						52,
+						53,
+						54,
+						55,
+						56,
+						57,
+						58,
+						59,
+						60,
+						61,
+						62,
+						63,
+						64,
+						65,
+						66,
+						67,
+						68,
+						69,
+						70,
+						71,
+						72,
+						73,
+						74,
+						75,
+						76,
+						77,
+						78,
+						79,
+						80,
+						81,
+						82,
+						83,
+						84,
+						85,
+						86,
+						87,
+						109,
+						110,
+						111,
+						112,
+						113,
+						114,
+						115,
+						116,
+						117,
+						118,
+						119,
+						120,
+						121,
+						122,
+						123,
+						124,
+						125,
+						126,
+						127,
+						128,
+						129,
+						130,
+						131,
+						132,
+						133,
+						134,
+						135,
+						136,
+						137,
+						138,
+						139,
+						140,
+						141,
+						142,
+						143,
+						144,
+						145,
+						146,
+						147,
+						148,
+						149,
+						150,
+						151,
+						152,
+						153,
+						154,
+						155,
+						156,
+						157,
+						158,
+						159,
+						160,
+						161
+					],
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"jsonFile" : "directory-.-Debug-9ad1a58d4644cf6543fa.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						9,
+						10,
+						11
+					]
+				},
+				{
+					"abstractTargetIndexes" : 
+					[
+						0,
+						1,
+						3,
+						14,
+						88,
+						89,
+						90,
+						91,
+						92,
+						93,
+						94,
+						95,
+						96,
+						97,
+						98,
+						99,
+						100,
+						101,
+						102,
+						103,
+						104,
+						105,
+						106,
+						107,
+						108
+					],
+					"build" : "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build",
+					"jsonFile" : "directory-Debug-4a620db1fba74f4a8ad9.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10.0"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib",
+					"targetIndexes" : 
+					[
+						6,
+						7,
+						8
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"abstractTargetIndexes" : 
+					[
+						2,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						15,
+						16,
+						17,
+						18,
+						19,
+						20,
+						21,
+						22,
+						23,
+						24,
+						25,
+						26,
+						27,
+						28,
+						29,
+						30,
+						31,
+						32,
+						33,
+						34,
+						35,
+						36,
+						37,
+						38,
+						39,
+						40,
+						41,
+						42,
+						43,
+						44,
+						45,
+						46,
+						47,
+						48,
+						49,
+						50,
+						51,
+						52,
+						53,
+						54,
+						55,
+						56,
+						57,
+						58,
+						59,
+						60,
+						61,
+						62,
+						63,
+						64,
+						65,
+						66,
+						67,
+						68,
+						69,
+						70,
+						71,
+						72,
+						73,
+						74,
+						75,
+						76,
+						77,
+						78,
+						79,
+						80,
+						81,
+						82,
+						83,
+						84,
+						85,
+						86,
+						87,
+						109,
+						110,
+						111,
+						112,
+						113,
+						114,
+						115,
+						116,
+						117,
+						118,
+						119,
+						120,
+						121,
+						122,
+						123,
+						124,
+						125,
+						126,
+						127,
+						128,
+						129,
+						130,
+						131,
+						132,
+						133,
+						134,
+						135,
+						136,
+						137,
+						138,
+						139,
+						140,
+						141,
+						142,
+						143,
+						144,
+						145,
+						146,
+						147,
+						148,
+						149,
+						150,
+						151,
+						152,
+						153,
+						154,
+						155,
+						156,
+						157,
+						158,
+						159,
+						160,
+						161
+					],
+					"childIndexes" : 
+					[
+						1
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "RobotNurseHelper",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						9,
+						10,
+						11
+					]
+				},
+				{
+					"abstractTargetIndexes" : 
+					[
+						0,
+						1,
+						3,
+						14,
+						88,
+						89,
+						90,
+						91,
+						92,
+						93,
+						94,
+						95,
+						96,
+						97,
+						98,
+						99,
+						100,
+						101,
+						102,
+						103,
+						104,
+						105,
+						106,
+						107,
+						108
+					],
+					"directoryIndexes" : 
+					[
+						1
+					],
+					"name" : "dlib",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						6,
+						7,
+						8
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "MP_FORMATS::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-MP_FORMATS-Debug-f594685887dcb36907cc.json",
+					"name" : "MP_FORMATS",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "MP_FORMATS_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-MP_FORMATS_autogen-Debug-3df65999f736992249fd.json",
+					"name" : "MP_FORMATS_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "MP_FORMATS_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-MP_FORMATS_autogen_timestamp_deps-Debug-2f225b3f613989760c3b.json",
+					"name" : "MP_FORMATS_autogen_timestamp_deps",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "RobotNurseHelper::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-RobotNurseHelper-Debug-1e57c53c0a95141d0d71.json",
+					"name" : "RobotNurseHelper",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "RobotNurseHelper_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-RobotNurseHelper_autogen-Debug-50a4226c2a26547aa9f3.json",
+					"name" : "RobotNurseHelper_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "RobotNurseHelper_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-RobotNurseHelper_autogen_timestamp_deps-Debug-e0433ddb3bece2e8f781.json",
+					"name" : "RobotNurseHelper_autogen_timestamp_deps",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "dlib::@61bd949a9c044cee969a",
+					"jsonFile" : "target-dlib-Debug-b058766333b4943e5ea8.json",
+					"name" : "dlib",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "dlib_autogen::@61bd949a9c044cee969a",
+					"jsonFile" : "target-dlib_autogen-Debug-df19ee464344e1600697.json",
+					"name" : "dlib_autogen",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "dlib_autogen_timestamp_deps::@61bd949a9c044cee969a",
+					"jsonFile" : "target-dlib_autogen_timestamp_deps-Debug-72b3dc11e9a19cff27c2.json",
+					"name" : "dlib_autogen_timestamp_deps",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "libprotobuf::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-libprotobuf-Debug-d25624acfaf488ec3a97.json",
+					"name" : "libprotobuf",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "libprotobuf_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-libprotobuf_autogen-Debug-52bd3d1d32372328c941.json",
+					"name" : "libprotobuf_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "libprotobuf_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-libprotobuf_autogen_timestamp_deps-Debug-64bd11a34c1a838e7827.json",
+					"name" : "libprotobuf_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/chihyuan/RobotNurseHelper/build",
+		"source" : "/home/chihyuan/RobotNurseHelper/Server"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 9
+	}
+}
