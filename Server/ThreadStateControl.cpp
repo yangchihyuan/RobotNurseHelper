@@ -1,3 +1,7 @@
+/*
+
+*/
+
 #include "ThreadStateControl.hpp"
 #include "utility_time.hpp"
 
@@ -17,9 +21,8 @@ ThreadStateControl::~ThreadStateControl()
 
 void ThreadStateControl::InitializeStates()
 {
-    Setting setting;
-    LoadJSONFile(setting, "json/Setting.json");
-    LoadJSONFile(mStates, setting.StateControlFile);
+    LoadJSONFile(msetting, "json/Setting.json");
+    LoadJSONFile(mStates, msetting.StateControlFile);
     for( size_t i = 0; i < mStates.size(); i++)
     {
         mStates[i].m_secDurationLimit = chrono::seconds(mStates[i].iDurationLimitSeconds);
@@ -34,8 +37,6 @@ void ThreadStateControl::NextState()
 void ThreadStateControl::run()
 {
     chrono::time_point<chrono::system_clock> current_time;
-    bool bReadyToChangeState = false;
-    bool bOldStateComplete = false;
 
     //wait until Kebbi is connected.
     mutex mtx;
@@ -47,7 +48,8 @@ void ThreadStateControl::run()
 
     //initialize the random seed.
     srand(time(0));
-
+    bool bAccumulateConversation = false;
+    string assistant_message_str;
     while(b_WhileLoop)
     {
         current_time = chrono::system_clock::now();
@@ -55,19 +57,37 @@ void ThreadStateControl::run()
         if(mStates[m_iStateIndex].bInitial)
         {
             cout << "Enter state " << m_iStateIndex << endl;
-
-            if( mStates[m_iStateIndex].sAction != "" )
+            for( string s : mStates[m_iStateIndex].v_str_Action)
             {
                 //debug
-                cout << "Action for this state: " << mStates[m_iStateIndex].sAction << endl;
-                if( mStates[m_iStateIndex].sAction.find("PlayVideo") != string::npos )
+                if( s == "PlayVideo")
                 {
-                    pVideoWindow->show();
-                    pVideoWindow->raise();
-                    pVideoWindow->activateWindow();
-                    pVideoWindow->move(820, 0);  //move to the right side of the main window
-                    pVideoWindow->setFocus();
-                    pVideoWindow->playVideo("Videos/Cataract_Post-Surgery.mp4");
+                    emit playVideoRequest(msetting.VideoFile.c_str());
+                }
+
+                if( s == "KeepSilent" )
+                {
+                    //Do not send any message for a period of time
+                    mbKeepSilent = true;
+                }
+
+                if( s == "KeepSilentOff" )
+                {
+                    //Do not send any message for a period of time
+                    mbKeepSilent = false;
+                }
+
+                if( s == "AccumulateConversation" )
+                {
+                    //Do not clear the message history when entering this state.
+                    mStates[m_iStateIndex].message_history = mStates[m_iStateIndex-1].message_history;
+                    bAccumulateConversation = true;
+                }
+
+                if( s.find("InsertAssitantMessage:") != string::npos )
+                {
+                    size_t pos = s.find(":");
+                    assistant_message_str = s.substr(pos + 1);
                 }
             }
             
@@ -75,9 +95,13 @@ void ThreadStateControl::run()
             mStates[m_iStateIndex].m_Start_time = chrono::system_clock::now();
             if( mStates[m_iStateIndex].m_strFirstSentence != "")
             {
-                ollama::message system_message("system", mStates[m_iStateIndex].m_strSystemMessage);
-                mStates[m_iStateIndex].message_history.push_back(system_message);
-                ollama::message assistant_message("assistant", mStates[m_iStateIndex].m_strFirstSentence);
+                if( !bAccumulateConversation)
+                {
+                    ollama::message system_message("system", mStates[m_iStateIndex].m_strSystemMessage);
+                    mStates[m_iStateIndex].message_history.push_back(system_message);
+                }
+                ollama::message assistant_message("assistant", mStates[m_iStateIndex].m_strFirstSentence + assistant_message_str);
+                assistant_message_str = "";   //clear the string
                 mStates[m_iStateIndex].message_history.push_back(assistant_message);
                 RobotCommandProtobuf::RobotCommand command;
                 command.set_speak_sentence(mStates[m_iStateIndex].m_strFirstSentence);
@@ -102,8 +126,8 @@ void ThreadStateControl::run()
                 //    pDistribution = unique_ptr<uniform_int_distribution<int>>(new uniform_int_distribution<int>(0,mStates[m_iStateIndex].vSmallMotion.size()));
             }
             mbWaitForTTSComplete = mStates[m_iStateIndex].bWaitForTTSComplete; 
-            bOldStateComplete = false;
-            bReadyToChangeState = false;
+            mbOldStateComplete = false;              //In the initial state, the old state is not complete.
+            mbReadyToChangeState = false;
 
         }
 
@@ -150,20 +174,13 @@ void ThreadStateControl::run()
                     }
                     else if( mStates[m_iStateIndex].iStage == 1 )  //Wait for dance completion
                     {
-                        //Use time to control
-/*
-                        if(current_time - dance_start_time > dance_wait_duration)
-                        {
-                            bOldStateComplete = true;
-                        }
-*/
                         //Use signal to control the state flow
                         //debug 
                         //cout << "(K) wait for mbActivity_mbtx_Complete as true" << endl;
                         if( mbActivity_mbtx_Complete )
                         {
-                            bOldStateComplete = true;
-                            bReadyToChangeState = true;
+                            mbOldStateComplete = true;
+                            mbReadyToChangeState = true;
 
                             //turn of the face because the dance completes.
                             RobotCommandProtobuf::RobotCommand command;
@@ -178,14 +195,16 @@ void ThreadStateControl::run()
                 else if( WhisperResult.tSpeechStart > mtimestamp_TTSComplete - tolerance_duration || 
                          (WhisperResult.tSpeechEnd > mtimestamp_TTSComplete && current_time - WhisperResult.tSpeechEnd > 3s) )
                 {
+                    //debug
+                    cout << "Patient's response: " << WhisperResult.sOutput << endl;
                     if( mStates[m_iStateIndex].v_str_KeyWordMoveToNextState.size() > 0)
                     {
                         for( size_t k = 0; k < mStates[m_iStateIndex].v_str_KeyWordMoveToNextState.size(); k++)
                         {
                             if( WhisperResult.sOutput.find( mStates[m_iStateIndex].v_str_KeyWordMoveToNextState.at(k) ) != string::npos)
                             {
-                                bReadyToChangeState = true;
-                                bOldStateComplete = true;
+                                mbReadyToChangeState = true;
+                                mbOldStateComplete = true;
                                 break;
                             }
                         }
@@ -194,10 +213,10 @@ void ThreadStateControl::run()
                     ollama::message user_message("user", WhisperResult.sOutput);
                     mStates[m_iStateIndex].message_history.push_back(user_message);
 
-                    if(bReadyToChangeState )
+                    if(mbReadyToChangeState )
                     {
-                        cout << "(G) bOldStateComplete = true;" << endl;
-                        bOldStateComplete = true;
+//                        cout << "(G) mbOldStateComplete = true;" << endl;
+                        mbOldStateComplete = true;
                     }
                     else
                     {
@@ -233,30 +252,34 @@ void ThreadStateControl::run()
                     DumpOllamaMessages(mStates[m_iStateIndex].message_history);
                 }
                 
-                RobotCommandProtobuf::RobotCommand command;
-                command.set_speak_sentence(msLLMResult);
-                //randomly choose a motion
-                if( mStates[m_iStateIndex].vSmallMotion.size() > 0)
+                //Here is the command to let Kebbi speak the LLM result
+                if( !mbKeepSilent)
                 {
-                    int randomNumber = (rand() % mStates[m_iStateIndex].vSmallMotion.size());
-                    command.set_smotion(mStates[m_iStateIndex].vSmallMotion.at(randomNumber));
-                }
+                    RobotCommandProtobuf::RobotCommand command;
+                    command.set_speak_sentence(msLLMResult);
+                    //randomly choose a motion
+                    if( mStates[m_iStateIndex].vSmallMotion.size() > 0)
+                    {
+                        int randomNumber = (rand() % mStates[m_iStateIndex].vSmallMotion.size());
+                        command.set_smotion(mStates[m_iStateIndex].vSmallMotion.at(randomNumber));
+                    }
 
-                m_pSendMessageManager->AddMessage(command);
-                mbTTSComplete = false;
-                mbWaitForTTSComplete = true;
-                mbWaitForLLMResult = false;
-                mbLLMResult = false;
+                    m_pSendMessageManager->AddMessage(command);
+                    mbTTSComplete = false;
+                    mbWaitForTTSComplete = true;
+                    mbWaitForLLMResult = false;
+                    mbLLMResult = false;
+                }
             }
         }
 
         //Check if the time exceed the state limit
         if(current_time - mStates[m_iStateIndex].m_Start_time > mStates[m_iStateIndex].m_secDurationLimit)
         {
-            bReadyToChangeState = true;
+            mbReadyToChangeState = true;
         }
 
-        if( bReadyToChangeState && bOldStateComplete)
+        if( mbReadyToChangeState && mbOldStateComplete)
         {
             if(mStates[m_iStateIndex].bEndState)
             {
@@ -265,10 +288,9 @@ void ThreadStateControl::run()
             else
             {
                 m_iStateIndex = mStates[m_iStateIndex].iNextStateIndex;
-                bReadyToChangeState = false;
+                mbReadyToChangeState = false;
             }
         }
-
 
         this_thread::sleep_for(std::chrono::milliseconds(1));
     }
@@ -298,7 +320,14 @@ void ThreadStateControl::NotifyEvent(string description, chrono::time_point<chro
         mbActivity_mbtx_Complete = true;
         mtimestamp_Activity_mbtx_Complete = timestamp;
     }
-    
+    else if( description == "onVideoComplete")
+    {
+        //debug
+        cout << "NotifyEvent onVideoComplete" << endl;
+        mbReadyToChangeState = true;
+        mbOldStateComplete = true;
+        mtimestamp_TTSComplete = timestamp;     //In fact, it is not TTSComplete, but I reuse this variable to store the time when video is complete.
+    }
 }
 
 //N is the initial state index

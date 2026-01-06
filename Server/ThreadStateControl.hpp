@@ -28,7 +28,7 @@ struct State
     vector<string> vSmallMotion;
     int iNextStateIndex = -1;  //bug proofing
     vector<string> v_str_KeyWordMoveToNextState;
-    string sAction;
+    vector<string> v_str_Action;
 
     //Dynarmic data
     chrono::time_point<std::chrono::system_clock> m_Start_time;
@@ -43,15 +43,17 @@ struct State
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(State, iStateIndex, m_strStateName, iDurationLimitSeconds, 
-    m_strSystemMessage, m_strFirstSentence, iNextStateIndex, sFace, sMotion, vSmallMotion, v_str_KeyWordMoveToNextState, sAction
+    m_strSystemMessage, m_strFirstSentence, iNextStateIndex, sFace, sMotion, vSmallMotion, v_str_KeyWordMoveToNextState, 
+    v_str_Action
 )
 
 struct Setting
 {
     string StateControlFile;
+    string VideoFile;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Setting, StateControlFile
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Setting, StateControlFile, VideoFile
 )
 
 
@@ -79,6 +81,9 @@ public:
 
     VideoWindow* pVideoWindow = nullptr;
 
+signals:
+    void playVideoRequest(const QString& videoPath);
+
 protected:
     void run();
     vector<State> mStates;
@@ -97,6 +102,11 @@ protected:
 
     bool mbActivity_mbtx_Complete = false;
     chrono::time_point<chrono::system_clock> mtimestamp_Activity_mbtx_Complete;
+
+    bool mbKeepSilent = false;
+    bool mbReadyToChangeState = false;      //This variable is used to decide whether to chat with LLM in a loop.
+    bool mbOldStateComplete = false;        //This varaible is used to check whether the time is up, or some keyword is detected.
+    Setting msetting;
 };
 
 #endif

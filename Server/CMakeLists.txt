@@ -102,6 +102,7 @@ set(SOURCES JPEG.cpp
             silero-vad-onnx.cpp
             Yolo11Pose.cpp 
             SocketClientHandler.cpp
+            VideoWindow.cpp
     )
 
 # robot-specific files    

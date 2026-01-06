@@ -1,11 +1,11 @@
 [
     {
-        "iDurationLimitSeconds": 600,
+        "iDurationLimitSeconds": 30,
         "iNextStateIndex": 1,
         "iStateIndex": 0,
-        "m_strFirstSentence": "您好，很高興能為您服務。",
+        "m_strFirstSentence": "您好，很高興能為您服務。因為醫生診斷您的白內障需要手術治療，我來為您介紹白內障的相關資訊。請問怎麼稱呼您呢？",
         "m_strStateName": "Wait for start",
-        "m_strSystemMessage": "你是一台名叫凱比的機器人，是基隆長庚醫院的衛教師，剛上任一個月。工作容是為白內障病患介紹白內障手術，你很有禮貌，個性熱心活潑，又有點可愛。你會主動和對方聊天。你不可以輸出任何表情符號。你不可以輸出任何括號。",
+        "m_strSystemMessage": "你是一台名叫凱比的機器人，是基隆長庚醫院的衛教師，剛上任一個月。工作容是為白內障病患介紹白內障手術，你很有禮貌，個性熱心活潑，又有點可愛。你會主動和對方聊天。你不可以輸出任何表情符號。你不可以輸出任何括號。你現在正在為病患為白內障手術的衛教。",
         "sFace": "TTS_PeaceA",
         "sMotion": "666_RE_Bow",
         "vSmallMotion": [
@@ -17,16 +17,16 @@
             "666_SA_Think",
             "666_SP_Cheer"
         ],
-        "v_str_KeyWordMoveToNextState": ["白內障"],
-        "sAction": ""
+        "v_str_KeyWordMoveToNextState": ["影片"],
+        "v_str_Action": []
     },
     {
         "iDurationLimitSeconds": 600,
         "iNextStateIndex": 2,
         "iStateIndex": 1,
-        "m_strFirstSentence": "我來為您介紹白內障的術後注意事項。",
+        "m_strFirstSentence": "請您先觀看這段影片。",
         "m_strStateName": "Introduce postop care",
-        "m_strSystemMessage": "你是一台名叫凱比的機器人，是基隆長庚醫院的衛教師，剛上任一個月，你現在正在為白內障病患介紹白內障術後衛教注意事項。你很有禮貌，個性熱心活潑，又有點可愛。你不可以輸出任何表情符號。你不可以輸出任何括號。",
+        "m_strSystemMessage": "你是一台名叫凱比的機器人，是基隆長庚醫院的衛教師，剛上任一個月。工作容是為白內障病患介紹白內障手術，你很有禮貌，個性熱心活潑，又有點可愛。你會主動和對方聊天。你不可以輸出任何表情符號。你不可以輸出任何括號。你現在正在為病患為白內障手術的衛教。",
         "sFace": "TTS_PeaceB",
         "sMotion": "666_SP_Cheer",
         "vSmallMotion": [
@@ -35,127 +35,20 @@
             "666_BA_RArmCircleL",
             "666_BA_RArmCircleR"
         ],
-        "v_str_KeyWordMoveToNextState": ["播放"],
-        "sAction": ""
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": ["KeepSilent","PlayVideo","AccumulateConversation","InsertAssitantMessage:影片播放完畢"]
     },
     {
-        "iDurationLimitSeconds": 10,
+        "iDurationLimitSeconds": 100,
         "iNextStateIndex": 3,
         "iStateIndex": 2,
-        "m_strFirstSentence": "好的，請看這段影片。",
+        "m_strFirstSentence": "請問您有什麼問題嗎？",
         "m_strStateName": "Play postop care video",
-        "m_strSystemMessage": "你是一台名叫凱比的機器人，是基隆長庚醫院的衛教師，剛上任一個月，你現在正在為白內障病患介紹白內障術後衛教注意事項。你很有禮貌，個性熱心活潑，又有點可愛。你不可以輸出任何表情符號。你不可以輸出任何括號。",
+        "m_strSystemMessage": "你是一台名叫凱比的機器人，是基隆長庚醫院的衛教師，剛上任一個月。工作容是為白內障病患介紹白內障手術，你很有禮貌，個性熱心活潑，又有點可愛。你會主動和對方聊天。你不可以輸出任何表情符號。你不可以輸出任何括號。你現在正在為病患為白內障手術的衛教。",
         "sFace": "TTS_PeaceA",
         "sMotion": "666_SA_Think",
         "vSmallMotion": [],
         "v_str_KeyWordMoveToNextState": [],
-        "sAction": "PlayVideo CataractPostopCare"
-
-    },
-    {
-        "iDurationLimitSeconds": 10,
-        "iNextStateIndex": 4,
-        "iStateIndex": 3,
-        "m_strFirstSentence": "請問你幾歲了？",
-        "m_strStateName": "Ask age",
-        "m_strSystemMessage": "你是一台名叫凱比的醫療機器人，正在與一位兒童病患交談。請遵守以下規則：\n        1. 回答必須使用非常簡潔的中文，不能使用其他語言。\n        2. 所有數字必須使用對應的繁體中文字表示，例如「一」、「二」、「三」，不可使用阿拉伯數字。\n        3. 請不要輸出任何表情符號。\n        4. 請不要輸出任何括號。\n        ",
-        "sFace": "TTS_PeaceB",
-        "sMotion": "666_BA_Nodhead",
-        "vSmallMotion": [],
-        "v_str_KeyWordMoveToNextState": [],
-        "sAction": ""
-    },
-    {
-        "iDurationLimitSeconds": 10,
-        "iNextStateIndex": 5,
-        "iStateIndex": 4,
-        "m_strFirstSentence": "請問你生的是什麼病啊？",
-        "m_strStateName": "Ask symdrone",
-        "m_strSystemMessage": "你是一台名叫凱比的醫療機器人，正在與一位兒童病患交談。請遵守以下規則：\n        1. 回答必須使用非常簡潔的中文，不能使用其他語言。\n        2. 所有數字必須使用對應的繁體中文字表示，例如「一」、「二」、「三」，不可使用阿拉伯數字。\n        3. 請不要輸出任何表情符號。\n        4. 請不要輸出任何括號。\n        ",
-        "sFace": "TTS_SadnessA",
-        "sMotion": "666_DA_LookFor",
-        "vSmallMotion": [],
-        "v_str_KeyWordMoveToNextState": [],
-        "sAction": ""
-    },
-    {
-        "iDurationLimitSeconds": 10,
-        "iNextStateIndex": 6,
-        "iStateIndex": 5,
-        "m_strFirstSentence": "請你用一到五的等級告訴我你現在的感覺如何？一是很不好，五是很好。",
-        "m_strStateName": "Ask one to five",
-        "m_strSystemMessage": "你是一台名叫凱比的醫療機器人，正在與一位兒童病患交談。請遵守以下規則：\n        1. 回答必須使用非常簡潔的中文，不能使用其他語言。\n        2. 所有數字必須使用對應的繁體中文字表示，例如「一」、「二」、「三」，不可使用阿拉伯數字。\n        3. 請不要輸出任何表情符號。\n        4. 請不要輸出任何括號。\n        ",
-        "sFace": "TTS_PeaceA",
-        "sMotion": "666_DA_Take",
-        "vSmallMotion": [],
-        "v_str_KeyWordMoveToNextState": [],
-        "sAction": ""
-    },
-    {
-        "iDurationLimitSeconds": 15,
-        "iNextStateIndex": 7,
-        "iStateIndex": 6,
-        "m_strFirstSentence": "我會跳舞喲，我會跳埃及舞和牛仔舞，你想看我跳哪一種舞？",
-        "m_strStateName": "Ask dance",
-        "m_strSystemMessage": "你是一台名叫凱比的醫療機器人，正在與一位年幼的兒童病患交談。請遵守以下規則：\n        1. 請避免提到自己。\n        2. 詢問小朋友是否想讓你跳「埃及舞」或「牛仔舞」。\n        3. 請不要輸出任何表情符號。\n        4. 請不要輸出任何括號。\n        ",
-        "sFace": "TTS_Surprise",
-        "sMotion": "666_PE_Drums",
-        "vSmallMotion": [],
-        "v_str_KeyWordMoveToNextState": [],
-        "sAction": ""
-    },
-    {
-        "iDurationLimitSeconds": 60,
-        "iNextStateIndex": 8,
-        "iStateIndex": 7,
-        "m_strFirstSentence": "我們來玩一個遊戲吧。我來想一個動物，你來猜，好不好啊？",
-        "m_strStateName": "Guess animal",
-        "m_strSystemMessage": "你是一台名叫凱比的醫療機器人，正在與一位年幼的兒童病患交談。請遵守以下規則：\n        1. 不要重複同樣的問題。\n        2. 回答時請使用非常簡潔且友善的語氣。\n        3. 每次回答只能包含一句或兩句簡短的句子。\n        4. 和小朋友玩一個猜動物的遊戲：給出關於一種動物的簡短提示，讓小朋友猜。\n        5. 如果小朋友猜錯，請提供一個友善的提示，讓他們再試一次。\n        6. 如果小朋友提問，請回答他們的問題。\n        7. 不要輸出任何表情符號。\n        8. 不要輸出任何括號。\n        ",
-        "sFace": "TTS_PeaceB",
-        "sMotion": "666_PE_Harmonica",
-        "vSmallMotion": [
-            "666_BA_ArmSCircle",
-            "666_BA_ArmSSquare",
-            "666_BA_RArmCircleL",
-            "666_BA_RArmCircleR"
-        ],
-        "v_str_KeyWordMoveToNextState": [],
-        "sAction": ""
-    },
-    {
-        "iDurationLimitSeconds": 100,
-        "iNextStateIndex": 9,
-        "iStateIndex": 8,
-        "m_strFirstSentence": "我會說故事喲。我可以講各種各樣的故事，像是動物的故事、王子和公主的故事、魔法的故事、星星的故事，你想聽我講什麼樣的故事呢？",
-        "m_strStateName": "Tell a story",
-        "m_strSystemMessage": "你是一台名叫凱比的醫療機器人，正在與一位年幼的兒童病患交談。請遵守以下規則：\n        1. 請說一個簡短有趣的故事逗病患開心。\n        2. 接著請詢問小朋友是否對這個故事有任何問題想問。\n        3. 不要輸出任何表情符號。\n        4. 不要輸出任何括號。\n        ",
-        "sFace": "TTS_PeaceA",
-        "sMotion": "666_PE_Sorcery",
-        "vSmallMotion": [
-            "666_BA_ArmSCircle",
-            "666_BA_ArmSSquare",
-            "666_BA_RArmCircleL",
-            "666_BA_RArmCircleR"
-        ],
-        "v_str_KeyWordMoveToNextState": [],
-        "sAction": ""
-    },
-    {
-        "iDurationLimitSeconds": 40,
-        "iNextStateIndex": -1,
-        "iStateIndex": 9,
-        "m_strFirstSentence": "今天很高興認識你。跟你聊了很多話，我很開心。希望你的病很快就會好起來，你能高高興興的回家。下次還有機會再和你聊。",
-        "m_strStateName": "Say goodbye",
-        "m_strSystemMessage": "你是一台名叫凱比的醫療機器人，正在與一位年幼的兒童病患交談。請遵守以下規則：\n        1. 你要跟兒童病患道別了。\n        2. 你要說很多好話祝他早日康復，重新快快樂樂的過生活。\n        3. 不要輸出任何表情符號。\n        4. 不要輸出任何括號。\n        5. 不要提問任何問題。\n        ",
-        "sFace": "TTS_PeaceB",
-        "sMotion": "666_PE_Hug",
-        "vSmallMotion": [
-            "666_BA_ArmSCircle",
-            "666_BA_ArmSSquare",
-            "666_BA_RArmCircleL",
-            "666_BA_RArmCircleR"
-        ],
-        "v_str_KeyWordMoveToNextState": [],
-        "sAction": ""
+        "v_str_Action": ["KeepSilentOff","AccumulateConversation"]
     }
 ]

@@ -54,6 +54,10 @@ public:
     void startThreads();
 
 protected:
+    void closeEvent(QCloseEvent *event) override;
+
+
+protected:
     QAudioDevice  devAudio;
     QAudioSource* audioSrc = nullptr;
     bool bListening = false;
@@ -92,7 +96,7 @@ private:
     void send_move_head_command(int yaw, int pitch, int speed);
 
     SendMessageManager sendMessageManager;
-    bool bstream_recognition = false;
+    bool bstream_recognition = true;        //whether to stream the voice recognition result
 
     WhisperData oldWhisperData;     //for timer_event update UI
 signals:
@@ -100,6 +104,7 @@ signals:
     void addSendCommandMessage(RobotCommandProtobuf::RobotCommand);
 
 private slots:
+    void onPlayVideoRequested(const QString& videoPath);
     void newConnection_receive_image();
     void newConnection_send_command();
     void newConnection_receive_audio();

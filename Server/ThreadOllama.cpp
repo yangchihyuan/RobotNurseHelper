@@ -77,7 +77,7 @@ void ThreadOllama::run()
 
         if(mqueue.size() > 0)
         {
-            cout << "(G) process an Ollama task." << endl;
+//            cout << "(G) process an Ollama task." << endl;
             OllamaTask task = mqueue.front();
             mqueue.pop();
             ollama::response response = ollama::chat(ModelName, task.message_history, options);

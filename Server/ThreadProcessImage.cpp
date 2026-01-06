@@ -435,14 +435,14 @@ void ThreadProcessImage::NotifyEvent(string description, chrono::time_point<chro
 {
     if( description == "onCompleteOfMotionPlay")
     {
-        cout << "(A) onCompleteOfMotionPlay yaw " << yaw << " pitch " << pitch << endl;
+//        cout << "(A) onCompleteOfMotionPlay yaw " << yaw << " pitch " << pitch << endl;
         robot_status.yaw_degree = (int)yaw;
         robot_status.pitch_degree = (int)pitch;
         mbWatchPatient = true;
     }
     else if(description == "KebbiMoveHeadDuringMotion")
     {
-        cout << "(B) KebbiMoveHeadDuringMotion " << endl;
+//        cout << "(B) KebbiMoveHeadDuringMotion " << endl;
         mbWatchPatient = false;
     }
 }

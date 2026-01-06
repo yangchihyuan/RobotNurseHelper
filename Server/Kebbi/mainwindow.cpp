@@ -18,6 +18,7 @@
 #include "RobotStatus.hpp"
 #include "ActionOption.hpp"
 #include <memory>
+#include <QCloseEvent>
 
 extern std::mutex gMutex_audio_buffer;
 extern std::queue<short> AudioBuffer;
@@ -242,7 +243,11 @@ MainWindow::MainWindow(QWidget *parent)
     thread_ollama.mpThreadStateControl = &thread_state_control;
 
     pVideoWindow = std::make_unique<VideoWindow>(nullptr);
+    pVideoWindow->showFullScreen();
     thread_state_control.pVideoWindow = pVideoWindow.get();
+    pVideoWindow->pThreadStateControl = &thread_state_control;
+
+    connect(&thread_state_control, &ThreadStateControl::playVideoRequest, this, &MainWindow::onPlayVideoRequested);
 }
 
 void MainWindow::on_pushButton_speak_clicked()
@@ -362,4 +367,22 @@ void MainWindow::timer_event()
         }
     }
     sendMessageManager.Send();
+}
+
+void MainWindow::onPlayVideoRequested(const QString& videoPath)
+{
+    if (pVideoWindow) {
+        // Calling showFullScreen() is often enough to show, raise, and focus the window.
+        // Combining it with other calls like move() can confuse the window manager.
+        pVideoWindow->showFullScreen();
+        pVideoWindow->playVideo(videoPath);
+    }
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (pVideoWindow) {
+        pVideoWindow->close();
+    }
+    QMainWindow::closeEvent(event);
 }

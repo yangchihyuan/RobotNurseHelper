@@ -636,7 +636,7 @@ void MainWindow::on_checkBox_stream_clicked(bool checked)
 {
     if( checked)
     {
-//        thread_whisper.setStartTime();
+
         bstream_recognition = true;
     }
     else
