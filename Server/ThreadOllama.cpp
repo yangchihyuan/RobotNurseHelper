@@ -57,6 +57,18 @@ void ThreadOllama::run()
         return;
     }
 
+    //warm up the model
+    OllamaTask task_warmup;
+    ollama::messages message_history_warmup;
+    ollama::message system_message("system", "你是一台名叫凱比的機器人，是基隆長庚醫院的員工，正在為一位白內障病患介紹白內障手術，你很有禮貌，個性熱心活潑，又有點可愛。請遵守以下規則：1.請主動和對方聊天適中。2.不要輸出任何表情符號。3.不要輸出任何括號。");
+    message_history_warmup.push_back(system_message);
+    ollama::message assistant_message("assistant", "您好，很高興能為您服務。");
+    message_history_warmup.push_back(assistant_message);
+    ollama::message user_message("user", "你好");
+    message_history_warmup.push_back(user_message);
+    task_warmup.message_history = message_history_warmup;
+    ollama::response response = ollama::chat(ModelName, task_warmup.message_history, options);
+
     mutex mtx;
     unique_lock<mutex> lk(mtx);
     while(b_WhileLoop)

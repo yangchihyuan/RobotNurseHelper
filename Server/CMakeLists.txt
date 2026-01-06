@@ -1,5 +1,15 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.14)    #FetchContent_MakeAvailable() requires CMake 3.14 higher (I am using 4.2.1)
 project(RobotNurseHelper)
+
+include(FetchContent) # 1. Load the "FetchContent" toolset
+
+FetchContent_Declare(
+    json                                            # A local name for this dependency
+    GIT_REPOSITORY https://github.com/nlohmann/json.git # Where to get it
+    GIT_TAG v3.11.3                                 # Which version to get
+)
+
+FetchContent_MakeAvailable(json) # 2. Download and prepare it NOW
 
 option(USE_GPU "USE GPU" ON)
 option(COMPILE_WITH_G_FLAG "COMPILE WITH G FLAG" ON)   #if OFF, executable size 2.5MB; if ON, 88MB
@@ -162,8 +172,8 @@ add_library(LIBEmotiEffNet SHARED IMPORTED)      #give the target a name
 set_target_properties(LIBEmotiEffNet PROPERTIES
   IMPORTED_LOCATION "${ROBOTNURSEHELPER_BUILD_DIR}/EmotiEffLib/emotieffcpplib/build/lib/libemotiefflib.so")
 target_link_libraries(RobotNurseHelper LIBEmotiEffNet)
-target_include_directories(RobotNurseHelper PUBLIC "${ROBOTNURSEHELPER_BUILD_DIR}/EmotiEffLib/emotieffcpplib/include",
-  "${ROBOTNURSEHELPER_BUILD_DIR}/EmotiEffLib/emotieffcpplib/3rdparty/xtensor/include",
+target_include_directories(RobotNurseHelper PUBLIC "${ROBOTNURSEHELPER_BUILD_DIR}/EmotiEffLib/emotieffcpplib/include"
+  "${ROBOTNURSEHELPER_BUILD_DIR}/EmotiEffLib/emotieffcpplib/3rdparty/xtensor/include"
   "${ROBOTNURSEHELPER_BUILD_DIR}/EmotiEffLib/emotieffcpplib/3rdparty/xtl/include")
 
 #dlib for face recognition
@@ -181,7 +191,7 @@ set_target_properties(${TARGET_NAME} PROPERTIES "CMAKE_CXX_FLAGS" "${CMAKE_CXX_F
 
 target_link_libraries(RobotNurseHelper LIBWHISPER
     Qt::Core Qt::Widgets Qt::Network
-    Qt::Multimedia Qt::MultimediaWidgets ${OpenCV_LIBS} portaudio LIBONNX)
+    Qt::Multimedia Qt::MultimediaWidgets ${OpenCV_LIBS} portaudio LIBONNX nlohmann_json::nlohmann_json)
 
 #set the compile definition
 if(ROBOT_MODEL STREQUAL "Kebbi")

@@ -229,9 +229,6 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     thread_process_image.pSendMessageManager = &sendMessageManager;
-//    thread_process_image.pSocketBufferParser = &SocketBufferParser1;
-
-//    thread_receive_message.pSocketHandler = &socketHandler4;
     thread_receive_message.pSendMessageManager = &sendMessageManager;
     thread_receive_message.mpThreadStateControl = &thread_state_control;
     thread_receive_message.mpThreadProcessImage = &thread_process_image;
@@ -244,13 +241,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     thread_ollama.mpThreadStateControl = &thread_state_control;
 
-    pVideoWindow = std::make_unique<VideoWindow>(this);
-    pVideoWindow->show();
-    pVideoWindow->raise();
-    pVideoWindow->activateWindow();
-    pVideoWindow->move(820, 0);  //move to the right side of the main window
-    pVideoWindow->setFocus();
-    pVideoWindow->playVideo("cataract_postop_v1.mp4");
+    pVideoWindow = std::make_unique<VideoWindow>(nullptr);
+    thread_state_control.pVideoWindow = pVideoWindow.get();
 }
 
 void MainWindow::on_pushButton_speak_clicked()

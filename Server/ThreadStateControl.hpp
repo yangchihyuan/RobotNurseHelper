@@ -10,27 +10,50 @@
 #include "ThreadOllama.hpp"
 #include "ThreadProcessImage.hpp"
 #include "utility_KebbiMotion.hpp" 
+#include <nlohmann/json.hpp>
+#include "VideoWindow.hpp"
 
 using namespace std;
 
 struct State
 {
+    //StateSetting
+    int iStateIndex;
     string m_strStateName;
-    chrono::seconds m_secDurationLimit;
-    string m_strSummary;
-    chrono::time_point<std::chrono::system_clock> m_Start_time;
+    int iDurationLimitSeconds;     //JSON supports int but not chrono::seconds
     string m_strSystemMessage;
-    string m_strFirstSentence;
-    ollama::messages message_history;
-    bool bInitial = true;
-    bool bWaitForTTSComplete = true;
-    int iNextStateIndex = -1;  //bug proofing
-    bool bEndState = false;
-    int iStage = 0;
+    string m_strFirstSentence;          //The first sentence to speak when enter this state
     string sFace;
     string sMotion;
     vector<string> vSmallMotion;
+    int iNextStateIndex = -1;  //bug proofing
+    vector<string> v_str_KeyWordMoveToNextState;
+    string sAction;
+
+    //Dynarmic data
+    chrono::time_point<std::chrono::system_clock> m_Start_time;
+    bool bInitial = true;
+    bool bWaitForTTSComplete = true;
+    bool bEndState = false;
+    ollama::messages message_history;
+    chrono::seconds m_secDurationLimit;     //Converted from iDurationLimitSeconds
+
+    //Special variables for some states
+    int iStage = 0;             //Only wok for the Ask Dance state. Stage 0 is conversation, Stage 1 is dance performance.
 };
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(State, iStateIndex, m_strStateName, iDurationLimitSeconds, 
+    m_strSystemMessage, m_strFirstSentence, iNextStateIndex, sFace, sMotion, vSmallMotion, v_str_KeyWordMoveToNextState, sAction
+)
+
+struct Setting
+{
+    string StateControlFile;
+};
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Setting, StateControlFile
+)
+
 
 class ThreadOllama; //Because ThreadOllama.hpp and ThreadStateControl.hpp include each other, I need to use forward declaration
 
@@ -53,6 +76,8 @@ public:
     void NotifyEvent(string description, chrono::time_point<chrono::system_clock> timestamp, string sLLMResult = "");
     condition_variable cond_var_state_control;
     void SetIntialStateIndex(int index);
+
+    VideoWindow* pVideoWindow = nullptr;
 
 protected:
     void run();

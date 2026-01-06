@@ -37,7 +37,7 @@ public:
         // Set the window size and title
         setWindowTitle("Video Player");
         resize(800, 600);
-        showFullScreen();
+        //showFullScreen();
     }
 
     void playVideo(const QString &fileName)
