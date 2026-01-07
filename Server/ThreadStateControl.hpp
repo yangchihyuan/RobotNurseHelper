@@ -25,6 +25,7 @@ struct State
     string m_strFirstSentence;          //The first sentence to speak when enter this state
     string sFace;
     string sMotion;
+    string sStateType;
     vector<string> vSmallMotion;
     int iNextStateIndex = -1;  //bug proofing
     vector<string> v_str_KeyWordMoveToNextState;
@@ -44,7 +45,7 @@ struct State
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(State, iStateIndex, m_strStateName, iDurationLimitSeconds, 
     m_strSystemMessage, m_strFirstSentence, iNextStateIndex, sFace, sMotion, vSmallMotion, v_str_KeyWordMoveToNextState, 
-    v_str_Action
+    v_str_Action, sStateType
 )
 
 struct Setting
@@ -93,6 +94,8 @@ protected:
     bool mbTTSComplete = false;
     bool mbWaitForTTSComplete = false;
     chrono::time_point<chrono::system_clock> mtimestamp_TTSComplete;
+    chrono::time_point<chrono::system_clock> mtimestamp_VideoComplete;
+
 
     bool mbLLMResult = false;
     bool mbWaitForLLMResult = false;

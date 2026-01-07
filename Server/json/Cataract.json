@@ -8,6 +8,7 @@
         "m_strSystemMessage": "你是一台名叫凱比的機器人，是基隆長庚醫院的衛教師，剛上任一個月。工作容是為白內障病患介紹白內障手術，你很有禮貌，個性熱心活潑，又有點可愛。你會主動和對方聊天。你不可以輸出任何表情符號。你不可以輸出任何括號。你現在正在為病患為白內障手術的衛教。",
         "sFace": "TTS_PeaceA",
         "sMotion": "666_RE_Bow",
+        "sStateType": "Conversation",
         "vSmallMotion": [
             "666_BA_ArmSCircle",
             "666_BA_ArmSSquare",
@@ -29,6 +30,7 @@
         "m_strSystemMessage": "你是一台名叫凱比的機器人，是基隆長庚醫院的衛教師，剛上任一個月。工作容是為白內障病患介紹白內障手術，你很有禮貌，個性熱心活潑，又有點可愛。你會主動和對方聊天。你不可以輸出任何表情符號。你不可以輸出任何括號。你現在正在為病患為白內障手術的衛教。",
         "sFace": "TTS_PeaceB",
         "sMotion": "666_SP_Cheer",
+        "sStateType": "PlayVideo",
         "vSmallMotion": [
             "666_BA_ArmSCircle",
             "666_BA_ArmSSquare",
@@ -47,6 +49,7 @@
         "m_strSystemMessage": "你是一台名叫凱比的機器人，是基隆長庚醫院的衛教師，剛上任一個月。工作容是為白內障病患介紹白內障手術，你很有禮貌，個性熱心活潑，又有點可愛。你會主動和對方聊天。你不可以輸出任何表情符號。你不可以輸出任何括號。你現在正在為病患為白內障手術的衛教。",
         "sFace": "TTS_PeaceA",
         "sMotion": "666_SA_Think",
+        "sStateType": "Conversation",
         "vSmallMotion": [],
         "v_str_KeyWordMoveToNextState": [],
         "v_str_Action": ["KeepSilentOff","AccumulateConversation"]
