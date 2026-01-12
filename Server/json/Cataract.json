@@ -5,7 +5,7 @@
         "iStateIndex": 0,
         "m_strFirstSentence": "您好，很高興能為您服務。因為醫生診斷您的白內障需要手術治療，我來為您介紹白內障的相關資訊。請問怎麼稱呼您呢？",
         "m_strStateName": "Wait for start",
-        "m_strSystemMessage": "你是一台名叫凱比的機器人，是基隆長庚醫院的衛教師，剛上任一個月。工作容是為白內障病患介紹白內障手術，你很有禮貌，個性熱心活潑，又有點可愛。你會主動和對方聊天。你不可以輸出任何表情符號。你不可以輸出任何括號。你現在正在為病患為白內障手術的衛教。",
+        "m_strSystemMessage": "你是一台名叫凱比的機器人，是基隆長庚醫院的衛教師，剛上任一個月。工作容是為白內障病患介紹白內障手術，你很有禮貌，個性熱心活潑，又有點可愛。你不可以輸出任何表情符號。你不可以輸出任何括號。你現在正在為病患為白內障手術的衛教。",
         "sFace": "TTS_PeaceA",
         "sMotion": "666_RE_Bow",
         "sStateType": "Conversation",
@@ -25,7 +25,7 @@
         "iDurationLimitSeconds": 600,
         "iNextStateIndex": 2,
         "iStateIndex": 1,
-        "m_strFirstSentence": "請您先觀看這段影片。",
+        "m_strFirstSentence": "請您先觀看這段術前衛教影片。",
         "m_strStateName": "Introduce postop care",
         "m_strSystemMessage": "你是一台名叫凱比的機器人，是基隆長庚醫院的衛教師，剛上任一個月。工作容是為白內障病患介紹白內障手術，你很有禮貌，個性熱心活潑，又有點可愛。你會主動和對方聊天。你不可以輸出任何表情符號。你不可以輸出任何括號。你現在正在為病患為白內障手術的衛教。",
         "sFace": "TTS_PeaceB",
@@ -38,7 +38,7 @@
             "666_BA_RArmCircleR"
         ],
         "v_str_KeyWordMoveToNextState": [],
-        "v_str_Action": ["KeepSilent","PlayVideo","AccumulateConversation","InsertAssitantMessage:影片播放完畢"]
+        "v_str_Action": ["KeepSilent","PlayVideo:Videos/Cataract_Preop.mp4","AccumulateConversation","InsertAssitantMessage:第一點：手術前一天請充足睡眠。要讓身體與眼睛在手術前保持良好的休息狀態，這樣有助於手術的順利進行。第二點：請備妥手術相關文件與健保卡。在手術當天，請記得攜帶好健保卡、手術同意書等相關文件，這樣醫護人員能更順利地為您辦理手續，讓整個流程更順暢，也能避免臨時找資料的麻煩。第三點：手術當天請穿著輕便衣物。選擇寬鬆、容易穿脫的服裝，這樣在手術和更換衣物時會更方便，也能讓您感到更舒適。第四點：手術前不得佩戴任何飾品。包括項鍊、耳環、手鍊等，這樣可以壁面手術過程中出現不便，也確保手術的安全和順利進行。第五點：手術過程中不得隨意觸碰。在手術過程請不要隨意觸碰已經消毒過的部位，這是因為護士在手術前已經仔細消毒了相關區域，如果您過程中觸碰它，就必需重新消毒，這不僅會增加感染的風險，也會延長手術時間，所以請務必保持耐心避免觸碰。第六點：手術結束後請至領藥櫃檯。請在休息之後前往領藥櫃檯，在那裡護理人員會會為您準備術後的藥物，並且詳細叮囑您術後的照護注意事項，讓您清楚接下來如何照顧自己。"]
     },
     {
         "iDurationLimitSeconds": 100,
@@ -51,7 +51,54 @@
         "sMotion": "666_SA_Think",
         "sStateType": "Conversation",
         "vSmallMotion": [],
-        "v_str_KeyWordMoveToNextState": [],
+        "v_str_KeyWordMoveToNextState": ["沒有", "沒問題"],
         "v_str_Action": ["KeepSilentOff","AccumulateConversation"]
+    },
+    {
+        "iDurationLimitSeconds": 600,
+        "iNextStateIndex": 4,
+        "iStateIndex": 3,
+        "m_strFirstSentence": "請您觀看這段術後衛教影片。",
+        "m_strStateName": "Introduce postop care",
+        "m_strSystemMessage": "",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_SP_Cheer",
+        "sStateType": "PlayVideo",
+        "vSmallMotion": [
+            "666_BA_ArmSCircle",
+            "666_BA_ArmSSquare",
+            "666_BA_RArmCircleL",
+            "666_BA_RArmCircleR"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": ["KeepSilent","PlayVideo:Videos/Cataract_Postop.mp4","AccumulateConversation","InsertAssitantMessage:第一點：紗布覆蓋眼睛時不需點眼藥水。手術當天手術結束後眼睛會有紗布覆蓋，因此在當天無須點眼藥水，請依醫師指示的時間開始使用眼藥水即可。第二點：回診請帶開刀當日開立的藥品。在手術後隔天回診時，請攜帶當日開刀時，醫師所開立的藥品，例如藥水、藥膏、眼罩或護理包，經由醫師檢查後，再依照指示開始使用眼藥水。第三點：畏光、流眼淚、輕度局部刺痛感為正常現象。在手術後如果您感到對光線比較敏感、有流眼淚的情況或著眼睛有輕微的刺痛感，這些其實都是術後的正常現象，只要按照醫囑護理，通常這些症狀會逐漸緩解，無須過度擔心。第四點：有任何不適馬上回診或到急診室求診。如果在手術後，出現視力突然明顯減退、異常疼痛、眼紅、大量出血或有不正常的分泌物，請務必立即回診或前往急診室就醫。第五點：儘量臥床休息，避免危險動作。在手術當天請盡量臥床休息，並且避免進行任何可能造成眼部壓力的危險動作，例如：用力咳嗽、彎腰、提重物或是劇烈運動，以免影響傷口癒合。第六點：維持規律生活，按時服藥。請在術後維持規律的生活作息，保持日常作息的穩定，避免過度勞累，並依照醫師指示按時服用所有已開立的藥物。第七點：眼睛一個月不可進水、不可游泳及劇烈運動。在手術後的一個月內，請避免讓眼睛接觸水分，同時避免游泳和任何劇烈的運動，以確保眼部的安全。第八點：眼罩要戴一個月，白天、晚上都要戴。在術後的一個月內請每天全天配戴眼罩，特別是在睡眠時也要保持配戴，以確保眼部的安全與保護。"]
+    },
+    {
+        "iDurationLimitSeconds": 100,
+        "iNextStateIndex": 5,
+        "iStateIndex": 4,
+        "m_strFirstSentence": "請問您有什麼問題嗎？",
+        "m_strStateName": "Play postop care video",
+        "m_strSystemMessage": "",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_SA_Think",
+        "sStateType": "Conversation",
+        "vSmallMotion": [],
+        "v_str_KeyWordMoveToNextState": ["沒有", "沒問題"],
+        "v_str_Action": ["KeepSilentOff","AccumulateConversation"]
+    },
+    {
+        "iDurationLimitSeconds": 100,
+        "iNextStateIndex": 5,
+        "iStateIndex": 5,
+        "m_strFirstSentence": "好的，那我們今天衛教就作到這裏，祝您開刀順利，早日康復！如果有任何問題，隨時可以來找我喔！再見！",
+        "m_strStateName": "Ending and Goodbye",
+        "m_strSystemMessage": "",
+        "sFace": "TTS_PeaceC",
+        "sMotion": "666_SA_Think",
+        "sStateType": "Conversation",
+        "vSmallMotion": [],
+        "v_str_KeyWordMoveToNextState": ["好的", "再見", "謝謝"],
+        "v_str_Action": ["AccumulateConversation"]
     }
 ]

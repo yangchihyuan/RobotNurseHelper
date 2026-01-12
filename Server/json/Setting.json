@@ -1,4 +1,3 @@
 {
-    "StateControlFile": "json/Cataract.json",
-    "VideoFile": "Videos/Cataract_Post-Surgery.mp4"
+    "StateControlFile": "json/Cataract.json"
 }

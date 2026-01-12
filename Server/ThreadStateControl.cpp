@@ -60,11 +60,15 @@ void ThreadStateControl::run()
             cout << "Enter state " << m_iStateIndex << endl;
             for( string s : mStates[m_iStateIndex].v_str_Action)
             {
-                //debug
+                if( s.find("PlayVideo:") != string::npos )
+                {
+                    size_t pos = s.find(":");
+                    emit playVideoRequest(s.substr(pos + 1).c_str());
+                    str_voice_source = "Video";
+                }
+
                 if( s == "PlayVideo")
                 {
-                    emit playVideoRequest(msetting.VideoFile.c_str());
-                    str_voice_source = "Video";
                 }
 
                 if( s == "KeepSilent" )
@@ -137,7 +141,7 @@ void ThreadStateControl::run()
         {
             //Monitor WhisperResult, but do not generate LLM response
             WhisperData WhisperResult = mpThreadWhisper->getLatestResult();
-            cout << "WhisperResult: " << WhisperResult.sOutput << endl;
+//            cout << "WhisperResult: " << WhisperResult.sOutput << endl;
             if( mStates[m_iStateIndex].v_str_KeyWordMoveToNextState.size() > 0)
             {
                 for( size_t k = 0; k < mStates[m_iStateIndex].v_str_KeyWordMoveToNextState.size(); k++)

@@ -51,10 +51,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(State, iStateIndex, m_strStateName, iDuration
 struct Setting
 {
     string StateControlFile;
-    string VideoFile;
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Setting, StateControlFile, VideoFile
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Setting, StateControlFile
 )
 
 
