@@ -656,6 +656,30 @@ ThreadWhisper.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/ThreadWhisper.cpp.s
 .PHONY : ThreadWhisper.cpp.s
 
+VideoWindow.o: VideoWindow.cpp.o
+.PHONY : VideoWindow.o
+
+# target to build an object file
+VideoWindow.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/VideoWindow.cpp.o
+.PHONY : VideoWindow.cpp.o
+
+VideoWindow.i: VideoWindow.cpp.i
+.PHONY : VideoWindow.i
+
+# target to preprocess a source file
+VideoWindow.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/VideoWindow.cpp.i
+.PHONY : VideoWindow.cpp.i
+
+VideoWindow.s: VideoWindow.cpp.s
+.PHONY : VideoWindow.s
+
+# target to generate assembly for a file
+VideoWindow.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RobotNurseHelper.dir/build.make CMakeFiles/RobotNurseHelper.dir/VideoWindow.cpp.s
+.PHONY : VideoWindow.cpp.s
+
 Yolo11Pose.o: Yolo11Pose.cpp.o
 .PHONY : Yolo11Pose.o
 
@@ -3364,6 +3388,9 @@ help:
 	@echo "... ThreadWhisper.o"
 	@echo "... ThreadWhisper.i"
 	@echo "... ThreadWhisper.s"
+	@echo "... VideoWindow.o"
+	@echo "... VideoWindow.i"
+	@echo "... VideoWindow.s"
 	@echo "... Yolo11Pose.o"
 	@echo "... Yolo11Pose.i"
 	@echo "... Yolo11Pose.s"

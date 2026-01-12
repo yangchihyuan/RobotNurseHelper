@@ -2,6 +2,7 @@
 	"InstallScripts" : 
 	[
 		"/home/chihyuan/RobotNurseHelper/build/cmake_install.cmake",
+		"/home/chihyuan/RobotNurseHelper/build/_deps/json-build/cmake_install.cmake",
 		"/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/cmake_install.cmake"
 	],
 	"Parallel" : false

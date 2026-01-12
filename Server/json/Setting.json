@@ -1,3 +1,4 @@
 {
-    "StateControlFile": "json/Cataract.json"
+    "StateControlFile": "json/Cataract.json",
+    "RobotReceivedAudioOut": "false"
 }

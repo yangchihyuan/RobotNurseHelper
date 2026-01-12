@@ -26,8 +26,8 @@ CMAKE_BUILD_TYPE:STRING=Debug
 //Enable/Disable color output during build.
 CMAKE_COLOR_MAKEFILE:BOOL=ON
 
-//CXX compiler
-CMAKE_CXX_COMPILER:STRING=/usr/bin/g++
+//No help, variable specified on the command line.
+CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/g++
 
 //A wrapper around 'ar' adding the appropriate '--plugin' option
 // for the GCC compiler
@@ -52,8 +52,8 @@ CMAKE_CXX_FLAGS_RELEASE:STRING=-O3 -DNDEBUG
 //Flags used by the CXX compiler during RELWITHDEBINFO builds.
 CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
 
-//C compiler
-CMAKE_C_COMPILER:STRING=/usr/bin/gcc
+//No help, variable specified on the command line.
+CMAKE_C_COMPILER:FILEPATH=/usr/bin/gcc
 
 //A wrapper around 'ar' adding the appropriate '--plugin' option
 // for the GCC compiler
@@ -202,6 +202,21 @@ CMAKE_PROJECT_NAME:STATIC=RobotNurseHelper
 
 //Value Computed by CMake
 CMAKE_PROJECT_SPDX_LICENSE:STATIC=
+
+//Value Computed by CMake
+CMAKE_PROJECT_VERSION:STATIC=3.11.3
+
+//Value Computed by CMake
+CMAKE_PROJECT_VERSION_MAJOR:STATIC=3
+
+//Value Computed by CMake
+CMAKE_PROJECT_VERSION_MINOR:STATIC=11
+
+//Value Computed by CMake
+CMAKE_PROJECT_VERSION_PATCH:STATIC=3
+
+//Value Computed by CMake
+CMAKE_PROJECT_VERSION_TWEAK:STATIC=
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/usr/bin/ranlib
@@ -445,7 +460,7 @@ DLIB_PNG_SUPPORT:BOOL=ON
 //Disable this if you don't want to use a BLAS library
 DLIB_USE_BLAS:BOOL=ON
 
-//Disable this if you don't want to use a BLAS library
+//Disable this if you don't want to use NVIDIA CUDA
 DLIB_USE_CUDA:STRING=OFF
 
 //Set this to a comma-separated list of CUDA compute capabilities
@@ -471,6 +486,26 @@ DLIB_USE_MKL_WITH_TBB:BOOL=OFF
 //Disable this if you don't want to link against libwebp
 DLIB_WEBP_SUPPORT:BOOL=ON
 
+//Directory under which to collect all populated content
+FETCHCONTENT_BASE_DIR:PATH=/home/chihyuan/RobotNurseHelper/build/_deps
+
+//Disables all attempts to download or update content and assumes
+// source dirs already exist
+FETCHCONTENT_FULLY_DISCONNECTED:BOOL=OFF
+
+//Enables QUIET option for all content population
+FETCHCONTENT_QUIET:BOOL=ON
+
+//When not empty, overrides where to find pre-populated content
+// for json
+FETCHCONTENT_SOURCE_DIR_JSON:PATH=
+
+//Enables UPDATE_DISCONNECTED behavior for all content population
+FETCHCONTENT_UPDATES_DISCONNECTED:BOOL=OFF
+
+//Enables UPDATE_DISCONNECTED behavior just for population of json
+FETCHCONTENT_UPDATES_DISCONNECTED_JSON:BOOL=OFF
+
 //Path to a file.
 FREETYPE_INCLUDE_DIR_freetype2:PATH=/usr/include/freetype2
 
@@ -494,6 +529,9 @@ GIF_INCLUDE_DIR:PATH=GIF_INCLUDE_DIR-NOTFOUND
 
 //Path to a library.
 GIF_LIBRARY:FILEPATH=GIF_LIBRARY-NOTFOUND
+
+//Git command line client
+GIT_EXECUTABLE:FILEPATH=/usr/bin/git
 
 //ICU derb executable
 ICU_DERB_EXECUTABLE:FILEPATH=/usr/bin/derb
@@ -567,8 +605,35 @@ JPEG_LIBRARY_DEBUG:FILEPATH=JPEG_LIBRARY_DEBUG-NOTFOUND
 //Path to a library.
 JPEG_LIBRARY_RELEASE:FILEPATH=/usr/lib/x86_64-linux-gnu/libjpeg.so
 
-//Dependencies for the target
-MP_FORMATS_LIB_DEPENDS:STATIC=general;libprotobuf;
+//Build the unit tests when BUILD_TESTING is enabled.
+JSON_BuildTests:BOOL=OFF
+
+//Enable CI build targets.
+JSON_CI:BOOL=OFF
+
+//Use extended diagnostic messages.
+JSON_Diagnostics:BOOL=OFF
+
+//Disable default integer enum serialization.
+JSON_DisableEnumSerialization:BOOL=OFF
+
+//Place use-defined string literals in the global namespace.
+JSON_GlobalUDLs:BOOL=ON
+
+//Enable implicit conversions.
+JSON_ImplicitConversions:BOOL=ON
+
+//Install CMake targets during install step.
+JSON_Install:BOOL=OFF
+
+//Enable legacy discarded value comparison.
+JSON_LegacyDiscardedValueComparison:BOOL=OFF
+
+//Use non-amalgamated version of the library.
+JSON_MultipleHeaders:BOOL=ON
+
+//Include as system headers (skip for clang-tidy).
+JSON_SystemInclude:BOOL=OFF
 
 //Path to a file.
 OPENGL_EGL_INCLUDE_DIR:PATH=/usr/include
@@ -651,6 +716,9 @@ Qt6GuiTools_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6GuiTools
 
 //The directory containing a CMake configuration file for Qt6Gui.
 Qt6Gui_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6Gui
+
+//The directory containing a CMake configuration file for Qt6MultimediaWidgets.
+Qt6MultimediaWidgets_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6MultimediaWidgets
 
 //The directory containing a CMake configuration file for Qt6Multimedia.
 Qt6Multimedia_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6Multimedia
@@ -1174,6 +1242,15 @@ mkl_rt:FILEPATH=mkl_rt-NOTFOUND
 //Path to a library.
 mkl_thread:FILEPATH=mkl_thread-NOTFOUND
 
+//Value Computed by CMake
+nlohmann_json_BINARY_DIR:STATIC=/home/chihyuan/RobotNurseHelper/build/_deps/json-build
+
+//Value Computed by CMake
+nlohmann_json_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+nlohmann_json_SOURCE_DIR:STATIC=/home/chihyuan/RobotNurseHelper/build/_deps/json-src
+
 //Path to a library.
 openmp_libraries:FILEPATH=openmp_libraries-NOTFOUND
 
@@ -1369,7 +1446,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=2
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=3
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
@@ -1600,6 +1677,8 @@ Fontconfig_LIBRARY-ADVANCED:INTERNAL=1
 GIF_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: GIF_LIBRARY
 GIF_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: GIT_EXECUTABLE
+GIT_EXECUTABLE-ADVANCED:INTERNAL=1
 //Result of TRY_COMPILE
 HAVE_SIZE_OF_VOID_PTR:INTERNAL=TRUE
 //Test HAVE_STDATOMIC
@@ -1730,6 +1809,7 @@ LAPACK_REFERENCE_lapack_INCLUDEDIR:INTERNAL=
 LAPACK_REFERENCE_lapack_LIBDIR:INTERNAL=
 LAPACK_REFERENCE_lapack_PREFIX:INTERNAL=
 LAPACK_REFERENCE_lapack_VERSION:INTERNAL=
+NLOHMANN_JSON_CONFIG_INSTALL_DIR:INTERNAL=share/cmake/nlohmann_json
 //Have function sgetrf_single
 OPENBLAS_HAS_LAPACK:INTERNAL=1
 //ADVANCED property for variable: OPENGL_EGL_INCLUDE_DIR

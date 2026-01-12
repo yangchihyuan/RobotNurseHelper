@@ -24,6 +24,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/chihyuan/RobotNurseHelper/Server/ThreadProcessImage.cpp" "CMakeFiles/RobotNurseHelper.dir/ThreadProcessImage.cpp.o" "gcc" "CMakeFiles/RobotNurseHelper.dir/ThreadProcessImage.cpp.o.d"
   "/home/chihyuan/RobotNurseHelper/Server/ThreadStateControl.cpp" "CMakeFiles/RobotNurseHelper.dir/ThreadStateControl.cpp.o" "gcc" "CMakeFiles/RobotNurseHelper.dir/ThreadStateControl.cpp.o.d"
   "/home/chihyuan/RobotNurseHelper/Server/ThreadWhisper.cpp" "CMakeFiles/RobotNurseHelper.dir/ThreadWhisper.cpp.o" "gcc" "CMakeFiles/RobotNurseHelper.dir/ThreadWhisper.cpp.o.d"
+  "/home/chihyuan/RobotNurseHelper/Server/VideoWindow.cpp" "CMakeFiles/RobotNurseHelper.dir/VideoWindow.cpp.o" "gcc" "CMakeFiles/RobotNurseHelper.dir/VideoWindow.cpp.o.d"
   "/home/chihyuan/RobotNurseHelper/Server/Yolo11Pose.cpp" "CMakeFiles/RobotNurseHelper.dir/Yolo11Pose.cpp.o" "gcc" "CMakeFiles/RobotNurseHelper.dir/Yolo11Pose.cpp.o.d"
   "/home/chihyuan/RobotNurseHelper_build/whisper.cpp/examples/common.cpp" "CMakeFiles/RobotNurseHelper.dir/home/chihyuan/RobotNurseHelper_build/whisper.cpp/examples/common.cpp.o" "gcc" "CMakeFiles/RobotNurseHelper.dir/home/chihyuan/RobotNurseHelper_build/whisper.cpp/examples/common.cpp.o.d"
   "/home/chihyuan/RobotNurseHelper/Server/main.cpp" "CMakeFiles/RobotNurseHelper.dir/main.cpp.o" "gcc" "CMakeFiles/RobotNurseHelper.dir/main.cpp.o.d"

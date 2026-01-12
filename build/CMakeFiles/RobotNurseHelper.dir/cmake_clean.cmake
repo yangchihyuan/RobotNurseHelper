@@ -33,6 +33,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/RobotNurseHelper.dir/ThreadStateControl.cpp.o.d"
   "CMakeFiles/RobotNurseHelper.dir/ThreadWhisper.cpp.o"
   "CMakeFiles/RobotNurseHelper.dir/ThreadWhisper.cpp.o.d"
+  "CMakeFiles/RobotNurseHelper.dir/VideoWindow.cpp.o"
+  "CMakeFiles/RobotNurseHelper.dir/VideoWindow.cpp.o.d"
   "CMakeFiles/RobotNurseHelper.dir/Yolo11Pose.cpp.o"
   "CMakeFiles/RobotNurseHelper.dir/Yolo11Pose.cpp.o.d"
   "CMakeFiles/RobotNurseHelper.dir/home/chihyuan/RobotNurseHelper_build/whisper.cpp/examples/common.cpp.o"

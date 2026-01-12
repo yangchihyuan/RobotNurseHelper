@@ -309,7 +309,7 @@ void ThreadStateControl::run()
                 mbReadyToChangeState = true;
             }
         }
-        else
+        else //neither PlayVideo nor Conversation
         {
             //unknown state type
             cout << "Unknown state type: " << mStates[m_iStateIndex].sStateType << endl;

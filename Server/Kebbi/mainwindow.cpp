@@ -243,7 +243,12 @@ MainWindow::MainWindow(QWidget *parent)
     thread_ollama.mpThreadStateControl = &thread_state_control;
 
     pVideoWindow = std::make_unique<VideoWindow>(nullptr);
-    pVideoWindow->showFullScreen();
+    //temporary comment to avoid the window being full-screen at the beginning
+    bool bShowFullScreen = false;
+    if( bShowFullScreen )
+        pVideoWindow->showFullScreen();
+    else
+        pVideoWindow->show();
     thread_state_control.pVideoWindow = pVideoWindow.get();
     pVideoWindow->pThreadStateControl = &thread_state_control;
 
@@ -374,7 +379,8 @@ void MainWindow::onPlayVideoRequested(const QString& videoPath)
     if (pVideoWindow) {
         // Calling showFullScreen() is often enough to show, raise, and focus the window.
         // Combining it with other calls like move() can confuse the window manager.
-        pVideoWindow->showFullScreen();
+        //temporary comment to avoid the window being full-screen at the beginning
+        //pVideoWindow->showFullScreen();
         pVideoWindow->playVideo(videoPath);
     }
 }

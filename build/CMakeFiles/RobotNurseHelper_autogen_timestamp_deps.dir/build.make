@@ -66,9 +66,22 @@ include CMakeFiles/RobotNurseHelper_autogen_timestamp_deps.dir/compiler_depend.m
 # Include the progress variables for this target.
 include CMakeFiles/RobotNurseHelper_autogen_timestamp_deps.dir/progress.make
 
+CMakeFiles/RobotNurseHelper_autogen_timestamp_deps: Kebbi/RobotCommand.pb.cc
+CMakeFiles/RobotNurseHelper_autogen_timestamp_deps: Kebbi/RobotCommand.pb.h
+
+Kebbi/RobotCommand.pb.cc: /home/chihyuan/RobotNurseHelper/Server/Kebbi/RobotCommand.proto
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/chihyuan/RobotNurseHelper/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating C++ protobuf files from Kebbi/RobotCommand.proto"
+	protoc --cpp_out=/home/chihyuan/RobotNurseHelper/build --proto_path=/home/chihyuan/RobotNurseHelper/Server Kebbi/RobotCommand.proto
+
+Kebbi/RobotCommand.pb.h: Kebbi/RobotCommand.pb.cc
+	@$(CMAKE_COMMAND) -E touch_nocreate Kebbi/RobotCommand.pb.h
+
 CMakeFiles/RobotNurseHelper_autogen_timestamp_deps.dir/codegen:
 .PHONY : CMakeFiles/RobotNurseHelper_autogen_timestamp_deps.dir/codegen
 
+RobotNurseHelper_autogen_timestamp_deps: CMakeFiles/RobotNurseHelper_autogen_timestamp_deps
+RobotNurseHelper_autogen_timestamp_deps: Kebbi/RobotCommand.pb.cc
+RobotNurseHelper_autogen_timestamp_deps: Kebbi/RobotCommand.pb.h
 RobotNurseHelper_autogen_timestamp_deps: CMakeFiles/RobotNurseHelper_autogen_timestamp_deps.dir/build.make
 .PHONY : RobotNurseHelper_autogen_timestamp_deps
 

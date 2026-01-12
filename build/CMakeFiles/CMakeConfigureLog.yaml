@@ -36700,3 +36700,233 @@ events:
       CMAKE_SYSTEM_INCLUDE_PATH:
         - "/usr/include/X11"
 ...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/find_libpng.cmake:25 (try_compile)"
+      - "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/CMakeLists.txt:449 (include)"
+    directories:
+      source: "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libpng"
+      binary: "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build"
+    buildResult:
+      variable: "test_for_libpng_worked"
+      cached: true
+      stdout: |
+        Change Dir: '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile
+        /usr/bin/cmake -S/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libpng -B/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build --check-build-system CMakeFiles/Makefile.cmake 0
+        /usr/bin/cmake -E cmake_progress_start /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build/CMakeFiles /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build//CMakeFiles/progress.marks
+        /usr/bin/gmake  -f CMakeFiles/Makefile2 all
+        gmake[1]: Entering directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build'
+        /usr/bin/gmake  -f CMakeFiles/libpng_test.dir/build.make CMakeFiles/libpng_test.dir/depend
+        gmake[2]: Entering directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build'
+        cd /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build && /usr/bin/cmake -E cmake_depends "Unix Makefiles" /home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libpng /home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libpng /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build/CMakeFiles/libpng_test.dir/DependInfo.cmake libpng_test
+        Dependee "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build/CMakeFiles/libpng_test.dir/DependInfo.cmake" is newer than depender "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build/CMakeFiles/libpng_test.dir/depend.internal".
+        Dependee "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build/CMakeFiles/CMakeDirectoryInformation.cmake" is newer than depender "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build/CMakeFiles/libpng_test.dir/depend.internal".
+        Scanning dependencies of target libpng_test
+        gmake[2]: Leaving directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build'
+        /usr/bin/gmake  -f CMakeFiles/libpng_test.dir/build.make CMakeFiles/libpng_test.dir/build
+        gmake[2]: Entering directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build'
+        [ 50%] Building CXX object CMakeFiles/libpng_test.dir/libpng_test.cpp.o
+        /usr/bin/g++    -o CMakeFiles/libpng_test.dir/libpng_test.cpp.o -c /home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libpng/libpng_test.cpp
+        [100%] Linking CXX executable libpng_test
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/libpng_test.dir/link.txt --verbose=1
+        /usr/bin/g++ CMakeFiles/libpng_test.dir/libpng_test.cpp.o -o libpng_test  /usr/lib/x86_64-linux-gnu/libpng.so /usr/lib/x86_64-linux-gnu/libz.so
+        gmake[2]: Leaving directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build'
+        [100%] Built target libpng_test
+        gmake[1]: Leaving directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build'
+        /usr/bin/cmake -E cmake_progress_start /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build/CMakeFiles 0
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/find_libjpeg.cmake:25 (try_compile)"
+      - "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/CMakeLists.txt:511 (include)"
+    directories:
+      source: "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libjpeg"
+      binary: "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build"
+    buildResult:
+      variable: "test_for_libjpeg_worked"
+      cached: true
+      stdout: |
+        Change Dir: '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile
+        /usr/bin/cmake -S/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libjpeg -B/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build --check-build-system CMakeFiles/Makefile.cmake 0
+        /usr/bin/cmake -E cmake_progress_start /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build/CMakeFiles /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build//CMakeFiles/progress.marks
+        /usr/bin/gmake  -f CMakeFiles/Makefile2 all
+        gmake[1]: Entering directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build'
+        /usr/bin/gmake  -f CMakeFiles/libjpeg_test.dir/build.make CMakeFiles/libjpeg_test.dir/depend
+        gmake[2]: Entering directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build'
+        cd /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build && /usr/bin/cmake -E cmake_depends "Unix Makefiles" /home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libjpeg /home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libjpeg /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build/CMakeFiles/libjpeg_test.dir/DependInfo.cmake libjpeg_test
+        Dependee "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build/CMakeFiles/libjpeg_test.dir/DependInfo.cmake" is newer than depender "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build/CMakeFiles/libjpeg_test.dir/depend.internal".
+        Dependee "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build/CMakeFiles/CMakeDirectoryInformation.cmake" is newer than depender "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build/CMakeFiles/libjpeg_test.dir/depend.internal".
+        Scanning dependencies of target libjpeg_test
+        gmake[2]: Leaving directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build'
+        /usr/bin/gmake  -f CMakeFiles/libjpeg_test.dir/build.make CMakeFiles/libjpeg_test.dir/build
+        gmake[2]: Entering directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build'
+        [ 50%] Building CXX object CMakeFiles/libjpeg_test.dir/libjpeg_test.cpp.o
+        /usr/bin/g++    -o CMakeFiles/libjpeg_test.dir/libjpeg_test.cpp.o -c /home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libjpeg/libjpeg_test.cpp
+        [100%] Linking CXX executable libjpeg_test
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/libjpeg_test.dir/link.txt --verbose=1
+        /usr/bin/g++ CMakeFiles/libjpeg_test.dir/libjpeg_test.cpp.o -o libjpeg_test  /usr/lib/x86_64-linux-gnu/libjpeg.so
+        gmake[2]: Leaving directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build'
+        [100%] Built target libjpeg_test
+        gmake[1]: Leaving directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build'
+        /usr/bin/cmake -E cmake_progress_start /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build/CMakeFiles 0
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/find_libwebp.cmake:42 (try_compile)"
+      - "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/CMakeLists.txt:571 (include)"
+    directories:
+      source: "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libwebp"
+      binary: "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build"
+    buildResult:
+      variable: "test_for_libwebp_worked"
+      cached: true
+      stdout: |
+        Change Dir: '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile
+        /usr/bin/cmake -S/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libwebp -B/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build --check-build-system CMakeFiles/Makefile.cmake 0
+        /usr/bin/cmake -E cmake_progress_start /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build/CMakeFiles /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build//CMakeFiles/progress.marks
+        /usr/bin/gmake  -f CMakeFiles/Makefile2 all
+        gmake[1]: Entering directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build'
+        /usr/bin/gmake  -f CMakeFiles/libwebp_test.dir/build.make CMakeFiles/libwebp_test.dir/depend
+        gmake[2]: Entering directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build'
+        cd /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build && /usr/bin/cmake -E cmake_depends "Unix Makefiles" /home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libwebp /home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libwebp /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build/CMakeFiles/libwebp_test.dir/DependInfo.cmake libwebp_test
+        Dependee "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build/CMakeFiles/libwebp_test.dir/DependInfo.cmake" is newer than depender "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build/CMakeFiles/libwebp_test.dir/depend.internal".
+        Dependee "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build/CMakeFiles/CMakeDirectoryInformation.cmake" is newer than depender "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build/CMakeFiles/libwebp_test.dir/depend.internal".
+        Scanning dependencies of target libwebp_test
+        gmake[2]: Leaving directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build'
+        /usr/bin/gmake  -f CMakeFiles/libwebp_test.dir/build.make CMakeFiles/libwebp_test.dir/build
+        gmake[2]: Entering directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build'
+        [ 50%] Building CXX object CMakeFiles/libwebp_test.dir/libwebp_test.cpp.o
+        /usr/bin/g++    -o CMakeFiles/libwebp_test.dir/libwebp_test.cpp.o -c /home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libwebp/libwebp_test.cpp
+        [100%] Linking CXX executable libwebp_test
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/libwebp_test.dir/link.txt --verbose=1
+        /usr/bin/g++ CMakeFiles/libwebp_test.dir/libwebp_test.cpp.o -o libwebp_test
+        gmake[2]: Leaving directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build'
+        [100%] Built target libwebp_test
+        gmake[1]: Leaving directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build'
+        /usr/bin/cmake -E cmake_progress_start /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build/CMakeFiles 0
+        
+      exitCode: 0
+...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/find_libpng.cmake:25 (try_compile)"
+      - "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/CMakeLists.txt:449 (include)"
+    directories:
+      source: "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libpng"
+      binary: "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build"
+    buildResult:
+      variable: "test_for_libpng_worked"
+      cached: true
+      stdout: |
+        Change Dir: '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile
+        /usr/bin/cmake -S/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libpng -B/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build --check-build-system CMakeFiles/Makefile.cmake 0
+        /usr/bin/cmake -E cmake_progress_start /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build/CMakeFiles /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build//CMakeFiles/progress.marks
+        /usr/bin/gmake  -f CMakeFiles/Makefile2 all
+        gmake[1]: Entering directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build'
+        /usr/bin/gmake  -f CMakeFiles/libpng_test.dir/build.make CMakeFiles/libpng_test.dir/depend
+        gmake[2]: Entering directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build'
+        cd /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build && /usr/bin/cmake -E cmake_depends "Unix Makefiles" /home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libpng /home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libpng /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build/CMakeFiles/libpng_test.dir/DependInfo.cmake libpng_test
+        Dependee "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build/CMakeFiles/libpng_test.dir/DependInfo.cmake" is newer than depender "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build/CMakeFiles/libpng_test.dir/depend.internal".
+        Dependee "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build/CMakeFiles/CMakeDirectoryInformation.cmake" is newer than depender "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build/CMakeFiles/libpng_test.dir/depend.internal".
+        Scanning dependencies of target libpng_test
+        gmake[2]: Leaving directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build'
+        /usr/bin/gmake  -f CMakeFiles/libpng_test.dir/build.make CMakeFiles/libpng_test.dir/build
+        gmake[2]: Entering directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build'
+        gmake[2]: Nothing to be done for 'CMakeFiles/libpng_test.dir/build'.
+        gmake[2]: Leaving directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build'
+        [100%] Built target libpng_test
+        gmake[1]: Leaving directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build'
+        /usr/bin/cmake -E cmake_progress_start /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libpng_build/CMakeFiles 0
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/find_libjpeg.cmake:25 (try_compile)"
+      - "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/CMakeLists.txt:511 (include)"
+    directories:
+      source: "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libjpeg"
+      binary: "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build"
+    buildResult:
+      variable: "test_for_libjpeg_worked"
+      cached: true
+      stdout: |
+        Change Dir: '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile
+        /usr/bin/cmake -S/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libjpeg -B/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build --check-build-system CMakeFiles/Makefile.cmake 0
+        /usr/bin/cmake -E cmake_progress_start /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build/CMakeFiles /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build//CMakeFiles/progress.marks
+        /usr/bin/gmake  -f CMakeFiles/Makefile2 all
+        gmake[1]: Entering directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build'
+        /usr/bin/gmake  -f CMakeFiles/libjpeg_test.dir/build.make CMakeFiles/libjpeg_test.dir/depend
+        gmake[2]: Entering directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build'
+        cd /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build && /usr/bin/cmake -E cmake_depends "Unix Makefiles" /home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libjpeg /home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libjpeg /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build/CMakeFiles/libjpeg_test.dir/DependInfo.cmake libjpeg_test
+        Dependee "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build/CMakeFiles/libjpeg_test.dir/DependInfo.cmake" is newer than depender "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build/CMakeFiles/libjpeg_test.dir/depend.internal".
+        Dependee "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build/CMakeFiles/CMakeDirectoryInformation.cmake" is newer than depender "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build/CMakeFiles/libjpeg_test.dir/depend.internal".
+        Scanning dependencies of target libjpeg_test
+        gmake[2]: Leaving directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build'
+        /usr/bin/gmake  -f CMakeFiles/libjpeg_test.dir/build.make CMakeFiles/libjpeg_test.dir/build
+        gmake[2]: Entering directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build'
+        gmake[2]: Nothing to be done for 'CMakeFiles/libjpeg_test.dir/build'.
+        gmake[2]: Leaving directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build'
+        [100%] Built target libjpeg_test
+        gmake[1]: Leaving directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build'
+        /usr/bin/cmake -E cmake_progress_start /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libjpeg_build/CMakeFiles 0
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/find_libwebp.cmake:42 (try_compile)"
+      - "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/CMakeLists.txt:571 (include)"
+    directories:
+      source: "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libwebp"
+      binary: "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build"
+    buildResult:
+      variable: "test_for_libwebp_worked"
+      cached: true
+      stdout: |
+        Change Dir: '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile
+        /usr/bin/cmake -S/home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libwebp -B/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build --check-build-system CMakeFiles/Makefile.cmake 0
+        /usr/bin/cmake -E cmake_progress_start /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build/CMakeFiles /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build//CMakeFiles/progress.marks
+        /usr/bin/gmake  -f CMakeFiles/Makefile2 all
+        gmake[1]: Entering directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build'
+        /usr/bin/gmake  -f CMakeFiles/libwebp_test.dir/build.make CMakeFiles/libwebp_test.dir/depend
+        gmake[2]: Entering directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build'
+        cd /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build && /usr/bin/cmake -E cmake_depends "Unix Makefiles" /home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libwebp /home/chihyuan/RobotNurseHelper_build/dlib-20.0/dlib/cmake_utils/test_for_libwebp /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build/CMakeFiles/libwebp_test.dir/DependInfo.cmake libwebp_test
+        Dependee "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build/CMakeFiles/libwebp_test.dir/DependInfo.cmake" is newer than depender "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build/CMakeFiles/libwebp_test.dir/depend.internal".
+        Dependee "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build/CMakeFiles/CMakeDirectoryInformation.cmake" is newer than depender "/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build/CMakeFiles/libwebp_test.dir/depend.internal".
+        Scanning dependencies of target libwebp_test
+        gmake[2]: Leaving directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build'
+        /usr/bin/gmake  -f CMakeFiles/libwebp_test.dir/build.make CMakeFiles/libwebp_test.dir/build
+        gmake[2]: Entering directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build'
+        gmake[2]: Nothing to be done for 'CMakeFiles/libwebp_test.dir/build'.
+        gmake[2]: Leaving directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build'
+        [100%] Built target libwebp_test
+        gmake[1]: Leaving directory '/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build'
+        /usr/bin/cmake -E cmake_progress_start /home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/test_for_libwebp_build/CMakeFiles 0
+        
+      exitCode: 0
+...

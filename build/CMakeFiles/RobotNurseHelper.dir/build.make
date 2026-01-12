@@ -380,10 +380,24 @@ CMakeFiles/RobotNurseHelper.dir/SocketClientHandler.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/RobotNurseHelper.dir/SocketClientHandler.cpp.s"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chihyuan/RobotNurseHelper/Server/SocketClientHandler.cpp -o CMakeFiles/RobotNurseHelper.dir/SocketClientHandler.cpp.s
 
+CMakeFiles/RobotNurseHelper.dir/VideoWindow.cpp.o: CMakeFiles/RobotNurseHelper.dir/flags.make
+CMakeFiles/RobotNurseHelper.dir/VideoWindow.cpp.o: /home/chihyuan/RobotNurseHelper/Server/VideoWindow.cpp
+CMakeFiles/RobotNurseHelper.dir/VideoWindow.cpp.o: CMakeFiles/RobotNurseHelper.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chihyuan/RobotNurseHelper/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/RobotNurseHelper.dir/VideoWindow.cpp.o"
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/RobotNurseHelper.dir/VideoWindow.cpp.o -MF CMakeFiles/RobotNurseHelper.dir/VideoWindow.cpp.o.d -o CMakeFiles/RobotNurseHelper.dir/VideoWindow.cpp.o -c /home/chihyuan/RobotNurseHelper/Server/VideoWindow.cpp
+
+CMakeFiles/RobotNurseHelper.dir/VideoWindow.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/RobotNurseHelper.dir/VideoWindow.cpp.i"
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/chihyuan/RobotNurseHelper/Server/VideoWindow.cpp > CMakeFiles/RobotNurseHelper.dir/VideoWindow.cpp.i
+
+CMakeFiles/RobotNurseHelper.dir/VideoWindow.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/RobotNurseHelper.dir/VideoWindow.cpp.s"
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/chihyuan/RobotNurseHelper/Server/VideoWindow.cpp -o CMakeFiles/RobotNurseHelper.dir/VideoWindow.cpp.s
+
 CMakeFiles/RobotNurseHelper.dir/Kebbi/LandmarkToRobotAction.cpp.o: CMakeFiles/RobotNurseHelper.dir/flags.make
 CMakeFiles/RobotNurseHelper.dir/Kebbi/LandmarkToRobotAction.cpp.o: /home/chihyuan/RobotNurseHelper/Server/Kebbi/LandmarkToRobotAction.cpp
 CMakeFiles/RobotNurseHelper.dir/Kebbi/LandmarkToRobotAction.cpp.o: CMakeFiles/RobotNurseHelper.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chihyuan/RobotNurseHelper/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/RobotNurseHelper.dir/Kebbi/LandmarkToRobotAction.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chihyuan/RobotNurseHelper/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building CXX object CMakeFiles/RobotNurseHelper.dir/Kebbi/LandmarkToRobotAction.cpp.o"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/RobotNurseHelper.dir/Kebbi/LandmarkToRobotAction.cpp.o -MF CMakeFiles/RobotNurseHelper.dir/Kebbi/LandmarkToRobotAction.cpp.o.d -o CMakeFiles/RobotNurseHelper.dir/Kebbi/LandmarkToRobotAction.cpp.o -c /home/chihyuan/RobotNurseHelper/Server/Kebbi/LandmarkToRobotAction.cpp
 
 CMakeFiles/RobotNurseHelper.dir/Kebbi/LandmarkToRobotAction.cpp.i: cmake_force
@@ -397,7 +411,7 @@ CMakeFiles/RobotNurseHelper.dir/Kebbi/LandmarkToRobotAction.cpp.s: cmake_force
 CMakeFiles/RobotNurseHelper.dir/Kebbi/ThreadReceiveMessage.cpp.o: CMakeFiles/RobotNurseHelper.dir/flags.make
 CMakeFiles/RobotNurseHelper.dir/Kebbi/ThreadReceiveMessage.cpp.o: /home/chihyuan/RobotNurseHelper/Server/Kebbi/ThreadReceiveMessage.cpp
 CMakeFiles/RobotNurseHelper.dir/Kebbi/ThreadReceiveMessage.cpp.o: CMakeFiles/RobotNurseHelper.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chihyuan/RobotNurseHelper/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building CXX object CMakeFiles/RobotNurseHelper.dir/Kebbi/ThreadReceiveMessage.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chihyuan/RobotNurseHelper/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building CXX object CMakeFiles/RobotNurseHelper.dir/Kebbi/ThreadReceiveMessage.cpp.o"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/RobotNurseHelper.dir/Kebbi/ThreadReceiveMessage.cpp.o -MF CMakeFiles/RobotNurseHelper.dir/Kebbi/ThreadReceiveMessage.cpp.o.d -o CMakeFiles/RobotNurseHelper.dir/Kebbi/ThreadReceiveMessage.cpp.o -c /home/chihyuan/RobotNurseHelper/Server/Kebbi/ThreadReceiveMessage.cpp
 
 CMakeFiles/RobotNurseHelper.dir/Kebbi/ThreadReceiveMessage.cpp.i: cmake_force
@@ -411,7 +425,7 @@ CMakeFiles/RobotNurseHelper.dir/Kebbi/ThreadReceiveMessage.cpp.s: cmake_force
 CMakeFiles/RobotNurseHelper.dir/Kebbi/mainwindow.cpp.o: CMakeFiles/RobotNurseHelper.dir/flags.make
 CMakeFiles/RobotNurseHelper.dir/Kebbi/mainwindow.cpp.o: /home/chihyuan/RobotNurseHelper/Server/Kebbi/mainwindow.cpp
 CMakeFiles/RobotNurseHelper.dir/Kebbi/mainwindow.cpp.o: CMakeFiles/RobotNurseHelper.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chihyuan/RobotNurseHelper/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building CXX object CMakeFiles/RobotNurseHelper.dir/Kebbi/mainwindow.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chihyuan/RobotNurseHelper/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building CXX object CMakeFiles/RobotNurseHelper.dir/Kebbi/mainwindow.cpp.o"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/RobotNurseHelper.dir/Kebbi/mainwindow.cpp.o -MF CMakeFiles/RobotNurseHelper.dir/Kebbi/mainwindow.cpp.o.d -o CMakeFiles/RobotNurseHelper.dir/Kebbi/mainwindow.cpp.o -c /home/chihyuan/RobotNurseHelper/Server/Kebbi/mainwindow.cpp
 
 CMakeFiles/RobotNurseHelper.dir/Kebbi/mainwindow.cpp.i: cmake_force
@@ -425,7 +439,7 @@ CMakeFiles/RobotNurseHelper.dir/Kebbi/mainwindow.cpp.s: cmake_force
 CMakeFiles/RobotNurseHelper.dir/Kebbi/RobotCommand.pb.cc.o: CMakeFiles/RobotNurseHelper.dir/flags.make
 CMakeFiles/RobotNurseHelper.dir/Kebbi/RobotCommand.pb.cc.o: Kebbi/RobotCommand.pb.cc
 CMakeFiles/RobotNurseHelper.dir/Kebbi/RobotCommand.pb.cc.o: CMakeFiles/RobotNurseHelper.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chihyuan/RobotNurseHelper/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building CXX object CMakeFiles/RobotNurseHelper.dir/Kebbi/RobotCommand.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chihyuan/RobotNurseHelper/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building CXX object CMakeFiles/RobotNurseHelper.dir/Kebbi/RobotCommand.pb.cc.o"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/RobotNurseHelper.dir/Kebbi/RobotCommand.pb.cc.o -MF CMakeFiles/RobotNurseHelper.dir/Kebbi/RobotCommand.pb.cc.o.d -o CMakeFiles/RobotNurseHelper.dir/Kebbi/RobotCommand.pb.cc.o -c /home/chihyuan/RobotNurseHelper/build/Kebbi/RobotCommand.pb.cc
 
 CMakeFiles/RobotNurseHelper.dir/Kebbi/RobotCommand.pb.cc.i: cmake_force
@@ -439,7 +453,7 @@ CMakeFiles/RobotNurseHelper.dir/Kebbi/RobotCommand.pb.cc.s: cmake_force
 CMakeFiles/RobotNurseHelper.dir/home/chihyuan/RobotNurseHelper_build/whisper.cpp/examples/common.cpp.o: CMakeFiles/RobotNurseHelper.dir/flags.make
 CMakeFiles/RobotNurseHelper.dir/home/chihyuan/RobotNurseHelper_build/whisper.cpp/examples/common.cpp.o: /home/chihyuan/RobotNurseHelper_build/whisper.cpp/examples/common.cpp
 CMakeFiles/RobotNurseHelper.dir/home/chihyuan/RobotNurseHelper_build/whisper.cpp/examples/common.cpp.o: CMakeFiles/RobotNurseHelper.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chihyuan/RobotNurseHelper/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building CXX object CMakeFiles/RobotNurseHelper.dir/home/chihyuan/RobotNurseHelper_build/whisper.cpp/examples/common.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/chihyuan/RobotNurseHelper/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Building CXX object CMakeFiles/RobotNurseHelper.dir/home/chihyuan/RobotNurseHelper_build/whisper.cpp/examples/common.cpp.o"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/RobotNurseHelper.dir/home/chihyuan/RobotNurseHelper_build/whisper.cpp/examples/common.cpp.o -MF CMakeFiles/RobotNurseHelper.dir/home/chihyuan/RobotNurseHelper_build/whisper.cpp/examples/common.cpp.o.d -o CMakeFiles/RobotNurseHelper.dir/home/chihyuan/RobotNurseHelper_build/whisper.cpp/examples/common.cpp.o -c /home/chihyuan/RobotNurseHelper_build/whisper.cpp/examples/common.cpp
 
 CMakeFiles/RobotNurseHelper.dir/home/chihyuan/RobotNurseHelper_build/whisper.cpp/examples/common.cpp.i: cmake_force
@@ -473,6 +487,7 @@ RobotNurseHelper_OBJECTS = \
 "CMakeFiles/RobotNurseHelper.dir/silero-vad-onnx.cpp.o" \
 "CMakeFiles/RobotNurseHelper.dir/Yolo11Pose.cpp.o" \
 "CMakeFiles/RobotNurseHelper.dir/SocketClientHandler.cpp.o" \
+"CMakeFiles/RobotNurseHelper.dir/VideoWindow.cpp.o" \
 "CMakeFiles/RobotNurseHelper.dir/Kebbi/LandmarkToRobotAction.cpp.o" \
 "CMakeFiles/RobotNurseHelper.dir/Kebbi/ThreadReceiveMessage.cpp.o" \
 "CMakeFiles/RobotNurseHelper.dir/Kebbi/mainwindow.cpp.o" \
@@ -503,6 +518,7 @@ RobotNurseHelper: CMakeFiles/RobotNurseHelper.dir/GetLandmarks.cpp.o
 RobotNurseHelper: CMakeFiles/RobotNurseHelper.dir/silero-vad-onnx.cpp.o
 RobotNurseHelper: CMakeFiles/RobotNurseHelper.dir/Yolo11Pose.cpp.o
 RobotNurseHelper: CMakeFiles/RobotNurseHelper.dir/SocketClientHandler.cpp.o
+RobotNurseHelper: CMakeFiles/RobotNurseHelper.dir/VideoWindow.cpp.o
 RobotNurseHelper: CMakeFiles/RobotNurseHelper.dir/Kebbi/LandmarkToRobotAction.cpp.o
 RobotNurseHelper: CMakeFiles/RobotNurseHelper.dir/Kebbi/ThreadReceiveMessage.cpp.o
 RobotNurseHelper: CMakeFiles/RobotNurseHelper.dir/Kebbi/mainwindow.cpp.o
@@ -532,6 +548,7 @@ RobotNurseHelper: /usr/lib/x86_64-linux-gnu/libpng.so
 RobotNurseHelper: /usr/lib/x86_64-linux-gnu/libz.so
 RobotNurseHelper: /usr/lib/x86_64-linux-gnu/libjpeg.so
 RobotNurseHelper: /usr/lib/x86_64-linux-gnu/libwebp.so
+RobotNurseHelper: /usr/lib/x86_64-linux-gnu/libQt6MultimediaWidgets.so.6.4.2
 RobotNurseHelper: /usr/lib/x86_64-linux-gnu/libQt6Widgets.so.6.4.2
 RobotNurseHelper: /usr/lib/x86_64-linux-gnu/libQt6Multimedia.so.6.4.2
 RobotNurseHelper: /usr/lib/x86_64-linux-gnu/libQt6Network.so.6.4.2
@@ -542,7 +559,7 @@ RobotNurseHelper: /usr/lib/x86_64-linux-gnu/libOpenGL.so
 RobotNurseHelper: /usr/local/lib/libopencv_imgproc.so.4.11.0
 RobotNurseHelper: /usr/local/lib/libopencv_core.so.4.11.0
 RobotNurseHelper: CMakeFiles/RobotNurseHelper.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/chihyuan/RobotNurseHelper/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Linking CXX executable RobotNurseHelper"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/chihyuan/RobotNurseHelper/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_30) "Linking CXX executable RobotNurseHelper"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/RobotNurseHelper.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

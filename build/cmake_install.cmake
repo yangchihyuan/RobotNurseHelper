@@ -43,9 +43,13 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for each subdirectory.
-  include("/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/cmake_install.cmake")
+  # Include the install script for the subdirectory.
+  include("/home/chihyuan/RobotNurseHelper/build/_deps/json-build/cmake_install.cmake")
+endif()
 
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("/home/chihyuan/RobotNurseHelper_build/dlib-20.0/examples/build/dlib_build/cmake_install.cmake")
 endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
