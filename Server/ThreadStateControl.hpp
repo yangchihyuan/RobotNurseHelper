@@ -12,6 +12,7 @@
 #include "utility_KebbiMotion.hpp" 
 #include <nlohmann/json.hpp>
 #include "VideoWindow.hpp"
+#include "Setting.hpp"
 
 using namespace std;
 
@@ -47,15 +48,6 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(State, iStateIndex, m_strStateName, iDuration
     m_strSystemMessage, m_strFirstSentence, iNextStateIndex, sFace, sMotion, vSmallMotion, v_str_KeyWordMoveToNextState, 
     v_str_Action, sStateType
 )
-
-struct Setting
-{
-    string StateControlFile;
-};
-
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Setting, StateControlFile
-)
-
 
 class ThreadOllama; //Because ThreadOllama.hpp and ThreadStateControl.hpp include each other, I need to use forward declaration
 

@@ -1,10 +1,12 @@
+#pragma once
+
 #include <string>
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <iostream>
 
 template <typename T>
-void LoadJSONFile(T &Struct, const std::string& file_path)
+inline void LoadJSONFile(T &Struct, const std::string& file_path)
 {
     std::ifstream file_setting(file_path);
     if (file_setting.is_open())

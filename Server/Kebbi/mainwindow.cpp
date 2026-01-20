@@ -253,6 +253,8 @@ MainWindow::MainWindow(QWidget *parent)
     pVideoWindow->pThreadStateControl = &thread_state_control;
 
     connect(&thread_state_control, &ThreadStateControl::playVideoRequest, this, &MainWindow::onPlayVideoRequested);
+
+    LoadJSONFile(msetting, "json/Setting.json");    
 }
 
 void MainWindow::on_pushButton_speak_clicked()

@@ -27,6 +27,7 @@
 #include "SocketClientHandler.hpp"
 #include <memory>
 #include "../VideoWindow.hpp"
+#include "Setting.hpp"
  
 using namespace std;
 
@@ -99,6 +100,9 @@ private:
     bool bstream_recognition = true;        //whether to stream the voice recognition result
 
     WhisperData oldWhisperData;     //for timer_event update UI
+
+    Setting msetting;
+    
 signals:
     void newMessage(QString);   //where is the connect for this signal?
     void addSendCommandMessage(RobotCommandProtobuf::RobotCommand);

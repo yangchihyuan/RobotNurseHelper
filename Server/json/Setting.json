@@ -1,4 +1,4 @@
 {
     "StateControlFile": "json/Cataract.json",
-    "RobotReceivedAudioOut": "false"
+    "bServerPlaysRobotReceivedAudio": false
 }

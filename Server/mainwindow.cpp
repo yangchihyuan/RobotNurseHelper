@@ -329,13 +329,18 @@ void MainWindow::readSocket3()
     char* buffer_head = pbuffer.get();
     qint64 length = socketStream.readRawData(buffer_head, byteAvailable);
     short *pShort = (short *)buffer_head;
-    gMutex_audio_buffer.lock();
-    for( long long i = 0; i<length/2 ; i++)
+
+    //Disable here if I don't want to play audio on the server side.
+    if( msetting.bServerPlaysRobotReceivedAudio )
     {
-        short value = *(pShort + i);
-        AudioBuffer.push(value);       //This AudioBuffer is used to play audio on the server
+        gMutex_audio_buffer.lock();
+        for( long long i = 0; i<length/2 ; i++)
+        {
+            short value = *(pShort + i);
+            AudioBuffer.push(value);       //This AudioBuffer is used to play audio on the server
+        }
+        gMutex_audio_buffer.unlock();
     }
-    gMutex_audio_buffer.unlock();
 
     if( bstream_recognition)
     {
