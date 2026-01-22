@@ -14,7 +14,7 @@ if [ $# == 1 ]; then
     elif [[ "$1" == "Kebbi" ]]; then
         echo "Building for Kebbi"
         rm -rf build
-        cmake -S . -B build -DROBOT_MODEL=Kebbi
+        cmake -S . -B build -DROBOT_MODEL=Kebbi -DCMAKE_CXX_FLAGS="-Wno-psabi"
     fi
 fi
 cmake --build build -j $(nproc)

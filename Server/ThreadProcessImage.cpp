@@ -345,7 +345,11 @@ void ThreadProcessImage::run()
                             Rect roi = GetBoundingBoxFromLandmarks(NL_faces[face_num], inputImage.cols, inputImage.rows);
                             //not very accurate, the cropped face is too small, around 135x156.
 //                            cout << "Cropped size: " << face.cols << " " << face.rows << endl;
-                            cv::putText(outFrame, res.labels[0] + std::format("{:.3f}", res.scores[0]) , Point(roi.x, roi.y) , cv::FONT_HERSHEY_SIMPLEX, 1. , cv::Scalar(0,255,0), 2);
+                            //std::format requires C++20, but my project uses C++17. So I use sprintf instead.
+//                            cv::putText(outFrame, res.labels[0] + std::format("{:.3f}", res.scores[0]) , Point(roi.x, roi.y) , cv::FONT_HERSHEY_SIMPLEX, 1. , cv::Scalar(0,255,0), 2);
+                            char text[256];
+                            sprintf(text, "%s%.3f", res.labels[0].c_str(), res.scores[0]);
+                            cv::putText(outFrame, text, Point(roi.x, roi.y), cv::FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(0,255,0), 2);
 
 
 
