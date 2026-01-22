@@ -95,7 +95,11 @@ mkdir RobotNurseHelper_build
 #install OpenCV 4.11, which is required by MediaPipe
 #install OpenCV 4.11 first, because it requires to key in sudo password again
 cd ~/RobotNurseHelper_build
-sudo apt -y install cmake
+#sudo apt -y install cmake
+# Ubuntu 22.04 cmake version is 3.22.1, which is not enough for emotiEfflib, which needs cmake 3.29 or above.
+# The snap version is 3.31+
+sudo snap install cmake --classic
+
 wget -O opencv4.11.zip https://github.com/opencv/opencv/archive/refs/tags/4.11.0.zip
 wget -O opencv_contrib4.11.zip https://github.com/opencv/opencv_contrib/archive/refs/tags/4.11.0.zip
 unzip opencv4.11.zip
@@ -284,6 +288,11 @@ git checkout v0.9.5
 #sudo apt -y install libdlib-dev       #Ubuntu 24.04 has dlib version 19.24.0-1 available in its repository
 cd ~/RobotNurseHelper_build/
 #This command will go wrong in the future because new versions will changes its download URL
+#The curl program in JetPack 6.2.1 is snap version, which conflicts with SELinux's security configuration.
+sudo snap remove curl
+sudo apt update && sudo apt install curl -y
+#update the path cache
+hash -d curl
 curl https://dlib.net/files/dlib-20.0.tar.bz2 --output dlib-20.0.tar.bz2
 tar -xjvf dlib-20.0.tar.bz2
 
