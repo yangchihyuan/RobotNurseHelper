@@ -107,7 +107,11 @@ mkdir RobotNurseHelper_build
 #install OpenCV 4.11, which is required by MediaPipe
 #install OpenCV 4.11 first, because it requires to key in sudo password again
 cd ~/RobotNurseHelper_build
-sudo apt -y install cmake
+#sudo apt -y install cmake
+# Ubuntu 22.04 cmake version is 3.22.1, which is not enough for emotiEfflib, which needs cmake 3.29 or above.
+# The snap version is 3.31+
+sudo snap install cmake --classic
+
 wget -O opencv4.11.zip https://github.com/opencv/opencv/archive/refs/tags/4.11.0.zip
 wget -O opencv_contrib4.11.zip https://github.com/opencv/opencv_contrib/archive/refs/tags/4.11.0.zip
 unzip opencv4.11.zip
