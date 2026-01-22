@@ -87,6 +87,7 @@ fi
 
 
 #Install the compiler
+#On Ubuntu 22.04, the g++ version is 11.4.0, which only support up to C++17. But my code needs C++20.
 sudo apt -y install build-essential
 
 #install git
@@ -104,13 +105,28 @@ if [ -d "RobotNurseHelper_build" ]; then
 fi
 mkdir RobotNurseHelper_build
 
+#sudo apt -y install cmake
+
+if [ "$machine" = "PC" ]; then
+  # Ubuntu 22.04 cmake version is 3.22.1, which is not enough for emotiEfflib, which needs cmake 3.29 or above.
+  sudo snap install cmake --classic   # version 4.2.2 will be installed
+elif [ "$machine" = "AGXOrin" ]; then
+  #Snap's cmake does not work on AGX Orin because the SElinux does not allow the sandbox to access some required files.
+  #sudo snap install cmake --classic   # version 4.2.2 will be installed
+  cd ~/RobotNurseHelper_build
+  # Download the official Linux installer script
+  wget https://github.com/Kitware/CMake/releases/download/v3.31.3/cmake-3.31.3-linux-aarch64.sh
+
+  # Make it executable
+  chmod +x cmake-3.31.3-linux-aarch64.sh
+
+  # Run the installer (choose 'y' for license, 'y' for include subdirectory)
+  sudo ./cmake-3.31.3-linux-aarch64.sh --prefix=/usr/local --skip-license
+fi
+
 #install OpenCV 4.11, which is required by MediaPipe
 #install OpenCV 4.11 first, because it requires to key in sudo password again
 cd ~/RobotNurseHelper_build
-#sudo apt -y install cmake
-# Ubuntu 22.04 cmake version is 3.22.1, which is not enough for emotiEfflib, which needs cmake 3.29 or above.
-# The snap version is 3.31+
-sudo snap install cmake --classic
 
 wget -O opencv4.11.zip https://github.com/opencv/opencv/archive/refs/tags/4.11.0.zip
 wget -O opencv_contrib4.11.zip https://github.com/opencv/opencv_contrib/archive/refs/tags/4.11.0.zip
@@ -119,9 +135,11 @@ unzip opencv_contrib4.11.zip
 cd opencv-4.11.0
 mkdir -p build && cd build
 sudo apt install libvtk9-dev       #vtk is required to compile opencv_vis module, which is required by EmotiEffLib
+#      -D WITH_VTK=ON \             #for emotiefflib
+#      -D BUILD_opencv_viz=ON       #for emotiefflib
 cmake  .. -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-4.11.0/modules \
-      -D WITH_VTK=ON \             #for emotiefflib
-      -D BUILD_opencv_viz=ON       #for emotiefflib
+      -D WITH_VTK=ON \
+      -D BUILD_opencv_viz=ON
 cmake --build . -j $(nproc)
 sudo make install
 #to config the loading directories to let /usr/local/lib works
@@ -178,6 +196,9 @@ sudo apt-get -y install mesa-common-dev libegl1-mesa-dev libgles2-mesa-dev
 
 #build libmp library
 cd ~/mediapipe
+#I may need to manually change the sha256 value in mediapipe/WORKSPACE if the bazel build command reports a sha256 mismatch error for the AGX Orin case.
+#    name = "KleidiAI",
+#    sha256 = "8eeb81ff6bc7ab2de678c0c4a3d18b02c382a5122ac4edc26a3334c858531739",
 bazel build -c opt mediapipe/examples/desktop/libmp:libmp_gpu.so
 
 #Qt
@@ -241,10 +262,13 @@ fi
 
 #onnx
 cd ~/RobotNurseHelper_build
-#wget -O onnxruntime-linux-x64-1.12.1.tgz https://github.com/microsoft/onnxruntime/releases/download/v1.12.1/onnxruntime-linux-x64-1.12.1.tgz
-#tar -xvzf onnxruntime-linux-x64-1.12.1.tgz
-wget -O onnxruntime-linux-x64-gpu-1.22.0.tgz https://github.com/microsoft/onnxruntime/releases/download/v1.22.0/onnxruntime-linux-x64-gpu-1.22.0.tgz
-tar -xvzf onnxruntime-linux-x64-gpu-1.22.0.tgz
+if [ "$machine" = "PC" ]; then
+  wget -O onnxruntime-linux-x64-gpu-1.22.0.tgz https://github.com/microsoft/onnxruntime/releases/download/v1.22.0/onnxruntime-linux-x64-gpu-1.22.0.tgz
+  tar -xvzf onnxruntime-linux-x64-gpu-1.22.0.tgz
+elif [ "$machine" = "AGXOrin" ]; then
+  wget -O onnxruntime-linux-aarch64-1.22.0.tgz https://github.com/microsoft/onnxruntime/releases/download/v1.22.0/onnxruntime-linux-aarch64-1.22.0.tgz
+  tar -xvzf onnxruntime-linux-aarch64-1.22.0.tgz
+fi
 
 #silero-v
 cd ~/RobotNurseHelper_build
@@ -274,12 +298,21 @@ mkdir build && cd build
 #I am not sure if this command works. Check it later.
 #Their CMakeLists.txt file needs /home/chihyuan/RobotNurseHelper_build/onnxruntime-linux-x64-gpu-1.22.0/lib64, but there is no lib64 folder in onnxruntime-linux-x64-gpu-1.22.0. There is only a lib folder.
 #So, I create a symbolic link lib64 to lib
-cd ~/RobotNurseHelper_build/onnxruntime-linux-x64-gpu-1.22.0
-ln -s lib lib64
-cd ~/RobotNurseHelper_build/EmotiEffLib/emotieffcpplib/build
-cmake .. -DWITH_ONNX=~/RobotNurseHelper_build/onnxruntime-linux-x64-gpu-1.22.0 -DBUILD_SHARED_LIBS=ON
-make -j$(nproc)
-#The .so files are in ~/RobotNurseHelper_build/EmotiEffLib/emotieffcpplib/build/lib
+if [ "$machine" = "PC" ]; then
+  cd ~/RobotNurseHelper_build/onnxruntime-linux-x64-gpu-1.22.0
+  ln -s lib lib64
+  cd ~/RobotNurseHelper_build/EmotiEffLib/emotieffcpplib/build
+  cmake .. -DWITH_ONNX=~/RobotNurseHelper_build/onnxruntime-linux-x64-gpu-1.22.0 -DBUILD_SHARED_LIBS=ON
+  make -j$(nproc)
+  #The .so files are in ~/RobotNurseHelper_build/EmotiEffLib/emotieffcpplib/build/lib
+elif [ "$machine" = "AGXOrin" ]; then
+  cd ~/RobotNurseHelper_build/onnxruntime-linux-aarch64-1.22.0
+  ln -s lib lib64
+  cd ~/RobotNurseHelper_build/EmotiEffLib/emotieffcpplib/build
+  cmake .. -DWITH_ONNX=~/RobotNurseHelper_build/onnxruntime-linux-aarch64-1.22.0 -DBUILD_SHARED_LIBS=ON
+  make -j$(nproc)
+  #The .so files are in ~/RobotNurseHelper_build/EmotiEffLib/emotieffcpplib/build/lib
+fi
 
 #ollama
 sudo snap install curl
@@ -287,6 +320,7 @@ cd ~/RobotNurseHelper_build/
 #This command seems unnecenssary is from https://ollama.com/docs/installation
 curl.snap-acked        #ollama changed its installation script. There is a text explanation in the script. It only accepts Snap-curand we need to use this command first
 curl -fsSL https://ollama.com/install.sh | sh
+wget -O- https://ollama.com/install.sh | sh
 if((VRAMSize<=2)); then
   ollama pull gemma3:1b
 elif((VRAMSize=12)); then
