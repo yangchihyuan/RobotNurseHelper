@@ -15,8 +15,11 @@
 #include "RobotStatus.hpp"
 
 // Compiled protobuf headers for MediaPipe types used
-#include "mediapipe/framework/formats/landmark.pb.h"
-#include "mediapipe/framework/formats/image_format.pb.h"
+//The two files are at /home/chihyuan/mediapipe/bazel-bin/mediapipe/framework/formats
+//They are included by target_include_directories(MP_FORMATS PUBLIC "${MEDIAPIPE_DIR}/bazel-bin") in the CMakeLists.txt
+//However, they seem uncessary here because I move them to the GetLandmarks.hpp
+//#include "mediapipe/framework/formats/landmark.pb.h"
+//#include "mediapipe/framework/formats/image_format.pb.h"
 
 #include <google/protobuf/text_format.h>
 

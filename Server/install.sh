@@ -1,57 +1,69 @@
 #!/bin/bash
 
-#2025/7/23
-#Install Robot Nurse Helper to Ubuntu 24.04
+#2026 Jan 22
+#Install Robot Nurse Helper to Ubuntu 24.04 and NVidia AGX Orin
 #Author: Chih-Yuan Yang
 #Project: Robot Nurse Helper
 
-read -p "Is your secure boot off in your motherboard's UEFI setting? [y/n]" SecureBoot
-if ! [[ "$SecureBoot" == "Y" || "$SecureBoot" == "y" ]]; then
-  echo "This install.sh script cannot fully automatically install a Nvidia GPU driver because your UEFI secure boot is on. If you want to use this instal.sh to fully automatically install a NVidia GPU driver, you need to set your UEFI secure boot off. Otherwise, you need to install the Nvidia GPU driver manually."
-  read -p "Do you want to stop the install.sh? [y/n]" StopInstall
-  if ! [[ "$StopInstall" == "Y" || "$StopInstall" == "y" ]]; then
-    echo "You can continue to install the Robot Nurse Helper, but you need to install the Nvidia GPU driver manually after the installation."
-  else
-    echo "You can run this install.sh again after you set your UEFI secure boot off."
-    exit  #stop the installation script
-  fi  
-fi
-
-read -p "What is your GPU model? [none/3050laptop/4070laptop/4080/4090]" GPUModel
-read -p "What is the robot model you use? [Zenbo/Kebbi/ZenboJrII]" RobotModel
-
-#Check if the VARAM size is valid
-if [ "$GPUModel" = "none" ]; then
-  VRAMSize=0
-elif [ "$GPUModel" = "3050laptop" ]; then
-  VRAMSize=4
-elif [ "$GPUModel" = "4070laptop" ]; then
-  VRAMSize=8
-elif [ "$GPUModel" = "4080" ]; then
+read -p "What is your machine [PC/AGXOrin]" machine
+if [ "$machine" = "AGXOrin" ]; then
   VRAMSize=16
-elif [ "$GPUModel" = "4090" ]; then
-  VRAMSize=24
+elif [ "$machine" = "PC" ]; then
+  VRAMSize=0
 else
-  echo "Error: '$GPUModel' is not in the allowed list. Please try again."
+  echo "Error: '$machine' is not in the allowed list. Please try again."
   exit
 fi
 
-if (( VRAMSize > 0 )); then
-  #echo "We will detect the GPU driver. If there is no driver, we will install the driver for you. But you need to restart your PC after the installation."
-  #Check if the GPU driver is installed
-  sudo apt update   #this command is required because Ubuntu's repositories URL changed after its release in 2024 April.
-  #ubuntu-drivers devices             #list available drivers
-  #Don't use this command. It sometimes downgrades the GPU driver to an older version, which causes boot-failure problems.
-  #sudo ubuntu-drivers autoinstall    #Sometimes the system need a reboot. Otherwise Ubuntu does not detect the GPU.
-  nvidia-smi
-  read -p "Can you see the nvidia-smi GPU usage messages? [y/n]" GPUDriverWork
-  if ! [[ "$GPUDriverWork" == "Y" || "$GPUDriverWork" == "y" ]]; then
-    echo "Your NVidia GPU driver is not ready yet. You need to install the NVidia GPU driver first, and then run this install.sh script again."
+if [ "$machine" = "PC" ]; then
+  read -p "Is your secure boot off in your motherboard's UEFI setting? [y/n]" SecureBoot
+  if ! [[ "$SecureBoot" == "Y" || "$SecureBoot" == "y" ]]; then
+    echo "This install.sh script cannot fully automatically install a Nvidia GPU driver because your UEFI secure boot is on. If you want to use this instal.sh to fully automatically install a NVidia GPU driver, you need to set your UEFI secure boot off. Otherwise, you need to install the Nvidia GPU driver manually."
+    read -p "Do you want to stop the install.sh? [y/n]" StopInstall
+    if ! [[ "$StopInstall" == "Y" || "$StopInstall" == "y" ]]; then
+      echo "You can continue to install the Robot Nurse Helper, but you need to install the Nvidia GPU driver manually after the installation."
+    else
+      echo "You can run this install.sh again after you set your UEFI secure boot off."
+      exit  #stop the installation script
+    fi  
+  fi
+
+  read -p "What is your GPU model? [none/3050laptop/4070laptop/4080/4090]" GPUModel
+
+  #Check if the VARAM size is valid
+  if [ "$GPUModel" = "none" ]; then
+    VRAMSize=0
+  elif [ "$GPUModel" = "3050laptop" ]; then
+    VRAMSize=4
+  elif [ "$GPUModel" = "4070laptop" ]; then
+    VRAMSize=8
+  elif [ "$GPUModel" = "4080" ]; then
+    VRAMSize=16
+  elif [ "$GPUModel" = "4090" ]; then
+    VRAMSize=24
+  else
+    echo "Error: '$GPUModel' is not in the allowed list. Please try again."
     exit
+  fi
+
+  if (( VRAMSize > 0 )); then
+    #echo "We will detect the GPU driver. If there is no driver, we will install the driver for you. But you need to restart your PC after the installation."
+    #Check if the GPU driver is installed
+    sudo apt update   #this command is required because Ubuntu's repositories URL changed after its release in 2024 April.
+    #ubuntu-drivers devices             #list available drivers
+    #Don't use this command. It sometimes downgrades the GPU driver to an older version, which causes boot-failure problems.
+    #sudo ubuntu-drivers autoinstall    #Sometimes the system need a reboot. Otherwise Ubuntu does not detect the GPU.
+    nvidia-smi
+    read -p "Can you see the nvidia-smi GPU usage messages? [y/n]" GPUDriverWork
+    if ! [[ "$GPUDriverWork" == "Y" || "$GPUDriverWork" == "y" ]]; then
+      echo "Your NVidia GPU driver is not ready yet. You need to install the NVidia GPU driver first, and then run this install.sh script again."
+      exit
+    fi
   fi
 
 fi
 
+read -p "What is the robot model you use? [Zenbo/Kebbi/ZenboJrII]" RobotModel
 #Check if the RobotModel is valid
 allowed_robot_models=("Zenbo" "Kebbi" "ZenboJrII")
 # Validate if the input is a valid string
@@ -146,8 +158,15 @@ cp -r ~/RobotNurseHelper/Server/mediapipe_addition/* ~/mediapipe/
 
 #Install bazelisk
 cd ~/RobotNurseHelper_build
-wget -O bazelisk-amd64.deb https://github.com/bazelbuild/bazelisk/releases/download/v1.25.0/bazelisk-amd64.deb
-sudo dpkg -i bazelisk-amd64.deb
+#this command only works for amd64 architecture
+if [ "$machine" = "PC" ]; then
+  wget -O bazelisk-amd64.deb https://github.com/bazelbuild/bazelisk/releases/download/v1.25.0/bazelisk-amd64.deb
+  sudo dpkg -i bazelisk-amd64.deb
+elif [ "$machine" = "AGXOrin" ]; then
+  wget -O bazelisk-arm64.deb https://github.com/bazelbuild/bazelisk/releases/download/v1.25.0/bazelisk-arm64.deb
+  sudo dpkg -i bazelisk-arm64.deb
+fi
+
 
 #install OpenGL libraries, which will be used in MediaPipe for compiling GPU-related code.
 #This is MediaPipe's requirement
@@ -261,6 +280,7 @@ make -j$(nproc)
 #ollama
 sudo snap install curl
 cd ~/RobotNurseHelper_build/
+#This command seems unnecenssary is from https://ollama.com/docs/installation
 curl.snap-acked        #ollama changed its installation script. There is a text explanation in the script. It only accepts Snap-curand we need to use this command first
 curl -fsSL https://ollama.com/install.sh | sh
 if((VRAMSize<=2)); then
@@ -284,7 +304,8 @@ git checkout v0.9.5
 #sudo apt -y install libdlib-dev       #Ubuntu 24.04 has dlib version 19.24.0-1 available in its repository
 cd ~/RobotNurseHelper_build/
 #This command will go wrong in the future because new versions will changes its download URL
-curl https://dlib.net/files/dlib-20.0.tar.bz2 --output dlib-20.0.tar.bz2
+#curl https://dlib.net/files/dlib-20.0.tar.bz2 --output dlib-20.0.tar.bz2
+wget -O dlib-20.0.tar.bz2 https://dlib.net/files/dlib-20.0.tar.bz2
 tar -xjvf dlib-20.0.tar.bz2
 
 #Build our own program
