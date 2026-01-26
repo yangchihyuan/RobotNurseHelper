@@ -196,9 +196,12 @@ sudo apt-get -y install mesa-common-dev libegl1-mesa-dev libgles2-mesa-dev
 
 #build libmp library
 cd ~/mediapipe
-#I may need to manually change the sha256 value in mediapipe/WORKSPACE if the bazel build command reports a sha256 mismatch error for the AGX Orin case.
+#I need to manually change the sha256 value in mediapipe/WORKSPACE if the bazel build command reports a sha256 mismatch error for the AGX Orin case.
+if [ "$machine" = "AGXOrin" ]; then
 #    name = "KleidiAI",
 #    sha256 = "8eeb81ff6bc7ab2de678c0c4a3d18b02c382a5122ac4edc26a3334c858531739",
+  sed -i 's/ad37707084a6d4ff41be10cbe8540c75bea057ba79d0de6c367c1bfac6ba0852/8eeb81ff6bc7ab2de678c0c4a3d18b02c382a5122ac4edc26a3334c858531739/g' WORKSPACE
+fi
 bazel build -c opt mediapipe/examples/desktop/libmp:libmp_gpu.so
 
 #Qt
@@ -361,5 +364,7 @@ cp -r temp/home/$USER/mediapipe/mediapipe .
 rm -rf temp
 
 #copy the file to prevent Nvidia GPU from being unavailable after laptop suspends
-sudo cp ~/RobotNurseHelper/Server/nvidia-power-management.conf /etc/modprobe.d/
-sudo update-initramfs -u
+if [ "$machine" = "PC" ] && [[ "$GPUModel" = "3050laptop" ] || [ "$GPUModel" = "4070laptop" ]]; then
+  sudo cp ~/RobotNurseHelper/Server/nvidia-power-management.conf /etc/modprobe.d/
+  sudo update-initramfs -u
+fi
