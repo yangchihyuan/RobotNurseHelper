@@ -7,7 +7,7 @@
 
 read -p "What is your machine [PC/AGXOrin]" machine
 if [ "$machine" = "AGXOrin" ]; then
-  VRAMSize=16
+  VRAMSize=64
 elif [ "$machine" = "PC" ]; then
   VRAMSize=0
 else
@@ -318,15 +318,16 @@ elif [ "$machine" = "AGXOrin" ]; then
 fi
 
 #ollama
-sudo snap install curl
+#sudo snap install curl
 cd ~/RobotNurseHelper_build/
 #This command seems unnecenssary is from https://ollama.com/docs/installation
-curl.snap-acked        #ollama changed its installation script. There is a text explanation in the script. It only accepts Snap-curand we need to use this command first
-curl -fsSL https://ollama.com/install.sh | sh
+#curl.snap-acked        #ollama changed its installation script. There is a text explanation in the script. It only accepts Snap-curand we need to use this command first
+#curl -fsSL https://ollama.com/install.sh | sh
+#wget is enough to install ollama
 wget -O- https://ollama.com/install.sh | sh
-if((VRAMSize<=2)); then
+if [ "$VRAMSize" -le 2 ]; then
   ollama pull gemma3:1b
-elif((VRAMSize=12)); then
+elif [ "$VRAMSize" -ge 12 ]; then
   ollama pull gemma3:12b
 else
   ollama pull gemma3:4b
@@ -364,7 +365,22 @@ cp -r temp/home/$USER/mediapipe/mediapipe .
 rm -rf temp
 
 #copy the file to prevent Nvidia GPU from being unavailable after laptop suspends
-if [ "$machine" = "PC" ] && [[ "$GPUModel" = "3050laptop" ] || [ "$GPUModel" = "4070laptop" ]]; then
+if [ "$machine" = "PC" ] && [[ "$GPUModel" == "3050laptop" || "$GPUModel" == "4070laptop" ]]; then
   sudo cp ~/RobotNurseHelper/Server/nvidia-power-management.conf /etc/modprobe.d/
   sudo update-initramfs -u
 fi
+
+#Dowload media files from internet
+cd ~/RobotNurseHelper/Server
+mkdir Videos
+cd Videos
+wget -O Cataract_Postop.mp4 https://drive.google.com/file/d/1urdPZys9Duv6wQwd2j4fNRQNOLysZ6n5/view?usp=sharing 
+wget -O Cataract_Preop.mp4 https://drive.google.com/file/d/1noqQ8O6g743gwVLPYpvj3Zv0jmjHfSBT/view?usp=sharing
+cd ..
+mkdir Data
+cd Data
+mkdir dlib
+mkdir Yolo11n
+wget -O dlib/dlib_face_recognition_resnet_model_v1.dat https://drive.google.com/file/d/1288b8uBTQbzz5hnTTJlzdMdGUQQLNonm/view?usp=sharing
+wget -O Yolo11n/yolo11n-pose.onnx https://drive.google.com/file/d/1AERiHJ6R93hAz3Aj_XqP9SJTpLmfhmNF/view?usp=sharing
+wget -O Yolo11n/yolo11n-pose.pt https://drive.google.com/file/d/1Mxib_rq6_zkAJJtwWg7_mY8hy1UtBAVI/view?usp=sharing
