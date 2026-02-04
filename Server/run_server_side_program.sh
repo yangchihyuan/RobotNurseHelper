@@ -45,6 +45,33 @@ elif [[ "$1" = "4090" ]]; then
         --Language Chinese \
         --DefaultSaveImage false
 elif [[ "$1" = "AGXOrin" ]]; then
+
+    # Set GStreamer to prefer the avdec_h264 decoder for better performance on Orin
+    export GST_PLUGIN_FEATURE_RANK=avdec_h264:MAX
+
+    # 1. Force the sound card to HDMI profile 
+    # This ensures the HDMI sink is active even if it was previously disabled.
+    # Note: Card name might vary, 'alsa_card.platform-sound' is standard for Orin.
+    pactl set-card-profile alsa_card.platform-sound output:hdmi-stereo 2>/dev/null
+
+    # 2. Search for the Sink name containing "hdmi"
+    # We use 'pactl list short sinks' to grab the full identifier of the HDMI device.
+    HDMI_SINK=$(pactl list short sinks | grep -i "hdmi" | awk '{print $2}' | head -n 1)
+
+    if [ -z "$HDMI_SINK" ]; then
+        echo "Error: No HDMI output device found!"
+        echo "Current available sinks:"
+        pactl list short sinks
+        exit 1
+    fi
+
+    echo "Found HDMI device: $HDMI_SINK"
+
+    # 3. Set as the system default sink
+    # Future applications started after this will use HDMI by default.
+    pactl set-default-sink "$HDMI_SINK"
+
+    # 4. Run our program
     build/RobotNurseHelper \
         --WhisperModel "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin" \
         --ImageSaveDirectory "$HOME/Downloads/raw_images" \

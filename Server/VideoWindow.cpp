@@ -2,6 +2,8 @@
 #include <QVideoWidget>
 #include <QAudioOutput>
 #include <QKeyEvent>
+#include <QFileInfo>
+#include <QUrl>
 #include <iostream>
 #include "ThreadStateControl.hpp"
 
@@ -25,6 +27,11 @@ VideoWindow::VideoWindow(QWidget *parent)
     // Connect the mediaStatusChanged signal to know when the video ends
     connect(player, &QMediaPlayer::mediaStatusChanged, this, &VideoWindow::onMediaStatusChanged);
 
+    // Log any playback errors
+    connect(player, &QMediaPlayer::errorOccurred, this, [this](QMediaPlayer::Error error, const QString &errorString){
+        cout << "QMediaPlayer error: " << static_cast<int>(error) << " - " << errorString.toStdString() << endl;
+    });
+
     // Set the window size and title
     setWindowTitle("Video Player");
     resize(800, 600);
@@ -32,8 +39,24 @@ VideoWindow::VideoWindow(QWidget *parent)
 
 void VideoWindow::playVideo(const QString &fileName)
 {
-    // Load and play the video
-    player->setSource(QUrl::fromLocalFile(fileName));
+    QFileInfo fi(fileName);
+    if (!fi.exists() || !fi.isReadable()) {
+        cout << "Error: Video file does not exist or is not readable: " << fileName.toStdString() << endl;
+        return;
+    }
+
+    // Ensure video widget is visible and on top
+    if (videoWidget) {
+        videoWidget->show();
+        videoWidget->raise();
+        videoWidget->update();
+    }
+
+    // Load and play the video (use absolute local file URL)
+    QString absPath = fi.absoluteFilePath();
+    QUrl url = QUrl::fromLocalFile(absPath);
+    cout << "Playing video: " << url.toString().toStdString() << endl;
+    player->setSource(url);
     player->play();
 }
 

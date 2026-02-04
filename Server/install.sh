@@ -374,13 +374,21 @@ fi
 cd ~/RobotNurseHelper/Server
 mkdir Videos
 cd Videos
-wget -O Cataract_Postop.mp4 https://drive.google.com/file/d/1urdPZys9Duv6wQwd2j4fNRQNOLysZ6n5/view?usp=sharing 
-wget -O Cataract_Preop.mp4 https://drive.google.com/file/d/1noqQ8O6g743gwVLPYpvj3Zv0jmjHfSBT/view?usp=sharing
+wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=1urdPZys9Duv6wQwd2j4fNRQNOLysZ6n5' -O Cataract_Postop.mp4
+wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=1noqQ8O6g743gwVLPYpvj3Zv0jmjHfSBT' -O Cataract_Preop.mp4
 cd ..
 mkdir Data
 cd Data
 mkdir dlib
 mkdir Yolo11n
-wget -O dlib/dlib_face_recognition_resnet_model_v1.dat https://drive.google.com/file/d/1288b8uBTQbzz5hnTTJlzdMdGUQQLNonm/view?usp=sharing
-wget -O Yolo11n/yolo11n-pose.onnx https://drive.google.com/file/d/1AERiHJ6R93hAz3Aj_XqP9SJTpLmfhmNF/view?usp=sharing
-wget -O Yolo11n/yolo11n-pose.pt https://drive.google.com/file/d/1Mxib_rq6_zkAJJtwWg7_mY8hy1UtBAVI/view?usp=sharing
+wget -O dlib/dlib_face_recognition_resnet_model_v1.dat --no-check-certificate 'https://docs.google.com/uc?export=download&id=1288b8uBTQbzz5hnTTJlzdMdGUQQLNonm'
+#This yolo11n-pose.onnx file expects a desktop CUDA driver rather than a Orin CUDA driver. I need to find a specifically version built for the Jetson.
+#It will use CPU rather than GPU to run the Yolo11n model on AGX Orin.
+wget -O Yolo11n/yolo11n-pose.onnx --no-check-certificate 'https://docs.google.com/uc?export=download&id=1AERiHJ6R93hAz3Aj_XqP9SJTpLmfhmNF'
+wget -O Yolo11n/yolo11n-pose.pt --no-check-certificate 'https://docs.google.com/uc?export=download&id=1Mxib_rq6_zkAJJtwWg7_mY8hy1UtBAVI'
+
+#for play video and audio in Qt Multimedia
+sudo apt install libcanberra-gtk-module libcanberra-gtk3-module
+sudo apt install gstreamer1.0-tools gstreamer1.0-nice gstreamer1.0-qt5 gstreamer1.0-plugins-base
+sudo apt install gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
+sudo apt install gstreamer1.0-libav

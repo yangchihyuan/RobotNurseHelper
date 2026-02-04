@@ -67,10 +67,6 @@ void ThreadStateControl::run()
                     str_voice_source = "Video";
                 }
 
-                if( s == "PlayVideo")
-                {
-                }
-
                 if( s == "KeepSilent" )
                 {
                     //Do not send any message for a period of time
