@@ -127,30 +127,19 @@ void ThreadStateControl::run()
                 //if( mStates[m_iStateIndex].vSmallMotion.size() > 0 )
                 //    pDistribution = unique_ptr<uniform_int_distribution<int>>(new uniform_int_distribution<int>(0,mStates[m_iStateIndex].vSmallMotion.size()));
             }
-            mbWaitForTTSComplete = mStates[m_iStateIndex].bWaitForTTSComplete; 
+            mbWaitForTTSComplete = mStates[m_iStateIndex].bWaitForTTSComplete;      //now it is always true
             mbOldStateComplete = false;              //In the initial state, the old state is not complete.
             mbReadyToChangeState = false;
 
-        }
+        }  //if(mStates[m_iStateIndex].bInitial)
 
-        if( mStates[m_iStateIndex].sStateType == "PlayVideo")
+        if( mStates[m_iStateIndex].sStateType == "SaySomething" || mStates[m_iStateIndex].sStateType == "PlayVideo")   //Robot does not wait for patient's response
         {
-            //Monitor WhisperResult, but do not generate LLM response
-            WhisperData WhisperResult = mpThreadWhisper->getLatestResult();
-//            cout << "WhisperResult: " << WhisperResult.sOutput << endl;
-            if( mStates[m_iStateIndex].v_str_KeyWordMoveToNextState.size() > 0)
+            if( current_time - mStates[m_iStateIndex].m_Start_time > mStates[m_iStateIndex].m_secDurationLimit)
             {
-                for( size_t k = 0; k < mStates[m_iStateIndex].v_str_KeyWordMoveToNextState.size(); k++)
-                {
-                    if( WhisperResult.sOutput.find( mStates[m_iStateIndex].v_str_KeyWordMoveToNextState.at(k) ) != string::npos)
-                    {
-                        mbReadyToChangeState = true;
-                        mbOldStateComplete = true;
-                        break;
-                    }
-                }
+                mbReadyToChangeState = true;
+                mbOldStateComplete = true;
             }
-
         }
         else if( mStates[m_iStateIndex].sStateType == "Conversation")
         {
@@ -225,9 +214,10 @@ void ThreadStateControl::run()
                         cout << "Patient's response: " << WhisperResult.sOutput << endl;
                         
                         //get patient's name
-                        if( mStates[m_iStateIndex].m_strStateName == "Greeting and ask name" )
+                        if( mStates[m_iStateIndex].m_strStateName == "Greeting 1 and ask name" )
                         {
                             msPatientName = GetPatientName(WhisperResult.sOutput);
+                            cout << "Extracted patient name: " << msPatientName << endl;
                         }
 
 
@@ -270,7 +260,7 @@ void ThreadStateControl::run()
                         }
                     }
                 }
-            }
+            }   //if( mbWaitForTTSComplete)
 
             if( mbWaitForLLMResult)
             {
@@ -313,7 +303,7 @@ void ThreadStateControl::run()
                 mbReadyToChangeState = true;
             }
         }
-        else //neither PlayVideo nor Conversation
+        else //neither StateAndListen nor Conversation
         {
             //unknown state type
             cout << "Unknown state type: " << mStates[m_iStateIndex].sStateType << endl;
@@ -378,7 +368,27 @@ void ThreadStateControl::SetIntialStateIndex(int N) {
 }
 
 
-string ThreadStateControl::GetPatientName(string input_sentence);
-{
-    return ollama::generate(ModelName, "在這裏答句裏，回答的人叫什麼名字？只要傳回名字，不要其他文字。"+input_sentence, options);
+string ThreadStateControl::GetPatientName(string input_sentence){
+    ollama::options options;
+    //options["seed"] = 1;      
+    options["seed"] = rand();
+    options["temperature"] = 0.3;
+    options["num_ctx"] = 131072; //number of context tokens, which is the maximum number of tokens the model can handle in a single request
+
+
+    // 建立更嚴謹的 Prompt，要求模型只輸出 JSON 或純名字
+    string prompt = "你是一個機器人助手。請從以下句子中提取說話者的姓名。"
+                    "規則：1.只回傳姓名 2.如果找不到請回傳'先生'或'小姐 3.不要有任何標點或解釋。"
+                    "句子：\"" + input_sentence + "\"";    
+    // 呼叫 Ollama
+    string ModelName = "gemma3:1b";
+    string name = ollama::generate(ModelName, prompt, options);
+
+    // 去除 LLM 可能誤加的空白或換行
+    name.erase(0, name.find_first_not_of(" \n\r\t"));
+    name.erase(name.find_last_not_of(" \n\r\t") + 1);
+
+    cout << "Extracted patient name by LLM: " << name << endl;
+    
+    return name.empty() ? "患者" : name;
 }

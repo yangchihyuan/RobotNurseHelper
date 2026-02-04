@@ -104,19 +104,6 @@ protected:
 
     string msPatientName = ""; //default name is "patient"
     string GetPatientName(string input_sentence);
-    {
-        //very simple implementation: look for "我叫" or "我姓" and get the next two characters as name
-        size_t pos = input_sentence.find("我叫");
-        if( pos == string::npos)
-            pos = input_sentence.find("我姓");
-        if( pos != string::npos && pos + 6 <= input_sentence.length())
-        {
-            string name = input_sentence.substr(pos + 6, 2);
-            cout << "Extracted patient name: " << name << endl;
-            return name;
-        }
-        return "患者"; //default name is "patient" in Chinese
-    }
 };
 
 #endif

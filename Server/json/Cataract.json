@@ -1,11 +1,11 @@
 [
     {
-        "iDurationLimitSeconds": 30,
+        "iDurationLimitSeconds": 10,
         "iNextStateIndex": 1,
         "iStateIndex": 0,
-        "m_strFirstSentence": "您好，很高興能為您服務。因為醫生診斷您的白內障需要手術治療，我來為您介紹白內障的相關資訊。請問怎麼稱呼您呢？",
-        "m_strStateName": "Greeting and ask name",
-        "m_strSystemMessage": "你是一台名叫凱比的機器人，是基隆長庚醫院的衛教師，剛上任一個月。工作容是為白內障病患介紹白內障手術，你很有禮貌，個性熱心活潑，又有點可愛。你不可以輸出任何表情符號。你不可以輸出任何括號。",
+        "m_strFirstSentence": "您好，很高興能為您服務，我是衛教機器人凱比。請問怎麼稱呼您呢？",
+        "m_strStateName": "Greeting 1 and ask name",
+        "m_strSystemMessage": "你是一台名叫凱比的機器人，是基隆長庚醫院的衛教師，剛上任一個月。工作容是為白內障病患介紹白內障手術，你很有禮貌，個性熱心活潑，又有點可愛。你要遵守以下規則：1.不可以輸出任何表情符號。2.不可以輸出任何星號。3.不可以輸出任何括號。",
         "sFace": "TTS_PeaceA",
         "sMotion": "666_RE_Bow",
         "sStateType": "Conversation",
@@ -18,19 +18,19 @@
             "666_SA_Think",
             "666_SP_Cheer"
         ],
-        "v_str_KeyWordMoveToNextState": [""],
+        "v_str_KeyWordMoveToNextState": [],
         "v_str_Action": []
     },
     {
-        "iDurationLimitSeconds": 600,
+        "iDurationLimitSeconds": 10,
         "iNextStateIndex": 2,
         "iStateIndex": 1,
-        "m_strFirstSentence": "請您先觀看這段術前衛教影片。",
-        "m_strStateName": "Introduce postop care",
+        "m_strFirstSentence": "剛才醫生檢查過，確認您有白內障。您最近看東西是不是覺得霧霧的，好像隔著一層毛玻璃，還是晚上看燈光會覺得很散開？",
+        "m_strStateName": "Greeting 2",
         "m_strSystemMessage": "",
         "sFace": "TTS_PeaceB",
-        "sMotion": "666_SP_Cheer",
-        "sStateType": "PlayVideo",
+        "sMotion": "666_BA_Nodhead",
+        "sStateType": "Conversation",
         "vSmallMotion": [
             "666_BA_ArmSCircle",
             "666_BA_ArmSSquare",
@@ -38,14 +38,52 @@
             "666_BA_RArmCircleR"
         ],
         "v_str_KeyWordMoveToNextState": [],
-        "v_str_Action": ["KeepSilent","PlayVideo:Videos/Cataract_Preop.mp4","AccumulateConversation","InsertAssitantMessage:第一點：手術前一天請充足睡眠。要讓身體與眼睛在手術前保持良好的休息狀態，這樣有助於手術的順利進行。第二點：請備妥手術相關文件與健保卡。在手術當天，請記得攜帶好健保卡、手術同意書等相關文件，這樣醫護人員能更順利地為您辦理手續，讓整個流程更順暢，也能避免臨時找資料的麻煩。第三點：手術當天請穿著輕便衣物。選擇寬鬆、容易穿脫的服裝，這樣在手術和更換衣物時會更方便，也能讓您感到更舒適。第四點：手術前不得佩戴任何飾品。包括項鍊、耳環、手鍊等，這樣可以避免手術過程中出現不便，也確保手術的安全和順利進行。第五點：手術過程中不得隨意觸碰。在手術過程請不要隨意觸碰已經消毒過的部位，這是因為護士在手術前已經仔細消毒了相關區域，如果您過程中觸碰它，就必需重新消毒，這不僅會增加感染的風險，也會延長手術時間，所以請務必保持耐心避免觸碰。第六點：手術結束後請至領藥櫃檯。請在休息之後前往領藥櫃檯，在那裡護理人員會為您準備術後的藥物，並且詳細叮囑您術後的照護注意事項，讓您清楚接下來如何照顧自己。"]
+        "v_str_Action": ["AccumulateConversation"]
     },
     {
-        "iDurationLimitSeconds": 600,
-        "iNextStateIndex": 2,
-        "iStateIndex": 1,
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 3,
+        "iStateIndex": 2,
+        "m_strFirstSentence": "這些都是白內障的典型症狀。白內障手術是目前唯一有效改善視力的方法，手術過程大約10到15分鐘，通常是局部麻醉，手術後隔天就可以回診。手術風險相對較低，但仍有可能出現感染、發炎或視網膜剝離等併發症。手術後需要遵守醫囑，按時使用眼藥水，並避免劇烈運動，以促進傷口癒合。接下來我會為您介紹一些術前及術後的注意事項，您要開始了嗎？",
+        "m_strStateName": "Greeting 3",
+        "m_strSystemMessage": "",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_SP_Cheer",
+        "sStateType": "Conversation",
+        "vSmallMotion": [
+            "666_BA_ArmSCircle",
+            "666_BA_ArmSSquare",
+            "666_BA_RArmCircleL",
+            "666_BA_RArmCircleR"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": ["AccumulateConversation"]
+    },
+    {
+        "iDurationLimitSeconds": 6,
+        "iNextStateIndex": 4,
+        "iStateIndex": 3,
         "m_strFirstSentence": "請您先觀看這段術前衛教影片。",
-        "m_strStateName": "Introduce postop care",
+        "m_strStateName": "Introduce preop care",
+        "m_strSystemMessage": "",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_SP_Cheer",
+        "sStateType": "SaySomething",
+        "vSmallMotion": [
+            "666_BA_ArmSCircle",
+            "666_BA_ArmSSquare",
+            "666_BA_RArmCircleL",
+            "666_BA_RArmCircleR"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": ["AccumulateConversation"]
+    },    
+    {
+        "iDurationLimitSeconds": 99,
+        "iNextStateIndex": 5,
+        "iStateIndex": 4,
+        "m_strFirstSentence": "",
+        "m_strStateName": "Introduce preop care",
         "m_strSystemMessage": "",
         "sFace": "TTS_PeaceB",
         "sMotion": "666_SP_Cheer",
@@ -61,8 +99,8 @@
     },
     {
         "iDurationLimitSeconds": 100,
-        "iNextStateIndex": 3,
-        "iStateIndex": 2,
+        "iNextStateIndex": 6,
+        "iStateIndex": 5,
         "m_strFirstSentence": "請問您有什麼問題嗎？",
         "m_strStateName": "Question about preop care",
         "m_strSystemMessage": "",
@@ -74,9 +112,28 @@
         "v_str_Action": ["KeepSilentOff","AccumulateConversation"]
     },
     {
-        "iDurationLimitSeconds": 600,
-        "iNextStateIndex": 4,
-        "iStateIndex": 3,
+        "iDurationLimitSeconds": 6,
+        "iNextStateIndex": 7,
+        "iStateIndex": 6,
+        "m_strFirstSentence": "請您觀看這段術後衛教影片。",
+        "m_strStateName": "Play postop health care video",
+        "m_strSystemMessage": "",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_SP_Cheer",
+        "sStateType": "SaySomething",
+        "vSmallMotion": [
+            "666_BA_ArmSCircle",
+            "666_BA_ArmSSquare",
+            "666_BA_RArmCircleL",
+            "666_BA_RArmCircleR"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": []
+    },
+    {
+        "iDurationLimitSeconds": 129,
+        "iNextStateIndex": 8,
+        "iStateIndex": 7,
         "m_strFirstSentence": "請您觀看這段術後衛教影片。",
         "m_strStateName": "Play postop health care video",
         "m_strSystemMessage": "",
@@ -94,10 +151,10 @@
     },
     {
         "iDurationLimitSeconds": 100,
-        "iNextStateIndex": 5,
-        "iStateIndex": 4,
+        "iNextStateIndex": 9,
+        "iStateIndex": 8,
         "m_strFirstSentence": "請問您有什麼問題嗎？",
-        "m_strStateName": "Play postop care video",
+        "m_strStateName": "Q&A",
         "m_strSystemMessage": "",
         "sFace": "TTS_PeaceA",
         "sMotion": "666_SA_Think",
@@ -108,8 +165,8 @@
     },
     {
         "iDurationLimitSeconds": 100,
-        "iNextStateIndex": 6,
-        "iStateIndex": 5,
+        "iNextStateIndex": 10,
+        "iStateIndex": 9,
         "m_strFirstSentence": "好的，那我們今天衛教就作到這裏，祝您開刀順利，早日康復！如果有任何問題，隨時可以來找我喔！再見！",
         "m_strStateName": "Ending and Goodbye",
         "m_strSystemMessage": "",
@@ -122,8 +179,8 @@
     },
     {
         "iDurationLimitSeconds": 100,
-        "iNextStateIndex": 7,
-        "iStateIndex": 6,
+        "iNextStateIndex": 10,
+        "iStateIndex": 10,
         "m_strFirstSentence": "再見！",
         "m_strStateName": "Goodbye",
         "m_strSystemMessage": "",
