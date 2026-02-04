@@ -101,6 +101,22 @@ protected:
     bool mbReadyToChangeState = false;      //This variable is used to decide whether to chat with LLM in a loop.
     bool mbOldStateComplete = false;        //This varaible is used to check whether the time is up, or some keyword is detected.
     Setting msetting;
+
+    string msPatientName = ""; //default name is "patient"
+    string GetPatientName(string input_sentence);
+    {
+        //very simple implementation: look for "我叫" or "我姓" and get the next two characters as name
+        size_t pos = input_sentence.find("我叫");
+        if( pos == string::npos)
+            pos = input_sentence.find("我姓");
+        if( pos != string::npos && pos + 6 <= input_sentence.length())
+        {
+            string name = input_sentence.substr(pos + 6, 2);
+            cout << "Extracted patient name: " << name << endl;
+            return name;
+        }
+        return "患者"; //default name is "patient" in Chinese
+    }
 };
 
 #endif

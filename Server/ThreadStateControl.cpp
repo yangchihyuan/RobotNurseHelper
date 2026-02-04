@@ -227,6 +227,14 @@ void ThreadStateControl::run()
                     {
                         //debug
                         cout << "Patient's response: " << WhisperResult.sOutput << endl;
+                        
+                        //get patient's name
+                        if( mStates[m_iStateIndex].m_strStateName == "Greeting and ask name" )
+                        {
+                            msPatientName = GetPatientName(WhisperResult.sOutput);
+                        }
+
+
                         if( mStates[m_iStateIndex].v_str_KeyWordMoveToNextState.size() > 0)
                         {
                             for( size_t k = 0; k < mStates[m_iStateIndex].v_str_KeyWordMoveToNextState.size(); k++)
@@ -371,4 +379,10 @@ void ThreadStateControl::SetIntialStateIndex(int N) {
     if( N < 0 || N >= m_iNumberOfStates)
     throw "Invalid stage number: " + std::to_string(N);
     m_iStateIndex = N; 
+}
+
+
+string ThreadStateControl::GetPatientName(string input_sentence);
+{
+    return ollama::generate(ModelName, "在這裏答句裏，回答的人叫什麼名字？只要傳回名字，不要其他文字。"+input_sentence, options);
 }

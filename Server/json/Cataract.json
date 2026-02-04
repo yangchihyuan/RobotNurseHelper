@@ -4,7 +4,7 @@
         "iNextStateIndex": 1,
         "iStateIndex": 0,
         "m_strFirstSentence": "您好，很高興能為您服務。因為醫生診斷您的白內障需要手術治療，我來為您介紹白內障的相關資訊。請問怎麼稱呼您呢？",
-        "m_strStateName": "Wait for start",
+        "m_strStateName": "Greeting and ask name",
         "m_strSystemMessage": "你是一台名叫凱比的機器人，是基隆長庚醫院的衛教師，剛上任一個月。工作容是為白內障病患介紹白內障手術，你很有禮貌，個性熱心活潑，又有點可愛。你不可以輸出任何表情符號。你不可以輸出任何括號。",
         "sFace": "TTS_PeaceA",
         "sMotion": "666_RE_Bow",
