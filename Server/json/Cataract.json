@@ -134,7 +134,7 @@
         "iDurationLimitSeconds": 129,
         "iNextStateIndex": 8,
         "iStateIndex": 7,
-        "m_strFirstSentence": "請您觀看這段術後衛教影片。",
+        "m_strFirstSentence": "",
         "m_strStateName": "Play postop health care video",
         "m_strSystemMessage": "",
         "sFace": "TTS_PeaceB",

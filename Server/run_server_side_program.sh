@@ -46,8 +46,8 @@ elif [[ "$1" = "4090" ]]; then
         --DefaultSaveImage false
 elif [[ "$1" = "AGXOrin" ]]; then
 
-    # Set GStreamer to prefer the avdec_h264 decoder for better performance on Orin
-    export GST_PLUGIN_FEATURE_RANK=avdec_h264:MAX
+    # Set GStreamer to prefer the avdec_h264 and h265 decoder for better performance on Orin
+    export GST_PLUGIN_FEATURE_RANK=avdec_h264:MAX,avdec_h265:MAX,nvv4l2h264dec:NONE,nvv4l2h265dec:NONE
 
     # 1. Switch the HDA card to HDMI mode
     # We use the specific name found in your log
