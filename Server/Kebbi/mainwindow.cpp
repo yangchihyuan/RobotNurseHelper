@@ -35,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    LoadJSONFile(msetting, "json/Setting.json");    
 
     QStringList strList;
     strList.append("TTS_AngerA");
@@ -244,7 +245,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     pVideoWindow = std::make_unique<VideoWindow>(nullptr);
     //temporary comment to avoid the window being full-screen at the beginning
-    bool bShowFullScreen = false;
+    bool bShowFullScreen = msetting.bVideoWindowFullScreen;
     if( bShowFullScreen )
         pVideoWindow->showFullScreen();
     else
@@ -254,7 +255,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(&thread_state_control, &ThreadStateControl::playVideoRequest, this, &MainWindow::onPlayVideoRequested);
 
-    LoadJSONFile(msetting, "json/Setting.json");    
 }
 
 void MainWindow::on_pushButton_speak_clicked()
@@ -338,8 +338,11 @@ void MainWindow::timer_event()
         //to the window such as mouse hovering. It seems caused by the hardward driver.
         //imshow is a high-level GUI. There is no extra argument for this function.
         //How to force the problem to update the window?
-        cv::imshow("Image", thread_process_image.getOutFrame());
-        cv::waitKey(1);    //I miss this line so that Ubuntu does not update the window.
+        if( msetting.bShowPreviewWindow )
+        {
+            cv::imshow("Image", thread_process_image.getOutFrame());
+            cv::waitKey(1);    //I miss this line so that Ubuntu does not update the window.
+        }
         thread_process_image.bNewoutFrame = false;
         //update pitch and yaw
         ui->lineEdit_yaw_now->setText(QString::number(robot_status.yaw_degree));
