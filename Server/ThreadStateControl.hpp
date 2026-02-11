@@ -1,5 +1,5 @@
-#ifndef __THREAD_STAGE_CONTROL_hpp__
-#define __THREAD_STAGE_CONTROL_hpp__
+#ifndef __THREAD_STATE_CONTROL_hpp__
+#define __THREAD_STATE_CONTROL_hpp__
 
 #include <chrono>
 #include <string>

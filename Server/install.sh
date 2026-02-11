@@ -392,3 +392,11 @@ sudo apt install libcanberra-gtk-module libcanberra-gtk3-module
 sudo apt install gstreamer1.0-tools gstreamer1.0-nice gstreamer1.0-qt5 gstreamer1.0-plugins-base
 sudo apt install gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
 sudo apt install gstreamer1.0-libav
+
+#install the desktop file to let users launch the program by clicking the icon
+mkdir -p ~/.local/share/applications/ && cp RobotNurseHelper.desktop ~/.local/share/applications/
+
+#update desktop database
+update-desktop-database ~/.local/share/applications/
+
+#you need to logout and login again to let the desktop file work. After that, you can launch the program by clicking the icon "Robot Nurse Helper" on your desktop or application menu.

@@ -136,7 +136,7 @@ void MainWindow::setLanguageModelName( QString ModelName)
 }
 
 
-void MainWindow::setStage(int N)
+void MainWindow::setState(int N)
 {
     thread_state_control.SetIntialStateIndex(N);
 }

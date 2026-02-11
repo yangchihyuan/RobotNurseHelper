@@ -2,5 +2,5 @@
     "StateControlFile": "json/Cataract.json",
     "bServerPlaysRobotReceivedAudio": false,
     "bVideoWindowFullScreen": true,
-    "bShowPreviewWindow": false
+    "bShowPreviewWindow": true
 }

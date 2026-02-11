@@ -89,7 +89,7 @@ void ThreadProcessImage::run()
     bool bLastLandmarksEffective = false;
     int iFrameCount = 0;
     int iNoPersonFrameCount = 0;  //If cannot find a person for 30 frames, move the head to up right frontal
-    Mat inputImage;                 //BGR (Blue, Green, Red)
+    Mat inputImage;                 //BGR (Blue, Green, Red), this is OpenCV's default color channel order. I will convert it to RGB order before sending it to MediaPipe because MediaPipe uses RGB order.
 
     while(b_WhileLoop)
     {
@@ -116,7 +116,7 @@ void ThreadProcessImage::run()
                 cout << "Failed to parse protobuf message" << endl;
                 continue;
             }
-            std::vector<uchar> JPEG_Data;  //2025/12/27 Debug: I declare the JPEG_Data twice. I copy the RTSmessage.jpegdata to the second one in the if section. The first one before the if section is still empty.
+            std::vector<uchar> JPEG_Data;
             if( RTSmessage.has_jpegdata() && RTSmessage.has_jpegdatalength())
             {
                 string strJPEG_Data = RTSmessage.jpegdata();
@@ -140,7 +140,6 @@ void ThreadProcessImage::run()
                 if( inputImage.data )
                 {
                     bCorrectlyDecoded = true;
-                    cv::cvtColor(inputImage, inputImage, cv::COLOR_RGB2BGR);
                 }
                 else
                 {
@@ -176,8 +175,7 @@ void ThreadProcessImage::run()
                                 m_bDirectoryCreated = true;
                             }
                         }
-//                        save_image_JPEG(data_ + shift_length, iJPEG_length , filename);
-                        save_image_JPEG(JPEG_Data, filename);
+                        save_image_JPEG(JPEG_Data, filename);           //wrong color.
                         iFrameCount = 0; //reset the frame count
                     }
                     else

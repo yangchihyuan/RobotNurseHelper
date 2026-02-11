@@ -4,6 +4,9 @@
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
+# Change to the directory of the script to ensure relative paths work correctly
+cd "$(dirname "$0")"
+
 # Always quote variables in conditionals
 if [[ "$#" -eq 0 ]]; then # Use -eq for numerical comparison for $#
     echo "Please specify the GPU model as an argument."
@@ -13,7 +16,6 @@ elif [[ "$1" = "3050" ]]; then # Use = for string comparison and quote $1
         --WhisperModel "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin" \
         --ImageSaveDirectory "$HOME/Downloads/raw_images" \
         --LanguageModel gemma3:1b \
-        --previous_context \
         --ImageSaveEveryNFrame 5 \
         --Language Chinese \
         --DefaultSaveImage true
@@ -23,16 +25,16 @@ elif [[ "$1" = "4070" ]]; then
         --WhisperModel "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin" \
         --ImageSaveDirectory "$HOME/Downloads/raw_images" \
         --LanguageModel gemma3:1b \
-        --stage 0 \
+        --state 0 \
         --ImageSaveEveryNFrame 1 \
         --Language Chinese \
-        --DefaultSaveImage false
+        --DefaultSaveImage true
 elif [[ "$1" = "4080" ]]; then
     build/RobotNurseHelper \
         --WhisperModel "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin" \
         --ImageSaveDirectory "$HOME/Downloads/raw_images" \
         --LanguageModel gemma3:4b \
-        --stage 0 \
+        --state 0 \
         --ImageSaveEveryNFrame 1 \
         --Language Chinese \
         --DefaultSaveImage false
@@ -80,7 +82,7 @@ elif [[ "$1" = "debug" ]]; then
         "--WhisperModel" "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin" \
         "--ImageSaveDirectory" "$HOME/Downloads/raw_images" \
         "--LanguageModel" "gemma3:1b" \
-        "--stage" "0" \
+        "--state" "0" \
         "--ImageSaveEveryNFrame" "5" \
         "--Language" "Chinese" \
         "--DefaultSaveImage" "false" 

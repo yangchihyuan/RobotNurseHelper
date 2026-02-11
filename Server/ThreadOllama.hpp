@@ -31,9 +31,10 @@ public:
     ThreadOllama();
     ~ThreadOllama();
 
-    int stage_index = 0;
-    int mNumberOfStages = 9;
-    chrono::time_point<std::chrono::high_resolution_clock> stage_start_time[9];
+    //no longer use it. It has been moved to the ThreadStateControl class.
+//    int stage_index = 0;
+//    int mNumberOfStages = 9;
+//    chrono::time_point<std::chrono::high_resolution_clock> stage_start_time[9];
 
 
     bool b_WhileLoop = true;

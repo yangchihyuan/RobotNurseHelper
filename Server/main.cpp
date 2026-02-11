@@ -8,7 +8,10 @@
 #include "ThreadOllama.hpp"
 #include <csignal>
 
+//20260211 Chih-Yuan: If I press Ctrl+C to stop this program, I will save this file.
+//This is Muhamed's code. I need to modify it.
 void handle_sigint(int) {
+    /*
     std::time_t currentTime = std::time(0); 
     // Convert the time_t object to a string representing local time
     char* dateTimeString = std::ctime(&currentTime);
@@ -22,6 +25,7 @@ void handle_sigint(int) {
     std::ofstream file(filename);
 
     //std::exit(0);  // Exit cleanly
+    */
     std::_Exit(0);
 }
 
@@ -30,8 +34,9 @@ int main(int argc, char *argv[])
     signal(SIGINT, handle_sigint);
     //signal(SIGSEGV, handle_sigint);
     QApplication app(argc, argv);
-    QCoreApplication::setApplicationName("Zenbo Nurse Helper");
+    QCoreApplication::setApplicationName("Robot Nurse Helper");
     QCoreApplication::setApplicationVersion("25.5.25");
+    //It does not work. My application does not have a icon.
     app.setWindowIcon(QIcon(":/ZenboNurse.png"));
 
     QCommandLineParser parser;
@@ -58,11 +63,11 @@ int main(int argc, char *argv[])
     QCommandLineOption DefaultSaveImageOption("DefaultSaveImage", "The default value of saving images.", "boolean", "false");
     parser.addOption(DefaultSaveImageOption);
 
-    QCommandLineOption previousContextOption({"pf", "previous_context"}, "Previous context text file", "string", "");
-    parser.addOption(previousContextOption);
+//    QCommandLineOption previousContextOption({"pf", "previous_context"}, "Previous context text file", "string", "");
+//    parser.addOption(previousContextOption);
 
-    QCommandLineOption stageOption({"s", "stage"}, "LLM starting stage", "int", 0);
-    parser.addOption(stageOption);
+    QCommandLineOption stateOption({"s", "state"}, "Starting state", "int", 0);
+    parser.addOption(stateOption);
 
     parser.process(app);
 
@@ -105,23 +110,16 @@ int main(int argc, char *argv[])
     //Program launch time for Fang-yu's need to save images in this directory
     string str_now = GetCurrentTimeString(false);
 
-
-    QString previousContext;
-    if (parser.isSet(previousContextOption)) {
-        previousContext = parser.value(previousContextOption);
-        qDebug() << "previousContext string is:" << previousContext;
-    }
-
-    QString strstage;;
-    if (parser.isSet(stageOption)) {
-        strstage = parser.value(stageOption);
-        qDebug() << "Stage int is:" << strstage;
+    QString strstate;;
+    if (parser.isSet(stateOption)) {
+        strstate = parser.value(stateOption);
+        qDebug() << "State int is:" << strstate;
     }
 
     MainWindow w;
     w.setWhisperModelFile(whisperModel);
     w.setLanguageModelName(languageModel);
-    w.setStage(strstage.toInt());
+    w.setState(strstate.toInt());
     w.setImageSaveEveryNFrame(strimageSaveEveryNFrame.toInt());
     w.setLanguage(strLanguage);
     w.setImageSaveDirectory(parser.value(ImageSaveDirectoryOption).append("/").append(str_now.c_str()));
