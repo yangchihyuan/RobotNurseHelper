@@ -371,21 +371,13 @@ if [ "$machine" = "PC" ] && [[ "$GPUModel" == "3050laptop" || "$GPUModel" == "40
 fi
 
 #Dowload media files from internet
-cd ~/RobotNurseHelper/Server
-mkdir Videos
-cd Videos
-wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=1urdPZys9Duv6wQwd2j4fNRQNOLysZ6n5' -O Cataract_Postop.mp4
-wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=1noqQ8O6g743gwVLPYpvj3Zv0jmjHfSBT' -O Cataract_Preop.mp4
-cd ..
-mkdir Data
-cd Data
-mkdir dlib
-mkdir Yolo11n
-wget -O dlib/dlib_face_recognition_resnet_model_v1.dat --no-check-certificate 'https://docs.google.com/uc?export=download&id=1288b8uBTQbzz5hnTTJlzdMdGUQQLNonm'
-#This yolo11n-pose.onnx file expects a desktop CUDA driver rather than a Orin CUDA driver. I need to find a specifically version built for the Jetson.
-#It will use CPU rather than GPU to run the Yolo11n model on AGX Orin.
-wget -O Yolo11n/yolo11n-pose.onnx --no-check-certificate 'https://docs.google.com/uc?export=download&id=1AERiHJ6R93hAz3Aj_XqP9SJTpLmfhmNF'
-wget -O Yolo11n/yolo11n-pose.pt --no-check-certificate 'https://docs.google.com/uc?export=download&id=1Mxib_rq6_zkAJJtwWg7_mY8hy1UtBAVI'
+cd ~/RobotNurseHelper_build
+#wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=1n5GuS6kqABCq5hGLOToFV_11V9mmEHZR' -O RobotNurseHelper.zip
+#for large files (>100MB), Google Drive will block the download and ask for a confirmation. Press F12 when you use your brower to download the file. In the Network tab, your will see the authentic url.
+wget --no-check-certificate 'https://drive.usercontent.google.com/download?id=1zVMH3INErwSuXJ1TF2gfPe2O0HVLu381&export=download&authuser=0&confirm=t&uuid=d4298704-bde8-444d-9ca4-0e36402c1e1f&at=APcXIO3sT6c9dZSljEclJVnWV_OW%3A1770877164167' -O RobotNurseHelper_MediaFiles.zip
+unzip RobotNurseHelper_MediaFiles.zip -d RobotNurseHelper_MediaFiles
+cp -r RobotNurseHelper_MediaFiles/RobotNurseHelper/* ~/RobotNurseHelper
+
 
 #for play video and audio in Qt Multimedia
 sudo apt install libcanberra-gtk-module libcanberra-gtk3-module
