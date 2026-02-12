@@ -14,23 +14,13 @@ android {
     //    targetSdkVersion 28     //Chih-Yuan Yang: this targetSdkVersion item is used for Android 6 SDK.
         //   Android 9 no longer needs it.
         versionCode 14
-        versionName 'v13 25.2.11'
-        externalNativeBuild {
-            cmake {
-                cppFlags ""
-            }
-        }
+        versionName 'v14 25.2.11'
         targetSdk 28
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-    externalNativeBuild {
-        cmake {
-            path "CMakeLists.txt"
         }
     }
     namespace 'tw.edu.cgu.ai.kebbi'
