@@ -157,16 +157,18 @@ void ThreadProcessImage::run()
                 if( iFrameCount == 0 )
                 { 
                     inputImage.copyTo(outFrame);  //To let outFrame has buffer
+                    //I draw the outFrame by myself, so I don't need to use the output_video of MediaPipe. But MediaPipe requires an output buffer to write the output video. So I create outFrame for this purpose. I will draw the output video by myself, and I will not use the content of outFrame outside this function.
+
                     inputImage.copyTo(tempFrame);  //To let tempFrame has buffer
+                    //tempFrame is used to receive the output video from MediaPipe. I don't need it, but MediaPipe requires an output buffer to write the output video. So I create tempFrame for this purpose. I will not use the content of tempFrame outside this function.
                 }
 
                 if(bSaveTransmittedImage)
                 {
                     if(iFrameCount % image_save_every_N_frame == 0 )
                     {
-                        string str_now = GetCurrentTimeString(true);
-
-                        string filename = ImageSaveDirectory + "/" + str_now + ".jpg";
+                        string str_captured_timestamp = ConvertProtobufTimestampToString( RTSmessage.event_time(), bMillisecond);
+                        string filename = ImageSaveDirectory + "/" + str_captured_timestamp + ".jpg";
                         if(! m_bDirectoryCreated )
                         {
                             if( !CheckDirectoryExist(ImageSaveDirectory))
@@ -186,8 +188,6 @@ void ThreadProcessImage::run()
 
                 if( b_HumanPoseEstimation)
                 {
-//                    start = std::chrono::high_resolution_clock::now();
-
                     mtx_Task.lock();
                     //try CPU first
                     std::vector<std::vector<std::array<float, 3>>> NL_pose;   //normalized_landmarks;
@@ -371,6 +371,9 @@ void ThreadProcessImage::run()
                             //no idea now.
                         }
                     }
+
+                    //Dump outFrame for debugging
+
 
                     mtx_UpdateOutFrame.unlock();
 

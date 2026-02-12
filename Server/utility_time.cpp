@@ -38,16 +38,8 @@ string GetCurrentTimeString(bool bMillisecond)
 // Function to convert google::protobuf::Timestamp to std::chrono::time_point
 chrono::time_point<chrono::system_clock> 
 protobufTimestampToTimePoint(const google::protobuf::Timestamp& ts) {
-    // Get seconds and nanos from the protobuf Timestamp
-    std::chrono::seconds s{ts.seconds()};
-    std::chrono::nanoseconds ns{ts.nanos()};
-
-    // Construct the duration and add it to the system_clock epoch
-    std::chrono::time_point<std::chrono::system_clock> tp;
-    tp += s;
-    tp += ns;
-    
-    return tp;
+    auto d = std::chrono::seconds{ts.seconds()} + std::chrono::nanoseconds{ts.nanos()};
+    return std::chrono::time_point<std::chrono::system_clock>{d};
 }
 
 //Convert chrono system_time to string
@@ -60,8 +52,9 @@ string ConvertTimeToString(chrono::time_point<chrono::system_clock> chrono_time,
     auto duration_in_ms = chrono::duration_cast<chrono::milliseconds>(chrono_time.time_since_epoch());
     
     // Use stringstream to format the output
+    tm timeinfo;
     std::stringstream ss;
-    ss << std::put_time(std::localtime(&time_t_now), "%Y-%m-%d %H:%M:%S");
+    ss << std::put_time(localtime_r(&time_t_now, &timeinfo), "%Y-%m-%d %H:%M:%S");
     
     // Append the milliseconds to the string
     if( bMillisecond)
@@ -70,5 +63,12 @@ string ConvertTimeToString(chrono::time_point<chrono::system_clock> chrono_time,
         ss << "." << std::setfill('0') << std::setw(3) << milliseconds;
     }
     
-    return string(ss.str());
+    return ss.str();
+}
+
+//Convert protobuf Timestamp to string
+string ConvertProtobufTimestampToString(const google::protobuf::Timestamp& ts, bool bMillisecond)
+{
+    auto chrono_time = protobufTimestampToTimePoint(ts);
+    return ConvertTimeToString(chrono_time, bMillisecond);
 }

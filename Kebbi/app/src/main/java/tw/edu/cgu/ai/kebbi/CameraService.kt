@@ -153,7 +153,33 @@ class CameraService : LifecycleService() {
                     .also {
                         it.setAnalyzer(cameraExecutor) { imageProxy ->
                             try{
-//                                val bitmap = imageProxyToBitmap(imageProxy)   //channel order RGBA
+                                // Get timestamp (nanosecond)
+                                //val timestampNanos = imageProxy.imageInfo.timestamp   //Monotonic Time (time after system boot)
+                                // 1. system clock time (millisecond)
+                                val currentTimeMillis = System.currentTimeMillis()
+
+                                // 2. system monotonic time (millisecond)
+                                val currentElapsedMillis = android.os.SystemClock.elapsedRealtime()
+
+                                // 3. image monotonic time (nanosecond to millisecond)
+                                val imageElapsedMillis = imageProxy.imageInfo.timestamp / 1_000_000
+
+                                // 4. Unix time shift
+                                val imageUnixMillis = currentTimeMillis - (currentElapsedMillis - imageElapsedMillis)
+
+                                // 5. convert to Protobuf Timestamp
+                                val eventTime = com.google.protobuf.Timestamp.newBuilder()
+                                    .setSeconds(imageUnixMillis / 1000)
+                                    .setNanos(((imageUnixMillis % 1000) * 1_000_000).toInt())
+                                    .build()
+                                // Convert to Protobuf's Timestamp (second + nanosecond)
+                          //      val seconds = timestampNanos / 1_000_000_000
+                           //     val nanos = (timestampNanos % 1_000_000_000).toInt()
+                           //     val eventTime = com.google.protobuf.Timestamp.newBuilder()
+                           //         .setSeconds(seconds)
+                           //         .setNanos(nanos)
+                           //         .build()
+
                                 val bitmap = imageProxy.toBitmap()      //Official function
                                 val stream = ByteArrayOutputStream()
                                 val quality = 90
@@ -161,6 +187,7 @@ class CameraService : LifecycleService() {
                                 val jpegData = stream.toByteArray()
                                 val message =
                                     RobotToServerMessage.newBuilder()
+                                        .setEventTime(eventTime)
                                         .setJpegdatalength(jpegData.size)
                                         .setJpegdata(com.google.protobuf.ByteString.copyFrom(jpegData))
                                         .build()
