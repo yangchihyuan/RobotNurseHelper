@@ -50,3 +50,7 @@ captures/
 
 # External native build folder generated in Android Studio 2.2 and later
 .externalNativeBuild
+
+.idea/
+#weird path, I don't know why it is generated.
+app/.cxx/
