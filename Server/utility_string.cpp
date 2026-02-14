@@ -48,7 +48,7 @@ string LoadFileToString(string filepath)
     if( !std::filesystem::exists(filepath) )
     {
         std::cerr << "Cannot find: " << filepath << std::endl;
-        throw("Cannot find " + filepath);
+        throw std::runtime_error("Cannot find " + filepath);
     }
 
     std::ifstream file_stream(filepath);

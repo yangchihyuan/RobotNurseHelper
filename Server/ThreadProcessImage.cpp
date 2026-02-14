@@ -47,6 +47,8 @@ int is_dancing = 0;
 
 ThreadProcessImage::ThreadProcessImage()
 {
+    LoadJSONFile(msetting, "json/Setting.json");
+
     //Initialize the EmotiEffLib
     string backend = "onnx";
     string modelName = EmotiEffLib::getSupportedModels(backend)[0];
@@ -90,10 +92,9 @@ void ThreadProcessImage::run()
     int iFrameCount = 0;
     int iNoPersonFrameCount = 0;  //If cannot find a person for 30 frames, move the head to up right frontal
     Mat inputImage;                 //BGR (Blue, Green, Red), this is OpenCV's default color channel order. I will convert it to RGB order before sending it to MediaPipe because MediaPipe uses RGB order.
-
+    chrono::time_point<chrono::system_clock> previous_image_save_time;
     while(b_WhileLoop)
     {
-        
         if( DataFrames_queue.size() > 0 )
         {
             auto start = std::chrono::high_resolution_clock::now();
@@ -163,12 +164,17 @@ void ThreadProcessImage::run()
                     //tempFrame is used to receive the output video from MediaPipe. I don't need it, but MediaPipe requires an output buffer to write the output video. So I create tempFrame for this purpose. I will not use the content of tempFrame outside this function.
                 }
 
+                bool bSavePreviewImage = false;     //default false, this variable is controlled by the iFrameCount
                 if(bSaveTransmittedImage)
                 {
-                    if(iFrameCount % image_save_every_N_frame == 0 )
+                    chrono::time_point<chrono::system_clock> protobufTimestamp = protobufTimestampToTimePoint(RTSmessage.event_time());
+                    //ToDo: This should be time interval, rather than iFrameCount because server may drop frames.
+                    if(iFrameCount == 0 || protobufTimestamp - previous_image_save_time > chrono::milliseconds(msetting.iImageSaveIntervalMillisecond) )
                     {
-                        string str_captured_timestamp = ConvertProtobufTimestampToString( RTSmessage.event_time(), bMillisecond);
-                        string filename = ImageSaveDirectory + "/" + str_captured_timestamp + ".jpg";
+                        const bool bMillisecond = true;
+                        mstr_captured_timestamp = ConvertProtobufTimestampToString( RTSmessage.event_time(), bMillisecond);     //use event_time as the timestamp for saving images. It is more accurate than using the current time.
+                        string filename = ImageSaveDirectory + "/" + mstr_captured_timestamp + ".jpg";
+                        previous_image_save_time = protobufTimestamp;
                         if(! m_bDirectoryCreated )
                         {
                             if( !CheckDirectoryExist(ImageSaveDirectory))
@@ -178,11 +184,7 @@ void ThreadProcessImage::run()
                             }
                         }
                         save_image_JPEG(JPEG_Data, filename);           //wrong color.
-                        iFrameCount = 0; //reset the frame count
-                    }
-                    else
-                    {
-                        iFrameCount++;
+                        bSavePreviewImage = true;
                     }
                 }
 
@@ -373,7 +375,11 @@ void ThreadProcessImage::run()
                     }
 
                     //Dump outFrame for debugging
-
+                    if(bSavePreviewImage)
+                    {
+                        string filename = ImageSaveDirectory + "/" + mstr_captured_timestamp + ".preview.jpg";
+                        cv::imwrite(filename, outFrame);
+                    }
 
                     mtx_UpdateOutFrame.unlock();
 
@@ -433,6 +439,7 @@ void ThreadProcessImage::run()
                 std::cout << "Elapsed time: " << duration_ms.count() << " milliseconds" << std::endl;
             }
 
+            iFrameCount++;
         } //if( pSocketBufferParser->get_queue_length() > 0 )
         msleep(1);   //to prevent CPU usage too high
     } //while(b_WhileLoop)

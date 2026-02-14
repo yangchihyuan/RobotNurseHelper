@@ -16,7 +16,6 @@ elif [[ "$1" = "3050" ]]; then # Use = for string comparison and quote $1
         --WhisperModel "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin" \
         --ImageSaveDirectory "$HOME/Downloads/raw_images" \
         --LanguageModel gemma3:1b \
-        --ImageSaveEveryNFrame 5 \
         --Language Chinese \
         --DefaultSaveImage true
 elif [[ "$1" = "4070" ]]; then
@@ -26,7 +25,6 @@ elif [[ "$1" = "4070" ]]; then
         --ImageSaveDirectory "$HOME/Downloads/raw_images" \
         --LanguageModel gemma3:1b \
         --state 0 \
-        --ImageSaveEveryNFrame 1 \
         --Language Chinese \
         --DefaultSaveImage true
 elif [[ "$1" = "4080" ]]; then
@@ -35,7 +33,6 @@ elif [[ "$1" = "4080" ]]; then
         --ImageSaveDirectory "$HOME/Downloads/raw_images" \
         --LanguageModel gemma3:4b \
         --state 0 \
-        --ImageSaveEveryNFrame 1 \
         --Language Chinese \
         --DefaultSaveImage false
 elif [[ "$1" = "4090" ]]; then
@@ -43,7 +40,6 @@ elif [[ "$1" = "4090" ]]; then
         --WhisperModel "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin" \
         --ImageSaveDirectory "$HOME/Downloads/raw_images" \
         --LanguageModel gemma3:12b \
-        --ImageSaveEveryNFrame 1 \
         --Language Chinese \
         --DefaultSaveImage false
 elif [[ "$1" = "AGXOrin" ]]; then
@@ -72,7 +68,6 @@ elif [[ "$1" = "AGXOrin" ]]; then
         --WhisperModel "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin" \
         --ImageSaveDirectory "$HOME/Downloads/raw_images" \
         --LanguageModel gemma3:4b \
-        --ImageSaveEveryNFrame 1 \
         --Language Chinese \
         --DefaultSaveImage false
         
@@ -83,7 +78,6 @@ elif [[ "$1" = "debug" ]]; then
         "--ImageSaveDirectory" "$HOME/Downloads/raw_images" \
         "--LanguageModel" "gemma3:1b" \
         "--state" "0" \
-        "--ImageSaveEveryNFrame" "5" \
         "--Language" "Chinese" \
         "--DefaultSaveImage" "false" 
 elif [[ "$1" = "valgrind" ]]; then

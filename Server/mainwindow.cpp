@@ -244,15 +244,6 @@ void MainWindow::setLanguage( QString Language)
 
 }
 
-void MainWindow::setImageSaveEveryNFrame(int N)
-{
-    thread_process_image.image_save_every_N_frame = N;
-    thread_process_image.bSaveTransmittedImage = (N > 0);
-    if( N > 0)
-    {
-        ui->checkBox_SaveImages->setChecked(true);
-    }
-}
 
 void MainWindow::newConnection_receive_image()
 {
@@ -657,5 +648,4 @@ void MainWindow::on_pushButton_generate_response_clicked()
     thread_ollama.strPrompt = text.toStdString();      //The string is used here.
 //    thread_ollama.cond_var_ollama.notify_one();     //2025/8/7 This is the only place where we notify the thread_ollama to generate a response. Did Mohamed call this function?
 }
-
 

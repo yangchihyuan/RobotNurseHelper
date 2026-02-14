@@ -1,11 +1,3 @@
-#include "mainwindow.h"
-#include <QApplication>
-#include <QCommandLineParser>
-#include <utility_time.hpp>
-#include <csignal>
-#include <fstream>
-#include <string>
-#include "ThreadOllama.hpp"
 #include <csignal>
 
 //20260211 Chih-Yuan: If I press Ctrl+C to stop this program, I will save this file.
@@ -88,12 +80,7 @@ int main(int argc, char *argv[])
         qDebug() << "languageModel string is:" << languageModel;
     }
 
-    QString strimageSaveEveryNFrame;
-    if (parser.isSet(imageSaveEveryNFrameOption)) {
-        strimageSaveEveryNFrame = parser.value(imageSaveEveryNFrameOption);
-        qDebug() << "imageSaveEveryNFrame value is:" << strimageSaveEveryNFrame;
-    }
-
+  
     QString strLanguage;
     if (parser.isSet(languageOption)) {
         strLanguage = parser.value(languageOption);
@@ -120,7 +107,6 @@ int main(int argc, char *argv[])
     w.setWhisperModelFile(whisperModel);
     w.setLanguageModelName(languageModel);
     w.setState(strstate.toInt());
-    w.setImageSaveEveryNFrame(strimageSaveEveryNFrame.toInt());
     w.setLanguage(strLanguage);
     w.setImageSaveDirectory(parser.value(ImageSaveDirectoryOption).append("/").append(str_now.c_str()));
     w.setDefaultSaveImage(bDefaultSaveImage);

@@ -15,6 +15,8 @@
 #include "ActionOption.hpp"
 #include <opencv2/opencv.hpp>
 
+#include "Setting.hpp"
+
 struct DataFrame;
 
 //EmotiEffLib
@@ -126,7 +128,7 @@ public:
     ThreadSafeQueue<DataFrame> DataFrames_queue;
 
     bool bNewoutFrame = false;
-    int image_save_every_N_frame = 1; //default value is 1, which means every frame will be saved
+//    int image_save_every_N_frame = 1; //default value is 1, which means every frame will be saved
     void NotifyEvent(string description, chrono::time_point<chrono::system_clock> timestamp, float yaw = 0.0, float pitch = 0.0);
 
     ActionOption action_option;
@@ -150,6 +152,9 @@ protected:
     anet_type net;
 
     Yolo11Pose yolo11pose;
+    std::string mstr_captured_timestamp;
+
+    Setting msetting;
 };
 
 #endif

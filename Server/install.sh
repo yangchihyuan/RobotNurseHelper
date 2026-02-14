@@ -5,6 +5,13 @@
 #Author: Chih-Yuan Yang
 #Project: Robot Nurse Helper
 
+read -p "Is your RAM + swap greater than 32G? [Y/n]" EnoughRAM
+if ! [[ "$GPUDriverWork" == "Y" || "$GPUDriverWork" == "y" ]]; then
+  echo "You need 32G to compile the RobotNurseHelper program. If you don't have enough RAM, enlarge your swap."
+  exit
+fi
+
+
 read -p "What is your machine [PC/AGXOrin]" machine
 if [ "$machine" = "AGXOrin" ]; then
   VRAMSize=64
@@ -318,18 +325,15 @@ elif [ "$machine" = "AGXOrin" ]; then
 fi
 
 #ollama
-#sudo snap install curl
+sudo snap install curl
 cd ~/RobotNurseHelper_build/
 #This command seems unnecenssary is from https://ollama.com/docs/installation
-#curl.snap-acked        #ollama changed its installation script. There is a text explanation in the script. It only accepts Snap-curand we need to use this command first
-#curl -fsSL https://ollama.com/install.sh | sh
-#wget is enough to install ollama
-wget -O- https://ollama.com/install.sh | sh
-if [ "$VRAMSize" -le 2 ]; then
-  ollama pull gemma3:1b
-elif [ "$VRAMSize" -ge 12 ]; then
+curl.snap-acked        #ollama changed its installation script. There is a text explanation in the script. It only accepts Snap-curl and we need to use this command first to prevent a warning message
+curl -fsSL https://ollama.com/install.sh | sh
+ollama pull gemma3:1b
+if [ "$VRAMSize" -ge 24 ]; then
   ollama pull gemma3:12b
-else
+elif [ "$VRAMSize" -ge 16 ]; then
   ollama pull gemma3:4b
 fi
 
