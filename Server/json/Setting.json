@@ -2,5 +2,6 @@
     "StateControlFile": "json/Cataract.json",
     "bServerPlaysRobotReceivedAudio": false,
     "bVideoWindowFullScreen": false,
-    "bShowPreviewWindow": true
+    "bShowPreviewWindow": true,
+    "iImageSaveIntervalMillisecond": 1000
 }

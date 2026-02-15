@@ -1,3 +1,11 @@
+#include "mainwindow.h"
+#include <QApplication>
+#include <QCommandLineParser>
+#include <utility_time.hpp>
+#include <csignal>
+#include <fstream>
+#include <string>
+#include "ThreadOllama.hpp"
 #include <csignal>
 
 //20260211 Chih-Yuan: If I press Ctrl+C to stop this program, I will save this file.

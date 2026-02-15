@@ -6,7 +6,7 @@
 #Project: Robot Nurse Helper
 
 read -p "Is your RAM + swap greater than 32G? [Y/n]" EnoughRAM
-if ! [[ "$GPUDriverWork" == "Y" || "$GPUDriverWork" == "y" ]]; then
+if ! [[ "$EnoughRAM" == "Y" || "$EnoughRAM" == "y" ]]; then
   echo "You need 32G to compile the RobotNurseHelper program. If you don't have enough RAM, enlarge your swap."
   exit
 fi
@@ -325,11 +325,17 @@ elif [ "$machine" = "AGXOrin" ]; then
 fi
 
 #ollama
-sudo snap install curl
-cd ~/RobotNurseHelper_build/
-#This command seems unnecenssary is from https://ollama.com/docs/installation
-curl.snap-acked        #ollama changed its installation script. There is a text explanation in the script. It only accepts Snap-curl and we need to use this command first to prevent a warning message
-curl -fsSL https://ollama.com/install.sh | sh
+if [ "$machine" = "PC" ]; then
+  sudo snap install curl
+  cd ~/RobotNurseHelper_build/
+  #This command seems unnecenssary is from https://ollama.com/docs/installation
+  curl.snap-acked        #ollama changed its installation script. There is a text explanation in the script. It only accepts Snap-curl and we need to use this command first to prevent a warning message
+  curl -fsSL https://ollama.com/install.sh | sh
+elif [ "$machine" = "AGXOrin" ]; then
+  #There snap program on AGX Orin's Ubuntu is restricted, so we need to use get
+  wget -O- https://ollama.com/install.sh | sh
+fi
+
 ollama pull gemma3:1b
 if [ "$VRAMSize" -ge 24 ]; then
   ollama pull gemma3:12b
@@ -384,15 +390,33 @@ cp -r RobotNurseHelper_MediaFiles/RobotNurseHelper/* ~/RobotNurseHelper
 
 
 #for play video and audio in Qt Multimedia
-sudo apt install libcanberra-gtk-module libcanberra-gtk3-module
-sudo apt install gstreamer1.0-tools gstreamer1.0-nice gstreamer1.0-qt5 gstreamer1.0-plugins-base
-sudo apt install gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
-sudo apt install gstreamer1.0-libav
+sudo apt install libcanberra-gtk-module libcanberra-gtk3-module   #for system sound support in Qt Multimedia
+if [ "$machine" = "AGXOrin" ]; then
+  sudo apt install gstreamer1.0-tools gstreamer1.0-nice gstreamer1.0-qt5 gstreamer1.0-plugins-base
+  sudo apt install gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
+  sudo apt install gstreamer1.0-libav
+fi 
 
 #install the desktop file to let users launch the program by clicking the icon
+cd ~/RobotNurseHelper/Server
 mkdir -p ~/.local/share/applications/ && cp RobotNurseHelper.desktop ~/.local/share/applications/
 
 #update desktop database
 update-desktop-database ~/.local/share/applications/
 
 #you need to logout and login again to let the desktop file work. After that, you can launch the program by clicking the icon "Robot Nurse Helper" on your desktop or application menu.
+
+#Yolov11-pose needs CuDNN to run its onnx file.
+if [ "$machine" = "PC" ]; then
+  cd ~/RobotNurseHelper_build
+  # Download Ubuntu 24.04 spcific keyring
+  wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb
+  # Install keyring
+  sudo dpkg -i cuda-keyring_1.1-1_all.deb
+  # update package list
+  sudo apt-get update
+  # install runtime library for YOLOv11-pose
+  sudo apt-get install libcudnn9-cuda-12
+  sudo ldconfig
+  ls -l /usr/lib/x86_64-linux-gnu/libcudnn.so.9
+fi
