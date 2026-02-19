@@ -521,6 +521,7 @@ void MainWindow::comboBox_MoveMode_changed()
 
 //Control the detection mode
 //This will no longer need because I can simutaneously detect face, pose, hand
+//20260219 ToDo: remove it. no longer needed it.
 void MainWindow::comboBox_DetectionMode_changed()
 {
     switch(ui->comboBox_DetectionMode->currentIndex())

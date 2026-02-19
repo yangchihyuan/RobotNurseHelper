@@ -3,5 +3,11 @@
     "bServerPlaysRobotReceivedAudio": false,
     "bVideoWindowFullScreen": false,
     "bShowPreviewWindow": true,
-    "iImageSaveIntervalMillisecond": 1000
+    "iImageSaveIntervalMillisecond": 5000,
+    "bFacialExpressionRecognition": false,
+    "bHumanPoseEstimation": true,
+    "PoseEstimationModel": "MediaPipe_Pose",        //Yolo11n_Pose, MediaPipe_Pose
+    "bHandLandmarkDetection": false,
+    "bUseDlibForFaceRecognition": true,
+    "bFaceDetection": true
 }

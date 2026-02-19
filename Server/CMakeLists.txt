@@ -185,7 +185,8 @@ target_include_directories(RobotNurseHelper PUBLIC "${ROBOTNURSEHELPER_BUILD_DIR
   "${ROBOTNURSEHELPER_BUILD_DIR}/EmotiEffLib/emotieffcpplib/3rdparty/xtl/include")
 
 #dlib for face recognition
-add_subdirectory(${ROBOTNURSEHELPER_BUILD_DIR}/dlib-20.0/dlib ${ROBOTNURSEHELPER_BUILD_DIR}/dlib-20.0/examples/build/dlib_build)
+#The second parameter is the build directory of dlib
+add_subdirectory(${ROBOTNURSEHELPER_BUILD_DIR}/dlib-20.0/dlib ${ROBOTNURSEHELPER_BUILD_DIR}/dlib-20.0/dlib_build)
 target_link_libraries(RobotNurseHelper dlib::dlib)
 
 #Enalbe the debug mode

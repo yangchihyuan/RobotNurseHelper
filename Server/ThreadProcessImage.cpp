@@ -88,9 +88,11 @@ void ThreadProcessImage::run()
     auto previous_time = std::chrono::high_resolution_clock::now();
 
     std::vector<std::vector<std::array<float, 3>>> last_landmarks;
-    bool bLastLandmarksEffective = false;
+    bool bDrawImageByOurOwn = true;
     int iFrameCount = 0;
     int iNoPersonFrameCount = 0;  //If cannot find a person for 30 frames, move the head to up right frontal
+    //try CPU first
+    std::vector<std::vector<std::array<float, 3>>> NL_pose;   //normalized_landmarks;
     Mat inputImage;                 //BGR (Blue, Green, Red), this is OpenCV's default color channel order. I will convert it to RGB order before sending it to MediaPipe because MediaPipe uses RGB order.
     chrono::time_point<chrono::system_clock> previous_image_save_time;
     while(b_WhileLoop)
@@ -168,7 +170,6 @@ void ThreadProcessImage::run()
                 if(bSaveTransmittedImage)
                 {
                     chrono::time_point<chrono::system_clock> protobufTimestamp = protobufTimestampToTimePoint(RTSmessage.event_time());
-                    //ToDo: This should be time interval, rather than iFrameCount because server may drop frames.
                     if(iFrameCount == 0 || protobufTimestamp - previous_image_save_time > chrono::milliseconds(msetting.iImageSaveIntervalMillisecond) )
                     {
                         const bool bMillisecond = true;
@@ -188,13 +189,28 @@ void ThreadProcessImage::run()
                     }
                 }
 
-                if( b_HumanPoseEstimation)
+
+                //Draw Pose landmarks
+                mtx_UpdateOutFrame.lock();
+                //ToDo: remove this variable.
+                //if( b_HumanPoseEstimation)
+                if( msetting.bHumanPoseEstimation )
                 {
                     mtx_Task.lock();
-                    //try CPU first
-                    std::vector<std::vector<std::array<float, 3>>> NL_pose;   //normalized_landmarks;
                     bool use_Yolo11n_Pose = true;
-                    //2025/11/18 ToDo: Yolo11n-pose is computational expensive, and it cause cv::imshow() to frozen on Hinton. I don't know why.
+                    if( msetting.PoseEstimationModel == "Yolo11n_Pose")
+                    {
+                        use_Yolo11n_Pose = true;
+                    }
+                    else if( msetting.PoseEstimationModel == "MediaPipe_Pose")
+                    {
+                        use_Yolo11n_Pose = false;
+                    }
+                    else
+                    {
+                        cout << "Unknown PoseEstimationModel: " << msetting.PoseEstimationModel << ". Use Yolo11n_Pose by default." << endl;
+                        use_Yolo11n_Pose = true;
+                    }
 
                     if( use_Yolo11n_Pose)
                     {
@@ -209,23 +225,6 @@ void ThreadProcessImage::run()
                         }
                     }
                     
-                    //limbp_face always uses CPU
-                    if( !libmp_face->Process2(inputImage) )
-                    {
-                        std::cerr << "libmp_face Process() failed!" << std::endl;
-                        break;
-                    }
-
-                    //limbp_hand always uses CPU
-                    if( !libmp_hand->Process2(inputImage) )
-                    {
-                        std::cerr << "libmp_hand Process() failed!" << std::endl;
-                        break;
-                    }
-
-
-                    //Draw Pose landmarks
-                    mtx_UpdateOutFrame.lock();
                     //2025 Nov 5. Debug: MediaPipe cannot run GPU and CPU at the same time.
                     if( use_Yolo11n_Pose)
                     {
@@ -251,17 +250,7 @@ void ThreadProcessImage::run()
                                 }
                             }
                         }
-
-                        //only draw points
-                        /*
-                        for (int pose_num = 0; pose_num < num_poses; pose_num++) {
-                            for (const std::array<float, 3>& norm_xyz : NL_pose[pose_num]) {
-                                int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
-                                int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
-                                cv::circle(outFrame, cv::Point(x, y), 3, cv::Scalar(255, 255, 0), -1);
-                            }
-                        }
-                        */
+                        bNewoutFrame = true;
                     }
                     else
                     {
@@ -276,35 +265,17 @@ void ThreadProcessImage::run()
 
                         NL_pose = get_landmarks_pose(libmp_pose);      //I use this to guide robot's movement
                     }
-                    
+                }
 
-                    //Draw face
-                    //Do I need the output_video of libmp_face? I only need the landmarks.
-                    //I draw the MediaPipe output to tempFrame, which is not used outside this function.
-                    if( libmp_face->WriteOutputImage(tempFrame.data, libmp_face->GetOutputPacket("output_video") ) )
+                //Draw hand landmarks
+                if( msetting.bHandLandmarkDetection )
+                {
+                    if( !libmp_hand->Process2(inputImage) )
                     {
-                        bNewoutFrame = true;
-                    }
-                    else
-                    {
-                        cout << "WriteOutputImage fails." << std::endl;
-                    }
-                    std::vector<std::vector<std::array<float, 3>>> NL_faces;   //normalized_landmarks;
-                    NL_faces = get_landmarks_face(libmp_face);
-                    bool bDrawImageByOurOwn = true;
-                    if( bDrawImageByOurOwn )
-                    {
-                        size_t num_faces = NL_faces.size();
-                        for (int face_num = 0; face_num < num_faces; face_num++) {
-                            for (const std::array<float, 3>& norm_xyz : NL_faces[face_num]) {
-                                int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
-                                int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
-                                cv::circle(outFrame, cv::Point(x, y), 1, cv::Scalar(0, 255, 0), -1);
-                            }
-                        }
+                        std::cerr << "Libmp_hand Proces() failed!" << std::endl;
+                        break;
                     }
 
-                    //Draw hand landmarks
                     //I don't need the frame because I only need the landmarks.
                     if( libmp_hand->WriteOutputImage(tempFrame.data, libmp_hand->GetOutputPacket("output_video") ) )
                     {
@@ -328,9 +299,45 @@ void ThreadProcessImage::run()
                             }
                         }
                     }
+                }
+
+                std::vector<std::vector<std::array<float, 3>>> NL_faces;   //normalized_landmarks;
+                if( msetting.bFaceDetection )
+                {
+                    //limbp_face always uses CPU
+                    if( !libmp_face->Process2(inputImage) )
+                    {
+                        std::cerr << "libmp_face Process() failed!" << std::endl;
+                        break;
+                    }
+
+                    //Draw face
+                    //Do I need the output_video of libmp_face? I only need the landmarks.
+                    //I draw the MediaPipe output to tempFrame, which is not used outside this function.
+                    if( libmp_face->WriteOutputImage(tempFrame.data, libmp_face->GetOutputPacket("output_video") ) )
+                    {
+                        bNewoutFrame = true;
+                    }
+                    else
+                    {
+                        cout << "WriteOutputImage fails." << std::endl;
+                    }
+                    NL_faces = get_landmarks_face(libmp_face);
+                    if( bDrawImageByOurOwn )
+                    {
+                        size_t num_faces = NL_faces.size();
+                        for (int face_num = 0; face_num < num_faces; face_num++) {
+                            for (const std::array<float, 3>& norm_xyz : NL_faces[face_num]) {
+                                int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
+                                int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
+                                cv::circle(outFrame, cv::Point(x, y), 1, cv::Scalar(0, 255, 0), -1);
+                            }
+                        }
+                    }
 
                     //Crop the face regions and do facial expression recognition
-                    if( m_bRecognizeFacialExpression && !NL_faces.empty() )
+//                    if( m_bRecognizeFacialExpression && !NL_faces.empty() )
+                    if( !NL_faces.empty() )
                     {
                         size_t num_faces = NL_faces.size();
                         for (int face_num = 0; face_num < num_faces; face_num++) {
@@ -340,94 +347,102 @@ void ThreadProcessImage::run()
                             //Debug 2025 Nov 5: Here is the reason that Hinton frozens.
                             //I sitll don't know why. But if I disable this imshow(), Hinton works fine.
 //                            cv::imshow("Cropped face", face);
-
-                            auto res = fer->predictEmotions(face, false);       //false will return the softmax scores
-                            Rect roi = GetBoundingBoxFromLandmarks(NL_faces[face_num], inputImage.cols, inputImage.rows);
-                            //not very accurate, the cropped face is too small, around 135x156.
-//                            cout << "Cropped size: " << face.cols << " " << face.rows << endl;
-                            //std::format requires C++20, but my project uses C++17. So I use sprintf instead.
-//                            cv::putText(outFrame, res.labels[0] + std::format("{:.3f}", res.scores[0]) , Point(roi.x, roi.y) , cv::FONT_HERSHEY_SIMPLEX, 1. , cv::Scalar(0,255,0), 2);
-                            char text[256];
-                            sprintf(text, "%s%.3f", res.labels[0].c_str(), res.scores[0]);
-                            cv::putText(outFrame, text, Point(roi.x, roi.y), cv::FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(0,255,0), 2);
-
+                            if( msetting.bFacialExpressionRecognition )
+                            {
+                                auto res = fer->predictEmotions(face, false);       //false will return the softmax scores
+                                Rect roi = GetBoundingBoxFromLandmarks(NL_faces[face_num], inputImage.cols, inputImage.rows);
+                                //not very accurate, the cropped face is too small, around 135x156.
+    //                            cout << "Cropped size: " << face.cols << " " << face.rows << endl;
+                                //std::format requires C++20, but my project uses C++17. So I use sprintf instead.
+    //                            cv::putText(outFrame, res.labels[0] + std::format("{:.3f}", res.scores[0]) , Point(roi.x, roi.y) , cv::FONT_HERSHEY_SIMPLEX, 1. , cv::Scalar(0,255,0), 2);
+                                char text[256];
+                                sprintf(text, "%s%.3f", res.labels[0].c_str(), res.scores[0]);
+                                cv::putText(outFrame, text, Point(roi.x, roi.y), cv::FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(0,255,0), 2);
+                            }
 
 
                             //Get face recognition features
                             //Although there is only one face, the dlib face recognition model needs a vector of faces as input.
-                            std::vector<dlib::matrix<dlib::rgb_pixel>> faces;
-                            dlib::matrix<dlib::rgb_pixel> dlib_face;
-                            dlib::assign_image(dlib_face, dlib::cv_image<dlib::bgr_pixel>(face));
-                            faces.push_back(dlib_face);
-                            
-                            //Here is a restriction. The input size needs to be 150x150
-                            //So we need to resize the face image first.
-                            // Temporary workaround: skip this step if the face size is not correct.
-                            /*
-                            std::vector<matrix<float,0,1>> face_descriptors = net(faces);
-                            //It is a vector of 128D
-                            //print it out
-                            cout << "face descriptor for one face: " << dlib::trans(face_descriptors[0]) << endl;
-                            */
+                            if( msetting.bUseDlibForFaceRecognition )
+                            {
+                                std::vector<dlib::matrix<dlib::rgb_pixel>> faces;
+                                dlib::matrix<dlib::rgb_pixel> dlib_face;
+                                //The face size has to be 150x150, which is the input size of the dlib face recognition model. So I need to resize the cropped face to 150x150 before sending it to the dlib model. But resizing may cause distortion, so I will skip this step if the face size is not correct.
+                                if( face.cols != 150 || face.rows != 150)
+                                {
+                                    //Use OpenCV to resize the face to 150x150. But it may cause distortion. I will skip this step if the face size is not correct.
+                                    Mat resized_face;
+                                    cv::resize(face, resized_face, Size(150, 150));
+                                    face = resized_face;
+                                }
+                                dlib::assign_image(dlib_face, dlib::cv_image<dlib::bgr_pixel>(face));
+                                faces.push_back(dlib_face);
+                                //dlib use GPU already, but it is still slow.
+                                //std::cout << "CUDA Device Count: " << dlib::cuda::get_num_devices() << std::endl;                            
+                                std::vector<matrix<float,0,1>> face_descriptors = net(faces);
+                                //It is a vector of 128D
+                                //print it out
+                                cout << "face descriptor for one face: " << dlib::trans(face_descriptors[0]) << endl;
+                            }                            
                             //how to create a cluster of the face descriptors for face recognition?
                             //no idea now.
                         }
                     }
+                }
 
-                    //Dump outFrame for debugging
-                    if(bSavePreviewImage)
+                //Dump outFrame for debugging
+                if(bSavePreviewImage)
+                {
+                    string filename = ImageSaveDirectory + "/" + mstr_captured_timestamp + ".preview.jpg";
+                    cv::imwrite(filename, outFrame);
+
+                    size_t num_faces = NL_faces.size();
+                    for (int face_num = 0; face_num < num_faces; face_num++) 
                     {
-                        string filename = ImageSaveDirectory + "/" + mstr_captured_timestamp + ".preview.jpg";
-                        cv::imwrite(filename, outFrame);
+                        Mat face = CropRegion(inputImage, NL_faces[face_num]);
+                        filename = ImageSaveDirectory + "/" + mstr_captured_timestamp + ".face" + to_string(face_num) + ".jpg";
+                        cv::imwrite(filename, face);
                     }
+                }
 
-                    mtx_UpdateOutFrame.unlock();
+                mtx_UpdateOutFrame.unlock();
 
-                    //This variable is used to prevent the robot from sending new commands while the previous command is being executed.
-                    if( mbWatchPatient )
+                //This variable is used to prevent the robot from sending new commands while the previous command is being executed.
+                if( mbWatchPatient )
+                {
+                    if( !NL_pose.empty())      //If there is no person detected, the following code will not be executed.
                     {
-                        if( !NL_pose.empty())      //If there is no person detected, the following code will not be executed.
-                        {
-                            iNoPersonFrameCount = 0;
+                        iNoPersonFrameCount = 0;
 
-                            bLastLandmarksEffective = true;
-                            //use time control first, wait for 1 seconds
-                            auto current_time = chrono::high_resolution_clock::now();
-                            auto duration = chrono::duration_cast<chrono::seconds>(current_time - previous_time);
-                            //to prevent too many messages being sent to the robot, I set a time interval between two messages.
-                            if (duration.count() >= 1) {
-                                if( action_option.move_mode != action_option.MOVE_MANUAL)
-                                {
-                                    RobotCommandProtobuf::RobotCommand command;
-                                    PoseLandmarks_to_RobotAction_yolo(NL_pose, robot_status, action_option, command);
-                                    previous_time = current_time;
-                                    pSendMessageManager->AddMessage(command);       //The command is filled in the PoseLandmarks_to_RobotAction function
-                                }
-                            }
-                        }
-                        else
-                        {
-                            iNoPersonFrameCount++;
-                            if( iNoPersonFrameCount > 30)
+                        //use time control
+                        auto current_time = chrono::high_resolution_clock::now();
+                        auto duration = chrono::duration_cast<chrono::seconds>(current_time - previous_time);
+                        //to prevent too many messages being sent to the robot, I set a time interval between two messages.
+                        if (duration.count() >= 1) {
+                            if( action_option.move_mode != action_option.MOVE_MANUAL)
                             {
                                 RobotCommandProtobuf::RobotCommand command;
-                                command.set_yaw(0);
-                                command.set_pitch(0);
-                                pSendMessageManager->AddMessage(command);
-                                //debug
-                                iNoPersonFrameCount = 0;
+                                PoseLandmarks_to_RobotAction_yolo(NL_pose, robot_status, action_option, command);
+                                previous_time = current_time;
+                                pSendMessageManager->AddMessage(command);       //The command is filled in the PoseLandmarks_to_RobotAction function
                             }
                         }
                     }
-                    mtx_Task.unlock();    
+                    else
+                    {
+                        iNoPersonFrameCount++;
+                        if( iNoPersonFrameCount > 30)
+                        {
+                            RobotCommandProtobuf::RobotCommand command;
+                            command.set_yaw(0);
+                            command.set_pitch(0);
+                            pSendMessageManager->AddMessage(command);
+                            //debug
+                            iNoPersonFrameCount = 0;
+                        }
+                    }
                 }
-                else
-                {
-                    mtx_UpdateOutFrame.lock();
-                    inputImage.copyTo(outFrame);
-                    bNewoutFrame = true;
-                    mtx_UpdateOutFrame.unlock();
-                }
+                mtx_Task.unlock();    
             }    //if bCorrectlyDecoded
 
             //debug code, to messure the processing time

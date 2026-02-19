@@ -351,8 +351,8 @@ cd ~/RobotNurseHelper_build/ollama-hpp
 git checkout v0.9.5
 #The ollama.hpp vesioin 0.9.7 has a conclict with c++13 std::hash. My previous verion is 0.9.5, does not have this problem.
 
-#dlib library for Facial expression recognition
-#The precompiled libdlib-dev does not work it enables the DLIB_NO_GUI_SUPPORT
+#dlib library for face recognition
+#The precompiled libdlib-dev does not work. It enables the DLIB_NO_GUI_SUPPORT
 #sudo apt -y install libdlib-dev       #Ubuntu 24.04 has dlib version 19.24.0-1 available in its repository
 cd ~/RobotNurseHelper_build/
 #This command will go wrong in the future because new versions will changes its download URL
