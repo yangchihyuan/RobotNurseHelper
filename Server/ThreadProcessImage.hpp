@@ -39,6 +39,10 @@ struct DataFrame;
 //Yolo11pse
 #include "Yolo11Pose.hpp"   
 
+//InspireFace
+#include "inspireface.h"
+#include "herror.h"       // 為了使用 HSUCCEED
+
 //using namespace dlib;
 using dlib::add_prev1;
 using dlib::add_prev2;
@@ -117,6 +121,7 @@ class ThreadProcessImage: public QThread
 
 public:
     ThreadProcessImage();
+    ~ThreadProcessImage();
 
     bool b_HumanPoseEstimation = false;
     bool b_WhileLoop = true;
@@ -155,6 +160,9 @@ protected:
     std::string mstr_captured_timestamp;
 
     Setting msetting;
+
+    //InspireFace
+    HFSession session = {0};
 };
 
 #endif

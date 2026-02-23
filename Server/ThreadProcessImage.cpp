@@ -44,7 +44,6 @@ int is_dancing = 0;
 #include "SocketBufferParser.hpp"   //DataFrame is defined in this hpp file
 #include "ThreadSafeQueue.hpp"
 
-
 ThreadProcessImage::ThreadProcessImage()
 {
     LoadJSONFile(msetting, "json/Setting.json");
@@ -80,8 +79,40 @@ ThreadProcessImage::ThreadProcessImage()
     libmp_pose->AddOutputStream("pose_landmarks");
     libmp_pose->AddOutputStream("output_video");
     libmp_pose->Start();
+
+    const char* InspireFaceModelPath = "/home/chihyuan/Downloads/InspireFace/test_res/pack/Pikachu"; // 確保此路徑下有模型文件
+    if (HFLaunchInspireFace(InspireFaceModelPath) != HSUCCEED) {
+        std::cerr << "InspireFace 初始化失敗！" << std::endl;
+    }    
+
+    // 1. 初始化 Session 參數結構體
+    HFSessionCustomParameter customParameter = {0}; // 全部初始化為 0    
+    // 2. 依照需求開啟功能 (1 為開啟, 0 為關閉)
+    customParameter.enable_recognition = 1;  // 開啟人臉識別 (特徵提取)
+    customParameter.enable_liveness = 0;         // 關閉 RGB 活體檢測
+    customParameter.enable_face_attribute = 1;   // 開啟人臉屬性分析 (如性別、年齡)
+    customParameter.enable_ir_liveness = 0;      // 關閉紅外線活體檢測
+
+    HFDetectMode detectMode = HF_DETECT_MODE_ALWAYS_DETECT; //HF_DETECT_MODE_LIGHT_TRACK; //HF_DETECT_MODE_TRACK_BY_DETECTION;  // 使用偵測驅動的追蹤模式，適合高解析度視頻流
+
+    HInt32 maxDetectFaceNum = 5;  // 設定最大偵測人臉數量
+
+    HInt32 detectPixelLevel = 320;  // 修改偵測器的輸入解析度等級，數值越大越好，默認值 -1 為 320，建議輸入 160、320、640 等 160 的倍數
+
+    HInt32 trackByDetectModeFPS = -1;  // 如果使用 MODE_TRACK_BY_DETECTION 模式，設定當前輸入視頻流的 fps 幀率，默認值 -1 為 30fps
+    HResult sessionRet = HFCreateInspireFaceSession(customParameter, detectMode, maxDetectFaceNum, detectPixelLevel, trackByDetectModeFPS, &session);
+    if (sessionRet == HSUCCEED) {
+        std::cout << "Session 建立成功！" << std::endl;
+    } else {
+        std::cout << "Session 建立失敗，錯誤碼: " << sessionRet << std::endl;
+    }
 }
 
+ThreadProcessImage::~ThreadProcessImage()
+{
+    HFReleaseInspireFaceSession(session);
+
+}
 
 void ThreadProcessImage::run()
 {
@@ -166,7 +197,7 @@ void ThreadProcessImage::run()
                     //tempFrame is used to receive the output video from MediaPipe. I don't need it, but MediaPipe requires an output buffer to write the output video. So I create tempFrame for this purpose. I will not use the content of tempFrame outside this function.
                 }
 
-                bool bSavePreviewImage = false;     //default false, this variable is controlled by the iFrameCount
+                bool bSaveProcessResult = false;     //default false, this variable is controlled by the iFrameCount
                 if(bSaveTransmittedImage)
                 {
                     chrono::time_point<chrono::system_clock> protobufTimestamp = protobufTimestampToTimePoint(RTSmessage.event_time());
@@ -185,7 +216,7 @@ void ThreadProcessImage::run()
                             }
                         }
                         save_image_JPEG(JPEG_Data, filename);           //wrong color.
-                        bSavePreviewImage = true;
+                        bSaveProcessResult = true;
                     }
                 }
 
@@ -304,96 +335,182 @@ void ThreadProcessImage::run()
                 std::vector<std::vector<std::array<float, 3>>> NL_faces;   //normalized_landmarks;
                 if( msetting.bFaceDetection )
                 {
-                    //limbp_face always uses CPU
-                    if( !libmp_face->Process2(inputImage) )
+                    if( msetting.FaceDetectionModel == "InspireFace")
                     {
-                        std::cerr << "libmp_face Process() failed!" << std::endl;
-                        break;
-                    }
+                        //Use InspireFace to detect faces.
+                        HFImageBitmapData imageBitmapData;
+                        imageBitmapData.data = inputImage.data;
+                        imageBitmapData.width = inputImage.cols;
+                        imageBitmapData.height = inputImage.rows;
+                        imageBitmapData.channels = inputImage.channels();
 
-                    //Draw face
-                    //Do I need the output_video of libmp_face? I only need the landmarks.
-                    //I draw the MediaPipe output to tempFrame, which is not used outside this function.
-                    if( libmp_face->WriteOutputImage(tempFrame.data, libmp_face->GetOutputPacket("output_video") ) )
+                        HResult result;
+                        HFImageBitmap image;
+                        result = HFCreateImageBitmap(&imageBitmapData, &image);
+                        if (result != HSUCCEED) {
+                            std::cerr << "Failed to create image bitmap." << std::endl;
+                            break;
+                        }
+
+                        HFImageStream imageHandle = {0};
+                        result = HFCreateImageStreamFromImageBitmap(image, HF_CAMERA_ROTATION_0, &imageHandle);
+                        if (result != HSUCCEED) {
+                            std::cerr << "Failed to set image format." << std::endl;
+                            break;
+                        }
+
+                        result = HFSessionSetFaceDetectThreshold(session, 0.5);  // 可選：設定人臉偵測的信心閾值，範圍為 0.0 到 1.0
+                        if (result != HSUCCEED) {
+                            std::cerr << "Failed to set face detection threshold." << std::endl;
+                            break;
+                        }
+
+                        HFMultipleFaceData MultipleFaceData = {0};
+                        result = HFExecuteFaceTrack(session, imageHandle, &MultipleFaceData);
+                        if (result != HSUCCEED) {
+                            std::cerr << "Failed to execute face tracking." << std::endl;
+                            break;
+                        }
+                        
+                        for (int i = 0; i < MultipleFaceData.detectedNum; i++) {
+                            HFaceRect faceRect = MultipleFaceData.rects[i];
+                            cv::rectangle(outFrame, cv::Point(faceRect.x, faceRect.y), cv::Point(faceRect.x+faceRect.width-1, faceRect.y+faceRect.height-1), cv::Scalar(0, 255, 0), 2);
+                            //cout << "Face " << i << ": x=" << faceRect.x << ", y=" << faceRect.y << ", width=" << faceRect.width << ", height=" << faceRect.height << endl;                        
+                        }
+                        HFReleaseImageStream(imageHandle);
+                    }                    
+                    else if( msetting.FaceDetectionModel == "MediaPipe_Face")
                     {
-                        bNewoutFrame = true;
+                        //Use MediaPipe to detect faces.
+                        if( !libmp_face->Process2(inputImage) )
+                        {
+                            std::cerr << "libmp_face Process() failed!" << std::endl;
+                            break;
+                        }
+
+                        //Draw face
+                        //Do I need the output_video of libmp_face? I only need the landmarks.
+                        //I draw the MediaPipe output to tempFrame, which is not used outside this function.
+                        if( libmp_face->WriteOutputImage(tempFrame.data, libmp_face->GetOutputPacket("output_video") ) )
+                        {
+                            bNewoutFrame = true;
+                        }
+                        else
+                        {
+                            cout << "WriteOutputImage fails." << std::endl;
+                        }
+                        NL_faces = get_landmarks_face(libmp_face);
+                        if( bDrawImageByOurOwn )
+                        {
+                            size_t num_faces = NL_faces.size();
+                            for (int face_num = 0; face_num < num_faces; face_num++) {
+                                for (const std::array<float, 3>& norm_xyz : NL_faces[face_num]) {
+                                    int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
+                                    int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
+                                    cv::circle(outFrame, cv::Point(x, y), 1, cv::Scalar(0, 255, 0), -1);
+                                }
+                            }
+                        }
+
+
+    //                    if( m_bRecognizeFacialExpression && !NL_faces.empty() )
+                        if( !NL_faces.empty() )
+                        {
+                            size_t num_faces = NL_faces.size();
+                            for (int face_num = 0; face_num < num_faces; face_num++) {
+                                //crop the face region.
+                                //Why is the cropped region too small?
+                                Mat face = CropRegion(inputImage, NL_faces[face_num]);
+                                //Debug 2025 Nov 5: Here is the reason that Hinton frozens.
+                                //I sitll don't know why. But if I disable this imshow(), Hinton works fine.
+    //                            cv::imshow("Cropped face", face);
+                                if( msetting.bFacialExpressionRecognition )
+                                {
+                                    auto res = fer->predictEmotions(face, false);       //false will return the softmax scores
+                                    Rect roi = GetBoundingBoxFromLandmarks(NL_faces[face_num], inputImage.cols, inputImage.rows);
+                                    //not very accurate, the cropped face is too small, around 135x156.
+        //                            cout << "Cropped size: " << face.cols << " " << face.rows << endl;
+                                    //std::format requires C++20, but my project uses C++17. So I use sprintf instead.
+        //                            cv::putText(outFrame, res.labels[0] + std::format("{:.3f}", res.scores[0]) , Point(roi.x, roi.y) , cv::FONT_HERSHEY_SIMPLEX, 1. , cv::Scalar(0,255,0), 2);
+                                    char text[256];
+                                    sprintf(text, "%s%.3f", res.labels[0].c_str(), res.scores[0]);
+                                    cv::putText(outFrame, text, Point(roi.x, roi.y), cv::FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(0,255,0), 2);
+                                }
+
+
+                                //Get face recognition features
+                                //Although there is only one face, the dlib face recognition model needs a vector of faces as input.
+                                if( msetting.bUseDlibForFaceRecognition )
+                                {
+                                    std::vector<dlib::matrix<dlib::rgb_pixel>> faces;
+                                    dlib::matrix<dlib::rgb_pixel> dlib_face;
+                                    //The face size has to be 150x150, which is the input size of the dlib face recognition model. So I need to resize the cropped face to 150x150 before sending it to the dlib model. But resizing may cause distortion, so I will skip this step if the face size is not correct.
+                                    if( face.cols != 150 || face.rows != 150)
+                                    {
+                                        //Use OpenCV to resize the face to 150x150. But it may cause distortion. I will skip this step if the face size is not correct.
+                                        Mat resized_face;
+                                        cv::resize(face, resized_face, Size(150, 150));
+                                        face = resized_face;
+                                    }
+                                    dlib::assign_image(dlib_face, dlib::cv_image<dlib::bgr_pixel>(face));
+                                    faces.push_back(dlib_face);
+                                    //dlib use GPU already, but it is still slow.
+                                    //std::cout << "CUDA Device Count: " << dlib::cuda::get_num_devices() << std::endl;                            
+                                    std::vector<matrix<float,0,1>> face_descriptors = net(faces);
+                                    //It is a vector of 128D
+                                    //print it out
+                                    cout << "face descriptor for one face: " << dlib::trans(face_descriptors[0]) << endl;
+                                }                            
+                                //how to create a cluster of the face descriptors for face recognition?
+                                //no idea now.
+                            }
+                        }
+                    
+
                     }
                     else
                     {
-                        cout << "WriteOutputImage fails." << std::endl;
+                        cout << "Unknown FaceDetectionModel: " << msetting.FaceDetectionModel << ". Use InspireFace by default." << endl;
                     }
-                    NL_faces = get_landmarks_face(libmp_face);
-                    if( bDrawImageByOurOwn )
+                
+                    //If I turn this on, the FaceTrack no longer works. Why?
+                    //Is it unit session rather than a single frame?
+                    /*
+                    if( MultipleFaceData.detectedNum > 0 )
                     {
-                        size_t num_faces = NL_faces.size();
-                        for (int face_num = 0; face_num < num_faces; face_num++) {
-                            for (const std::array<float, 3>& norm_xyz : NL_faces[face_num]) {
-                                int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
-                                int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
-                                cv::circle(outFrame, cv::Point(x, y), 1, cv::Scalar(0, 255, 0), -1);
-                            }
-                        }
-                    }
-
-                    //Crop the face regions and do facial expression recognition
-//                    if( m_bRecognizeFacialExpression && !NL_faces.empty() )
-                    if( !NL_faces.empty() )
-                    {
-                        size_t num_faces = NL_faces.size();
-                        for (int face_num = 0; face_num < num_faces; face_num++) {
-                            //crop the face region.
-                            //Why is the cropped region too small?
-                            Mat face = CropRegion(inputImage, NL_faces[face_num]);
-                            //Debug 2025 Nov 5: Here is the reason that Hinton frozens.
-                            //I sitll don't know why. But if I disable this imshow(), Hinton works fine.
-//                            cv::imshow("Cropped face", face);
-                            if( msetting.bFacialExpressionRecognition )
+                        HFFaceAttributeResult faceAttributeResult;
+                        HResult result = HFGetFaceAttributeResult(session, &faceAttributeResult);
+                        if( result == HSUCCEED )
+                        {
+                            cout << "Successfully get face attribute result." << endl;
+                            if( faceAttributeResult.num > 0 )
                             {
-                                auto res = fer->predictEmotions(face, false);       //false will return the softmax scores
-                                Rect roi = GetBoundingBoxFromLandmarks(NL_faces[face_num], inputImage.cols, inputImage.rows);
-                                //not very accurate, the cropped face is too small, around 135x156.
-    //                            cout << "Cropped size: " << face.cols << " " << face.rows << endl;
-                                //std::format requires C++20, but my project uses C++17. So I use sprintf instead.
-    //                            cv::putText(outFrame, res.labels[0] + std::format("{:.3f}", res.scores[0]) , Point(roi.x, roi.y) , cv::FONT_HERSHEY_SIMPLEX, 1. , cv::Scalar(0,255,0), 2);
-                                char text[256];
-                                sprintf(text, "%s%.3f", res.labels[0].c_str(), res.scores[0]);
-                                cv::putText(outFrame, text, Point(roi.x, roi.y), cv::FONT_HERSHEY_SIMPLEX, 1., cv::Scalar(0,255,0), 2);
-                            }
-
-
-                            //Get face recognition features
-                            //Although there is only one face, the dlib face recognition model needs a vector of faces as input.
-                            if( msetting.bUseDlibForFaceRecognition )
-                            {
-                                std::vector<dlib::matrix<dlib::rgb_pixel>> faces;
-                                dlib::matrix<dlib::rgb_pixel> dlib_face;
-                                //The face size has to be 150x150, which is the input size of the dlib face recognition model. So I need to resize the cropped face to 150x150 before sending it to the dlib model. But resizing may cause distortion, so I will skip this step if the face size is not correct.
-                                if( face.cols != 150 || face.rows != 150)
+                                if( faceAttributeResult.gender == 0 )
                                 {
-                                    //Use OpenCV to resize the face to 150x150. But it may cause distortion. I will skip this step if the face size is not correct.
-                                    Mat resized_face;
-                                    cv::resize(face, resized_face, Size(150, 150));
-                                    face = resized_face;
+                                    cout << "Gender: Female" << endl;
                                 }
-                                dlib::assign_image(dlib_face, dlib::cv_image<dlib::bgr_pixel>(face));
-                                faces.push_back(dlib_face);
-                                //dlib use GPU already, but it is still slow.
-                                //std::cout << "CUDA Device Count: " << dlib::cuda::get_num_devices() << std::endl;                            
-                                std::vector<matrix<float,0,1>> face_descriptors = net(faces);
-                                //It is a vector of 128D
-                                //print it out
-                                cout << "face descriptor for one face: " << dlib::trans(face_descriptors[0]) << endl;
-                            }                            
-                            //how to create a cluster of the face descriptors for face recognition?
-                            //no idea now.
+                                else
+                                {
+                                    cout << "Gender: Male" << endl;
+                                }
+                                cout << "Age bracket: " << faceAttributeResult.ageBracket << endl;
+                            }
+                        }
+                        else
+                        {
+                            cout << "Failed to get face attribute result, error code: " << result << endl;
                         }
                     }
+                    */
                 }
 
+
+
+
                 //Dump outFrame for debugging
-                if(bSavePreviewImage)
+                if(bSaveProcessResult)
                 {
-                    string filename = ImageSaveDirectory + "/" + mstr_captured_timestamp + ".preview.jpg";
+                    string filename = ImageSaveDirectory + "/" + mstr_captured_timestamp + ".outFrame.jpg";
                     cv::imwrite(filename, outFrame);
 
                     size_t num_faces = NL_faces.size();
@@ -441,9 +558,9 @@ void ThreadProcessImage::run()
                             iNoPersonFrameCount = 0;
                         }
                     }
-                }
+                }    //if( mbWatchPatient )
                 mtx_Task.unlock();    
-            }    //if bCorrectlyDecoded
+            }    //if( bCorrectlyDecoded )
 
             //debug code, to messure the processing time
             bool bShowTransmittedImage = false;

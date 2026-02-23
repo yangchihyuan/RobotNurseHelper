@@ -8,6 +8,7 @@
     "bHumanPoseEstimation": true,
     "PoseEstimationModel": "MediaPipe_Pose",        //Yolo11n_Pose, MediaPipe_Pose
     "bHandLandmarkDetection": false,
-    "bUseDlibForFaceRecognition": true,
-    "bFaceDetection": true
+    "bUseDlibForFaceRecognition": false,
+    "bFaceDetection": true,
+    "FaceDetectionModel": "InspireFace"             //MediaPipe_Face, InspireFace
 }

@@ -189,6 +189,14 @@ target_include_directories(RobotNurseHelper PUBLIC "${ROBOTNURSEHELPER_BUILD_DIR
 add_subdirectory(${ROBOTNURSEHELPER_BUILD_DIR}/dlib-20.0/dlib ${ROBOTNURSEHELPER_BUILD_DIR}/dlib-20.0/dlib_build)
 target_link_libraries(RobotNurseHelper dlib::dlib)
 
+#InspireFace
+add_library(LIBINSPIREFACE SHARED IMPORTED)
+set(INSPIREFACE_DIR "$ENV{HOME}/Downloads/InspireFace/build/inspireface-linux-ubuntu/InspireFace")
+set_target_properties(LIBINSPIREFACE PROPERTIES
+  IMPORTED_LOCATION "${INSPIREFACE_DIR}/lib/libInspireFace.so")
+target_include_directories(RobotNurseHelper PRIVATE "${INSPIREFACE_DIR}/include")
+target_link_libraries(RobotNurseHelper LIBINSPIREFACE)
+
 #Enalbe the debug mode
 if(COMPILE_WITH_G_FLAG)
   set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")   
