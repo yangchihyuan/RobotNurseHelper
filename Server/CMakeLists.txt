@@ -191,7 +191,7 @@ target_link_libraries(RobotNurseHelper dlib::dlib)
 
 #InspireFace
 add_library(LIBINSPIREFACE SHARED IMPORTED)
-set(INSPIREFACE_DIR "$ENV{HOME}/Downloads/InspireFace/build/inspireface-linux-ubuntu/InspireFace")
+set(INSPIREFACE_DIR "$ENV{HOME}/RobotNurseHelper_build/InspireFace/build/inspireface-linux-ubuntu/InspireFace")
 set_target_properties(LIBINSPIREFACE PROPERTIES
   IMPORTED_LOCATION "${INSPIREFACE_DIR}/lib/libInspireFace.so")
 target_include_directories(RobotNurseHelper PRIVATE "${INSPIREFACE_DIR}/include")

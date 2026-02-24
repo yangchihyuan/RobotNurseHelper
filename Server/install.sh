@@ -360,6 +360,39 @@ cd ~/RobotNurseHelper_build/
 wget -O dlib-20.0.tar.bz2 https://dlib.net/files/dlib-20.0.tar.bz2
 tar -xjvf dlib-20.0.tar.bz2
 
+#InspireFace (The library has not been tested on AGX Orin, but it should work because it is based on OpenCV and ONNX Runtime, which are both tested on AGX Orin.
+#I need to test it on AGX Orin later. If there is a problem, I will try to fix it and update the code.
+#if [ "$machine" = "PC" ]; then
+  cd ~/RobotNurseHelper_build/
+  git clone https://github.com/HyperInspire/InspireFace.git
+  checkout v1.2.3
+  # Must enter this directory
+  cd InspireFace
+  # Clone the repository and pull submodules
+  git clone --recurse-submodules https://github.com/tunmx/inspireface-3rdparty.git 3rdparty
+
+  # Download lightweight resource files for mobile device
+  bash command/download_models_general.sh Pikachu
+  # Download resource files for mobile device or PC/server
+  bash command/download_models_general.sh Megatron
+  # Download resource files for RV1109
+  bash command/download_models_general.sh Gundam_RV1109
+  # Download resource files for RV1106
+  bash command/download_models_general.sh Gundam_RV1106
+  # Download resource files for RK356X
+  bash command/download_models_general.sh Gundam_RK356X
+  # Download resource files for RK3588
+  bash command/download_models_general.sh Gundam_RK3588
+  # Download resource files for NVIDIA-GPU Device(TensorRT)
+  bash command/download_models_general.sh Megatron_TRT
+
+  # Download all model files
+  bash command/download_models_general.sh
+
+  # Execute the local compilation script
+  bash command/build.sh
+#fi
+
 #Build our own program
 cd ~/RobotNurseHelper/Server
 ./build_project.sh $RobotModel
