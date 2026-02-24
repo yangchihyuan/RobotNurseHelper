@@ -377,6 +377,86 @@ void ThreadProcessImage::run()
                             cv::rectangle(outFrame, cv::Point(faceRect.x, faceRect.y), cv::Point(faceRect.x+faceRect.width-1, faceRect.y+faceRect.height-1), cv::Scalar(0, 255, 0), 2);
                             //cout << "Face " << i << ": x=" << faceRect.x << ", y=" << faceRect.y << ", width=" << faceRect.width << ", height=" << faceRect.height << endl;                        
                         }
+
+                        if( MultipleFaceData.detectedNum > 0 )
+                        {
+                            HFSessionCustomParameter customParameter = {0}; // 全部初始化為 0    
+                            // 2. 依照需求開啟功能 (1 為開啟, 0 為關閉)
+                            customParameter.enable_recognition = 1;  // 開啟人臉識別 (特徵提取)
+                            customParameter.enable_liveness = 0;         // 關閉 RGB 活體檢測
+                            customParameter.enable_face_attribute = 1;   // 開啟人臉屬性分析 (如性別、年齡)
+                            customParameter.enable_ir_liveness = 0;      // 關閉紅外線活體檢測
+
+                            result = HFMultipleFacePipelineProcess(session, imageHandle, &MultipleFaceData, customParameter);
+                            if (result != HSUCCEED) {
+                                std::cerr << "Failed to process multiple face pipeline." << std::endl;
+                                break;
+                            }
+
+
+                            HFFaceAttributeResult faceAttributeResult;
+                            HResult result = HFGetFaceAttributeResult(session, &faceAttributeResult);
+                            if( result == HSUCCEED )
+                            {
+                                //cout << "Successfully get face attribute result." << endl;
+                                for( int i = 0; i < faceAttributeResult.num; i++ )
+                                {
+                                    if( faceAttributeResult.gender[i] == 0 )
+                                    {
+                                        cout << "Gender: Female" << endl;
+                                    }
+                                    else
+                                    {
+                                        cout << "Gender: Male" << endl;
+                                    }
+                                    ///< 0: 0-2 years old;
+                                    ///< 1: 3-9 years old;
+                                    ///< 2: 10-19 years old;
+                                    ///< 3: 20-29 years old;
+                                    ///< 4: 30-39 years old;
+                                    ///< 5: 40-49 years old;
+                                    ///< 6: 50-59 years old;
+                                    ///< 7: 60-69 years old;
+                                    ///< 8: more than 70 years old;
+                                    switch(faceAttributeResult.ageBracket[i])
+                                    {
+                                        case 0:
+                                            cout << "Age bracket: 0-2 years old" << endl;
+                                            break;
+                                        case 1:
+                                            cout << "Age bracket: 3-9 years old" << endl;
+                                            break;
+                                        case 2:
+                                            cout << "Age bracket: 10-19 years old" << endl;
+                                            break;
+                                        case 3:
+                                            cout << "Age bracket: 20-29 years old" << endl;
+                                            break;
+                                        case 4:
+                                            cout << "Age bracket: 30-39 years old" << endl;
+                                            break;
+                                        case 5:
+                                            cout << "Age bracket: 40-49 years old" << endl;
+                                            break;
+                                        case 6:
+                                            cout << "Age bracket: 50-59 years old" << endl;
+                                            break;
+                                        case 7:
+                                            cout << "Age bracket: 60-69 years old" << endl;
+                                            break;
+                                        case 8:
+                                            cout << "Age bracket: more than 70 years old" << endl;
+                                            break;
+                                        default:
+                                            cout << "Unknown age bracket: " << faceAttributeResult.ageBracket[i] << endl;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                cout << "Failed to get face attribute result, error code: " << result << endl;
+                            }
+                        }
                         HFReleaseImageStream(imageHandle);
                     }                    
                     else if( msetting.FaceDetectionModel == "MediaPipe_Face")
@@ -472,40 +552,7 @@ void ThreadProcessImage::run()
                     {
                         cout << "Unknown FaceDetectionModel: " << msetting.FaceDetectionModel << ". Use InspireFace by default." << endl;
                     }
-                
-                    //If I turn this on, the FaceTrack no longer works. Why?
-                    //Is it unit session rather than a single frame?
-                    /*
-                    if( MultipleFaceData.detectedNum > 0 )
-                    {
-                        HFFaceAttributeResult faceAttributeResult;
-                        HResult result = HFGetFaceAttributeResult(session, &faceAttributeResult);
-                        if( result == HSUCCEED )
-                        {
-                            cout << "Successfully get face attribute result." << endl;
-                            if( faceAttributeResult.num > 0 )
-                            {
-                                if( faceAttributeResult.gender == 0 )
-                                {
-                                    cout << "Gender: Female" << endl;
-                                }
-                                else
-                                {
-                                    cout << "Gender: Male" << endl;
-                                }
-                                cout << "Age bracket: " << faceAttributeResult.ageBracket << endl;
-                            }
-                        }
-                        else
-                        {
-                            cout << "Failed to get face attribute result, error code: " << result << endl;
-                        }
-                    }
-                    */
                 }
-
-
-
 
                 //Dump outFrame for debugging
                 if(bSaveProcessResult)
