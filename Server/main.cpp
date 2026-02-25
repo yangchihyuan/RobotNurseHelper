@@ -63,9 +63,6 @@ int main(int argc, char *argv[])
     QCommandLineOption DefaultSaveImageOption("DefaultSaveImage", "The default value of saving images.", "boolean", "false");
     parser.addOption(DefaultSaveImageOption);
 
-//    QCommandLineOption previousContextOption({"pf", "previous_context"}, "Previous context text file", "string", "");
-//    parser.addOption(previousContextOption);
-
     QCommandLineOption stateOption({"s", "state"}, "Starting state", "int", 0);
     parser.addOption(stateOption);
 
@@ -112,12 +109,12 @@ int main(int argc, char *argv[])
     }
 
     MainWindow w;
-    w.setWhisperModelFile(whisperModel);
-    w.setLanguageModelName(languageModel);
+//    w.setWhisperModelFile(whisperModel);
+//    w.setLanguageModelName(languageModel);
     w.setState(strstate.toInt());
-    w.setLanguage(strLanguage);
-    w.setImageSaveDirectory(parser.value(ImageSaveDirectoryOption).append("/").append(str_now.c_str()));
-    w.setDefaultSaveImage(bDefaultSaveImage);
+//    w.setLanguage(strLanguage);
+//    w.setImageSaveDirectory(parser.value(ImageSaveDirectoryOption).append("/").append(str_now.c_str()));
+//    w.setDefaultSaveImage(bDefaultSaveImage);
     w.startThreads();
     w.show();
     app.exec();

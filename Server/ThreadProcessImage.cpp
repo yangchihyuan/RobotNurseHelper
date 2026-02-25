@@ -80,31 +80,31 @@ ThreadProcessImage::ThreadProcessImage()
     libmp_pose->AddOutputStream("output_video");
     libmp_pose->Start();
 
-    const char* InspireFaceModelPath = "/home/chihyuan/Downloads/InspireFace/test_res/pack/Pikachu"; // 確保此路徑下有模型文件
-    if (HFLaunchInspireFace(InspireFaceModelPath) != HSUCCEED) {
-        std::cerr << "InspireFace 初始化失敗！" << std::endl;
+    string InspireFaceModelPath = Homepath + "/RobotNurseHelper_build/InspireFace/test_res/pack/Pikachu";
+    const char* InspireFaceModelPath_cstr = InspireFaceModelPath.c_str();
+    if (HFLaunchInspireFace(InspireFaceModelPath_cstr) != HSUCCEED) {
+        std::cerr << "InspireFace Initializatino failure!" << std::endl;
     }    
 
-    // 1. 初始化 Session 參數結構體
-    HFSessionCustomParameter customParameter = {0}; // 全部初始化為 0    
-    // 2. 依照需求開啟功能 (1 為開啟, 0 為關閉)
-    customParameter.enable_recognition = 1;  // 開啟人臉識別 (特徵提取)
-    customParameter.enable_liveness = 0;         // 關閉 RGB 活體檢測
-    customParameter.enable_face_attribute = 1;   // 開啟人臉屬性分析 (如性別、年齡)
-    customParameter.enable_ir_liveness = 0;      // 關閉紅外線活體檢測
 
-    HFDetectMode detectMode = HF_DETECT_MODE_ALWAYS_DETECT; //HF_DETECT_MODE_LIGHT_TRACK; //HF_DETECT_MODE_TRACK_BY_DETECTION;  // 使用偵測驅動的追蹤模式，適合高解析度視頻流
+    HFSessionCustomParameter customParameter = {0}; // Initial as 0    
 
-    HInt32 maxDetectFaceNum = 5;  // 設定最大偵測人臉數量
+    customParameter.enable_recognition = 1;  
+    customParameter.enable_face_attribute = 1; 
 
-    HInt32 detectPixelLevel = 320;  // 修改偵測器的輸入解析度等級，數值越大越好，默認值 -1 為 320，建議輸入 160、320、640 等 160 的倍數
+    //The HF_DETECT_MODE_ALWAYS_DETECT option won't generate TrackID, which is always -1
+    HFDetectMode detectMode = HF_DETECT_MODE_TRACK_BY_DETECTION;  //HF_DETECT_MODE_ALWAYS_DETECT; //HF_DETECT_MODE_LIGHT_TRACK; //HF_DETECT_MODE_TRACK_BY_DETECTION;  // 使用偵測驅動的追蹤模式，適合高解析度視頻流
 
-    HInt32 trackByDetectModeFPS = -1;  // 如果使用 MODE_TRACK_BY_DETECTION 模式，設定當前輸入視頻流的 fps 幀率，默認值 -1 為 30fps
+    HInt32 maxDetectFaceNum = 5;  
+
+    HInt32 detectPixelLevel = 320;  // default -1 means 320, usually 160、320、640
+
+    HInt32 trackByDetectModeFPS = -1;  // if MODE_TRACK_BY_DETECTION, default value -1 means 30fps
     HResult sessionRet = HFCreateInspireFaceSession(customParameter, detectMode, maxDetectFaceNum, detectPixelLevel, trackByDetectModeFPS, &session);
     if (sessionRet == HSUCCEED) {
-        std::cout << "Session 建立成功！" << std::endl;
+        std::cout << "Session Success" << std::endl;
     } else {
-        std::cout << "Session 建立失敗，錯誤碼: " << sessionRet << std::endl;
+        std::cout << "Session Failure. error code: " << sessionRet << std::endl;
     }
 }
 
@@ -371,12 +371,6 @@ void ThreadProcessImage::run()
                             std::cerr << "Failed to execute face tracking." << std::endl;
                             break;
                         }
-                        
-                        for (int i = 0; i < MultipleFaceData.detectedNum; i++) {
-                            HFaceRect faceRect = MultipleFaceData.rects[i];
-                            cv::rectangle(outFrame, cv::Point(faceRect.x, faceRect.y), cv::Point(faceRect.x+faceRect.width-1, faceRect.y+faceRect.height-1), cv::Scalar(0, 255, 0), 2);
-                            //cout << "Face " << i << ": x=" << faceRect.x << ", y=" << faceRect.y << ", width=" << faceRect.width << ", height=" << faceRect.height << endl;                        
-                        }
 
                         if( MultipleFaceData.detectedNum > 0 )
                         {
@@ -398,16 +392,17 @@ void ThreadProcessImage::run()
                             HResult result = HFGetFaceAttributeResult(session, &faceAttributeResult);
                             if( result == HSUCCEED )
                             {
-                                //cout << "Successfully get face attribute result." << endl;
+                                string FaceGender = "";
+                                string FaceAge = "";
                                 for( int i = 0; i < faceAttributeResult.num; i++ )
                                 {
                                     if( faceAttributeResult.gender[i] == 0 )
                                     {
-                                        cout << "Gender: Female" << endl;
+                                        FaceGender = "F";
                                     }
                                     else
                                     {
-                                        cout << "Gender: Male" << endl;
+                                        FaceGender = "M";
                                     }
                                     ///< 0: 0-2 years old;
                                     ///< 1: 3-9 years old;
@@ -421,35 +416,41 @@ void ThreadProcessImage::run()
                                     switch(faceAttributeResult.ageBracket[i])
                                     {
                                         case 0:
-                                            cout << "Age bracket: 0-2 years old" << endl;
+                                            FaceAge = "0-2";
                                             break;
                                         case 1:
-                                            cout << "Age bracket: 3-9 years old" << endl;
+                                            FaceAge = "3-9";
                                             break;
                                         case 2:
-                                            cout << "Age bracket: 10-19 years old" << endl;
+                                            FaceAge = "10-19";
                                             break;
                                         case 3:
-                                            cout << "Age bracket: 20-29 years old" << endl;
+                                            FaceAge = "20-29";
                                             break;
                                         case 4:
-                                            cout << "Age bracket: 30-39 years old" << endl;
+                                            FaceAge = "30-39";
                                             break;
                                         case 5:
-                                            cout << "Age bracket: 40-49 years old" << endl;
+                                            FaceAge = "40-49";
                                             break;
                                         case 6:
-                                            cout << "Age bracket: 50-59 years old" << endl;
+                                            FaceAge = "50-59";
                                             break;
                                         case 7:
-                                            cout << "Age bracket: 60-69 years old" << endl;
+                                            FaceAge = "60-69";
                                             break;
                                         case 8:
-                                            cout << "Age bracket: more than 70 years old" << endl;
+                                            FaceAge = "70+";
                                             break;
                                         default:
-                                            cout << "Unknown age bracket: " << faceAttributeResult.ageBracket[i] << endl;
+                                            FaceAge = "Unknown";
                                     }
+
+                                    HFaceRect faceRect = MultipleFaceData.rects[i];
+                                    cv::rectangle(outFrame, cv::Point(faceRect.x, faceRect.y), cv::Point(faceRect.x+faceRect.width-1, faceRect.y+faceRect.height-1), cv::Scalar(0, 255, 0), 2);
+                                    //cout << "MultipleFaceData.trackIds[i]: " << MultipleFaceData.trackIds[i] << endl;
+                                    cv::putText(outFrame, std::to_string(MultipleFaceData.trackIds[i]) + " " + FaceGender + " " + FaceAge, cv::Point(faceRect.x, faceRect.y -10), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0), 2);
+
                                 }
                             }
                             else

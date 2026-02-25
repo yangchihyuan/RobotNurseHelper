@@ -132,3 +132,16 @@ bool CheckDirectoryExist(const string& directory)
 //    }
     return false;
 }
+
+string ReplaceShellVariable(const string& path)
+{
+    string result = path;
+    size_t pos = result.find("$HOME");
+    if (pos != string::npos) {
+        const char* home = getenv("HOME");
+        if (home != nullptr) {
+            result.replace(pos, 5, home);
+        }
+    }
+    return result;
+}

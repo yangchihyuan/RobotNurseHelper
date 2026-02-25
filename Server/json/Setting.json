@@ -3,6 +3,7 @@
     "bServerPlaysRobotReceivedAudio": false,
     "bVideoWindowFullScreen": false,
     "bShowPreviewWindow": true,
+    "bSaveImages": true,
     "iImageSaveIntervalMillisecond": 5000,
     "bFacialExpressionRecognition": false,
     "bHumanPoseEstimation": true,
@@ -10,5 +11,9 @@
     "bHandLandmarkDetection": false,
     "bUseDlibForFaceRecognition": false,
     "bFaceDetection": true,
-    "FaceDetectionModel": "InspireFace"             //MediaPipe_Face, InspireFace
+    "FaceDetectionModel": "InspireFace",             //MediaPipe_Face, InspireFace
+    "WhisperModel": "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin",
+    "ImageSaveDirectory": "$HOME/Downloads/raw_images",
+    "LanguageModel": "gemma3:1b",
+    "Language": "Chinese"
 }

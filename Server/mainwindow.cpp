@@ -165,9 +165,6 @@ void MainWindow::setLanguage( QString Language)
     QString SentenceFileName;
     if( Language == "Chinese")
     {
-       
-        
-        
         thread_whisper.strLanguage = "zh"; // set language to Chinese (可維持此行不變)
         SentenceFileName = "Sentence_Chinese.txt";
     }

@@ -431,6 +431,9 @@ if [ "$machine" = "AGXOrin" ]; then
 fi 
 
 #install the desktop file to let users launch the program by clicking the icon
+#copy the icon file to /usr/share/pixmaps, which is a standard directory for storing icons in Linux systems. This allows the system to find and display the icon properly when you launch the program from the application menu.
+sudo cp ~/RobotNurseHelper/Server/ZenboNurse.png /usr/share/pixmaps/ZenboNurse.png
+
 cd ~/RobotNurseHelper/Server
 mkdir -p ~/.local/share/applications/ && cp RobotNurseHelper.desktop ~/.local/share/applications/
 
