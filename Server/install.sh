@@ -400,6 +400,12 @@ tar -xjvf dlib-20.0.tar.bz2
   bash command/build.sh
 #fi
 
+#cpp-httplib
+cd ~/RobotNurseHelper_build
+git clone https://github.com/yhirose/cpp-httplib.git
+cd cpp-httplib
+git checkout v0.34.0
+
 #Build our own program
 cd ~/RobotNurseHelper/Server
 ./build_project.sh $RobotModel

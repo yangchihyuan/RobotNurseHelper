@@ -18,7 +18,7 @@
 #include <QScrollBar>
 #include "RobotStatus.hpp"
 #include "ActionOption.hpp"
-#include "ThreadOllama.hpp"
+#include "ThreadLLM.hpp"
 
 extern std::mutex gMutex_audio_buffer;
 extern std::queue<short> AudioBuffer;

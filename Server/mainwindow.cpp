@@ -18,7 +18,7 @@
 #include <QScrollBar>
 #include "RobotStatus.hpp"
 #include "ActionOption.hpp"
-#include "ThreadOllama.hpp"
+#include "ThreadLLM.hpp"
 #include "LandmarkToRobotAction.hpp" //[MOHAMED]
 
 extern std::mutex gMutex_audio_buffer;
@@ -170,22 +170,8 @@ void MainWindow::setLanguage( QString Language)
     }
     else if( Language == "English")
     {
-        
         thread_whisper.strLanguage = "en"; // set language to English
         SentenceFileName = "Sentence_English.txt";
-
-        thread_ollama.bio_summary_prompt = R"(Summarize only the important information gathered about patient so far. In this format (only as an example):
-        **Patient Summary:**
-        
-        -Age: 35
-        -Name: Muhammad
-        -Main Complaint: Stomach ache.
-        -Location: Stomach.
-        -Pain Intensity: Additional Concern:** Feels stomach in throat.)";
-
-        thread_ollama.check_stage_prompt = "Has ALL the patient age, name, how they are feeling on a scale from 1 to 5, and symptom/main complaint information been gathered? Do not concern yourself with any other information and do not ask for clarifications. As soon as the minimum specified info has been gathered, say yes. State yes or no. If no, state what is missing.";
-        thread_ollama.no_response = "No response from patient. Continue with what you are saying";
-        thread_ollama.dance_complete = "The dance that the patient selected is now complete";
     }
     else if( Language == "Arabic")
     {

@@ -245,7 +245,7 @@ MainWindow::MainWindow(QWidget *parent)
     thread_state_control.InitializeStates();
     thread_state_control.m_pSendMessageManager = &sendMessageManager;
     thread_state_control.mpThreadWhisper = &thread_whisper;
-    thread_state_control.mpThreadOllama = &thread_ollama;
+    thread_state_control.mpThreadLLM = &thread_ollama;
     thread_state_control.mpThreadProcessImage = &thread_process_image;
 
     thread_ollama.mpThreadStateControl = &thread_state_control;

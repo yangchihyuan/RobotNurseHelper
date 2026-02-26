@@ -15,5 +15,7 @@
     "WhisperModel": "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin",
     "ImageSaveDirectory": "$HOME/Downloads/raw_images",
     "LanguageModel": "gemma3:1b",
-    "Language": "Chinese"
+    "Language": "Chinese",
+    "AnythingLLM_API_key": "B5Q49XV-0P04PY2-KJ4TRSQ-250ZSYE",
+    "AnythingLLM_workspace_slug": "cataract"
 }

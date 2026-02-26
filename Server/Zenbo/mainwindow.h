@@ -15,7 +15,7 @@
 #include "ThreadPortAudio.hpp"
 #include "ThreadTablet.hpp"
 #include "ThreadWhisper.hpp"
-#include "ThreadOllama.hpp"
+#include "ThreadLLM.hpp"
 #include <queue>
 #include <QMediaDevices>
 #include <QAudioDevice>
@@ -77,7 +77,7 @@ private:
 
     ThreadWhisper thread_whisper;
 
-    ThreadOllama thread_ollama;
+    ThreadLLM thread_ollama;
 
     QString QString_SentCommands;
     void send_move_body_command(float x, float y, int degree, int speed);

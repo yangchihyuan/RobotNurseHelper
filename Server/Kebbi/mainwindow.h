@@ -15,7 +15,7 @@
 #include "ThreadPortAudio.hpp"
 #include "ThreadReceiveMessage.hpp"
 #include "ThreadWhisper.hpp"
-#include "ThreadOllama.hpp"
+#include "ThreadLLM.hpp"
 #include "ThreadStateControl.hpp"
 #include <queue>
 #include <QMediaDevices>
@@ -87,7 +87,7 @@ private:
 
     ThreadWhisper thread_whisper;
 
-    ThreadOllama thread_ollama;
+    ThreadLLM thread_ollama;
     ThreadStateControl thread_state_control;
 
     std::unique_ptr<VideoWindow> pVideoWindow;

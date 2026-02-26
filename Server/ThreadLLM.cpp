@@ -1,4 +1,4 @@
-#include "ThreadOllama.hpp"
+#include "ThreadLLM.hpp"
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <ctime>
@@ -9,11 +9,13 @@
 #include <utility_string.hpp>
 #include <cstdlib>
 #include <ctime>   // For time()
-ThreadOllama::ThreadOllama()
+
+ThreadLLM::ThreadLLM()
 {
+    LoadJSONFile(msetting, "json/Setting.json");
 }
 
-ThreadOllama::~ThreadOllama()
+ThreadLLM::~ThreadLLM()
 {
 }
 
@@ -28,8 +30,10 @@ void DumpOllamaMessages(ollama::messages messages)
 
 string check_summary = "";
 
-void ThreadOllama::run()
+void ThreadLLM::run()
 {
+    AnythingLLM anythingLLM("127.0.0.1", 3001, msetting.AnythingLLM_API_key);
+
     srand(time(0));
 
     ollama::options options;
@@ -77,11 +81,15 @@ void ThreadOllama::run()
 
         if(mqueue.size() > 0)
         {
-//            cout << "(G) process an Ollama task." << endl;
             OllamaTask task = mqueue.front();
             mqueue.pop();
+            //replace this part with AnythingLLM API call
+            /*
             ollama::response response = ollama::chat(ModelName, task.message_history, options);
             strResponse = response.as_simple_string();        //The strResponse will be send to the robot to speak out.
+            */
+            strResponse = anythingLLM.ask(msetting.AnythingLLM_workspace_slug, task.message_history.back());
+
             b_new_LLM_response = true;
             if( task.bNotify)
                 mpThreadStateControl->NotifyEvent("onLLMResult", chrono::system_clock::now() ,strResponse);
@@ -90,7 +98,7 @@ void ThreadOllama::run()
     cout << "Exit thread Ollama while loop." << endl;
 }
 
-void ThreadOllama::AddQueue(OllamaTask task)
+void ThreadLLM::AddQueue(OllamaTask task)
 {
     mqueue.push(task);
 }

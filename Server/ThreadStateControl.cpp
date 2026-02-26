@@ -120,8 +120,8 @@ void ThreadStateControl::run()
                 mbTTSComplete = false;
 
                 //just for display on UI
-                mpThreadOllama->strResponse = mStates[m_iStateIndex].m_strFirstSentence;
-                mpThreadOllama->b_new_LLM_response = true;
+                mpThreadLLM->strResponse = mStates[m_iStateIndex].m_strFirstSentence;
+                mpThreadLLM->b_new_LLM_response = true;
 
                 //prepare random number
                 //if( mStates[m_iStateIndex].vSmallMotion.size() > 0 )
@@ -255,8 +255,8 @@ void ThreadStateControl::run()
                             task.message_history = mStates[m_iStateIndex].message_history;
                             task.timestamp = chrono::system_clock::now();
                             task.bNotify = true;
-                            mpThreadOllama->AddQueue(task);
-                            mpThreadOllama->cond_var_ollama.notify_one();
+                            mpThreadLLM->AddQueue(task);
+                            mpThreadLLM->cond_var_ollama.notify_one();
                         }
                     }
                 }

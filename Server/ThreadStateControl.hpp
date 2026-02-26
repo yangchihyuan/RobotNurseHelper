@@ -7,7 +7,7 @@
 #include "ollama.hpp"
 #include "SendMessageManager.hpp"
 #include "ThreadWhisper.hpp"
-#include "ThreadOllama.hpp"
+#include "ThreadLLM.hpp"
 #include "ThreadProcessImage.hpp"
 #include "utility_KebbiMotion.hpp" 
 #include <nlohmann/json.hpp>
@@ -49,7 +49,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(State, iStateIndex, m_strStateName, iDuration
     v_str_Action, sStateType
 )
 
-class ThreadOllama; //Because ThreadOllama.hpp and ThreadStateControl.hpp include each other, I need to use forward declaration
+class ThreadLLM; //Because ThreadLLM.hpp and ThreadStateControl.hpp include each other, I need to use forward declaration
 
 
 class ThreadStateControl: public QThread
@@ -65,7 +65,7 @@ public:
     void NextState();
     SendMessageManager *m_pSendMessageManager;
     ThreadWhisper *mpThreadWhisper;
-    ThreadOllama *mpThreadOllama;
+    ThreadLLM *mpThreadLLM;
     ThreadProcessImage *mpThreadProcessImage;
     void NotifyEvent(string description, chrono::time_point<chrono::system_clock> timestamp, string sLLMResult = "");
     condition_variable cond_var_state_control;

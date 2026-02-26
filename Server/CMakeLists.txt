@@ -102,7 +102,7 @@ set(SOURCES JPEG.cpp
             ThreadProcessImage.cpp
             ThreadStateControl.cpp
             ThreadWhisper.cpp
-            ThreadOllama.cpp
+            ThreadLLM.cpp
             SocketBufferParser.cpp
             SendMessageManager.cpp
             GetLandmarks.cpp
@@ -195,6 +195,13 @@ set_target_properties(LIBINSPIREFACE PROPERTIES
   IMPORTED_LOCATION "${INSPIREFACE_DIR}/lib/libInspireFace.so")
 target_include_directories(RobotNurseHelper PRIVATE "${INSPIREFACE_DIR}/include")
 target_link_libraries(RobotNurseHelper LIBINSPIREFACE)
+
+#httplib
+add_library(LIBHTTPLIB SHARED IMPORTED)
+set_target_properties(LIBHTTPLIB PROPERTIES
+  IMPORTED_LOCATION "${ROBOTNURSEHELPER_BUILD_DIR}/cpp-httplib/httplib.h")
+target_include_directories(RobotNurseHelper PRIVATE "${ROBOTNURSEHELPER_BUILD_DIR}/cpp-httplib")
+target_link_libraries(RobotNurseHelper LIBHTTPLIB)
 
 #Enalbe the debug mode
 if(COMPILE_WITH_G_FLAG)
