@@ -124,7 +124,6 @@ message(STATUS 'PROTO_SRC ${PROTO_SRC}')
 # whisper.cpp v1.7.5
 add_library(LIBWHISPER SHARED IMPORTED)
 set(WHISPER_DIR $ENV{HOME}/RobotNurseHelper_build/whisper.cpp)
-set(WHISPER_DIR $ENV{HOME}/RobotNurseHelper_build/whisper.cpp)
 set_target_properties(LIBWHISPER PROPERTIES
   IMPORTED_LOCATION "${WHISPER_DIR}/build/src/libwhisper.so")
 target_include_directories(LIBWHISPER INTERFACE "${WHISPER_DIR}/include" "${WHISPER_DIR}/ggml/include" ${WHISPER_DIR}/examples)

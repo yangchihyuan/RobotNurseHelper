@@ -260,11 +260,18 @@ if ((VRAMSize==0)); then
   cmake -B build
   cmake --build build -j10 --config Release
 else
-  sudo apt -y install nvidia-cuda-toolkit
+  if [ "$machine" = "PC" ]; then
+    sudo apt -y install nvidia-cuda-toolkit
+  fi
   if ((VRAMSize==2)); then
     bash ./models/download-ggml-model.sh small
   else
     bash ./models/download-ggml-model.sh large-v3-turbo
+  fi
+  if [ "$machine" = "AGXOrin" ]; then
+    #set up the ncvv path
+    export PATH=/usr/local/cuda/bin:$PATH
+    export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH  
   fi
   cmake -B build -DGGML_CUDA=1
   cmake --build build -j10 --config Release    #Don't use -j, there are 20 cores in my laptop, which will cause a peak memory usage
@@ -332,7 +339,7 @@ if [ "$machine" = "PC" ]; then
   curl.snap-acked        #ollama changed its installation script. There is a text explanation in the script. It only accepts Snap-curl and we need to use this command first to prevent a warning message
   curl -fsSL https://ollama.com/install.sh | sh
 elif [ "$machine" = "AGXOrin" ]; then
-  #There snap program on AGX Orin's Ubuntu is restricted, so we need to use get
+  #There snap program on AGX Orin's Ubuntu is restricted, so we need to use wget
   wget -O- https://ollama.com/install.sh | sh
 fi
 
