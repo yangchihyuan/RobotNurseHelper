@@ -4,7 +4,6 @@
 #include <chrono>
 #include <string>
 #include <QThread>
-#include "ollama.hpp"
 #include "SendMessageManager.hpp"
 #include "ThreadWhisper.hpp"
 #include "ThreadLLM.hpp"
@@ -36,7 +35,8 @@ struct State
     bool bInitial = true;
     bool bWaitForTTSComplete = true;
     bool bEndState = false;
-    ollama::messages message_history;
+    std::vector<std::string> message_history;
+
     chrono::seconds m_secDurationLimit;     //Converted from iDurationLimitSeconds
 
     //Special variables for some states
@@ -77,6 +77,10 @@ signals:
 
 protected:
     void run();
+    string ConvertMessageHistoryToString(vector<string> message_history);
+    void DumpHistoryMessages(vector<string> messages);
+
+
     vector<State> mStates;
     int m_iNumberOfStates = 10;
     int m_iStateIndex = 0;

@@ -356,7 +356,12 @@ cd ~/RobotNurseHelper_build
 git clone https://github.com/jmont-dev/ollama-hpp.git
 cd ~/RobotNurseHelper_build/ollama-hpp
 git checkout v0.9.5
-#The ollama.hpp vesioin 0.9.7 has a conclict with c++13 std::hash. My previous verion is 0.9.5, does not have this problem.
+#The ollama.hpp vesion 0.9.7 has a conclict with GCC 13 std::hash (GCC is the default compiler package on Ubuntu 24.04).
+#The old verion 0.9.5 does not have this problem because it does not use std::hash. So I use the old version 0.9.5 to prevent the compilation error.
+#However, the 0.9.5 version is incompatible with the latest version of cpp-httplib 0.30.0.
+#Apply patch to fix compilation with newer cpp-httplib (using sed to avoid patch whitespace issues)
+sed -i 's|this->cli->Post("/api/generate", request_string, "application/json", stream_callback)|this->cli->Post("/api/generate", request_string.size(), [\&](size_t offset, size_t length, httplib::DataSink \&sink) { size_t chunk_len = length; size_t remaining = request_string.size() - offset; if (chunk_len > remaining) chunk_len = remaining; sink.write(request_string.data() + offset, chunk_len); return true; }, "application/json", stream_callback, [](uint64_t, uint64_t){ return true; })|' include/ollama.hpp
+sed -i 's|this->cli->Post("/api/chat", request_string, "application/json", stream_callback)|this->cli->Post("/api/chat", request_string.size(), [\&](size_t offset, size_t length, httplib::DataSink \&sink) { size_t chunk_len = length; size_t remaining = request_string.size() - offset; if (chunk_len > remaining) chunk_len = remaining; sink.write(request_string.data() + offset, chunk_len); return true; }, "application/json", stream_callback, [](uint64_t, uint64_t){ return true; })|' include/ollama.hpp
 
 #dlib library for face recognition
 #The precompiled libdlib-dev does not work. It enables the DLIB_NO_GUI_SUPPORT

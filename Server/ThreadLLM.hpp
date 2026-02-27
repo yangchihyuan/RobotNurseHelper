@@ -6,7 +6,6 @@
 #include <mutex>
 #include <queue>
 #include <condition_variable>
-#include "ollama.hpp"
 #include <chrono>
 #include "ThreadStateControl.hpp"
 #include "Setting.hpp"
@@ -16,14 +15,13 @@ using namespace std;
 
 class ThreadStateControl;       //Because ThreadLLM.hpp and ThreadStateControl.hpp include each other, I need to use forward declaration
 
-struct OllamaTask
+
+struct LLMTask
 {
-    ollama::messages message_history;
+    string str_message;
     chrono::time_point<std::chrono::system_clock> timestamp;
     bool bNotify = true;        //Notify the ThreadStateControl
 };
-
-void DumpOllamaMessages(ollama::messages messages);
 
 class ThreadLLM: public QThread
 {
@@ -36,20 +34,16 @@ public:
     bool b_WhileLoop = true;
     bool b_new_LLM_response = false;
     
-    condition_variable cond_var_ollama;
-    string strPrompt;                       //The strPrompt is the user's input sentence, genrated by Whisper.
+    condition_variable cond_var_thread_LLM;
     string strResponse;
-    string str_system_message;               
     
-    string ModelName = "gemma3:12b";
 
-    string generateResponse(ollama::messages message_history);
-    void AddQueue(OllamaTask task);
+    void AddQueue(LLMTask task);
     ThreadStateControl *mpThreadStateControl;
 
 protected:
     void run();
-    queue<OllamaTask> mqueue;
+    queue<LLMTask> mqueue;
     Setting msetting;
 };
 

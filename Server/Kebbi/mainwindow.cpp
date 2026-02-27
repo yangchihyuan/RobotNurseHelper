@@ -39,7 +39,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     thread_whisper.model_file_path = QString::fromStdString(ReplaceShellVariable(msetting.WhisperModel));    
     setLanguage(QString::fromStdString(msetting.Language));
-    thread_ollama.ModelName = msetting.LanguageModel;
     thread_process_image.ImageSaveDirectory = ReplaceShellVariable(msetting.ImageSaveDirectory);
     thread_process_image.bSaveTransmittedImage = msetting.bSaveImages;
 
@@ -245,10 +244,10 @@ MainWindow::MainWindow(QWidget *parent)
     thread_state_control.InitializeStates();
     thread_state_control.m_pSendMessageManager = &sendMessageManager;
     thread_state_control.mpThreadWhisper = &thread_whisper;
-    thread_state_control.mpThreadLLM = &thread_ollama;
+    thread_state_control.mpThreadLLM = &thread_LLM;
     thread_state_control.mpThreadProcessImage = &thread_process_image;
 
-    thread_ollama.mpThreadStateControl = &thread_state_control;
+    thread_LLM.mpThreadStateControl = &thread_state_control;
 
     pVideoWindow = std::make_unique<VideoWindow>(nullptr);
     //temporary comment to avoid the window being full-screen at the beginning
@@ -370,16 +369,17 @@ void MainWindow::timer_event()
         oldWhisperData = thisWhisperData;
     }
                     
-    if( thread_ollama.b_new_LLM_response )
+    if( thread_LLM.b_new_LLM_response )
     {
-        thread_ollama.b_new_LLM_response = false;
-        ui->plainTextEdit_LLM_response->setPlainText(QString::fromStdString(thread_ollama.strResponse));
+        thread_LLM.b_new_LLM_response = false;
+        ui->plainTextEdit_LLM_response->setPlainText(QString::fromStdString(thread_LLM.strResponse));
+
         //speak out
         bool bAutoSpeakOut = false;
         if( bAutoSpeakOut)
         {
             RobotCommandProtobuf::RobotCommand command;
-            command.set_speak_sentence(thread_ollama.strResponse);
+            command.set_speak_sentence(thread_LLM.strResponse);
             sendMessageManager.AddMessage(command);
         }
     }

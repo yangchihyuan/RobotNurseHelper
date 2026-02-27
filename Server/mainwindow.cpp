@@ -36,7 +36,7 @@ void MainWindow::startThreads()
     thread_process_audio.start();
     thread_receive_message.start();
     thread_whisper.start();
-    thread_ollama.start();
+    thread_LLM.start();
     thread_state_control.start();
 }
 
@@ -98,10 +98,10 @@ MainWindow::~MainWindow()
     if (audioSrc != nullptr)
       delete audioSrc;
 
-    cout << "Waiting for thread_ollama to exit" << endl;
-    thread_ollama.b_WhileLoop = false;
-    thread_ollama.cond_var_ollama.notify_one();
-    thread_ollama.wait();
+    cout << "Waiting for thread_LLM to exit" << endl;
+    thread_LLM.b_WhileLoop = false;
+    thread_LLM.cond_var_thread_LLM.notify_one();
+    thread_LLM.wait();
 
     cout << "Waiting for thread_state_control to exit" << endl;
     thread_state_control.b_WhileLoop = false;
@@ -128,11 +128,6 @@ MainWindow::~MainWindow()
 void MainWindow::setWhisperModelFile( QString filePath)
 {
     thread_whisper.model_file_path = filePath;
-}
-
-void MainWindow::setLanguageModelName( QString ModelName)
-{
-    thread_ollama.ModelName = ModelName.toStdString();
 }
 
 
@@ -175,7 +170,6 @@ void MainWindow::setLanguage( QString Language)
     }
     else if( Language == "Arabic")
     {
-        thread_ollama.str_system_message = "أنت روبوت طبي يُدعى زينبو. يرجى الإجابة باللغة العربية المختصرة.";
         thread_whisper.strLanguage = "ar"; // set language to Arabic
         SentenceFileName = "Sentence_English.txt";
     }
@@ -629,7 +623,7 @@ void MainWindow::on_pushButton_generate_response_clicked()
 {
     QString text = ui->plainTextEdit_received->toPlainText();
     thread_whisper.ClearBuffer();
-    thread_ollama.strPrompt = text.toStdString();      //The string is used here.
-//    thread_ollama.cond_var_ollama.notify_one();     //2025/8/7 This is the only place where we notify the thread_ollama to generate a response. Did Mohamed call this function?
+//    thread_ollama.strPrompt = text.toStdString();      //The string is used here.
+//    thread_LLM.strPrompt = text.toStdString();      //The string is used here.
 }
 

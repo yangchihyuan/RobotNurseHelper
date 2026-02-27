@@ -1,5 +1,4 @@
 #include <QObject>
-#include "ollama.hpp"
 
 #include <memory>
 #include <nlohmann/json.hpp>
@@ -8,34 +7,6 @@
 #include <vector>
 #include <string>
 #include "AnythingLLM.hpp"
-
-std::string ManualMemoryNurse::askWithManualHistory(std::string new_question) {
-    std::string full_prompt = "";
-    
-    // 1. 疊加歷史 (只取最近 3 輪，避免 Token 爆炸)
-    int start = (history.size() > 3) ? history.size() - 3 : 0;
-    for (int i = start; i < history.size(); ++i) {
-        full_prompt += "User: " + history[i].first + "\n";
-        full_prompt += "Assistant: " + history[i].second + "\n";
-    }
-    
-    // 2. 加入當前問題
-    full_prompt += "User: " + new_question;
-
-    // 3. 呼叫 API (注意：mode 要用 query，避免伺服器端又疊加一次)
-    nlohmann::json body = {
-        {"message", full_prompt},
-        {"mode", "query"} 
-    };
-
-    // ... 發送 POST 請求並取得 response_text ...
-    std::string response_text = "從API取得的回覆"; 
-
-    // 4. 更新歷史紀錄
-    history.push_back({new_question, response_text});
-    
-    return response_text;
-}
 
 AnythingLLM::AnythingLLM(std::string host, int port, std::string api_key) 
     : key("Bearer " + api_key) {
@@ -49,7 +20,7 @@ AnythingLLM::AnythingLLM(std::string host, int port, std::string api_key)
 std::string AnythingLLM::ask(std::string slug, std::string message) {
     nlohmann::json body = {
         {"message", message}, 
-        {"mode", "chat"}, 
+        {"mode", "query"}, 
         {"sessionId", current_session}
     };
     

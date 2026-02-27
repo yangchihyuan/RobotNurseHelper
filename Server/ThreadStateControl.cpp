@@ -1,13 +1,10 @@
-/*
-
-*/
-
 #include "ThreadStateControl.hpp"
 #include "utility_time.hpp"
 
 #include <cstdlib> // For rand() and srand()
 #include <ctime>   // For time()
 #include "utility_json.hpp"
+#include "ollama.hpp"
 
 ThreadStateControl::ThreadStateControl()
 {
@@ -49,7 +46,8 @@ void ThreadStateControl::run()
     //initialize the random seed.
     srand(time(0));
     bool bAccumulateConversation = false;
-    string assistant_message_str;
+    string str_inserted_assistant_message;
+    string str_assistant_message;
     string str_voice_source = "Patient"; //or "Video"
     while(b_WhileLoop)
     {
@@ -89,7 +87,7 @@ void ThreadStateControl::run()
                 if( s.find("InsertAssitantMessage:") != string::npos )
                 {
                     size_t pos = s.find(":");
-                    assistant_message_str = s.substr(pos + 1);
+                    str_inserted_assistant_message = s.substr(pos + 1);
                 }
             }
             
@@ -97,14 +95,9 @@ void ThreadStateControl::run()
             mStates[m_iStateIndex].m_Start_time = chrono::system_clock::now();
             if( mStates[m_iStateIndex].m_strFirstSentence != "")
             {
-                if( !bAccumulateConversation)
-                {
-//                    ollama::message system_message("system", mStates[m_iStateIndex].m_strSystemMessage);
-//                    mStates[m_iStateIndex].message_history.push_back(system_message);
-                }
-                ollama::message assistant_message("assistant", mStates[m_iStateIndex].m_strFirstSentence + assistant_message_str);
-                assistant_message_str = "";   //clear the string
-                mStates[m_iStateIndex].message_history.push_back(assistant_message);
+                str_assistant_message = mStates[m_iStateIndex].m_strFirstSentence + str_inserted_assistant_message;
+                str_inserted_assistant_message = "";   //clear the string
+                mStates[m_iStateIndex].message_history.push_back("Assistant: "+str_assistant_message);
                 RobotCommandProtobuf::RobotCommand command;
                 command.set_speak_sentence(mStates[m_iStateIndex].m_strFirstSentence);
                 command.set_sface(mStates[m_iStateIndex].sFace);
@@ -122,10 +115,6 @@ void ThreadStateControl::run()
                 //just for display on UI
                 mpThreadLLM->strResponse = mStates[m_iStateIndex].m_strFirstSentence;
                 mpThreadLLM->b_new_LLM_response = true;
-
-                //prepare random number
-                //if( mStates[m_iStateIndex].vSmallMotion.size() > 0 )
-                //    pDistribution = unique_ptr<uniform_int_distribution<int>>(new uniform_int_distribution<int>(0,mStates[m_iStateIndex].vSmallMotion.size()));
             }
             mbWaitForTTSComplete = mStates[m_iStateIndex].bWaitForTTSComplete;      //now it is always true
             mbOldStateComplete = false;              //In the initial state, the old state is not complete.
@@ -234,29 +223,26 @@ void ThreadStateControl::run()
                             }
                         }
 
-                        ollama::message user_message("user", WhisperResult.sOutput);
-                        mStates[m_iStateIndex].message_history.push_back(user_message);
+                        mStates[m_iStateIndex].message_history.push_back("User: "+WhisperResult.sOutput);
 
                         if(mbReadyToChangeState )
                         {
-    //                        cout << "(G) mbOldStateComplete = true;" << endl;
                             mbOldStateComplete = true;
                         }
                         else
                         {
                             //generate LLM response
                             //debug
-                            //cout << "(H)" << endl;
-                            DumpOllamaMessages(mStates[m_iStateIndex].message_history);
+                            DumpHistoryMessages(mStates[m_iStateIndex].message_history);
                             //generate LLM result;
                             mbWaitForTTSComplete = false;
                             mbWaitForLLMResult = true;
-                            OllamaTask task;
-                            task.message_history = mStates[m_iStateIndex].message_history;
+                            LLMTask task;
+                            task.str_message = ConvertMessageHistoryToString( mStates[m_iStateIndex].message_history );
                             task.timestamp = chrono::system_clock::now();
                             task.bNotify = true;
                             mpThreadLLM->AddQueue(task);
-                            mpThreadLLM->cond_var_ollama.notify_one();
+                            mpThreadLLM->cond_var_thread_LLM.notify_one();
                         }
                     }
                 }
@@ -266,15 +252,7 @@ void ThreadStateControl::run()
             {
                 if( mbLLMResult)
                 {
-                    ollama::message assistant_message("assistant", msLLMResult);
-                    mStates[m_iStateIndex].message_history.push_back(assistant_message);
-                    //debug
-                    if(false)
-                    {
-                        //debug
-                        //cout << "(D)" << endl;
-                        DumpOllamaMessages(mStates[m_iStateIndex].message_history);
-                    }
+                    mStates[m_iStateIndex].message_history.push_back("Assistant: "+msLLMResult);
                     
                     //Here is the command to let Kebbi speak the LLM result
                     if( !mbKeepSilent)
@@ -391,4 +369,24 @@ string ThreadStateControl::GetPatientName(string input_sentence){
     cout << "Extracted patient name by LLM: " << name << endl;
     
     return name.empty() ? "患者" : name;
+}
+
+string ThreadStateControl::ConvertMessageHistoryToString(vector<string> message_history)
+{
+    string result = "";
+    for( const auto& message : message_history)
+    {
+        result += message + "\n";
+    }
+    return result;
+}
+
+void ThreadStateControl::DumpHistoryMessages(vector<string> messages)
+{
+    cout << "---- Dumping message history ----" << endl;
+    for( const auto& message : messages)
+    {
+        cout << message << endl;
+    }
+    cout << "---- End of message history ----" << endl;
 }

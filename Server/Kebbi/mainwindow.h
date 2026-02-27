@@ -87,7 +87,7 @@ private:
 
     ThreadWhisper thread_whisper;
 
-    ThreadLLM thread_ollama;
+    ThreadLLM thread_LLM;
     ThreadStateControl thread_state_control;
 
     std::unique_ptr<VideoWindow> pVideoWindow;
