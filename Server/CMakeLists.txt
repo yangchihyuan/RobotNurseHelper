@@ -89,27 +89,28 @@ endif()
 set(OLLAMA_HPP_INCLUDE_DIR "${ROBOTNURSEHELPER_BUILD_DIR}/ollama-hpp/include")
 set(ONNX_HPP_INCLUDE_DIR "${ROBOTNURSEHELPER_BUILD_DIR}/${ONNX_DIR_NAME}/include")
 set(SILERO_HPP_INCLUDE_DIR "${ROBOTNURSEHELPER_BUILD_DIR}/silero-vad/examples/cpp")
-set(SOURCES JPEG.cpp
+set(SOURCES AnythingLLM.cpp
+            GetLandmarks.cpp
+            JPEG.cpp
+            SendMessageManager.cpp
+            SocketBufferParser.cpp
+            SocketClientHandler.cpp
+            ThreadPortAudio.cpp
+            ThreadProcessImage.cpp
+            ThreadStateControl.cpp
+            ThreadWhisper.cpp
+            ThreadLLM.cpp
+            VideoWindow.cpp
+            Yolo11Pose.cpp 
+            main.cpp
+            mainwindow.cpp
             utility_directory.cpp
             utility_TimeRecorder.cpp
             utility_compute.cpp
             utility_string.cpp
             utility_time.cpp
             utility_KebbiMotion.cpp
-            main.cpp
-            mainwindow.cpp
-            ThreadPortAudio.cpp
-            ThreadProcessImage.cpp
-            ThreadStateControl.cpp
-            ThreadWhisper.cpp
-            ThreadLLM.cpp
-            SocketBufferParser.cpp
-            SendMessageManager.cpp
-            GetLandmarks.cpp
             silero-vad-onnx.cpp
-            Yolo11Pose.cpp 
-            SocketClientHandler.cpp
-            VideoWindow.cpp
     )
 
 # robot-specific files    

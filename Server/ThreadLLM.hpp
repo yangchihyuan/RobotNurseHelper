@@ -10,7 +10,7 @@
 #include <chrono>
 #include "ThreadStateControl.hpp"
 #include "Setting.hpp"
-#include "anythingllm.hpp"
+#include "AnythingLLM.hpp"
 
 using namespace std;
 

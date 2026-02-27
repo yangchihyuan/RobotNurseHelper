@@ -22,7 +22,6 @@ struct State
     int iStateIndex;
     string m_strStateName;
     int iDurationLimitSeconds;     //JSON supports int but not chrono::seconds
-    string m_strSystemMessage;
     string m_strFirstSentence;          //The first sentence to speak when enter this state
     string sFace;
     string sMotion;
@@ -45,7 +44,7 @@ struct State
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(State, iStateIndex, m_strStateName, iDurationLimitSeconds, 
-    m_strSystemMessage, m_strFirstSentence, iNextStateIndex, sFace, sMotion, vSmallMotion, v_str_KeyWordMoveToNextState, 
+    m_strFirstSentence, iNextStateIndex, sFace, sMotion, vSmallMotion, v_str_KeyWordMoveToNextState, 
     v_str_Action, sStateType
 )
 

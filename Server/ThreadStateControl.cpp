@@ -99,8 +99,8 @@ void ThreadStateControl::run()
             {
                 if( !bAccumulateConversation)
                 {
-                    ollama::message system_message("system", mStates[m_iStateIndex].m_strSystemMessage);
-                    mStates[m_iStateIndex].message_history.push_back(system_message);
+//                    ollama::message system_message("system", mStates[m_iStateIndex].m_strSystemMessage);
+//                    mStates[m_iStateIndex].message_history.push_back(system_message);
                 }
                 ollama::message assistant_message("assistant", mStates[m_iStateIndex].m_strFirstSentence + assistant_message_str);
                 assistant_message_str = "";   //clear the string

@@ -35,7 +35,6 @@ void ThreadLLM::run()
     AnythingLLM anythingLLM("127.0.0.1", 3001, msetting.AnythingLLM_API_key);
 
     srand(time(0));
-
     ollama::options options;
     //options["seed"] = 1;      
     options["seed"] = rand();
