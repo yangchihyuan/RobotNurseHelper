@@ -1,14 +1,5 @@
 #include "ThreadLLM.hpp"
-#include <opencv2/core.hpp>
-#include <opencv2/highgui.hpp>
-#include <ctime>
-#include <cctype>
-#include "ThreadProcessImage.hpp"
-#include <future>
-#include <chrono>
-#include <utility_string.hpp>
-#include <cstdlib>
-#include <ctime>   // For time()
+#include "utility_string.hpp"
 
 ThreadLLM::ThreadLLM()
 {
@@ -19,14 +10,10 @@ ThreadLLM::~ThreadLLM()
 {
 }
 
-
-
-
 void ThreadLLM::run()
 {
     AnythingLLM anythingLLM("127.0.0.1", 3001, msetting.AnythingLLM_API_key);
 
-   
     mutex mtx;
     unique_lock<mutex> lk(mtx);
     while(b_WhileLoop)

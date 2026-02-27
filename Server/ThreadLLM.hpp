@@ -15,7 +15,6 @@ using namespace std;
 
 class ThreadStateControl;       //Because ThreadLLM.hpp and ThreadStateControl.hpp include each other, I need to use forward declaration
 
-
 struct LLMTask
 {
     string str_message;

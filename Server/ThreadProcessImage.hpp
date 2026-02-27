@@ -133,11 +133,14 @@ public:
     ThreadSafeQueue<DataFrame> DataFrames_queue;
 
     bool bNewoutFrame = false;
-//    int image_save_every_N_frame = 1; //default value is 1, which means every frame will be saved
     void NotifyEvent(string description, chrono::time_point<chrono::system_clock> timestamp, float yaw = 0.0, float pitch = 0.0);
 
     ActionOption action_option;
     Mat getOutFrame();
+
+    string GetPatientGender();
+    int GetPatientAge();
+
 protected:
     void run();
     std::shared_ptr<mediapipe::LibMP> libmp_face;
@@ -163,6 +166,9 @@ protected:
 
     //InspireFace
     HFSession session = {0};
+
+    string msPatientGender = "Unknown"; //default
+    int miPatientAge = -1; //default -1 means unknown age
 };
 
 #endif

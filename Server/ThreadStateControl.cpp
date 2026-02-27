@@ -95,11 +95,12 @@ void ThreadStateControl::run()
             mStates[m_iStateIndex].m_Start_time = chrono::system_clock::now();
             if( mStates[m_iStateIndex].m_strFirstSentence != "")
             {
-                str_assistant_message = mStates[m_iStateIndex].m_strFirstSentence + str_inserted_assistant_message;
+                string sReplacedFirstSentence = ReplaceVariables(mStates[m_iStateIndex].m_strFirstSentence);
+                str_assistant_message = sReplacedFirstSentence + str_inserted_assistant_message;
                 str_inserted_assistant_message = "";   //clear the string
                 mStates[m_iStateIndex].message_history.push_back("Assistant: "+str_assistant_message);
                 RobotCommandProtobuf::RobotCommand command;
-                command.set_speak_sentence(mStates[m_iStateIndex].m_strFirstSentence);
+                command.set_speak_sentence(sReplacedFirstSentence);
                 command.set_sface(mStates[m_iStateIndex].sFace);
                 if(mStates[m_iStateIndex].sMotion != "")
                 {
@@ -113,7 +114,7 @@ void ThreadStateControl::run()
                 mbTTSComplete = false;
 
                 //just for display on UI
-                mpThreadLLM->strResponse = mStates[m_iStateIndex].m_strFirstSentence;
+                mpThreadLLM->strResponse = sReplacedFirstSentence;
                 mpThreadLLM->b_new_LLM_response = true;
             }
             mbWaitForTTSComplete = mStates[m_iStateIndex].bWaitForTTSComplete;      //now it is always true
@@ -130,7 +131,7 @@ void ThreadStateControl::run()
                 mbOldStateComplete = true;
             }
         }
-        else if( mStates[m_iStateIndex].sStateType == "Conversation")
+        else if( mStates[m_iStateIndex].sStateType == "Conversation" || mStates[m_iStateIndex].sStateType == "RobotAskPatientAnswer")
         {
             if( mbWaitForTTSComplete)
             {
@@ -225,11 +226,16 @@ void ThreadStateControl::run()
 
                         mStates[m_iStateIndex].message_history.push_back("User: "+WhisperResult.sOutput);
 
+                        if (mStates[m_iStateIndex].sStateType == "RobotAskPatientAnswer")
+                        {
+                            mbReadyToChangeState = true;   //After the patient answers the question, the robot can move to the next state without waiting for LLM response.
+                        }
+
                         if(mbReadyToChangeState )
                         {
                             mbOldStateComplete = true;
                         }
-                        else
+                        else if (mStates[m_iStateIndex].sStateType == "Conversation")
                         {
                             //generate LLM response
                             //debug
@@ -356,7 +362,7 @@ string ThreadStateControl::GetPatientName(string input_sentence){
 
     // 建立更嚴謹的 Prompt，要求模型只輸出 JSON 或純名字
     string prompt = "你是一個機器人助手。請從以下句子中提取說話者的姓名。"
-                    "規則：1.只回傳姓名 2.如果找不到請回傳'先生'或'小姐 3.不要有任何標點或解釋。"
+                    "規則：1.只回傳姓名 2.不要有任何標點或解釋。"
                     "句子：\"" + input_sentence + "\"";    
     // 呼叫 Ollama
     string ModelName = "gemma3:1b";
@@ -368,7 +374,7 @@ string ThreadStateControl::GetPatientName(string input_sentence){
 
     cout << "Extracted patient name by LLM: " << name << endl;
     
-    return name.empty() ? "患者" : name;
+    return name;
 }
 
 string ThreadStateControl::ConvertMessageHistoryToString(vector<string> message_history)
@@ -389,4 +395,56 @@ void ThreadStateControl::DumpHistoryMessages(vector<string> messages)
         cout << message << endl;
     }
     cout << "---- End of message history ----" << endl;
+}
+
+string ThreadStateControl::ReplaceVariables(string sentence)
+{
+    //This function is used to replace the variables in the sentence with the real values. For example, replace {PatientName} with the real patient name.
+    string result = sentence;
+    if( result.find("{PatientName}") != string::npos)
+    {
+        result.replace(result.find("{PatientName}"), string("{PatientName}").length(), msPatientName);
+    }
+
+    if( result.find("{PatientTitle}") != string::npos)
+    {
+        string sPatientGender = mpThreadProcessImage->GetPatientGender(); //update the patient
+        int iPatientAge = mpThreadProcessImage->GetPatientAge();
+        if( iPatientAge != -1 )
+        {
+            if( iPatientAge < 10 )
+            {
+                msPatientTitle = "小朋友";
+            }
+            else if( iPatientAge < 20 )
+            {
+                msPatientTitle = "同學";
+            }
+            else
+            {
+                if( sPatientGender == "Male" )
+                {
+                    msPatientTitle = "先生";
+                }
+                else if ( sPatientGender == "Female" )
+                {
+                    if( iPatientAge < 40 )
+                    {
+                        msPatientTitle = "小姐";
+                    }
+                    else
+                    {
+                        msPatientTitle = "女士";
+                    }
+                }
+                else
+                {
+                    msPatientTitle = "";
+                }
+            }
+        }
+
+        result.replace(result.find("{PatientTitle}"), string("{PatientTitle}").length(), msPatientTitle);
+    }
+    return result;
 }

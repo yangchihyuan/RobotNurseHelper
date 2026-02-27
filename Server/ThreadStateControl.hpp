@@ -79,7 +79,7 @@ protected:
     void run();
     string ConvertMessageHistoryToString(vector<string> message_history);
     void DumpHistoryMessages(vector<string> messages);
-
+    string ReplaceVariables(string sentence);
 
     vector<State> mStates;
     int m_iNumberOfStates = 10;
@@ -106,6 +106,7 @@ protected:
     Setting msetting;
 
     string msPatientName = ""; //default name is "patient"
+    string msPatientTitle = ""; //先生 or 小姐, default is empty string. It is determined by the LLM result of patient name. If the patient name ends with "先生", then the title is "先生". If the patient name ends with "小姐", then the title is "小姐". Otherwise, the title is "".
     string GetPatientName(string input_sentence);
 };
 

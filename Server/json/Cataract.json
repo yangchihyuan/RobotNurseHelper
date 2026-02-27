@@ -28,7 +28,7 @@
         "m_strStateName": "Greeting 1 and ask name",
         "sFace": "TTS_PeaceA",
         "sMotion": "666_RE_Bow",
-        "sStateType": "Conversation",
+        "sStateType": "RobotAskPatientAnswer",
         "vSmallMotion": [
             "666_BA_ArmSCircle",
             "666_BA_ArmSSquare",
@@ -45,11 +45,11 @@
         "iDurationLimitSeconds": 10,
         "iNextStateIndex": 3,
         "iStateIndex": 2,
-        "m_strFirstSentence": "剛才醫生檢查過，確認您有白內障。您最近看東西是不是覺得霧霧的，好像隔著一層毛玻璃，還是晚上看燈光會覺得很散開？",
+        "m_strFirstSentence": "{PatientName}{PatientTitle}您好，剛才醫生檢查過，確認您有白內障。您最近看東西是不是覺得霧霧的，好像隔著一層毛玻璃，還是晚上看燈光會覺得很散開？",
         "m_strStateName": "Greeting 2",
         "sFace": "TTS_PeaceB",
         "sMotion": "666_BA_Nodhead",
-        "sStateType": "Conversation",
+        "sStateType": "RobotAskPatientAnswer",
         "vSmallMotion": [
             "666_BA_ArmSCircle",
             "666_BA_ArmSSquare",

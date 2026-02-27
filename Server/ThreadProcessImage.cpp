@@ -399,10 +399,12 @@ void ThreadProcessImage::run()
                                     if( faceAttributeResult.gender[i] == 0 )
                                     {
                                         FaceGender = "F";
+                                        msPatientGender = "Female";
                                     }
                                     else
                                     {
                                         FaceGender = "M";
+                                        msPatientGender = "Male";
                                     }
                                     ///< 0: 0-2 years old;
                                     ///< 1: 3-9 years old;
@@ -417,30 +419,39 @@ void ThreadProcessImage::run()
                                     {
                                         case 0:
                                             FaceAge = "0-2";
+                                            miPatientAge = 1;
                                             break;
                                         case 1:
                                             FaceAge = "3-9";
+                                            miPatientAge = 6;
                                             break;
                                         case 2:
                                             FaceAge = "10-19";
+                                            miPatientAge = 15;
                                             break;
                                         case 3:
                                             FaceAge = "20-29";
+                                            miPatientAge = 25;
                                             break;
                                         case 4:
                                             FaceAge = "30-39";
+                                            miPatientAge = 35;
                                             break;
                                         case 5:
                                             FaceAge = "40-49";
+                                            miPatientAge = 45;
                                             break;
                                         case 6:
                                             FaceAge = "50-59";
+                                            miPatientAge = 55;
                                             break;
                                         case 7:
                                             FaceAge = "60-69";
+                                            miPatientAge = 65;
                                             break;
                                         case 8:
                                             FaceAge = "70+";
+                                            miPatientAge = 75;
                                             break;
                                         default:
                                             FaceAge = "Unknown";
@@ -687,4 +698,14 @@ cv::Rect ThreadProcessImage::GetBoundingBoxFromLandmarks(const std::vector<std::
 
     //Return the bounding box
     return Rect(x1, y1, x2 - x1, y2 - y1);
+}
+
+string ThreadProcessImage::GetPatientGender()
+{
+    return msPatientGender;
+}
+
+int ThreadProcessImage::GetPatientAge()
+{
+    return miPatientAge;
 }
