@@ -118,7 +118,8 @@ if [ "$machine" = "PC" ]; then
   # Ubuntu 22.04 cmake version is 3.22.1, which is not enough for emotiEfflib, which needs cmake 3.29 or above.
   sudo snap install cmake --classic   # version 4.2.2 will be installed
 elif [ "$machine" = "AGXOrin" ]; then
-  #Snap's cmake does not work on AGX Orin because the SElinux does not allow the sandbox to access some required files.
+  #Snap's cmake does not work on AGX Orin because the the AGX Orin Ubuntu does not a complete SELinux system.
+  #The SELinux service is initialzed, but required componenets are missing, which leads to a failure of snap's sandbox.
   #sudo snap install cmake --classic   # version 4.2.2 will be installed
   cd ~/RobotNurseHelper_build
   # Download the official Linux installer script
@@ -210,6 +211,16 @@ if [ "$machine" = "AGXOrin" ]; then
   sed -i 's/ad37707084a6d4ff41be10cbe8540c75bea057ba79d0de6c367c1bfac6ba0852/8eeb81ff6bc7ab2de678c0c4a3d18b02c382a5122ac4edc26a3334c858531739/g' WORKSPACE
 fi
 bazel build -c opt mediapipe/examples/desktop/libmp:libmp_gpu.so
+
+#chekc if the bazel build is successful. Sometimes the repository is unavailable and bazel does not work.
+DIR="basel-out"
+
+if [ -d "$DIR" ]; then
+  echo "Directory $DIR exists. Mediapipe is built successfully. You can continue to install the Robot Nurse Helper."
+else
+  echo "Error: Directory $DIR does not exist. There is a problem with bazel build. Please check the error messages above and fix the problem. You can try to run the bazel build command again after fixing the problem."
+  exit
+fi
 
 #Qt
 #We use it to create our GUI
@@ -460,7 +471,7 @@ update-desktop-database ~/.local/share/applications/
 
 #you need to logout and login again to let the desktop file work. After that, you can launch the program by clicking the icon "Robot Nurse Helper" on your desktop or application menu.
 
-#Yolov11-pose needs CuDNN to run its onnx file.
+#Yolov11-pose needs CuDNN to run its onnx file. It is only need to install in PC. The AGX Orin has its own GPU acceleration library, which is compatible with CuDNN, so we don't need to install CuDNN on AGX Orin.
 if [ "$machine" = "PC" ]; then
   cd ~/RobotNurseHelper_build
   # Download Ubuntu 24.04 spcific keyring
@@ -474,3 +485,31 @@ if [ "$machine" = "PC" ]; then
   sudo ldconfig
   ls -l /usr/lib/x86_64-linux-gnu/libcudnn.so.9
 fi
+
+##############################
+#install AnythingLLM for RAG
+##############################
+#The library is required by AnythingLLM, but missing in Ubuntu 22.04 and 24.04.
+sudo apt install libfuse2
+
+cd ~/RobotNurseHelper_build
+# Download the installer script to wherever you want to run it from
+curl -fsSL https://cdn.anythingllm.com/latest/installer.sh -o installer.sh
+ 
+# Make the script executable
+chmod +x installer.sh
+ 
+# Run the script
+./installer.sh
+
+
+##############################
+#AnythingLLM Instructions
+##############################
+echo "Launch AnythingLLM, and do the following things:"
+echo "1. Create a new workspace named 'cataract'."
+echo "2. Upload the CataractRAG.txt to cataract workspace."
+echo "3. Set the workspace LLM provider as Ollama, and set the model as gemma3:1b. If your machine has more than 16G VRAM, you can also set the model as gemma3:4b or gemma3:12b to let the RAG function have a better performance. But it will be slower to generate the first token because the model is larger."
+echo "4. Set the System Prompt as the prompt in the AnythingLLM_Setting.txt"
+echo "5. Go to the TythingLLM setting/Tools/Developer API to create a new API key."
+echo "6. Copy the API key and paste it in the Setting.json to use AnythingLLM's RAG function."

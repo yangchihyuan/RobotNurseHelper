@@ -258,13 +258,26 @@ void ThreadStateControl::run()
             {
                 if( mbLLMResult)
                 {
-                    mStates[m_iStateIndex].message_history.push_back("Assistant: "+msLLMResult);
+                    //Ollama.hpp's format is different from AnythingLLM.
+                    //Ollama.hpp does not have the "Assistant: " prefix in the response, while AnythingLLM has.
+//                    mStates[m_iStateIndex].message_history.push_back("Assistant: "+msLLMResult);
+                    mStates[m_iStateIndex].message_history.push_back(msLLMResult);
                     
                     //Here is the command to let Kebbi speak the LLM result
                     if( !mbKeepSilent)
                     {
                         RobotCommandProtobuf::RobotCommand command;
-                        command.set_speak_sentence(msLLMResult);
+                        size_t pos = msLLMResult.find("Assistant: ");
+                        string str_assistant_message;
+                        if( pos != string::npos )
+                        {
+                            str_assistant_message = msLLMResult.substr(pos + string("Assistant: ").length());
+                        }
+                        else
+                        {
+                            str_assistant_message = msLLMResult;
+                        }
+                        command.set_speak_sentence(str_assistant_message);
                         //randomly choose a motion
                         if( mStates[m_iStateIndex].vSmallMotion.size() > 0)
                         {
