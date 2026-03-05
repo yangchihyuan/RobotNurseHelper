@@ -213,7 +213,7 @@ fi
 bazel build -c opt mediapipe/examples/desktop/libmp:libmp_gpu.so
 
 #chekc if the bazel build is successful. Sometimes the repository is unavailable and bazel does not work.
-DIR="basel-out"
+DIR="bazel-out"
 
 if [ -d "$DIR" ]; then
   echo "Directory $DIR exists. Mediapipe is built successfully. You can continue to install the Robot Nurse Helper."
