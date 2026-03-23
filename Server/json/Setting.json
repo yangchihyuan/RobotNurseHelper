@@ -14,8 +14,8 @@
     "FaceDetectionModel": "InspireFace",             //MediaPipe_Face, InspireFace
     "WhisperModel": "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin",
     "ImageSaveDirectory": "$HOME/Downloads/raw_images",
-    "LanguageModel": "gemma3:1b",
+    "LanguageModel": "gemma3:1b",           //The setting does not work. Now the model is controlled by the AnythingLLM workspace. The setting is reserved for future use.
     "Language": "Chinese",
-    "AnythingLLM_API_key": "TYDWKES-0YEMMDQ-J2QQ1CA-RSR0WTK",
+    "AnythingLLM_API_key": "1J3PDWX-ZN3MYHX-MWRFGMY-FXRQSDQ",
     "AnythingLLM_workspace_slug": "cataract"
 }
