@@ -20,7 +20,7 @@ AnythingLLM::AnythingLLM(std::string host, int port, std::string api_key)
 std::string AnythingLLM::ask(std::string slug, std::string message) {
     nlohmann::json body = {
         {"message", message}, 
-        {"mode", "query"}, 
+        {"mode", "chat"}, 
         {"sessionId", current_session}
     };
     
