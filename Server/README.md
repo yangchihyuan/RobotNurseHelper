@@ -12,6 +12,7 @@ cd ~
 wget -O install.sh https://raw.githubusercontent.com/yangchihyuan/RobotNurseHelper/refs/heads/master/Server/install.sh
 chmod +x install.sh
 ./install.sh
+echo "Don't use sudo ./install.sh. That is wrong."
 ```
 
 It will ask for your sudo password and take 40 to 50 minutes to install all required libraries
