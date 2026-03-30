@@ -56,6 +56,11 @@ void ThreadStateControl::run()
         if(mStates[m_iStateIndex].bInitial)
         {
             cout << "Enter state " << m_iStateIndex << endl;
+            if( mStates[m_iStateIndex].sImageFileName != "" )
+            {
+                emit playImageRequest(mStates[m_iStateIndex].sImageFileName.c_str());
+            }
+
             for( string s : mStates[m_iStateIndex].v_str_Action)
             {
                 if( s.find("PlayVideo:") != string::npos )

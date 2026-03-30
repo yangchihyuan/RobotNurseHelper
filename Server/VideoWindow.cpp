@@ -1,6 +1,9 @@
 #include "VideoWindow.hpp"
 #include <QVideoWidget>
 #include <QAudioOutput>
+#include <QLabel>
+#include <QStackedWidget>
+#include <QPixmap>
 #include <QKeyEvent>
 #include <QFileInfo>
 #include <QUrl>
@@ -12,14 +15,22 @@ using namespace std;
 VideoWindow::VideoWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    // Create the video player and widget
+    // Create the widgets
     player = new QMediaPlayer(this);
     videoWidget = new QVideoWidget(this);
     audioOutput = new QAudioOutput(this);
+    imageLabel = new QLabel(this);
+    stackedWidget = new QStackedWidget(this);
 
-    // Set the video widget as the central widget of the window
-    setCentralWidget(videoWidget);
+    // Configure the image label to scale its contents
+    imageLabel->setAlignment(Qt::AlignCenter);
+    imageLabel->setScaledContents(true);
 
+    // Add widgets to the stacked layout
+    stackedWidget->addWidget(videoWidget);
+    stackedWidget->addWidget(imageLabel);
+
+    setCentralWidget(stackedWidget);
     // Set the player output to the video widget
     player->setVideoOutput(videoWidget);
     player->setAudioOutput(audioOutput);
@@ -45,19 +56,36 @@ void VideoWindow::playVideo(const QString &fileName)
         return;
     }
 
-    // Ensure video widget is visible and on top
-    if (videoWidget) {
-        videoWidget->show();
-        videoWidget->raise();
-        videoWidget->update();
-    }
-
+    // Switch to the video widget before playing
+    stackedWidget->setCurrentWidget(videoWidget);
     // Load and play the video (use absolute local file URL)
     QString absPath = fi.absoluteFilePath();
     QUrl url = QUrl::fromLocalFile(absPath);
     cout << "Playing video: " << url.toString().toStdString() << endl;
     player->setSource(url);
     player->play();
+}
+
+void VideoWindow::showImage(const QString &fileName)
+{
+    QFileInfo fi(fileName);
+    if (!fi.exists() || !fi.isReadable()) {
+        cout << "Error: Image file does not exist or is not readable: " << fileName.toStdString() << endl;
+        return;
+    }
+
+    QPixmap pixmap(fileName);
+    if (pixmap.isNull()) {
+        cout << "Error: Failed to load image: " << fileName.toStdString() << endl;
+        return;
+    }
+
+    // Stop any video that might be playing
+    if (player->playbackState() == QMediaPlayer::PlayingState) {
+        player->stop();
+    }
+    imageLabel->setPixmap(pixmap);
+    stackedWidget->setCurrentWidget(imageLabel);
 }
 
 void VideoWindow::onMediaStatusChanged(QMediaPlayer::MediaStatus status)

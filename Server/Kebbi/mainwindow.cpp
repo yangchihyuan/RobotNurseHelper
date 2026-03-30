@@ -250,16 +250,25 @@ MainWindow::MainWindow(QWidget *parent)
     thread_LLM.mpThreadStateControl = &thread_state_control;
 
     pVideoWindow = std::make_unique<VideoWindow>(nullptr);
-    //temporary comment to avoid the window being full-screen at the beginning
-    bool bShowFullScreen = msetting.bVideoWindowFullScreen;
-    if( bShowFullScreen )
-        pVideoWindow->showFullScreen();
-    else
-        pVideoWindow->show();
     thread_state_control.pVideoWindow = pVideoWindow.get();
     pVideoWindow->pThreadStateControl = &thread_state_control;
 
     connect(&thread_state_control, &ThreadStateControl::playVideoRequest, this, &MainWindow::onPlayVideoRequested);
+    connect(&thread_state_control, &ThreadStateControl::playImageRequest, this, &MainWindow::onPlayImageRequested);
+
+    // Delay showing the video window so it renders after MainWindow 
+    // and successfully steals focus to become the top window.
+    QTimer::singleShot(300, this, [this]() {
+        if (pVideoWindow) {
+            if( msetting.bVideoWindowFullScreen ) {
+                pVideoWindow->showFullScreen();
+            } else {
+                pVideoWindow->show();
+            }
+            pVideoWindow->raise();
+            pVideoWindow->activateWindow();
+        }
+    });
 
 }
 
@@ -393,7 +402,19 @@ void MainWindow::onPlayVideoRequested(const QString& videoPath)
         // Combining it with other calls like move() can confuse the window manager.
         //temporary comment to avoid the window being full-screen at the beginning
         //pVideoWindow->showFullScreen();
+        pVideoWindow->raise();
+        pVideoWindow->activateWindow();
         pVideoWindow->playVideo(videoPath);
+    }
+}
+
+void MainWindow::onPlayImageRequested(const QString& imagePath)
+{
+    if (pVideoWindow) {
+        pVideoWindow->showImage(imagePath);
+        // Also bring the window to the front
+        pVideoWindow->raise();
+        pVideoWindow->activateWindow();
     }
 }
 

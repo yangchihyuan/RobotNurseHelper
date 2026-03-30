@@ -4,8 +4,10 @@
 #include <QMainWindow>
 #include <QMediaPlayer>
 
+class QStackedWidget;
 class QVideoWidget;
 class QAudioOutput;
+class QLabel;
 class QKeyEvent;
 class ThreadStateControl;
 
@@ -16,6 +18,7 @@ class VideoWindow : public QMainWindow
 public:
     explicit VideoWindow(QWidget *parent = nullptr);
     void playVideo(const QString &fileName);
+    void showImage(const QString &fileName);
     ThreadStateControl* pThreadStateControl = nullptr;
 
 public slots:
@@ -27,7 +30,9 @@ protected:
 private:
     QMediaPlayer *player;
     QVideoWidget *videoWidget;
+    QLabel *imageLabel;
     QAudioOutput *audioOutput;
+    QStackedWidget *stackedWidget;
 };
 
 #endif // __VIDEO_WINDOW_HPP__

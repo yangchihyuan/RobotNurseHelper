@@ -109,6 +109,7 @@ signals:
 
 private slots:
     void onPlayVideoRequested(const QString& videoPath);
+    void onPlayImageRequested(const QString& imagePath);
     void newConnection_receive_image();
     void newConnection_send_command();
     void newConnection_receive_audio();

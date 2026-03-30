@@ -1,8 +1,8 @@
 {
-    "StateControlFile": "json/Cataract.json",
+    "StateControlFile": "json/Cataractproject.json",
     "bServerPlaysRobotReceivedAudio": false,
-    "bVideoWindowFullScreen": false,
-    "bShowPreviewWindow": true,
+    "bVideoWindowFullScreen": true,
+    "bShowPreviewWindow": false,
     "bSaveImages": true,
     "iImageSaveIntervalMillisecond": 5000,
     "bFacialExpressionRecognition": false,
@@ -16,6 +16,6 @@
     "ImageSaveDirectory": "$HOME/Downloads/raw_images",
     "LanguageModel": "gemma3:1b",           //The setting does not work. Now the model is controlled by the AnythingLLM workspace. The setting is reserved for future use.
     "Language": "Chinese",
-    "AnythingLLM_API_key": "1J3PDWX-ZN3MYHX-MWRFGMY-FXRQSDQ",
+    "AnythingLLM_API_key": "B5Q49XV-0P04PY2-KJ4TRSQ-250ZSYE",
     "AnythingLLM_workspace_slug": "cataract"
 }

@@ -90,6 +90,7 @@ protected:
     int n_samples_silent;
     mutex mtx;
 
+    //ToDo: delete this function. I do not use it.
     float ComputeVolume(const std::vector<float>& pcmf32);
     WhisperData mResult;
 };
