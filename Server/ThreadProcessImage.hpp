@@ -140,6 +140,7 @@ public:
 
     string GetPatientGender();
     int GetPatientAge();
+    void SetSettingFile(const QString &filePath);
 
 protected:
     void run();

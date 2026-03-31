@@ -8,113 +8,33 @@
 #include "ThreadLLM.hpp"
 #include <csignal>
 
-//20260211 Chih-Yuan: If I press Ctrl+C to stop this program, I will save this file.
-//This is Muhamed's code. I need to modify it.
-void handle_sigint(int) {
-    /*
-    std::time_t currentTime = std::time(0); 
-    // Convert the time_t object to a string representing local time
-    char* dateTimeString = std::ctime(&currentTime);
-
-    // Print the current date and time
-    std::cout << "The current date and time is: " << dateTimeString << std::endl;
-    
-    string filename = "Conversation_Summarys/Conversation_Summary-";
-    filename += dateTimeString;
-    filename += ".txt";
-    std::ofstream file(filename);
-
-    //std::exit(0);  // Exit cleanly
-    */
-    std::_Exit(0);
-}
-
 int main(int argc, char *argv[])
 {
-    signal(SIGINT, handle_sigint);
-    //signal(SIGSEGV, handle_sigint);
     QApplication app(argc, argv);
     QCoreApplication::setApplicationName("Robot Nurse Helper");
-    QCoreApplication::setApplicationVersion("25.5.25");
+    QCoreApplication::setApplicationVersion("2026.03.31");
     //It does not work. My application does not have a icon.
     app.setWindowIcon(QIcon(":/ZenboNurse.png"));
 
     QCommandLineParser parser;
-    parser.setApplicationDescription("Zenbo Nurse Helper");
+    parser.setApplicationDescription("Robot Nurse Helper");
     parser.addHelpOption();
     parser.addVersionOption();
     QString home_directory = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
-    QCommandLineOption ImageSaveDirectoryOption("ImageSaveDirectory", "image save directory.", "directory", home_directory + "/Downloads");
-    parser.addOption(ImageSaveDirectoryOption);
-
-    QCommandLineOption whisperModelOption({"wm","WhisperModel"}, "whisper model to be loaded.", "file path", home_directory + "/ZenboNurseHelper_build/whisper.cpp/models/ggml-base.en.bin");
-    parser.addOption(whisperModelOption);
-
-    QCommandLineOption languageModelOption({"lm", "LanguageModel"}, "language model", "string", "gemma3:1b");
-    parser.addOption(languageModelOption);
-
-    QCommandLineOption imageSaveEveryNFrameOption({"is","ImageSaveEveryNFrame"}, "1 of <N> frames will be saved", "natural number", "1");
-    parser.addOption(imageSaveEveryNFrameOption);
-
-    QCommandLineOption languageOption("Language", "Language used", "string", "Chinese");
-    parser.addOption(languageOption);
-
-    QCommandLineOption DefaultSaveImageOption("DefaultSaveImage", "The default value of saving images.", "boolean", "false");
-    parser.addOption(DefaultSaveImageOption);
-
-    QCommandLineOption stateOption({"s", "state"}, "Starting state", "int", 0);
-    parser.addOption(stateOption);
+    QCommandLineOption SettingFileOption("SettingFile", "Setting File", "string", "Setting.json");
+    parser.addOption(SettingFileOption);
 
     parser.process(app);
 
-    if (parser.isSet(ImageSaveDirectoryOption)) {
-        QString ImageSaveDirectory = parser.value(ImageSaveDirectoryOption);
-        qDebug() << "ImageSaveDirectory is:" << ImageSaveDirectory;
-    }
-
-    QString whisperModel;
-    if (parser.isSet(whisperModelOption)) {
-        whisperModel = parser.value(whisperModelOption);
-        qDebug() << "whisperModel file is:" << whisperModel;
-    }
-
-    QString languageModel;
-    if (parser.isSet(languageModelOption)) {
-        languageModel = parser.value(languageModelOption);
-        qDebug() << "languageModel string is:" << languageModel;
-    }
-
-  
-    QString strLanguage;
-    if (parser.isSet(languageOption)) {
-        strLanguage = parser.value(languageOption);
-        qDebug() << "Language string is:" << strLanguage;
-    }
-
-    QString strDefaultSaveImage;
-    bool bDefaultSaveImage = false;
-    if (parser.isSet(DefaultSaveImageOption)) {
-        bDefaultSaveImage = parser.value(DefaultSaveImageOption).toLower() == "true";
-        qDebug() << "DefaultSaveImage boolean is:" << bDefaultSaveImage;
-    }
-
-    //Program launch time for Fang-yu's need to save images in this directory
-    string str_now = GetCurrentTimeString(false);
-
-    QString strstate;;
-    if (parser.isSet(stateOption)) {
-        strstate = parser.value(stateOption);
-        qDebug() << "State int is:" << strstate;
+    QString strSetting;
+    if (parser.isSet(SettingFileOption)) {
+        strSetting = parser.value(SettingFileOption);
+        qDebug() << "Setting file is:" << strSetting;
     }
 
     MainWindow w;
-//    w.setWhisperModelFile(whisperModel);
-//    w.setLanguageModelName(languageModel);
-    w.setState(strstate.toInt());
-//    w.setLanguage(strLanguage);
-//    w.setImageSaveDirectory(parser.value(ImageSaveDirectoryOption).append("/").append(str_now.c_str()));
-//    w.setDefaultSaveImage(bDefaultSaveImage);
+    w.setSettingFile(strSetting);
     w.startThreads();
     w.show();
     app.exec();

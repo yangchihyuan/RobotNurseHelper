@@ -71,6 +71,7 @@ public:
     void SetIntialStateIndex(int index);
 
     VideoWindow* pVideoWindow = nullptr;
+    void SetSettingFile(const QString &filePath);
 
 signals:
     void playVideoRequest(const QString& videoPath);

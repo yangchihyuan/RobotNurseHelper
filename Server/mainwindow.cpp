@@ -40,6 +40,14 @@ void MainWindow::startThreads()
     thread_state_control.start();
 }
 
+void MainWindow::setSettingFile(const QString &filePath)
+{
+    LoadJSONFile(msetting, filePath.toStdString());
+    //After loading the setting, I can set the initial state of the state control thread.
+    thread_state_control.SetSettingFile(filePath);
+    thread_LLM.SetSettingFile(filePath);
+    thread_process_image.SetSettingFile(filePath);
+}
 
 MainWindow::~MainWindow()
 {
@@ -125,11 +133,12 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+
+/*
 void MainWindow::setWhisperModelFile( QString filePath)
 {
     thread_whisper.model_file_path = filePath;
 }
-
 
 void MainWindow::setState(int N)
 {
@@ -154,6 +163,7 @@ void MainWindow::setDefaultSaveImage(bool bDefaultSaveImage)
         ui->checkBox_SaveImages->setChecked(false);
     }
 }
+*/
 
 void MainWindow::setLanguage( QString Language)
 {

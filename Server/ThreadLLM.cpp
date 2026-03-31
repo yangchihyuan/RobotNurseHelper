@@ -3,7 +3,7 @@
 
 ThreadLLM::ThreadLLM()
 {
-    LoadJSONFile(msetting, "json/Setting.json");
+//    LoadJSONFile(msetting, "json/Setting.json");
 }
 
 ThreadLLM::~ThreadLLM()
@@ -37,4 +37,9 @@ void ThreadLLM::run()
 void ThreadLLM::AddQueue(LLMTask task)
 {
     mqueue.push(task);
+}
+
+void ThreadLLM::SetSettingFile(const QString &filePath)
+{
+    LoadJSONFile(msetting, filePath.toStdString());
 }

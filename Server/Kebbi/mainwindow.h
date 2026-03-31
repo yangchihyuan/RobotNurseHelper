@@ -45,13 +45,8 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void setWhisperModelFile(QString filePath);
-    void setLanguageModelName(QString ModelName);
-    void setState(int N);
-    void setImageSaveEveryNFrame(int N);
     void setLanguage(QString Language);
-    void setImageSaveDirectory(QString ImageSaveDirectory);
-    void setDefaultSaveImage(bool bDefaultSaveImage);
+    void setSettingFile(const QString &filePath);
     void startThreads();
 
 protected:

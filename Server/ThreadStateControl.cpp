@@ -16,9 +16,15 @@ ThreadStateControl::~ThreadStateControl()
     
 }
 
+void ThreadStateControl::SetSettingFile(const QString &filePath)
+{
+    LoadJSONFile(msetting, filePath.toStdString());
+    //After loading the setting, I can set the initial state of the state control thread.
+    InitializeStates();
+}
+
 void ThreadStateControl::InitializeStates()
 {
-    LoadJSONFile(msetting, "json/Setting.json");
     LoadJSONFile(mStates, msetting.StateControlFile);
     for( size_t i = 0; i < mStates.size(); i++)
     {

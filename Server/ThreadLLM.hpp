@@ -39,6 +39,7 @@ public:
 
     void AddQueue(LLMTask task);
     ThreadStateControl *mpThreadStateControl;
+    void SetSettingFile(const QString &filePath);
 
 protected:
     void run();

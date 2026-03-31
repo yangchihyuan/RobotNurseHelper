@@ -1,6 +1,6 @@
 #!/bin/bash
 #Author: Chih-Yuan Yang
-#2026 Feb 25
+#2026 Mar 31
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
@@ -9,8 +9,24 @@ cd "$(dirname "$0")"
 
 # Always quote variables in conditionals
 if [[ "$#" -eq 0 ]]; then # Use -eq for numerical comparison for $#
-    build/RobotNurseHelper
-elif [[ "$1" = "AGXOrin" ]]; then
+    # Set the default Setting.json path if no arguments are provided
+    Setting_file="json/Setting.json"    
+elif [[ "$1" = "debug" ]]; then             #TODO: I haven't update this debug command to use the new --SettingFile argument, so it still defaults to json/Setting.json. You may want to update this to allow passing a custom Setting file in debug mode as well.
+    Setting_file="json/Setting.json"    
+    # Ensure arguments are correctly passed to gdb via --args
+    gdb --args build/RobotNurseHelper
+elif [[ "$1" = "valgrind" ]]; then
+    valgrind build/RobotNurseHelper # Consider adding specific valgrind flags if needed, e.g., --leak-check=full
+else 
+    Setting_file="$1"
+fi
+
+#extract the machine field from the Setting JSON file.
+clean_json=$(sed 's|//.*||g' "$Setting_file")      # Remove comments from JSON file
+Machine=$(echo "$clean_json" | jq -r '.Machine')
+echo "The machine is $Machine"
+
+if [[ "$Machine" = "AGXOrin" ]]; then
 
     # Set GStreamer to prefer the avdec_h264 and h265 decoder for better performance on Orin
     export GST_PLUGIN_FEATURE_RANK=avdec_h264:MAX,avdec_h265:MAX,nvv4l2h264dec:NONE,nvv4l2h265dec:NONE
@@ -30,18 +46,9 @@ elif [[ "$1" = "AGXOrin" ]]; then
     else
         echo "Error: HDMI Sink not found after profile switch."
     fi
-
-    # 4. Run our program
-    build/RobotNurseHelper
-        
-elif [[ "$1" = "debug" ]]; then
-    # Ensure arguments are correctly passed to gdb via --args
-    gdb --args build/RobotNurseHelper
-elif [[ "$1" = "valgrind" ]]; then
-    valgrind build/RobotNurseHelper # Consider adding specific valgrind flags if needed, e.g., --leak-check=full
-else 
-    echo "Error: Invalid argument specified. If the program is running on a PC, please ignore the argument. Otherwise, please use 'AGXOrin', 'debug', or 'valgrind'."
-    exit 1 # Exit with a non-zero status
 fi
+
+echo "Starting RobotNurseHelper with Setting file: $Setting_file"
+build/RobotNurseHelper --SettingFile "$Setting_file"
 
 exit 0 # Indicate successful execution

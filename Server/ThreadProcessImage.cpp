@@ -44,10 +44,13 @@ int is_dancing = 0;
 #include "SocketBufferParser.hpp"   //DataFrame is defined in this hpp file
 #include "ThreadSafeQueue.hpp"
 
+void ThreadProcessImage::SetSettingFile(const QString &filePath)
+{
+    LoadJSONFile(msetting, filePath.toStdString());
+}
+
 ThreadProcessImage::ThreadProcessImage()
 {
-    LoadJSONFile(msetting, "json/Setting.json");
-
     //Initialize the EmotiEffLib
     string backend = "onnx";
     string modelName = EmotiEffLib::getSupportedModels(backend)[0];
