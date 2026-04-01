@@ -28,9 +28,11 @@ struct Setting
     string Language = "Chinese";
     string AnythingLLM_API_key;
     string AnythingLLM_workspace_slug;
+    bool bHideCursor = true;
+    string Machine = "PC";                      //AGXOrin, PC
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Setting, StateControlFile, bServerPlaysRobotReceivedAudio, bVideoWindowFullScreen, bShowPreviewWindow, bSaveImages,iImageSaveIntervalMillisecond, bFacialExpressionRecognition, bHumanPoseEstimation, bHandLandmarkDetection, bUseDlibForFaceRecognition, bFaceDetection, PoseEstimationModel, FaceDetectionModel, WhisperModel, ImageSaveDirectory, LanguageModel, Language, AnythingLLM_API_key, AnythingLLM_workspace_slug
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Setting, StateControlFile, bServerPlaysRobotReceivedAudio, bVideoWindowFullScreen, bShowPreviewWindow, bSaveImages,iImageSaveIntervalMillisecond, bFacialExpressionRecognition, bHumanPoseEstimation, bHandLandmarkDetection, bUseDlibForFaceRecognition, bFaceDetection, PoseEstimationModel, FaceDetectionModel, WhisperModel, ImageSaveDirectory, LanguageModel, Language, AnythingLLM_API_key, AnythingLLM_workspace_slug, bHideCursor, Machine
 )
 
 #endif // SETTING_HPP

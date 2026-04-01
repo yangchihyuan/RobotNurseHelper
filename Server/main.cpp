@@ -36,6 +36,17 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.setSettingFile(strSetting);
     w.startThreads();
+
+    Setting msetting;
+    LoadJSONFile(msetting, strSetting.toStdString());
+
+    // Hide the mouse cursor globally for the application
+    //debug
+    cout << "bHideCursor: " << msetting.bHideCursor << endl;
+    if (msetting.bHideCursor) {
+        app.setOverrideCursor(Qt::BlankCursor);
+    }
+    
     w.show();
     app.exec();
     return 1;
