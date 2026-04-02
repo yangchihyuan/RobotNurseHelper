@@ -19,7 +19,7 @@
         ],
         "v_str_KeyWordMoveToNextState": ["開始", "开始", "衛教", "介紹"],
         "v_str_Action": [],
-        "sImageFileName": "Images/PureBlack.png"
+        "sImageFileName": "Images/Welcome.png"
     },
     {
         "iDurationLimitSeconds": 10,
@@ -41,7 +41,7 @@
         ],
         "v_str_KeyWordMoveToNextState": [],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": ""
+        "sImageFileName": "Images/PureBlack.png"
     },
     {
         "iDurationLimitSeconds": 10,
@@ -60,7 +60,7 @@
         ],
         "v_str_KeyWordMoveToNextState": [],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": "Images/Lens.png"
+        "sImageFileName": "Images/cataract-surgery-2.jpg"
     },
     {
         "iDurationLimitSeconds": 38,
@@ -79,7 +79,7 @@
         ],
         "v_str_KeyWordMoveToNextState": [],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": "Images/cataract-surgery-3.jpg"
+        "sImageFileName": "Images/cataract-surgery.jpg"
     },
     {
         "iDurationLimitSeconds": 38,
@@ -98,7 +98,7 @@
         ],
         "v_str_KeyWordMoveToNextState": [],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": ""
+        "sImageFileName": "Images/Laser.jpg"
     },
     {
         "iDurationLimitSeconds": 38,
@@ -117,7 +117,7 @@
         ],
         "v_str_KeyWordMoveToNextState": [],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": ""
+        "sImageFileName": "Images/Slide7.jpg"
     },
    
   {
@@ -136,7 +136,7 @@
         ],
         "v_str_KeyWordMoveToNextState": ["怎麼選", "建議", "好"],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": ""
+        "sImageFileName": "Images/Choose.png"
     },
     {
         "iDurationLimitSeconds": 100,
