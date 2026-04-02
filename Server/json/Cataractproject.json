@@ -128,7 +128,7 @@
         "m_strStateName": "Visualized Lens Comparison",
         "sFace": "TTS_PeaceA",
         "sMotion": "666_BA_ArmSCircle",
-        "sStateType": "Conversation",
+        "sStateType": "SaySomething",
         "vSmallMotion": [
             "666_BA_Nodhead",
             "666_SA_Think",
@@ -146,7 +146,7 @@
         "m_strStateName": "Lifestyle Selection Guide",
         "sFace": "TTS_PeaceB",
         "sMotion": "666_SP_Cheer",
-        "sStateType": "SaySomething",
+        "sStateType": "Conversation",
         "vSmallMotion": [
             "666_BA_ArmSSquare",
             "666_BA_RArmCircleR"
@@ -163,7 +163,7 @@
         "m_strStateName": "Question about preop care",
         "sFace": "TTS_PeaceA",
         "sMotion": "666_SA_Think",
-        "sStateType": "Conversation",
+        "sStateType": "SaySomething",
         "vSmallMotion": ["666_BA_Nodhead"],
         "v_str_KeyWordMoveToNextState": ["沒問題", "好"],
         "v_str_Action": ["KeepSilentOff", "AccumulateConversation"],
