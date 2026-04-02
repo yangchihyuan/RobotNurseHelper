@@ -18,5 +18,6 @@
     "Language": "Chinese",
     "AnythingLLM_API_key": "1J3PDWX-ZN3MYHX-MWRFGMY-FXRQSDQ",
     "AnythingLLM_workspace_slug": "cataract",
-    "Machine": "AGXOrin"                      //AGXOrin, PC
+    "Machine": "AGXOrin",                      //AGXOrin, PC
+    "bHideCursor": true
 }

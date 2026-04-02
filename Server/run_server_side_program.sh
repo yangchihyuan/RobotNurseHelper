@@ -1,6 +1,6 @@
 #!/bin/bash
 #Author: Chih-Yuan Yang
-#2026 Mar 31
+#2026 April 1
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
@@ -8,7 +8,16 @@ set -e
 cd "$(dirname "$0")"
 
 # Always quote variables in conditionals
-if [[ "$#" -eq 0 ]]; then # Use -eq for numerical comparison for $#
+if [[ "$1" == "-h" || "$1" == "--help" || "$#" -gt 1 ]]; then
+    echo "Usage: $0 [Setting_file.json | debug | valgrind]"
+    echo ""
+    echo "Options:"
+    echo "  (none)       Runs with the default setting file (json/Setting.json)"
+    echo "  <file_path>  Runs with the specified JSON setting file, for example: $0 json/AGXOrin2.json"
+    echo "  debug        Runs the program using gdb for debugging"
+    echo "  valgrind     Runs the program using valgrind to check for memory leaks"
+    exit 1
+elif [[ "$#" -eq 0 ]]; then # Use -eq for numerical comparison for $#
     # Set the default Setting.json path if no arguments are provided
     Setting_file="json/Setting.json"    
 elif [[ "$1" = "debug" ]]; then             #TODO: I haven't update this debug command to use the new --SettingFile argument, so it still defaults to json/Setting.json. You may want to update this to allow passing a custom Setting file in debug mode as well.
