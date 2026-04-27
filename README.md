@@ -2,6 +2,7 @@
 This project aims to develop an interactive desktop multimedia robot system to alleviate the shortage of nurse educators in Taiwanese hospitals. We set our initial goal to deliver pre- and post-surgical health education to cataract patients. 
 
 #### Progress
+YouTube video:
 [<img src="https://img.youtube.com/vi/fq8i4wgnws4/hqdefault.jpg" width="600" height="300"
 />](https://www.youtube.com/embed/fq8i4wgnws4?si=rasj7HPLbr9MRAso)
 
