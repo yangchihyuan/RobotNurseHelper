@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdk 35
     defaultConfig {
-        applicationId "com.example.painrating"
+        applicationId "com.example.tablet"
         minSdk 23
         targetSdk 35
         versionCode 2
@@ -16,7 +16,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    namespace "com.example.painrating"
+    namespace "com.example.tablet"
 }
 
 dependencies {

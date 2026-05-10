@@ -2,11 +2,10 @@
 
 buildscript {
     ext {
-        agp_version = '8.11.0'
+        agp_version = '8.13.2'
         kotlin_version = '1.8.22' // Set your desired Kotlin version here
     }
     repositories {
-        jcenter()
         maven {
             url 'https://maven.google.com/'
             name 'Google'
@@ -28,7 +27,7 @@ buildscript {
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 }
 
