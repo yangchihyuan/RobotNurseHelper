@@ -10,7 +10,7 @@
 
         <!-- MainActivity: 首頁 -->
         <activity
-            android:name=".MainActivity"
+            android:name="tw.edu.cgu.ai.kebbi.pressnumber.MainActivity"
             android:exported="true"
             android:screenOrientation="landscape">
             <intent-filter>
@@ -20,7 +20,7 @@
         </activity>
 
         <activity
-            android:name=".NetworkSettingActivity"
+            android:name="tw.edu.cgu.ai.kebbi.pressnumber.NetworkSettingActivity"
             android:screenOrientation="landscape" />
 
     </application>

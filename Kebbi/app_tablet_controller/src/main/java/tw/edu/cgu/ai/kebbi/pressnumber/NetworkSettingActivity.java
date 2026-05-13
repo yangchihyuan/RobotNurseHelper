@@ -18,7 +18,7 @@ import tw.edu.cgu.ai.kebbi.tabletcontroller.R;
 
 public class NetworkSettingActivity extends AppCompatActivity {
 
-    private Button btnTest, btnSave;
+    private Button btnTest, btnSave, btn_return;
     private EditText editText_Server;
     private EditText editText_Port;
 
@@ -66,6 +66,7 @@ public class NetworkSettingActivity extends AppCompatActivity {
         editText_Server = (EditText) findViewById(R.id.editText_Server);
         btnSave = (Button) findViewById(R.id.btnSave);
         btnTest = (Button) findViewById(R.id.btnTest);
+        btn_return = (Button) findViewById(R.id.btn_return);
 
         UItoVariables();
         RetrieveSharedPreferences();
@@ -101,6 +102,13 @@ public class NetworkSettingActivity extends AppCompatActivity {
                         }
                     }
                 });
+            }
+        });
+
+        btn_return.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
             }
         });
 
