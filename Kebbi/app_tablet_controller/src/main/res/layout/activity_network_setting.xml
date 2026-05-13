@@ -3,23 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:ignore="HardcodedText">
-
-    <EditText
-        android:id="@+id/editText_Port"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="9dp"
-        android:ems="10"
-        android:importantForAutofill="no"
-        android:inputType="number"
-        android:minHeight="48dp"
-        android:selectAllOnFocus="false"
-        android:text="8898"
-        app:layout_constraintBottom_toBottomOf="@+id/editText_Server"
-        app:layout_constraintStart_toEndOf="@+id/editText_Server"
-        tools:ignore="LabelFor" />
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/textView2"
@@ -27,8 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:labelFor="@+id/editText_Server"
-        android:text="Server_and_port"
+        android:text="@string/server_and_port_label"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -37,13 +20,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:hint="@string/default_server_url"
         android:importantForAutofill="no"
         android:inputType="text"
         android:minHeight="48dp"
         android:selectAllOnFocus="false"
-        android:text="192.168.0.8"
         app:layout_constraintStart_toStartOf="@+id/textView2"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <EditText
+        android:id="@+id/editText_Port"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="9dp"
+        android:ems="10"
+        android:hint="@string/default_port"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        android:minHeight="48dp"
+        android:selectAllOnFocus="false"
+        app:layout_constraintBottom_toBottomOf="@+id/editText_Server"
+        app:layout_constraintStart_toEndOf="@+id/editText_Server"
+        app:layout_constraintTop_toTopOf="@+id/editText_Server" />
 
     <Button
         android:id="@+id/btnSave"
@@ -51,7 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:minHeight="48dp"
-        android:text="Save"
+        android:text="@string/btn_save"
         app:layout_constraintStart_toStartOf="@+id/editText_Server"
         app:layout_constraintTop_toBottomOf="@+id/editText_Server" />
 
@@ -60,7 +58,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minHeight="48dp"
-        android:text="Test"
+        android:text="@string/btn_test"
         app:layout_constraintEnd_toEndOf="@+id/editText_Port"
         app:layout_constraintTop_toTopOf="@+id/btnSave" />
 
@@ -70,7 +68,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:minHeight="48dp"
-        android:text="Return"
+        android:text="@string/btn_return"
         app:layout_constraintStart_toStartOf="@+id/btnSave"
         app:layout_constraintTop_toBottomOf="@+id/btnSave" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
