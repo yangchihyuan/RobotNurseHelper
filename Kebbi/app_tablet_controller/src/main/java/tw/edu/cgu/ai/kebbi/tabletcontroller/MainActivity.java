@@ -44,21 +44,21 @@ public class MainActivity extends AppCompatActivity {
         btn_restart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SendMessageToServer(1);
+                SendMessageToServer("Reset");
             }
         });
 
         btn_mandarin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SendMessageToServer(2);
+                SendMessageToServer("Mandarin");
             }
         });
 
         btn_english.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SendMessageToServer(3);
+                SendMessageToServer("English");
             }
         });
 
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    protected void SendMessageToServer(int number) {
+    protected void SendMessageToServer(String tabletcommand) {
         //There are two types of touch events: ACTION_DOWN and ACTION_UP.
         //Create a socket, send a message to the server and close the socket.
         HandlerThread thread = new HandlerThread("SocketProcess");
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                         //Test, send a protocol buffer message here
                         RobotToServerMessage message =
                         RobotToServerMessage.newBuilder()
-                                .setNumberpressed(number)
+                                .setTabletcommand(tabletcommand)
                                 .setEventTime(time)
                                 .build();
                         byte[] byteArray = message.toByteArray();
