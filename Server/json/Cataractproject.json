@@ -19,7 +19,7 @@
         ],
         "v_str_KeyWordMoveToNextState": ["開始", "开始", "衛教", "介紹"],
         "v_str_Action": [],
-        "sImageFileName": "Images/state 1.png"
+        "sImageFileName": "Images/state 0.png"
     },
     {
         "iDurationLimitSeconds": 10,
@@ -85,7 +85,7 @@
         "iDurationLimitSeconds": 31,
         "iNextStateIndex": 5,
         "iStateIndex": 4,
-        "m_strFirstSentence": "白內障手術主要有兩種方式，一種是傳統手術，一種是「飛秒雷射輔助手術」。飛秒雷射可以幫忙完成一些比較精細的步驟，例如切口和水晶體的前處理，但兩種手術最後拿掉白內障、放人工水晶體的原理是相同的。雖然飛秒雷射的精準度較高，但是健保不給付，需自費費用。",
+        "m_strFirstSentence": "白內障手術主要有兩種方式，一種是超音波乳化術，一種是「飛秒雷射輔助手術」。飛秒雷射可以幫忙完成一些比較精細的步驟，例如切口和水晶體的前處理，但兩種手術最後拿掉白內障、放人工水晶體的原理是相同的。雖然飛秒雷射的精準度較高，但是健保不給付，需自費費用。",
         "m_strStateName": "Laser comparison",
         "sFace": "TTS_PeaceB",
         "sMotion": "666_BA_ArmSSquare",
@@ -146,20 +146,55 @@
         "m_strStateName": "Lifestyle Selection Guide",
         "sFace": "TTS_PeaceB",
         "sMotion": "666_SP_Cheer",
-        "sStateType": "Conversation",
+        "sStateType": "SaySomething",
         "vSmallMotion": [
             "666_BA_ArmSSquare",
             "666_BA_RArmCircleR"
         ],
-        
         "v_str_KeyWordMoveToNextState": ["有", "有的", "有了"],
         "v_str_Action": ["AccumulateConversation"],
         "sImageFileName": "Images/state 7.png"
     },
-    {
-        "iDurationLimitSeconds": 10,
+      {
+        "iDurationLimitSeconds": 55,
         "iNextStateIndex": 9,
         "iStateIndex": 8,
+        "m_strFirstSentence": "在這裡給你看一下，手術與水晶體的預估價錢。健保有給付最基本的單焦點球面水晶體，但只能看遠，近距離仍需配戴眼鏡。看近跟遠距離則是多焦點約六萬元。中遠距離則是延伸焦段約七萬五千元。若想同時兼顧遠、中、近的視力，可自費選擇三焦點水晶體，費用約八萬五千元至十萬元。有散光的患者，可以加選散光矯正款式有顛焦點散光和延伸交段散光。費用會因手術方式飛秒雷射與超音波乳化和水晶體種類而有所不同，建議與主治醫師討論最適合您的選擇。",
+        "m_strStateName": "laser price",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_BA_ArmSCircle",
+        "sStateType": "SaySomething",
+        "vSmallMotion": [
+            "666_BA_Nodhead",
+            "666_SA_Think",
+            "666_BA_RArmCircleL"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": ["AccumulateConversation"],
+        "sImageFileName": "Images/price.png"
+    },
+      {
+        "iDurationLimitSeconds": 40,
+        "iNextStateIndex": 10,
+        "iStateIndex": 9,
+        "m_strFirstSentence": "多焦點水晶體在術後也可能會有一些後遺症，部分患者在術後，特別是夜間，可能會出現，看燈光時感覺光暈發散，光源周圍出現圓形光圈，或是光源向四周放射出光芒，這些現象因人而異，多數患者在 3 至 6 個月後會逐漸適應。若您有夜間開車需求，建議術前與醫師充分討論，選擇最適合您生活型態的水晶體。 ",
+        "m_strStateName": "laser sequence",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_BA_ArmSCircle",
+        "sStateType": "SaySomething",
+        "vSmallMotion": [
+            "666_BA_Nodhead",
+            "666_SA_Think",
+            "666_BA_RArmCircleL"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": ["AccumulateConversation"],
+        "sImageFileName": "Images/sequence.png"
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 11,
+        "iStateIndex": 10,
         "m_strFirstSentence": "接下來我們來玩個小測驗，確認您對水晶體功能的了解喔。",
         "m_strStateName": "Question about preop care",
         "sFace": "TTS_PeaceA",
@@ -168,45 +203,16 @@
         "vSmallMotion": ["666_BA_Nodhead"],
         "v_str_KeyWordMoveToNextState": [],
         "v_str_Action": ["KeepSilentOff", "AccumulateConversation"],
-        "sImageFileName": "Images/state 8.png"
-    },
-    {
-        "iDurationLimitSeconds": 10,
-        "iNextStateIndex": 10,
-        "iStateIndex": 9,
-        "m_strFirstSentence": "第一題：如果您選擇『單焦點』水晶體，在看遠處很清楚的情況下，看手機或看書需不需要配戴老花眼鏡呢？",
-        "m_strStateName": "Quiz Q1 - Vision Scope",
-        "sFace": "TTS_PeaceA",
-        "sMotion": "666_BA_Nodhead",
-        "sStateType": "Conversation",
-        "vSmallMotion": ["666_BA_Nodhead"],
-        "v_str_KeyWordMoveToNextState": [],
-        "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": "Images/state 9.png"
-    },
-    {
-        "iDurationLimitSeconds": 10,
-        "iNextStateIndex": 11,
-        "iStateIndex": 10,
-        "m_strFirstSentence": "第二題：如果您平時很喜歡煮飯或用電腦，這屬於『中距離』。請問哪種水晶體在看中距離時比較自然，能提供連續的視力呢？",
-        "m_strStateName": "Quiz Q2 - Mid distance",
-        "sFace": "TTS_PeaceB",
-        "sMotion": "666_SA_Think",
-        "sStateType": "Conversation",
-        "vSmallMotion": ["666_BA_Nodhead"],
-        "v_str_KeyWordMoveToNextState": [],
-        "v_str_Action": ["AccumulateConversation"],
         "sImageFileName": "Images/state 10.png"
     },
     {
         "iDurationLimitSeconds": 10,
         "iNextStateIndex": 12,
         "iStateIndex": 11,
-        "m_strFirstSentence": "第三題：請問如果您希望開刀後，不管是開車、看電腦還是看手機，『大部分時間』都不想戴眼鏡，哪一種水晶體最適合您呢？",
-        "m_strStateName": "Quiz Q3 - Comprehensive Vision",
-        "m_strSystemMessage": "",
+        "m_strFirstSentence": "第一題：如果您選擇『單焦點』水晶體，在看遠處很清楚的情況下，看手機或看書需不需要配戴老花眼鏡呢？",
+        "m_strStateName": "Quiz Q1 - Vision Scope",
         "sFace": "TTS_PeaceA",
-        "sMotion": "666_SP_Cheer",
+        "sMotion": "666_BA_Nodhead",
         "sStateType": "Conversation",
         "vSmallMotion": ["666_BA_Nodhead"],
         "v_str_KeyWordMoveToNextState": [],
@@ -217,6 +223,35 @@
         "iDurationLimitSeconds": 10,
         "iNextStateIndex": 13,
         "iStateIndex": 12,
+        "m_strFirstSentence": "第二題：如果您平時很喜歡煮飯或用電腦，這屬於『中距離』。請問哪種水晶體在看中距離時比較自然，能提供連續的視力呢？",
+        "m_strStateName": "Quiz Q2 - Mid distance",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_SA_Think",
+        "sStateType": "Conversation",
+        "vSmallMotion": ["666_BA_Nodhead"],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": ["AccumulateConversation"],
+        "sImageFileName": "Images/state 12.png"
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 14,
+        "iStateIndex": 13,
+        "m_strFirstSentence": "第三題：請問如果您希望開刀後，不管是開車、看電腦還是看手機，『大部分時間』都不想戴眼鏡，哪一種水晶體最適合您呢？",
+        "m_strStateName": "Quiz Q3 - Comprehensive Vision",
+        "m_strSystemMessage": "",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_SP_Cheer",
+        "sStateType": "Conversation",
+        "vSmallMotion": ["666_BA_Nodhead"],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": ["AccumulateConversation"],
+        "sImageFileName": "Images/state 13.png"
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 15,
+        "iStateIndex": 14,
         "m_strFirstSentence": "太棒了！您對水晶體的差別已經非常清楚了。最後，我們來了解手術前後的注意事項吧。",
         "m_strStateName": "Transition to Postop",
         "m_strSystemMessage": "",
@@ -226,12 +261,12 @@
         "vSmallMotion": ["666_BA_Nodhead"],
         "v_str_KeyWordMoveToNextState": [],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": "Images/state 12.png"
+        "sImageFileName": "Images/state 14.png"
     },
     {
         "iDurationLimitSeconds": 7,
-        "iNextStateIndex": 14,
-        "iStateIndex": 13,
+        "iNextStateIndex": 16,
+        "iStateIndex": 15,
         "m_strFirstSentence": "接下來,請您先觀看這段術前衛教影片。",
         "m_strStateName": "Introduce preop care",
         "m_strSystemMessage": "",
@@ -246,12 +281,12 @@
         ],
         "v_str_KeyWordMoveToNextState": [],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": "Images/state 12.png"
+        "sImageFileName": ""
     },    
     {
         "iDurationLimitSeconds": 99,
-        "iNextStateIndex": 15,
-        "iStateIndex": 14,
+        "iNextStateIndex": 17,
+        "iStateIndex": 16,
         "m_strFirstSentence": "",
         "m_strStateName": "Introduce preop care",
         "m_strSystemMessage": "",
@@ -270,8 +305,8 @@
     },
     {
         "iDurationLimitSeconds": 20,
-        "iNextStateIndex": 16,
-        "iStateIndex": 15,
+        "iNextStateIndex": 18,
+        "iStateIndex": 17,
         "m_strFirstSentence": "影片看完了，我們來做五題小問題，確認您記得術前注意事項。準備好了請說好。",
         "m_strStateName": "Preop Quiz Intro",
         "m_strSystemMessage": "",
@@ -285,8 +320,8 @@
     },
     {
         "iDurationLimitSeconds": 10,
-        "iNextStateIndex": 17,
-        "iStateIndex": 16,
+        "iNextStateIndex": 19,
+        "iStateIndex": 18,
         "m_strFirstSentence": "第一題：手術前一天最重要的準備是什麼？",
         "m_strStateName": "Preop Quiz Q1 - Sleep",
         "m_strSystemMessage": "",
@@ -296,12 +331,12 @@
         "vSmallMotion": ["666_SA_Think"],
         "v_str_KeyWordMoveToNextState": ["充足睡眠", "睡飽", "好好睡", "休息"],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": "Images/state 16.png"
+        "sImageFileName": "Images/state 18.png"
     },
     {
         "iDurationLimitSeconds": 10,
-        "iNextStateIndex": 18,
-        "iStateIndex": 17,
+        "iNextStateIndex": 20,
+        "iStateIndex": 19,
         "m_strFirstSentence": "第二題：手術當天要記得帶哪些重要的東西來辦理手續？",
         "m_strStateName": "Preop Quiz Q2 - Documents",
         "m_strSystemMessage": "",
@@ -311,12 +346,12 @@
         "vSmallMotion": ["666_BA_Nodhead"],
         "v_str_KeyWordMoveToNextState": ["健保卡", "手術同意書", "相關文件", "文件"],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": "Images/state 17.png"
+        "sImageFileName": "Images/state 19.png"
     },
     {
         "iDurationLimitSeconds": 10,
-        "iNextStateIndex": 19,
-        "iStateIndex": 18,
+        "iNextStateIndex": 21,
+        "iStateIndex": 20,
         "m_strFirstSentence": "第三題：手術當天建議穿什麼樣的衣服比較方便？",
         "m_strStateName": "Preop Quiz Q3 - Clothing",
         "m_strSystemMessage": "",
@@ -326,12 +361,12 @@
         "vSmallMotion": ["666_SA_Think"],
         "v_str_KeyWordMoveToNextState": ["輕便", "寬鬆", "容易穿脫", "好穿脫"],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": "Images/state 18.png"
+        "sImageFileName": "Images/state 20.png"
     },
     {
         "iDurationLimitSeconds": 10,
-        "iNextStateIndex": 20,
-        "iStateIndex": 19,
+        "iNextStateIndex": 22,
+        "iStateIndex": 21,
         "m_strFirstSentence": "第四題：手術前可以戴項鍊、耳環或手鍊嗎？",
         "m_strStateName": "Preop Quiz Q4 - No Jewelry",
         "m_strSystemMessage": "",
@@ -341,12 +376,12 @@
         "vSmallMotion": ["666_BA_Nodhead"],
         "v_str_KeyWordMoveToNextState": ["不可以", "不能", "不可", "不要"],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": "Images/state 19.png"
+        "sImageFileName": "Images/state 21.png"
     },
     {
         "iDurationLimitSeconds": 10,
-        "iNextStateIndex": 21,
-        "iStateIndex": 20,
+        "iNextStateIndex": 23,
+        "iStateIndex": 22,
         "m_strFirstSentence": "第五題：手術結束後通常要去哪裡領藥，並聽護理人員說明照護注意事項？",
         "m_strStateName": "Preop Quiz Q5 - Pharmacy Counter",
         "m_strSystemMessage": "",
@@ -356,26 +391,26 @@
         "vSmallMotion": ["666_BA_Nodhead"],
         "v_str_KeyWordMoveToNextState": ["領藥櫃檯", "領藥", "藥局", "領藥窗口"],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": "Images/state 20.png"
+        "sImageFileName": "Images/state 22.png"
     },
     {
         "iDurationLimitSeconds": 100,
-        "iNextStateIndex": 22,
-        "iStateIndex": 21,
+        "iNextStateIndex": 24,
+        "iStateIndex": 23,
         "m_strFirstSentence": "請問您對於內容有什麼問題嗎？",
         "m_strStateName": "Question about preop care",
         "sFace": "TTS_PeaceA",
         "sMotion": "666_SA_Think",
-        "sStateType": "RobotAskPatientAnswer",
+        "sStateType": "Conversation",
         "vSmallMotion": [],
         "v_str_KeyWordMoveToNextState": ["沒有", "沒問題"],
         "v_str_Action": ["KeepSilentOff","AccumulateConversation"],
-        "sImageFileName": "Images/state21.png"
+        "sImageFileName": "Images/state 23.png"
     },
     {
         "iDurationLimitSeconds": 10,
-        "iNextStateIndex": 23,
-        "iStateIndex": 22,
+        "iNextStateIndex": 25,
+        "iStateIndex": 24,
         "m_strFirstSentence": "做得很好。術前重點您都掌握了。接下來如果您還有疑問，我可以再為您說明。",
         "m_strStateName": "Preop Quiz End",
         "sFace": "TTS_PeaceB",
@@ -384,12 +419,12 @@
         "vSmallMotion": ["666_BA_Nodhead"],
         "v_str_KeyWordMoveToNextState": [],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": ""
+        "sImageFileName": "Images/stat 23.png"
     },
     {
         "iDurationLimitSeconds": 10,
-        "iNextStateIndex": 24,
-        "iStateIndex": 23,
+        "iNextStateIndex": 26,
+        "iStateIndex": 25,
         "m_strFirstSentence": "接下來，請您觀看這段術後衛教影片。",
         "m_strStateName": "Play postop health care video",
         "sFace": "TTS_PeaceB",
@@ -403,12 +438,12 @@
         ],
         "v_str_KeyWordMoveToNextState": [],
         "v_str_Action": [],
-        "sImageFileName": "Images/state24.png"
+        "sImageFileName": "Images/state 25.png"
     },
     {
         "iDurationLimitSeconds": 129,
-        "iNextStateIndex": 25,
-        "iStateIndex": 24,
+        "iNextStateIndex": 27,
+        "iStateIndex": 26,
         "m_strFirstSentence": "",
         "m_strStateName": "Play postop health care video",
         "sFace": "TTS_PeaceB",
@@ -426,22 +461,22 @@
     },
     {
         "iDurationLimitSeconds": 20,
-        "iNextStateIndex": 26,
-        "iStateIndex": 25,
+        "iNextStateIndex": 28,
+        "iStateIndex": 27,
         "m_strFirstSentence": "影片看完了，我們也來做五題小問題，確認您記得術後照護重點。準備好了請說好。",
         "m_strStateName": "Postop Quiz Intro",
         "sFace": "TTS_PeaceA",
         "sMotion": "666_SA_Think",
-        "sStateType": "Conversation",
+        "sStateType": "RobotAskPatientAnswer",
         "vSmallMotion": ["666_BA_Nodhead"],
         "v_str_KeyWordMoveToNextState": ["好", "可以", "準備好了", "準備好"],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": "Images/state25.png"
+        "sImageFileName": "Images/state 27.png"
     },
     {
         "iDurationLimitSeconds": 10,
-        "iNextStateIndex": 27,
-        "iStateIndex": 26,
+        "iNextStateIndex": 29,
+        "iStateIndex": 28,
         "m_strFirstSentence": "第一題：手術當天眼睛被紗布覆蓋時，可以立刻點眼藥水嗎？",
         "m_strStateName": "Postop Quiz Q1 - No Drops With Gauze",
         "sFace": "TTS_PeaceA",
@@ -450,12 +485,12 @@
         "vSmallMotion": ["666_SA_Think"],
         "v_str_KeyWordMoveToNextState": ["不需要", "不用", "不必"],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": "Images/state26.png"
+        "sImageFileName": "Images/state 28.png"
     },
     {
         "iDurationLimitSeconds": 10,
-        "iNextStateIndex": 28,
-        "iStateIndex": 27,
+        "iNextStateIndex": 30,
+        "iStateIndex": 29,
         "m_strFirstSentence": "第二題：隔天回診時，建議要帶什麼來給醫師確認後再開始使用？",
         "m_strStateName": "Postop Quiz Q2 - Bring Meds",
         "sFace": "TTS_PeaceB",
@@ -464,12 +499,12 @@
         "vSmallMotion": ["666_BA_Nodhead"],
         "v_str_KeyWordMoveToNextState": ["藥品", "藥水", "藥膏", "眼罩", "護理包"],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": "Images/state27.png"
+        "sImageFileName": "Images/state 29.png"
     },
     {
         "iDurationLimitSeconds": 10,
-        "iNextStateIndex": 29,
-        "iStateIndex": 28,
+        "iNextStateIndex": 31,
+        "iStateIndex": 30,
         "m_strFirstSentence": "第三題：術後出現畏光、流眼淚、輕微刺痛感，通常算是正常現象嗎？",
         "m_strStateName": "Postop Quiz Q3 - Normal Symptoms",
         "sFace": "TTS_PeaceA",
@@ -478,40 +513,40 @@
         "vSmallMotion": ["666_SA_Think"],
         "v_str_KeyWordMoveToNextState": ["是", "正常", "算正常", "對"],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": "Images/state28.png"
+        "sImageFileName": "Images/state 30.png"
     },
     {
         "iDurationLimitSeconds": 10,
-        "iNextStateIndex": 30,
-        "iStateIndex": 29,
+        "iNextStateIndex": 32,
+        "iStateIndex": 31,
         "m_strFirstSentence": "第四題：如果術後出現哪些狀況，需要立刻回診或到急診室？請說出一個就好。",
         "m_strStateName": "Postop Quiz Q4 - Red Flags",
         "sFace": "TTS_PeaceB",
         "sMotion": "666_SA_Think",
         "sStateType": "RobotAskPatientAnswer",
         "vSmallMotion": ["666_BA_Nodhead"],
-        "v_str_KeyWordMoveToNextState": ["視力突然", "視力減退", "異常疼痛", "眼紅", "大量出血", "分泌物","血"],
+        "v_str_KeyWordMoveToNextState": ["視力突然", "視力減退", "異常疼痛", "眼紅", "大量出血", "分泌物"],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": "Images/state29.png"
+        "sImageFileName": "Images/state 31.png"
     },
     {
         "iDurationLimitSeconds": 10,
-        "iNextStateIndex": 31,
-        "iStateIndex": 30,
+        "iNextStateIndex": 33,
+        "iStateIndex": 32,
         "m_strFirstSentence": "第五題：術後眼睛多久不可以進水，也不建議游泳或做劇烈運動？",
         "m_strStateName": "Postop Quiz Q5 - No Water One Month",
         "sFace": "TTS_PeaceA",
         "sMotion": "666_SP_Cheer",
         "sStateType": "RobotAskPatientAnswer",
         "vSmallMotion": ["666_BA_Nodhead"],
-        "v_str_KeyWordMoveToNextState": ["一個月", "1個月", "四週", "4週", "一个月", "1个月","四周", "4周", "30天", "四禮拜", "4禮拜", "四星期", "4星期", "四個禮拜","4个禮拜"],
+        "v_str_KeyWordMoveToNextState": ["一個月", "1個月", "四週", "4週"],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": "Images/state30.png"
+        "sImageFileName": "Images/state 32.png"
     },
     {
         "iDurationLimitSeconds": 10,
-        "iNextStateIndex": 32,
-        "iStateIndex": 31,
+        "iNextStateIndex": 34,
+        "iStateIndex": 33,
         "m_strFirstSentence": "太好了。術後照護重點您也記得很清楚。接下來如果您有問題，可以直接問我。",
         "m_strStateName": "Postop Quiz End",
         "sFace": "TTS_PeaceB",
@@ -520,40 +555,40 @@
         "vSmallMotion": ["666_BA_Nodhead"],
         "v_str_KeyWordMoveToNextState": [],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": "Images/state31.png"
+        "sImageFileName": "Images/state 34.png"
     },
     {
-        "iDurationLimitSeconds": 100,
-        "iNextStateIndex": 33,
-        "iStateIndex": 32,
+        "iDurationLimitSeconds": 999,
+        "iNextStateIndex": 35,
+        "iStateIndex": 34,
         "m_strFirstSentence": "請問您有什麼問題嗎？",
         "m_strStateName": "Q&A",
         "sFace": "TTS_PeaceA",
         "sMotion": "666_SA_Think",
         "sStateType": "Conversation",
         "vSmallMotion": [],
-        "v_str_KeyWordMoveToNextState": ["沒有", "沒問題", "没问题", "謝謝", "谢谢"],
+        "v_str_KeyWordMoveToNextState": ["沒有", "沒問題"],
         "v_str_Action": ["KeepSilentOff","AccumulateConversation"],
-        "sImageFileName": "Images/state31.png"
+        "sImageFileName": "Images/state 34.png"
     },
     {
         "iDurationLimitSeconds": 100,
-        "iNextStateIndex": 34,
-        "iStateIndex": 33,
+        "iNextStateIndex": 36,
+        "iStateIndex": 35,
         "m_strFirstSentence": "好的，那我們今天衛教就作到這裏，祝您開刀順利，早日康復！如果有任何問題，隨時可以來找我喔！",
         "m_strStateName": "Ending and Goodbye",
         "sFace": "TTS_PeaceB",
         "sMotion": "666_SA_Think",
         "sStateType": "RobotAskPatientAnswer",
         "vSmallMotion": [],
-        "v_str_KeyWordMoveToNextState": ["好的", "再見", "謝謝", "谢谢"],
+        "v_str_KeyWordMoveToNextState": ["好的", "再見", "謝謝"],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": "Images/state33.png"
+        "sImageFileName": "Images/state 35.png"
     },
     {
         "iDurationLimitSeconds": 100,
-        "iNextStateIndex": 35,
-        "iStateIndex": 34,
+        "iNextStateIndex": 37,
+        "iStateIndex": 36,
         "m_strFirstSentence": "再見！",
         "m_strStateName": "Goodbye",
         "sFace": "TTS_PeaceA",
@@ -562,6 +597,6 @@
         "vSmallMotion": [],
         "v_str_KeyWordMoveToNextState": [],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": "Images/state34.png"
+        "sImageFileName": "Images/state 36.png"
     }
 ]
