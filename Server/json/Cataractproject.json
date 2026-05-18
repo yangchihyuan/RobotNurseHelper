@@ -532,7 +532,7 @@
         "sMotion": "666_SA_Think",
         "sStateType": "Conversation",
         "vSmallMotion": [],
-        "v_str_KeyWordMoveToNextState": ["沒有", "沒問題", "没问题"],
+        "v_str_KeyWordMoveToNextState": ["沒有", "沒問題", "没问题", "謝謝", "谢谢"],
         "v_str_Action": ["KeepSilentOff","AccumulateConversation"],
         "sImageFileName": "Images/state31.png"
     },
