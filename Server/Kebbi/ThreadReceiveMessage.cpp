@@ -93,6 +93,30 @@ void ThreadReceiveMessage::run()
                 robot_command.set_face(RobotExpressionIndex);
                 pSendMessageManager->AddMessage(robot_command);
             }
+
+            if( RTSmessage.has_tabletcommand())
+            {
+                std::string str_tabletcommand = RTSmessage.tabletcommand();                int RobotExpressionIndex = 0;
+                cout << "Receive tabletcommand: " << str_tabletcommand << endl;
+                if( str_tabletcommand == "Reset")
+                {
+                    //Reset robot's control state.
+                    mpThreadStateControl->Reset();
+                }
+                else if( str_tabletcommand == "Mandarin" )
+                {
+                    //TODO: change language
+                }
+                else if( str_tabletcommand == "English" )
+                {
+                    //TODO: change language
+                }
+                else
+                {
+                    cout << "Unknown tablet command." << endl;
+                }
+            }
+
         }
     }
     cout << "Exit ReceiveMessages loop." << std::endl;

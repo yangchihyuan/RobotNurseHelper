@@ -472,3 +472,14 @@ string ThreadStateControl::ReplaceVariables(string sentence)
     }
     return result;
 }
+
+void ThreadStateControl::Reset()
+{
+    m_iStateIndex = 0;
+    for( auto& state : mStates)
+    {
+        state.bInitial = true;
+        state.bWaitForTTSComplete = true;
+        state.bEndState = false;
+    }
+}
