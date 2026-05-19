@@ -72,7 +72,7 @@ public:
 
     VideoWindow* pVideoWindow = nullptr;
     void SetSettingFile(const QString &filePath);
-    void Reset();
+    void Restart();
 
 signals:
     void playVideoRequest(const QString& videoPath);

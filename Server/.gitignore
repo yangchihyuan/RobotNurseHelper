@@ -3,6 +3,7 @@ mediapipe/
 Videos/
 Progress/
 Data/
+log/
 
 #file downloaded from the internet
 dlib_face_recognition_resnet_model_v1.dat

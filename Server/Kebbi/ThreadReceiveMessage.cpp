@@ -98,10 +98,10 @@ void ThreadReceiveMessage::run()
             {
                 std::string str_tabletcommand = RTSmessage.tabletcommand();                int RobotExpressionIndex = 0;
                 cout << "Receive tabletcommand: " << str_tabletcommand << endl;
-                if( str_tabletcommand == "Reset")
+                if( str_tabletcommand == "Restart")
                 {
-                    //Reset robot's control state.
-                    mpThreadStateControl->Reset();
+                    //Restart robot's control state.
+                    mpThreadStateControl->Restart();
                 }
                 else if( str_tabletcommand == "Mandarin" )
                 {
