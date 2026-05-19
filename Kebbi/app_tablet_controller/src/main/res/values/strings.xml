@@ -14,17 +14,5 @@
     <string name="btn_mandarin">Mandarin</string>
     <string name="btn_english">English</string>
     <string name="btn_network_setting">Network Settings</string>
-
-    <!-- PainActivity (Legacy/Copied) -->
-    <string name="desc_pain_btn">Pain Button</string>
-    <string name="desc_video_btn">Video Button</string>
-    <string name="btn_pain">疼痛量表</string>
-    <string name="btn_video">播放影片</string>
-    <string name="toast_no_face">未點中任何臉</string>
-    <string name="toast_face0">選擇了 0 分：無痛</string>
-    <string name="toast_face2">選擇了 2 分：微痛</string>
-    <string name="toast_face4">選擇了 4 分：輕痛</string>
-    <string name="toast_face6">選擇了 6 分：更痛</string>
-    <string name="toast_face8">選擇了 8 分：很痛</string>
-    <string name="toast_face10">選擇了 10 分：劇痛</string>
+    <string name="network_setting">Network Setting</string>
 </resources>
