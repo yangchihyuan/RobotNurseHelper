@@ -525,7 +525,7 @@
         "sMotion": "666_SA_Think",
         "sStateType": "RobotAskPatientAnswer",
         "vSmallMotion": ["666_BA_Nodhead"],
-        "v_str_KeyWordMoveToNextState": ["視力突然", "視力減退", "異常疼痛", "眼紅", "大量出血", "分泌物"],
+        "v_str_KeyWordMoveToNextState": ["視力突然", "視力減退", "異常疼痛", "眼紅", "大量出血", "分泌物","血"],
         "v_str_Action": ["AccumulateConversation"],
         "sImageFileName": "Images/state 31.png"
     },
@@ -539,7 +539,7 @@
         "sMotion": "666_SP_Cheer",
         "sStateType": "RobotAskPatientAnswer",
         "vSmallMotion": ["666_BA_Nodhead"],
-        "v_str_KeyWordMoveToNextState": ["一個月", "1個月", "四週", "4週"],
+        "v_str_KeyWordMoveToNextState": ["一個月", "1個月", "四週", "4週", "一个月", "1个月","四周", "4周", "30天", "四禮拜", "4禮拜", "四星期", "4星期", "四個禮拜","4个禮拜"],
         "v_str_Action": ["AccumulateConversation"],
         "sImageFileName": "Images/state 32.png"
     },
@@ -567,7 +567,7 @@
         "sMotion": "666_SA_Think",
         "sStateType": "Conversation",
         "vSmallMotion": [],
-        "v_str_KeyWordMoveToNextState": ["沒有", "沒問題"],
+        "v_str_KeyWordMoveToNextState": ["沒有", "沒問題", "没问题", "謝謝", "谢谢"],
         "v_str_Action": ["KeepSilentOff","AccumulateConversation"],
         "sImageFileName": "Images/state 34.png"
     },
@@ -581,7 +581,7 @@
         "sMotion": "666_SA_Think",
         "sStateType": "RobotAskPatientAnswer",
         "vSmallMotion": [],
-        "v_str_KeyWordMoveToNextState": ["好的", "再見", "謝謝"],
+        "v_str_KeyWordMoveToNextState": ["好的", "再見", "再见", "謝謝", "谢谢"],
         "v_str_Action": ["AccumulateConversation"],
         "sImageFileName": "Images/state 35.png"
     },

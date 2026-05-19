@@ -473,7 +473,7 @@ string ThreadStateControl::ReplaceVariables(string sentence)
     return result;
 }
 
-void ThreadStateControl::Reset()
+void ThreadStateControl::Restart()
 {
     m_iStateIndex = 0;
     for( auto& state : mStates)
