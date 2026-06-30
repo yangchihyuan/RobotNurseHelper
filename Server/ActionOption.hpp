@@ -11,6 +11,7 @@ struct ActionOption
     };
 
     MOVE_MODE move_mode;
+    bool bUseVisualCompass = false;
 };
 
 #endif

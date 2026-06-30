@@ -47,6 +47,10 @@ void MainWindow::setSettingFile(const QString &filePath)
     thread_state_control.SetSettingFile(filePath);
     thread_LLM.SetSettingFile(filePath);
     thread_process_image.SetSettingFile(filePath);
+
+    ui->checkBox_UseVisualCompass->setChecked(msetting.bUseVisualCompass);
+    ui->checkBox_SaveImages->setChecked(msetting.bSaveImages);
+    thread_process_image.action_option.bUseVisualCompass = msetting.bUseVisualCompass;
 }
 
 MainWindow::~MainWindow()
@@ -616,6 +620,20 @@ void MainWindow::on_checkBox_SaveImages_clicked()
 
 }
 
+void MainWindow::on_checkBox_UseVisualCompass_clicked()
+{
+    if( ui->checkBox_UseVisualCompass->isChecked() )
+    {
+        thread_process_image.action_option.bUseVisualCompass = true;
+        msetting.bUseVisualCompass = true;
+    }
+    else
+    {
+        thread_process_image.action_option.bUseVisualCompass = false;
+        msetting.bUseVisualCompass = false;
+    }
+}
+
 void MainWindow::on_checkBox_stream_clicked(bool checked)
 {
     if( checked)
@@ -636,4 +654,45 @@ void MainWindow::on_pushButton_generate_response_clicked()
 //    thread_ollama.strPrompt = text.toStdString();      //The string is used here.
 //    thread_LLM.strPrompt = text.toStdString();      //The string is used here.
 }
+
+void MainWindow::on_pushButton_photo_0_clicked()
+{
+    rotateAndTakePhoto(0, "photo_0");
+}
+
+void MainWindow::on_pushButton_photo_45_clicked()
+{
+    rotateAndTakePhoto(45, "photo_45");
+}
+
+void MainWindow::on_pushButton_photo_90_clicked()
+{
+    rotateAndTakePhoto(90, "photo_90");
+}
+
+void MainWindow::on_pushButton_photo_135_clicked()
+{
+    rotateAndTakePhoto(135, "photo_135");
+}
+
+void MainWindow::on_pushButton_photo_180_clicked()
+{
+    rotateAndTakePhoto(180, "photo_180");
+}
+
+void MainWindow::on_pushButton_photo_225_clicked()
+{
+    rotateAndTakePhoto(225, "photo_225");
+}
+
+void MainWindow::on_pushButton_photo_270_clicked()
+{
+    rotateAndTakePhoto(270, "photo_270");
+}
+
+void MainWindow::on_pushButton_photo_315_clicked()
+{
+    rotateAndTakePhoto(315, "photo_315");
+}
+
 

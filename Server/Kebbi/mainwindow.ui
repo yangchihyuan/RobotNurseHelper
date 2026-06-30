@@ -375,16 +375,133 @@
      <string>Face</string>
     </property>
    </widget>
-   <widget class="QListView" name="listView_PredefinedAction">
-    <property name="geometry">
-     <rect>
-      <x>470</x>
-      <y>30</y>
-      <width>291</width>
-      <height>551</height>
-     </rect>
-    </property>
-   </widget>
+    <widget class="QListView" name="listView_PredefinedAction">
+     <property name="geometry">
+      <rect>
+       <x>470</x>
+       <y>30</y>
+       <width>291</width>
+       <height>400</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_photo_title">
+     <property name="geometry">
+      <rect>
+       <x>470</x>
+       <y>440</y>
+       <width>291</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>360° Surrounding Photos</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_photo_0">
+      <property name="geometry">
+       <rect>
+        <x>470</x>
+        <y>470</y>
+        <width>68</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0° (Front)</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_photo_45">
+      <property name="geometry">
+       <rect>
+        <x>543</x>
+        <y>470</y>
+        <width>68</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>45°</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_photo_90">
+      <property name="geometry">
+       <rect>
+        <x>616</x>
+        <y>470</y>
+        <width>68</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>90°</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_photo_135">
+      <property name="geometry">
+       <rect>
+        <x>689</x>
+        <y>470</y>
+        <width>68</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>135°</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_photo_180">
+      <property name="geometry">
+       <rect>
+        <x>470</x>
+        <y>515</y>
+        <width>68</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>180°</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_photo_225">
+      <property name="geometry">
+       <rect>
+        <x>543</x>
+        <y>515</y>
+        <width>68</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>225°</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_photo_270">
+      <property name="geometry">
+       <rect>
+        <x>616</x>
+        <y>515</y>
+        <width>68</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>270°</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_photo_315">
+      <property name="geometry">
+       <rect>
+        <x>689</x>
+        <y>515</y>
+        <width>68</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>315°</string>
+      </property>
+     </widget>
    <widget class="QLabel" name="label_22">
     <property name="geometry">
      <rect>
@@ -606,6 +723,22 @@
     </property>
     <property name="text">
      <string>Save images</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_UseVisualCompass">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>330</y>
+      <width>180</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Visual Compass</string>
     </property>
     <property name="checked">
      <bool>false</bool>

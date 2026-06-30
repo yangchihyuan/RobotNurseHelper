@@ -4,9 +4,8 @@ project(RobotNurseHelper)
 include(FetchContent) # 1. Load the "FetchContent" toolset
 
 FetchContent_Declare(
-    json                                            # A local name for this dependency
-    GIT_REPOSITORY https://github.com/nlohmann/json.git # Where to get it
-    GIT_TAG v3.11.3                                 # Which version to get
+    json
+    URL https://github.com/nlohmann/json/archive/refs/tags/v3.11.3.zip
 )
 
 FetchContent_MakeAvailable(json) # 2. Download and prepare it NOW

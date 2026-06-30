@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"     //in      RobotNurseHelper/Server/build/RobotNurseHelper_autogen/include/Zenbo
                                  //also in RobotNurseHelper/Server/build/RobotNurseHelper_autogen/include
+#include <QSoundEffect>
+#include <QUrl>
 #include <QPixmap>
 #include <QStringListModel>
 #include <QStandardItemModel>
@@ -376,4 +378,41 @@ void MainWindow::timer_event()
     }
 
     sendMessageManager.Send();
+}
+
+void MainWindow::rotateAndTakePhoto(int targetAngle, const QString& prefix)
+{
+    static QSoundEffect *shutterSound = nullptr;
+    if (!shutterSound) {
+        shutterSound = new QSoundEffect(this);
+        shutterSound->setSource(QUrl::fromLocalFile("camera-shutter.wav"));
+        shutterSound->setVolume(1.0f);
+    }
+
+    int relative = targetAngle - current_body_angle;
+    // Normalize to [-180, 180]
+    while (relative > 180) relative -= 360;
+    while (relative <= -180) relative += 360;
+
+    int speed = ui->lineEdit_bodyspeed->text().toInt();
+    if (speed <= 0) speed = 3; // Default fallback
+
+    if (relative != 0) {
+        send_move_body_command(0, 0, relative, speed);
+        std::cout << "Rotating robot body by: " << relative << " degrees to target " << targetAngle << " degrees at speed " << speed << std::endl;
+    } else {
+        std::cout << "Robot body already at target " << targetAngle << " degrees." << std::endl;
+    }
+    int delay = (relative != 0) ? 2500 : 500;
+
+    QTimer::singleShot(delay, this, [this, prefix]() {
+        thread_process_image.requestedPhotoPrefix = prefix.toStdString();
+        thread_process_image.bSaveRequestedPhoto = true;
+        std::cout << "Triggered single photo capture for: " << prefix.toStdString() << std::endl;
+        if (shutterSound) {
+            shutterSound->play();
+        }
+    });
+
+    current_body_angle = targetAngle;
 }

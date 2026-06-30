@@ -10,6 +10,7 @@
 #include <mutex>
 #include <thread>
 #include <condition_variable>
+#include <atomic>
 #include "ThreadSafeQueue.hpp"
 #include "SendMessageManager.hpp"
 #include "ActionOption.hpp"
@@ -126,6 +127,8 @@ public:
     bool b_HumanPoseEstimation = false;
     bool b_WhileLoop = true;
     bool bSaveTransmittedImage = false;
+    std::atomic<bool> bSaveRequestedPhoto{false};
+    std::string requestedPhotoPrefix;
     bool m_bRecognizeFacialExpression = true;
     string ImageSaveDirectory = ""; //default value is empty, which means not saving images
 
@@ -151,6 +154,7 @@ protected:
     std::mutex mtx_Task;                        //dlib::mutex has the same class mutex, so I add std::
     std::mutex mtx_UpdateOutFrame;
     bool m_bDirectoryCreated = false;
+    bool m_bDirectoryCreated_VisualCompass = false;
     bool mbWatchPatient = true;
     Mat outFrame, tempFrame;
     cv::Rect GetBoundingBoxFromLandmarks(const std::vector<std::array<float, 3>>& normalized_landmarks, int img_width, int img_height);    

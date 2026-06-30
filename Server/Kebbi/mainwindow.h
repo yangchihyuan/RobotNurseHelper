@@ -97,6 +97,8 @@ private:
     WhisperData oldWhisperData;     //for timer_event update UI
 
     Setting msetting;
+    int current_body_angle = 0;
+    void rotateAndTakePhoto(int targetAngle, const QString& prefix);
     
 signals:
     void newMessage(QString);   //where is the connect for this signal?
@@ -139,6 +141,7 @@ private slots:
     void on_listView_Sentence3_clicked(const QModelIndex &index);
 
     void on_checkBox_SaveImages_clicked();
+    void on_checkBox_UseVisualCompass_clicked();
 
     void timer_event();
 
@@ -151,5 +154,13 @@ private slots:
     void on_pushButton_generate_response_clicked();
     void on_pushButton_speak_2_clicked();
     void on_pushButton_hideface_clicked();
+    void on_pushButton_photo_0_clicked();
+    void on_pushButton_photo_45_clicked();
+    void on_pushButton_photo_90_clicked();
+    void on_pushButton_photo_135_clicked();
+    void on_pushButton_photo_180_clicked();
+    void on_pushButton_photo_225_clicked();
+    void on_pushButton_photo_270_clicked();
+    void on_pushButton_photo_315_clicked();
 };
 #endif // MAINWINDOW_H

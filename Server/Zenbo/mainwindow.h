@@ -82,6 +82,8 @@ private:
     QString QString_SentCommands;
     void send_move_body_command(float x, float y, int degree, int speed);
     void send_move_head_command(int yaw, int pitch, int speed);
+    int current_body_angle = 0;
+    void rotateAndTakePhoto(int targetAngle, const QString& prefix);
 
     SendMessageManager sendMessageManager;
     bool bstream_recognition = false;
@@ -129,6 +131,7 @@ private slots:
     void on_listView_Sentence3_clicked(const QModelIndex &index);
 
     void on_checkBox_SaveImages_clicked();
+    void on_checkBox_UseVisualCompass_clicked();
 
     void timer_event();
 
@@ -142,5 +145,13 @@ private slots:
     void on_pushButton_generate_response_clicked();
     void on_pushButton_speak_2_clicked();
     void on_pushButton_hideface_clicked();
+    void on_pushButton_photo_0_clicked();
+    void on_pushButton_photo_45_clicked();
+    void on_pushButton_photo_90_clicked();
+    void on_pushButton_photo_135_clicked();
+    void on_pushButton_photo_180_clicked();
+    void on_pushButton_photo_225_clicked();
+    void on_pushButton_photo_270_clicked();
+    void on_pushButton_photo_315_clicked();
 };
 #endif // MAINWINDOW_H

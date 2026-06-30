@@ -1,6 +1,6 @@
 #!/bin/bash
 #Author: Chih-Yuan Yang
-#2026 May 19
+#2026 June 29
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
@@ -14,24 +14,22 @@ FILENAME="log/${TIMESTAMP}.log"
 cd "$(dirname "$0")"
 
 # Always quote variables in conditionals
-if [[ "$1" == "-h" || "$1" == "--help" || "$#" -gt 1 ]]; then
-    echo "Usage: $0 [Setting_file.json | debug | valgrind]"
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    echo "Usage: $0 [Options] <Setting_file_path>"
     echo ""
     echo "Options:"
-    echo "  (none)       Runs with the default setting file (json/Setting.json)"
-    echo "  <file_path>  Runs with the specified JSON setting file, for example: $0 json/AGXOrin2.json"
     echo "  debug        Runs the program using gdb for debugging"
-    echo "  valgrind     Runs the program using valgrind to check for memory leaks"
+    echo ""
+    echo "<Setting_file_path>  Runs with the specified JSON setting file, for example: $0 json/AGXOrin2.json"
+    echo "If <Setting_file_path> is not specified, json/Setting.json will be used."
     exit 1
 elif [[ "$#" -eq 0 ]]; then # Use -eq for numerical comparison for $#
     # Set the default Setting.json path if no arguments are provided
     Setting_file="json/Setting.json"    
-elif [[ "$1" = "debug" ]]; then             #TODO: I haven't update this debug command to use the new --SettingFile argument, so it still defaults to json/Setting.json. You may want to update this to allow passing a custom Setting file in debug mode as well.
-    Setting_file="json/Setting.json"    
+elif [[ "$1" = "debug" ]]; then
+    Setting_file="$2"    
     # Ensure arguments are correctly passed to gdb via --args
-    gdb --args build/RobotNurseHelper
-elif [[ "$1" = "valgrind" ]]; then
-    valgrind build/RobotNurseHelper # Consider adding specific valgrind flags if needed, e.g., --leak-check=full
+    gdb --args build/RobotNurseHelper --SettingFile "$Setting_file"
 else 
     Setting_file="$1"
 fi

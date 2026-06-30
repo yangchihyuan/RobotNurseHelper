@@ -12,6 +12,7 @@
     "bUseDlibForFaceRecognition": false,
     "bFaceDetection": true,
     "FaceDetectionModel": "InspireFace",             //MediaPipe_Face, InspireFace
+    "bUseVisualCompass": false,
     "WhisperModel": "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin",
     "ImageSaveDirectory": "$HOME/Downloads/raw_images",
     "LanguageModel": "gemma3:1b",           //The setting does not work. Now the model is controlled by the AnythingLLM workspace. The setting is reserved for future use.

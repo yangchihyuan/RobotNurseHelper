@@ -4,17 +4,18 @@
 #I wrote this shell script file to call another shell script file.
 
 if [ $# == 1 ]; then
-    if [[ "$1" == "fresh" ]]; then
+    if [[ "$1" == "clean" ]]; then
         rm -rf build
-        cmake -S . -B build
     elif [[ "$1" == "Zenbo" || "$1" == "ZenboJrII" ]]; then
         echo "Building for Zenbo or ZenboJrII"
-        rm -rf build
         cmake -S . -B build -DROBOT_MODEL=Zenbo
     elif [[ "$1" == "Kebbi" ]]; then
         echo "Building for Kebbi"
-        rm -rf build
         cmake -S . -B build -DROBOT_MODEL=Kebbi -DCMAKE_CXX_FLAGS="-Wno-psabi"
     fi
+else
+    echo "Building for Kebbi"
+    rm -rf build
+    cmake -S . -B build -DROBOT_MODEL=Kebbi -DCMAKE_CXX_FLAGS="-Wno-psabi"
 fi
 cmake --build build -j $(nproc)

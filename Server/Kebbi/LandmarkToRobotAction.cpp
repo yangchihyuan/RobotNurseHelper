@@ -5,6 +5,40 @@
 
 float prev_x = 0.5;     //Mohamed's variable, to store the previous x position of the face
 
+void ComputeTargetYawPitch(float x, float y, const RobotStatus &status, bool bUseVisualCompass, int &target_yaw, int &target_pitch)
+{
+    if (bUseVisualCompass)
+    {
+        double h_fov_rad = 62.5 * M_PI / 180.0;
+        double v_fov_rad = 48.9 * M_PI / 180.0;
+        double xc = 2.0 * (x - 0.5) * tan(h_fov_rad / 2.0);
+        double yc = 2.0 * (y - 0.5) * tan(v_fov_rad / 2.0);
+        double zc = 1.0;
+
+        double theta = status.yaw_degree * M_PI / 180.0;
+        double phi = status.pitch_degree * M_PI / 180.0;
+
+        // Kebbi rotation: positive pitch is downward
+        double x_g = xc * cos(theta) + yc * sin(theta) * sin(phi) - zc * sin(theta) * cos(phi);
+        double y_g = yc * cos(phi) + zc * sin(phi);
+        double z_g = xc * sin(theta) - yc * cos(theta) * sin(phi) + zc * cos(theta) * cos(phi);
+
+        double x_z_norm = sqrt(x_g * x_g + z_g * z_g);
+        double target_theta = atan2(-x_g, z_g) * 180.0 / M_PI;
+        double target_phi = atan2(y_g, x_z_norm) * 180.0 / M_PI;
+
+        target_yaw = static_cast<int>(round(target_theta));
+        target_pitch = static_cast<int>(round(target_phi));
+    }
+    else
+    {
+        float yaw_shift = -(x - 0.5f) * 62.5f;
+        float pitch_shift = (y - 0.5f) * 48.9f;
+        target_yaw = status.yaw_degree + static_cast<int>(yaw_shift);
+        target_pitch = status.pitch_degree + static_cast<int>(pitch_shift);
+    }
+}
+
 // 3D Euclidean distance
 float euclidean_distance(const std::array<float, 3>& a, const std::array<float, 3>& b) {
     return std::sqrt(
@@ -57,12 +91,12 @@ int FaceLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
         {
             //Only Zenbo has theta, Kebbi does not have it.
 //            float theta = -(x-0.5)*62.5;
-            float pitch_shift = (y-0.5)*48.9;         //Kebbi's postive pitch degreee is downward
 //            command.set_degree(static_cast<int>(theta));
             command.set_yaw(0);
             status.yaw_degree = 0;
 
-            int pitch = status.pitch_degree + static_cast<int>(pitch_shift);
+            int dummy_yaw, pitch;
+            ComputeTargetYawPitch(x, y, status, action_option.bUseVisualCompass, dummy_yaw, pitch);
             if( pitch < -20 ) pitch = -20;
             if( pitch > 20 ) pitch = 20;
             command.set_pitch(pitch);
@@ -95,16 +129,13 @@ int FaceLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
         }
         else  //move head
         {
-            float yaw_shift = -(x-0.5)*62.5;
-            float pitch_shift = (y-0.5)*48.9;         //Kebbi's postive pitch degree is downward
-            //I need to know current yaw
-            int yaw = status.yaw_degree + static_cast<int>(yaw_shift);
+            int yaw, pitch;
+            ComputeTargetYawPitch(x, y, status, action_option.bUseVisualCompass, yaw, pitch);
             if( yaw < -40) yaw = -40;
             if( yaw > 40) yaw = 40;
             command.set_yaw(yaw);
             status.yaw_degree = yaw;
             
-            int pitch = status.pitch_degree + static_cast<int>(pitch_shift);
             if( pitch < -20 ) pitch = -20;
             if( pitch > 20 ) pitch = 20;
             command.set_pitch(pitch);
@@ -137,12 +168,12 @@ int PoseLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
         {
             //Only Zenbo has theta, Kebbi does not have it.
 //            float theta = -(x-0.5)*62.5;
-            float pitch_shift = (y-0.5)*48.9;         //Kebbi's postive pitch degreee is downward
 //            command.set_degree(static_cast<int>(theta));
             command.set_yaw(0);
             status.yaw_degree = 0;
 
-            int pitch = status.pitch_degree + static_cast<int>(pitch_shift);
+            int dummy_yaw, pitch;
+            ComputeTargetYawPitch(x, y, status, action_option.bUseVisualCompass, dummy_yaw, pitch);
             if( pitch < -20 ) pitch = -20;
             if( pitch > 20 ) pitch = 20;
             command.set_pitch(pitch);
@@ -172,16 +203,13 @@ int PoseLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
         }
         else  //move head
         {
-            float yaw_shift = -(x-0.5)*62.5;        //The 62.5 and 48.9 are Zenbo's camera horizontal and vertical view angle
-            float pitch_shift = (y-0.5)*48.9;       //Kebbi's postive pitch degreee is downward
-            //I need to know current yaw
-            int yaw = status.yaw_degree + static_cast<int>(yaw_shift);
+            int yaw, pitch;
+            ComputeTargetYawPitch(x, y, status, action_option.bUseVisualCompass, yaw, pitch);
             if( yaw < -40) yaw = -40;
             if( yaw > 40) yaw = 40;
             command.set_yaw(yaw);
             status.yaw_degree = yaw;
 
-            int pitch = status.pitch_degree + static_cast<int>(pitch_shift);
             if( pitch < -20 ) pitch = -20;
             if( pitch > 20 ) pitch = 20;
             command.set_pitch(pitch);
@@ -216,12 +244,12 @@ int PoseLandmarks_to_RobotAction_yolo(std::vector<std::vector<std::array<float, 
         {
             //Only Zenbo has theta, Kebbi does not have it.
 //            float theta = -(x-0.5)*62.5;
-            float pitch_shift = (y-0.5)*48.9;         //Kebbi's postive pitch degreee is downward
 //            command.set_degree(static_cast<int>(theta));
             command.set_yaw(0);
             status.yaw_degree = 0;
 
-            int pitch = status.pitch_degree + static_cast<int>(pitch_shift);
+            int dummy_yaw, pitch;
+            ComputeTargetYawPitch(x, y, status, action_option.bUseVisualCompass, dummy_yaw, pitch);
             if( pitch < -20 ) pitch = -20;
             if( pitch > 20 ) pitch = 20;
             command.set_pitch(pitch);
@@ -238,6 +266,7 @@ int PoseLandmarks_to_RobotAction_yolo(std::vector<std::vector<std::array<float, 
             prev_x = x;
             if(x > 0.55)
             {
+                //This is Kebbi's command. I can only control the rotation speed.
                 command.set_turnspeed(-30.0f * mag);
             }
             else if (x < 0.45)
@@ -251,16 +280,13 @@ int PoseLandmarks_to_RobotAction_yolo(std::vector<std::vector<std::array<float, 
         }
         else  //move head
         {
-            float yaw_shift = -(x-0.5)*62.5;        //The 62.5 and 48.9 are Zenbo's camera horizontal and vertical view angle
-            float pitch_shift = (y-0.5)*48.9;       //Kebbi's postive pitch degreee is downward
-            //I need to know current yaw
-            int yaw = status.yaw_degree + static_cast<int>(yaw_shift);
+            int yaw, pitch;
+            ComputeTargetYawPitch(x, y, status, action_option.bUseVisualCompass, yaw, pitch);
             if( yaw < -40) yaw = -40;
             if( yaw > 40) yaw = 40;
             command.set_yaw(yaw);
             status.yaw_degree = yaw;
 
-            int pitch = status.pitch_degree + static_cast<int>(pitch_shift);
             if( pitch < -20 ) pitch = -20;
             if( pitch > 20 ) pitch = 20;
             command.set_pitch(pitch);
@@ -268,6 +294,5 @@ int PoseLandmarks_to_RobotAction_yolo(std::vector<std::vector<std::array<float, 
             status.pitch_degree = pitch;
         }
     }
-    //command.set_turnspeed(20);
     return 1;
 }

@@ -46,7 +46,10 @@ int main(int argc, char *argv[])
     if (msetting.bHideCursor) {
         app.setOverrideCursor(Qt::BlankCursor);
     }
-    
+    // 2026/05/20 How to enable the cursor again? app.restoreOverrideCursor();
+    // How to call this function in the MainWindow when the user clicks a button to show/hide the cursor? You can use a signal-slot mechanism to achieve this. For example, you can define a slot in your MainWindow class that toggles the cursor visibility and connect it to a button click signal.
+    // Can I only override cursor for a specific window instead of the whole application? Yes, you can set the cursor for a specific window by calling setCursor() on that window instance. For example, if you want to hide the cursor only in the MainWindow, you can do something like this:
+
     w.show();
     app.exec();
     return 1;
