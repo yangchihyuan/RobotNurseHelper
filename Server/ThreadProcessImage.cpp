@@ -773,3 +773,11 @@ cv::Rect ThreadProcessImage::GetBoundingBoxFromLandmarks(
 string ThreadProcessImage::GetPatientGender() { return msPatientGender; }
 
 int ThreadProcessImage::GetPatientAge() { return miPatientAge; }
+
+Mat ThreadProcessImage::getLatestFrame() {
+  Mat frame;
+  mtx_UpdateOutFrame.lock();
+  outFrame.copyTo(frame);
+  mtx_UpdateOutFrame.unlock();
+  return frame;
+}

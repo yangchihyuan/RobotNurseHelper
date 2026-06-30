@@ -72,7 +72,7 @@ set(PROTO_FILE ${ROBOT_MODEL}/RobotCommand.proto)
 my_protobuf_generate_cpp(PROTO_SRC PROTO_HDR ${PROTO_FILE})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-find_package(OpenCV COMPONENTS core highgui videoio imgproc imgcodecs dnn REQUIRED)
+find_package(OpenCV COMPONENTS core highgui videoio imgproc imgcodecs dnn calib3d REQUIRED)
 find_package(Qt6 COMPONENTS Core Widgets Network Multimedia MultimediaWidgets REQUIRED)   
 find_package(ICU REQUIRED COMPONENTS uc)
 

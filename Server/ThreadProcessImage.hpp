@@ -140,6 +140,7 @@ public:
 
     ActionOption action_option;
     Mat getOutFrame();
+    Mat getLatestFrame();
 
     string GetPatientGender();
     int GetPatientAge();
