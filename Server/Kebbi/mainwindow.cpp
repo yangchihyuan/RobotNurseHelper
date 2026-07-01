@@ -35,15 +35,7 @@ time_t start_dance_time = 0;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
-  LoadJSONFile(msetting, "json/Setting.json");
-
-  thread_whisper.model_file_path =
-      QString::fromStdString(ReplaceShellVariable(msetting.WhisperModel));
-  setLanguage(QString::fromStdString(msetting.Language));
-  thread_process_image.ImageSaveDirectory =
-      ReplaceShellVariable(msetting.ImageSaveDirectory);
-  thread_process_image.bSaveTransmittedImage = msetting.bSaveImages;
-
+  
   QStringList strList;
   strList.append("TTS_AngerA");
   strList.append("TTS_AngerB");

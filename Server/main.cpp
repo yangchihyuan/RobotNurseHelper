@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     QCoreApplication::setApplicationName("Robot Nurse Helper");
-    QCoreApplication::setApplicationVersion("2026.03.31");
+    QCoreApplication::setApplicationVersion("2026.07.01");
     //It does not work. My application does not have a icon.
     app.setWindowIcon(QIcon(":/ZenboNurse.png"));
 

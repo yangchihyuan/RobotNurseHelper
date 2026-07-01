@@ -1,0 +1,838 @@
+[
+    {
+        "iDurationLimitSeconds": 600,
+        "iNextStateIndex": 1,
+        "iStateIndex": 0,
+        "m_strFirstSentence": "I am ready. Please say \"start\" to begin the health education, or say \"introduce\" to hear my self-introduction.",
+        "m_strStateName": "Waiting for start",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_RE_Bow",
+        "sStateType": "Conversation",
+        "vSmallMotion": [
+            "666_BA_ArmSCircle",
+            "666_BA_ArmSSquare",
+            "666_BA_RArmCircleL",
+            "666_BA_RArmCircleR",
+            "666_BA_Nodhead",
+            "666_SA_Think",
+            "666_SP_Cheer"
+        ],
+        "v_str_KeyWordMoveToNextState": [
+            "start",
+            "begin",
+            "health education",
+            "introduce",
+            "introduction"
+        ],
+        "v_str_Action": [],
+        "sImageFileName": "Images/state 0.png"
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 2,
+        "iStateIndex": 1,
+        "m_strFirstSentence": "Hello, I am glad to be of service to you. I am Kebbi, the health education robot. How may I address you?",
+        "m_strStateName": "Greeting 1 and ask name",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_RE_Bow",
+        "sStateType": "Conversation",
+        "vSmallMotion": [
+            "666_BA_ArmSCircle",
+            "666_BA_ArmSSquare",
+            "666_BA_RArmCircleL",
+            "666_BA_RArmCircleR",
+            "666_BA_Nodhead",
+            "666_SA_Think",
+            "666_SP_Cheer"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 1.png"
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 3,
+        "iStateIndex": 2,
+        "m_strFirstSentence": "Hello {PatientTitle} {PatientName}, the doctor just checked and confirmed that you have cataracts. Have you recently felt that your vision is blurry, as if looking through a sheet of frosted glass, or do lights at night seem very scattered?",
+        "m_strStateName": "Greeting 2",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_BA_Nodhead",
+        "sStateType": "Conversation",
+        "vSmallMotion": [
+            "666_BA_ArmSCircle",
+            "666_BA_ArmSSquare",
+            "666_BA_RArmCircleL",
+            "666_BA_RArmCircleR"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 2.png"
+    },
+    {
+        "iDurationLimitSeconds": 38,
+        "iNextStateIndex": 4,
+        "iStateIndex": 3,
+        "m_strFirstSentence": "These are all typical symptoms of cataracts. Cataract surgery is currently the only effective way to improve vision. The procedure takes about 10 to 15 minutes, usually under local anesthesia, and you can return for a follow-up visit the next day. The surgical risk is relatively low, but complications such as infection, inflammation, or retinal detachment may still occur. After surgery, you need to follow medical advice, use eye drops on time, and avoid strenuous exercise to promote wound healing. Next, I will introduce intraocular lens surgery to you.",
+        "m_strStateName": "Greeting 3",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_BA_ArmSSquare",
+        "sStateType": "SaySomething",
+        "vSmallMotion": [
+            "666_BA_ArmSCircle",
+            "666_BA_ArmSSquare",
+            "666_BA_RArmCircleL",
+            "666_BA_RArmCircleR"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 3.png"
+    },
+    {
+        "iDurationLimitSeconds": 31,
+        "iNextStateIndex": 5,
+        "iStateIndex": 4,
+        "m_strFirstSentence": "There are two main methods of cataract surgery: phacoemulsification and femtosecond laser-assisted surgery. Femtosecond laser can help complete some of the more precise steps, such as incisions and pre-treatment of the lens, but the underlying principle of removing the cataract and implanting the artificial lens is the same for both procedures. Although femtosecond laser has higher precision, it is not covered by national health insurance and requires out-of-pocket payment.",
+        "m_strStateName": "Laser comparison",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_BA_ArmSSquare",
+        "sStateType": "SaySomething",
+        "vSmallMotion": [
+            "666_BA_ArmSCircle",
+            "666_BA_ArmSSquare",
+            "666_BA_RArmCircleL",
+            "666_BA_RArmCircleR"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 4.png"
+    },
+    {
+        "iDurationLimitSeconds": 56,
+        "iNextStateIndex": 6,
+        "iStateIndex": 5,
+        "m_strFirstSentence": "Before surgery, you must first decide whether to keep your nearsightedness prescription. In daily life, viewing distances can be roughly divided into: far distance (driving, outdoor activities), intermediate distance (using a computer, cooking, about 50-75 cm), and near distance (reading, using a smartphone, about 30 cm). After cataract surgery, your eyes will no longer have accommodative power; instead, the distance you can see clearly is determined by the power of the implanted lens. If a monofocal artificial lens is implanted, one specific focal distance will be clearest, while the other two distances will require assistance from glasses. Choosing a multifocal lens eliminates the need for glasses and can adapt to different distances, but you still need to be aware of potential nighttime glare, and ensure there are no other eye diseases to achieve the best performance of the lens.",
+        "m_strStateName": "keep nearsightedness or not",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_BA_ArmSSquare",
+        "sStateType": "SaySomething",
+        "vSmallMotion": [
+            "666_BA_ArmSCircle",
+            "666_BA_ArmSSquare",
+            "666_BA_RArmCircleL",
+            "666_BA_RArmCircleR"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 5.png"
+    },
+    {
+        "iDurationLimitSeconds": 27,
+        "iNextStateIndex": 7,
+        "iStateIndex": 6,
+        "m_strFirstSentence": "Let me help you summarize the differences between various intraocular lenses. Simply put, choosing an artificial lens is like buying glasses: monofocal only lets you choose to see far *or* near, while multifocal and trifocal lenses essentially build reading glasses directly into your eyes. Extended depth of focus, EDOF, makes your view at intermediate distances the most natural. These functions vary greatly in terms of lifestyle habits and costs.",
+        "m_strStateName": "Visualized Lens Comparison",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_BA_ArmSCircle",
+        "sStateType": "SaySomething",
+        "vSmallMotion": [
+            "666_BA_Nodhead",
+            "666_SA_Think",
+            "666_BA_RArmCircleL"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 6.png"
+    },
+    {
+        "iDurationLimitSeconds": 40,
+        "iNextStateIndex": 8,
+        "iStateIndex": 7,
+        "m_strFirstSentence": "You can choose based on what you do most often. If you frequently cook, play cards, or work on a computer, the extended depth of focus, EDOF, lens can provide the most comfortable visual quality. If you want to use a phone or computer without searching for glasses, a trifocal or multifocal lens will be more convenient. In addition, for those who often drive at night, an aspheric or extended depth of focus lens is recommended as they can reduce nighttime glare, making driving safer. After hearing this, do you have a preferred choice in mind?",
+        "m_strStateName": "Lifestyle Selection Guide",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_SP_Cheer",
+        "sStateType": "SaySomething",
+        "vSmallMotion": [
+            "666_BA_ArmSSquare",
+            "666_BA_RArmCircleR"
+        ],
+        "v_str_KeyWordMoveToNextState": [
+            "yes",
+            "yeah",
+            "I do",
+            "have",
+            "preferred"
+        ],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 7.png"
+    },
+    {
+        "iDurationLimitSeconds": 55,
+        "iNextStateIndex": 9,
+        "iStateIndex": 8,
+        "m_strFirstSentence": "Here is an estimated price list for the surgery and lenses. National health insurance covers the basic monofocal spherical lens, but it only allows you to see far, and you will still need reading glasses for near distance. For near and far distances, a multifocal lens costs about 60,000 NTD. For intermediate and far distances, an extended depth of focus, EDOF, lens costs about 75,000 NTD. If you want to cover far, intermediate, and near vision all at once, you can pay out-of-pocket for a trifocal lens, which costs about 85,000 to 100,000 NTD. Patients with astigmatism can choose astigmatism-correcting versions, which include monofocal astigmatism-correcting and EDOF astigmatism-correcting lenses. The cost varies based on the surgical method, femtosecond laser vs. phacoemulsification, and the type of lens. We recommend discussing this with your primary physician to find the most suitable option for you.",
+        "m_strStateName": "laser price",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_BA_ArmSCircle",
+        "sStateType": "SaySomething",
+        "vSmallMotion": [
+            "666_BA_Nodhead",
+            "666_SA_Think",
+            "666_BA_RArmCircleL"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/price.png"
+    },
+    {
+        "iDurationLimitSeconds": 40,
+        "iNextStateIndex": 10,
+        "iStateIndex": 9,
+        "m_strFirstSentence": "Multifocal lenses may also cause some side effects after surgery. Some patients, especially at night, may experience halo dispersion when looking at lights, circular rings appearing around light sources, or light rays radiating outward. These phenomena vary from person to person, and most patients will gradually adapt within 3 to 6 months. If you need to drive at night, it is highly recommended to discuss this fully with your doctor before surgery to choose the lens that best fits your lifestyle.",
+        "m_strStateName": "laser sequence",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_BA_ArmSCircle",
+        "sStateType": "SaySomething",
+        "vSmallMotion": [
+            "666_BA_Nodhead",
+            "666_SA_Think",
+            "666_BA_RArmCircleL"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/sequence.png"
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 11,
+        "iStateIndex": 10,
+        "m_strFirstSentence": "Next, let's play a quick quiz to check your understanding of intraocular lens functions.",
+        "m_strStateName": "Question about preop care",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_SA_Think",
+        "sStateType": "SaySomething",
+        "vSmallMotion": [
+            "666_BA_Nodhead"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": [
+            "KeepSilentOff",
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 10.png"
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 12,
+        "iStateIndex": 11,
+        "m_strFirstSentence": "First question: If you choose a 'monofocal' lens and can see far away clearly, do you need to wear reading glasses to look at your phone or read a book?",
+        "m_strStateName": "Quiz Q1 - Vision Scope",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_BA_Nodhead",
+        "sStateType": "Conversation",
+        "vSmallMotion": [
+            "666_BA_Nodhead"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 11.png"
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 13,
+        "iStateIndex": 12,
+        "m_strFirstSentence": "Second question: If you usually enjoy cooking or using a computer, which belongs to 'intermediate distance', which type of lens is more natural for intermediate vision and provides continuous eyesight?",
+        "m_strStateName": "Quiz Q2 - Mid distance",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_SA_Think",
+        "sStateType": "Conversation",
+        "vSmallMotion": [
+            "666_BA_Nodhead"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 12.png"
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 14,
+        "iStateIndex": 13,
+        "m_strFirstSentence": "Third question: If you hope that after the surgery, you won't need to wear glasses 'most of the time' for driving, looking at the computer, or reading your phone, which type of lens is best suited for you?",
+        "m_strStateName": "Quiz Q3 - Comprehensive Vision",
+        "m_strSystemMessage": "",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_SP_Cheer",
+        "sStateType": "Conversation",
+        "vSmallMotion": [
+            "666_BA_Nodhead"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 13.png"
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 15,
+        "iStateIndex": 14,
+        "m_strFirstSentence": "Wonderful! You are now very clear about the differences between these lenses. Finally, let's learn about the precautions before and after surgery.",
+        "m_strStateName": "Transition to Postop",
+        "m_strSystemMessage": "",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_SP_Cheer",
+        "sStateType": "SaySomething",
+        "vSmallMotion": [
+            "666_BA_Nodhead"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 14.png"
+    },
+    {
+        "iDurationLimitSeconds": 7,
+        "iNextStateIndex": 16,
+        "iStateIndex": 15,
+        "m_strFirstSentence": "Next, please watch this pre-operative health education video first.",
+        "m_strStateName": "Introduce preop care",
+        "m_strSystemMessage": "",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_BA_RHandR03",
+        "sStateType": "SaySomething",
+        "vSmallMotion": [
+            "666_BA_ArmSCircle",
+            "666_BA_ArmSSquare",
+            "666_BA_RArmCircleL",
+            "666_BA_RArmCircleR"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": ""
+    },
+    {
+        "iDurationLimitSeconds": 99,
+        "iNextStateIndex": 17,
+        "iStateIndex": 16,
+        "m_strFirstSentence": "",
+        "m_strStateName": "Introduce preop care",
+        "m_strSystemMessage": "",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_SP_Cheer",
+        "sStateType": "PlayVideo",
+        "vSmallMotion": [
+            "666_BA_ArmSCircle",
+            "666_BA_ArmSSquare",
+            "666_BA_RArmCircleL",
+            "666_BA_RArmCircleR"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": [
+            "KeepSilent",
+            "PlayVideo:Videos/Cataract_Preop.mp4",
+            "AccumulateConversation",
+            "InsertAssitantMessage:Point 1: Please get plenty of sleep the night before surgery. Keeping your body and eyes well-rested before surgery helps the procedure go smoothly. Point 2: Please prepare surgery-related documents and your health insurance card. On the day of surgery, please remember to bring your health insurance card, surgical consent form, and other related documents so that the medical staff can process the paperwork more smoothly, making the whole flow more efficient and avoiding the trouble of looking for documents last minute. Point 3: Please wear lightweight clothing on the day of surgery. Choose loose, easy-to-change clothing, which will be more convenient during the surgery and when changing clothes, and will also make you feel more comfortable. Point 4: Do not wear any jewelry before surgery. This includes necklaces, earrings, bracelets, etc., to avoid inconveniences during the operation and ensure the safety and success of the surgery. Point 5: Do not touch anything arbitrarily during the surgery. Please do not touch the sterilized area during the surgery. This is because the nurse has carefully sterilized the related area before the surgery; if you touch it, it must be sterilized again, which not only increases the risk of infection but also prolongs the surgical time, so please be patient and avoid touching. Point 6: Please go to the pharmacy counter after the surgery. After resting, please proceed to the medicine collection counter, where the nursing staff will prepare your post-operative medications and instruct you in detail on post-operative care precautions, so you know how to take care of yourself next."
+        ],
+        "sImageFileName": ""
+    },
+    {
+        "iDurationLimitSeconds": 20,
+        "iNextStateIndex": 18,
+        "iStateIndex": 17,
+        "m_strFirstSentence": "Now that the video is finished, let's do a 5-question quiz to make sure you remember the pre-operative precautions. Please say 'ready' or 'yes' when you are ready.",
+        "m_strStateName": "Preop Quiz Intro",
+        "m_strSystemMessage": "",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_SA_Think",
+        "sStateType": "RobotAskPatientAnswer",
+        "vSmallMotion": [
+            "666_BA_Nodhead"
+        ],
+        "v_str_KeyWordMoveToNextState": [
+            "ok",
+            "okay",
+            "yes",
+            "ready",
+            "I'm ready",
+            "prepared"
+        ],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": ""
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 19,
+        "iStateIndex": 18,
+        "m_strFirstSentence": "First question: What is the most important preparation the night before surgery?",
+        "m_strStateName": "Preop Quiz Q1 - Sleep",
+        "m_strSystemMessage": "",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_BA_Nodhead",
+        "sStateType": "RobotAskPatientAnswer",
+        "vSmallMotion": [
+            "666_SA_Think"
+        ],
+        "v_str_KeyWordMoveToNextState": [
+            "enough sleep",
+            "sleep well",
+            "plenty of sleep",
+            "rest",
+            "sufficient sleep",
+            "sleep"
+        ],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 18.png"
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 20,
+        "iStateIndex": 19,
+        "m_strFirstSentence": "Second question: What important things should you remember to bring on the day of surgery to process the paperwork?",
+        "m_strStateName": "Preop Quiz Q2 - Documents",
+        "m_strSystemMessage": "",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_SA_Think",
+        "sStateType": "RobotAskPatientAnswer",
+        "vSmallMotion": [
+            "666_BA_Nodhead"
+        ],
+        "v_str_KeyWordMoveToNextState": [
+            "health insurance card",
+            "consent form",
+            "documents",
+            "paperwork",
+            "card",
+            "consent"
+        ],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 19.png"
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 21,
+        "iStateIndex": 20,
+        "m_strFirstSentence": "Third question: What kind of clothing is recommended on the day of surgery for convenience?",
+        "m_strStateName": "Preop Quiz Q3 - Clothing",
+        "m_strSystemMessage": "",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_BA_Nodhead",
+        "sStateType": "RobotAskPatientAnswer",
+        "vSmallMotion": [
+            "666_SA_Think"
+        ],
+        "v_str_KeyWordMoveToNextState": [
+            "loose",
+            "comfortable",
+            "lightweight",
+            "easy to change",
+            "easy to wear",
+            "easy to put on",
+            "casual"
+        ],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 20.png"
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 22,
+        "iStateIndex": 21,
+        "m_strFirstSentence": "Fourth question: Can you wear necklaces, earrings, or bracelets before surgery?",
+        "m_strStateName": "Preop Quiz Q4 - No Jewelry",
+        "m_strSystemMessage": "",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_SA_Think",
+        "sStateType": "RobotAskPatientAnswer",
+        "vSmallMotion": [
+            "666_BA_Nodhead"
+        ],
+        "v_str_KeyWordMoveToNextState": [
+            "no",
+            "cannot",
+            "not allowed",
+            "don't",
+            "no jewelry"
+        ],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 21.png"
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 23,
+        "iStateIndex": 22,
+        "m_strFirstSentence": "Fifth question: After the surgery, where should you go to collect medication and listen to the nurse explain the care precautions?",
+        "m_strStateName": "Preop Quiz Q5 - Pharmacy Counter",
+        "m_strSystemMessage": "",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_SP_Cheer",
+        "sStateType": "RobotAskPatientAnswer",
+        "vSmallMotion": [
+            "666_BA_Nodhead"
+        ],
+        "v_str_KeyWordMoveToNextState": [
+            "pharmacy",
+            "pharmacy counter",
+            "dispensary",
+            "medicine collection",
+            "medicine counter",
+            "drugstore"
+        ],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 22.png"
+    },
+    {
+        "iDurationLimitSeconds": 100,
+        "iNextStateIndex": 24,
+        "iStateIndex": 23,
+        "m_strFirstSentence": "Do you have any questions about the content?",
+        "m_strStateName": "Question about preop care",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_SA_Think",
+        "sStateType": "Conversation",
+        "vSmallMotion": [],
+        "v_str_KeyWordMoveToNextState": [
+            "no",
+            "none",
+            "no questions",
+            "no problem",
+            "all clear"
+        ],
+        "v_str_Action": [
+            "KeepSilentOff",
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 23.png"
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 25,
+        "iStateIndex": 24,
+        "m_strFirstSentence": "Well done! You have mastered the key pre-operative points. If you have any further questions, I can explain them to you.",
+        "m_strStateName": "Preop Quiz End",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_SP_Cheer",
+        "sStateType": "SaySomething",
+        "vSmallMotion": [
+            "666_BA_Nodhead"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/stat 23.png"
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 26,
+        "iStateIndex": 25,
+        "m_strFirstSentence": "Next, please watch this post-operative health education video.",
+        "m_strStateName": "Play postop health care video",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_SP_Cheer",
+        "sStateType": "SaySomething",
+        "vSmallMotion": [
+            "666_BA_ArmSCircle",
+            "666_BA_ArmSSquare",
+            "666_BA_RArmCircleL",
+            "666_BA_RArmCircleR"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": [],
+        "sImageFileName": "Images/state 25.png"
+    },
+    {
+        "iDurationLimitSeconds": 129,
+        "iNextStateIndex": 27,
+        "iStateIndex": 26,
+        "m_strFirstSentence": "",
+        "m_strStateName": "Play postop health care video",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_SP_Cheer",
+        "sStateType": "PlayVideo",
+        "vSmallMotion": [
+            "666_BA_ArmSCircle",
+            "666_BA_ArmSSquare",
+            "666_BA_RArmCircleL",
+            "666_BA_RArmCircleR"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": [
+            "KeepSilent",
+            "PlayVideo:Videos/Cataract_Postop.mp4",
+            "AccumulateConversation",
+            "InsertAssitantMessage:Post-operative precautions for cataracts. Point 1: No eye drops are needed when the eye is covered with gauze. On the day of surgery, your eye will be covered with gauze after the operation, so you do not need to use eye drops on that day. Simply start using the eye drops at the time instructed by your doctor. Point 2: Bring the medications prescribed on the day of surgery to your follow-up visit. When you return for a follow-up visit the day after surgery, please bring the medications prescribed by the doctor on the day of surgery, such as eye drops, ointments, eye shields, or care kits. After the doctor's examination, start using the eye drops according to instructions. Point 3: Sensitivity to light, tearing, and mild local stinging are normal. If you experience sensitivity to light, tearing, or mild stinging in your eyes after surgery, these are normal post-operative reactions. As long as you follow the care instructions, these symptoms will usually subside gradually, so there is no need to worry excessively. Point 4: Seek immediate medical attention or go to the emergency room if you experience any discomfort. If you experience sudden significant vision loss, abnormal pain, eye redness, heavy bleeding, or abnormal discharge after surgery, please return for a follow-up visit or go to the emergency room immediately. Point 5: Rest in bed as much as possible and avoid risky movements. On the day of surgery, please stay in bed as much as possible and avoid any dangerous movements that might cause ocular pressure, such as coughing forcefully, bending over, lifting heavy objects, or engaging in strenuous exercise, to avoid affecting wound healing. Point 6: Maintain a regular life and take medications on time. Please maintain a regular daily routine after surgery, keep your daily schedule stable, avoid overexertion, and take all prescribed medications on time as directed by your doctor. Point 7: Keep water out of your eyes for one month, and do not swim or exercise strenuously. For one month after surgery, please avoid letting water contact your eyes, and avoid swimming or any strenuous physical exercise to ensure eye safety. Point 8: Wear the eye shield for one month, both day and night. For one month after surgery, please wear the eye shield all day, especially during sleep, to ensure eye safety and protection."
+        ],
+        "sImageFileName": ""
+    },
+    {
+        "iDurationLimitSeconds": 20,
+        "iNextStateIndex": 28,
+        "iStateIndex": 27,
+        "m_strFirstSentence": "Now that the video is finished, let's also do a 5-question quiz to make sure you remember the key post-operative care points. Please say 'ready' or 'yes' when you are ready.",
+        "m_strStateName": "Postop Quiz Intro",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_SA_Think",
+        "sStateType": "RobotAskPatientAnswer",
+        "vSmallMotion": [
+            "666_BA_Nodhead"
+        ],
+        "v_str_KeyWordMoveToNextState": [
+            "ok",
+            "okay",
+            "yes",
+            "ready",
+            "I'm ready",
+            "prepared"
+        ],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 27.png"
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 29,
+        "iStateIndex": 28,
+        "m_strFirstSentence": "First question: When your eye is covered with gauze on the day of surgery, can you apply eye drops immediately?",
+        "m_strStateName": "Postop Quiz Q1 - No Drops With Gauze",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_BA_Nodhead",
+        "sStateType": "RobotAskPatientAnswer",
+        "vSmallMotion": [
+            "666_SA_Think"
+        ],
+        "v_str_KeyWordMoveToNextState": [
+            "no",
+            "don't need",
+            "unnecessary",
+            "not necessary",
+            "no need"
+        ],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 28.png"
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 30,
+        "iStateIndex": 29,
+        "m_strFirstSentence": "Second question: What are you recommended to bring for the doctor's confirmation during the next day's follow-up visit before starting use?",
+        "m_strStateName": "Postop Quiz Q2 - Bring Meds",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_SA_Think",
+        "sStateType": "RobotAskPatientAnswer",
+        "vSmallMotion": [
+            "666_BA_Nodhead"
+        ],
+        "v_str_KeyWordMoveToNextState": [
+            "medication",
+            "medicine",
+            "eye drops",
+            "ointment",
+            "eye shield",
+            "care kit",
+            "drops",
+            "shields",
+            "kits"
+        ],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 29.png"
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 31,
+        "iStateIndex": 30,
+        "m_strFirstSentence": "Third question: Are sensitivity to light, tearing, and mild stinging after surgery generally considered normal?",
+        "m_strStateName": "Postop Quiz Q3 - Normal Symptoms",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_BA_Nodhead",
+        "sStateType": "RobotAskPatientAnswer",
+        "vSmallMotion": [
+            "666_SA_Think"
+        ],
+        "v_str_KeyWordMoveToNextState": [
+            "yes",
+            "normal",
+            "yeah",
+            "correct"
+        ],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 30.png"
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 32,
+        "iStateIndex": 31,
+        "m_strFirstSentence": "Fourth question: If what conditions occur after surgery, do you need to return for a follow-up visit or go to the emergency room immediately? Please name just one.",
+        "m_strStateName": "Postop Quiz Q4 - Red Flags",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_SA_Think",
+        "sStateType": "RobotAskPatientAnswer",
+        "vSmallMotion": [
+            "666_BA_Nodhead"
+        ],
+        "v_str_KeyWordMoveToNextState": [
+            "sudden vision loss",
+            "vision loss",
+            "abnormal pain",
+            "eye redness",
+            "bleeding",
+            "discharge",
+            "blood",
+            "pain",
+            "red eye",
+            "pus"
+        ],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 31.png"
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 33,
+        "iStateIndex": 32,
+        "m_strFirstSentence": "Fifth question: How long after surgery must you keep water out of your eyes, and avoid swimming or strenuous exercise?",
+        "m_strStateName": "Postop Quiz Q5 - No Water One Month",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_SP_Cheer",
+        "sStateType": "RobotAskPatientAnswer",
+        "vSmallMotion": [
+            "666_BA_Nodhead"
+        ],
+        "v_str_KeyWordMoveToNextState": [
+            "one month",
+            "1 month",
+            "four weeks",
+            "4 weeks",
+            "30 days",
+            "a month"
+        ],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 32.png"
+    },
+    {
+        "iDurationLimitSeconds": 10,
+        "iNextStateIndex": 34,
+        "iStateIndex": 33,
+        "m_strFirstSentence": "Great! You remember the post-operative care points very clearly too. Next, if you have any questions, you can ask me directly.",
+        "m_strStateName": "Postop Quiz End",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_SP_Cheer",
+        "sStateType": "SaySomething",
+        "vSmallMotion": [
+            "666_BA_Nodhead"
+        ],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 34.png"
+    },
+    {
+        "iDurationLimitSeconds": 999,
+        "iNextStateIndex": 35,
+        "iStateIndex": 34,
+        "m_strFirstSentence": "Do you have any questions?",
+        "m_strStateName": "Q&A",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_SA_Think",
+        "sStateType": "Conversation",
+        "vSmallMotion": [],
+        "v_str_KeyWordMoveToNextState": [
+            "no",
+            "none",
+            "no questions",
+            "no problem",
+            "thank you",
+            "thanks"
+        ],
+        "v_str_Action": [
+            "KeepSilentOff",
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 34.png"
+    },
+    {
+        "iDurationLimitSeconds": 100,
+        "iNextStateIndex": 36,
+        "iStateIndex": 35,
+        "m_strFirstSentence": "Alright, that concludes our health education session for today. I wish you a successful surgery and a speedy recovery! If you have any questions, you can come and see me anytime!",
+        "m_strStateName": "Ending and Goodbye",
+        "sFace": "TTS_PeaceB",
+        "sMotion": "666_SA_Think",
+        "sStateType": "RobotAskPatientAnswer",
+        "vSmallMotion": [],
+        "v_str_KeyWordMoveToNextState": [
+            "ok",
+            "okay",
+            "goodbye",
+            "bye",
+            "thank you",
+            "thanks"
+        ],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 35.png"
+    },
+    {
+        "iDurationLimitSeconds": 100,
+        "iNextStateIndex": 37,
+        "iStateIndex": 36,
+        "m_strFirstSentence": "Goodbye!",
+        "m_strStateName": "Goodbye",
+        "sFace": "TTS_PeaceA",
+        "sMotion": "666_RE_Bye",
+        "sStateType": "SaySomething",
+        "vSmallMotion": [],
+        "v_str_KeyWordMoveToNextState": [],
+        "v_str_Action": [
+            "AccumulateConversation"
+        ],
+        "sImageFileName": "Images/state 36.png"
+    }
+]

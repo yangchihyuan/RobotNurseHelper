@@ -49,6 +49,19 @@ void MainWindow::startThreads()
 void MainWindow::setSettingFile(const QString &filePath)
 {
     LoadJSONFile(msetting, filePath.toStdString());
+
+    // Use the loaded Language setting to show and use the correct language
+    setLanguage(QString::fromStdString(msetting.Language));
+    ui->comboBox_Language->setCurrentText(QString::fromStdString(msetting.Language));
+    cout << "setLanguage msetting.Language: " << msetting.Language << endl;
+
+    // Apply the other settings loaded from the file
+    thread_whisper.model_file_path =
+        QString::fromStdString(ReplaceShellVariable(msetting.WhisperModel));
+    thread_process_image.ImageSaveDirectory =
+        ReplaceShellVariable(msetting.ImageSaveDirectory);
+    thread_process_image.bSaveTransmittedImage = msetting.bSaveImages;
+
     //After loading the setting, I can set the initial state of the state control thread.
     thread_state_control.SetSettingFile(filePath);
     thread_LLM.SetSettingFile(filePath);
