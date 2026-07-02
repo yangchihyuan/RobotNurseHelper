@@ -1,4 +1,5 @@
 #include "ThreadStateControl.hpp"
+#include <fstream>
 #include "utility_time.hpp"
 
 #include <cstdlib> // For rand() and srand()
@@ -30,6 +31,7 @@ void ThreadStateControl::InitializeStates()
     {
         mStates[i].m_secDurationLimit = chrono::seconds(mStates[i].iDurationLimitSeconds);
     }
+    LoadPatientTitles();
 }
 
 void ThreadStateControl::NextState()
@@ -438,27 +440,27 @@ string ThreadStateControl::ReplaceVariables(string sentence)
         {
             if( iPatientAge < 10 )
             {
-                msPatientTitle = "小朋友";
+                msPatientTitle = m_mapPatientTitles["Child"];
             }
             else if( iPatientAge < 20 )
             {
-                msPatientTitle = "同學";
+                msPatientTitle = m_mapPatientTitles["Youth"];
             }
             else
             {
                 if( sPatientGender == "Male" )
                 {
-                    msPatientTitle = "先生";
+                    msPatientTitle = m_mapPatientTitles["MaleAdult"];
                 }
                 else if ( sPatientGender == "Female" )
                 {
                     if( iPatientAge < 40 )
                     {
-                        msPatientTitle = "小姐";
+                        msPatientTitle = m_mapPatientTitles["FemaleYoungAdult"];
                     }
                     else
                     {
-                        msPatientTitle = "女士";
+                        msPatientTitle = m_mapPatientTitles["FemaleOlderAdult"];
                     }
                 }
                 else
@@ -481,5 +483,64 @@ void ThreadStateControl::Restart()
         state.bInitial = true;
         state.bWaitForTTSComplete = true;
         state.bEndState = false;
+    }
+}
+
+void ThreadStateControl::LoadPatientTitles()
+{
+    m_mapPatientTitles.clear();
+
+    // Set fallback defaults based on language
+    if (msetting.Language == "English") {
+        m_mapPatientTitles["Child"] = "Kid";
+        m_mapPatientTitles["Youth"] = "Student";
+        m_mapPatientTitles["MaleAdult"] = "Mr.";
+        m_mapPatientTitles["FemaleYoungAdult"] = "Miss";
+        m_mapPatientTitles["FemaleOlderAdult"] = "Ms.";
+    } else {
+        // Default to Chinese
+        m_mapPatientTitles["Child"] = "小朋友";
+        m_mapPatientTitles["Youth"] = "同學";
+        m_mapPatientTitles["MaleAdult"] = "先生";
+        m_mapPatientTitles["FemaleYoungAdult"] = "小姐";
+        m_mapPatientTitles["FemaleOlderAdult"] = "女士";
+    }
+
+    // Try to load from dynamic text file
+    string fileName = "PatientTitle_" + msetting.Language + ".txt";
+    ifstream file(fileName);
+    if (!file.is_open()) {
+        if (msetting.Language == "Arabic") {
+            fileName = "PatientTitle_English.txt";
+            file.open(fileName);
+        }
+    }
+
+    if (file.is_open()) {
+        string line;
+        while (getline(file, line)) {
+            // Trim whitespace
+            line.erase(0, line.find_first_not_of(" \t\r\n"));
+            line.erase(line.find_last_not_of(" \t\r\n") + 1);
+
+            if (line.empty() || line[0] == '#') continue;
+
+            size_t sep = line.find(':');
+            if (sep != string::npos) {
+                string key = line.substr(0, sep);
+                string value = line.substr(sep + 1);
+
+                // Trim key and value
+                key.erase(0, key.find_first_not_of(" \t\r\n"));
+                key.erase(key.find_last_not_of(" \t\r\n") + 1);
+                value.erase(0, value.find_first_not_of(" \t\r\n"));
+                value.erase(value.find_last_not_of(" \t\r\n") + 1);
+
+                m_mapPatientTitles[key] = value;
+            }
+        }
+        file.close();
+    } else {
+        cout << "Warning: Could not open patient title text file: " << fileName << ". Using defaults." << endl;
     }
 }

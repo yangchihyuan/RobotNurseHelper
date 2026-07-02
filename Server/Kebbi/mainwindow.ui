@@ -398,123 +398,48 @@
       <string>360° Surrounding Photos</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_photo_0">
-      <property name="geometry">
-       <rect>
-        <x>470</x>
-        <y>470</y>
-        <width>68</width>
-        <height>30</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>0° (Front)</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_photo_45">
-      <property name="geometry">
-       <rect>
-        <x>543</x>
-        <y>470</y>
-        <width>68</width>
-        <height>30</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>45°</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_photo_90">
-      <property name="geometry">
-       <rect>
-        <x>616</x>
-        <y>470</y>
-        <width>68</width>
-        <height>30</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>90°</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_photo_135">
-      <property name="geometry">
-       <rect>
-        <x>689</x>
-        <y>470</y>
-        <width>68</width>
-        <height>30</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>135°</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_photo_180">
-      <property name="geometry">
-       <rect>
-        <x>470</x>
-        <y>515</y>
-        <width>68</width>
-        <height>30</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>180°</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_photo_225">
-      <property name="geometry">
-       <rect>
-        <x>543</x>
-        <y>515</y>
-        <width>68</width>
-        <height>30</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>225°</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_photo_270">
-      <property name="geometry">
-       <rect>
-        <x>616</x>
-        <y>515</y>
-        <width>68</width>
-        <height>30</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>270°</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_photo_315">
-      <property name="geometry">
-       <rect>
-        <x>689</x>
-        <y>515</y>
-        <width>68</width>
-        <height>30</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>315°</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_test">
-      <property name="geometry">
-       <rect>
-        <x>470</x>
-        <y>560</y>
-        <width>90</width>
-        <height>30</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Test</string>
-      </property>
-     </widget>
+    <widget class="QLineEdit" name="lineEdit_photo_angle">
+     <property name="geometry">
+      <rect>
+       <x>470</x>
+       <y>470</y>
+       <width>100</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>0</string>
+     </property>
+     <property name="placeholderText">
+      <string>Angle (e.g. 90)</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_take_photo">
+     <property name="geometry">
+      <rect>
+       <x>580</x>
+       <y>470</y>
+       <width>180</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Take Reference Photo</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_test">
+     <property name="geometry">
+      <rect>
+       <x>470</x>
+       <y>515</y>
+       <width>90</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Test</string>
+     </property>
+    </widget>
    <widget class="QLabel" name="label_22">
     <property name="geometry">
      <rect>

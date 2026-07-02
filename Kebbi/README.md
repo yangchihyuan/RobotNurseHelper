@@ -3,7 +3,9 @@ This folder contains the source files to build a robot-side app for the Kebbi Ai
 ![Kebbi](KebbiAirS.png)
 
 # Developing Tool
-Android Studio Meerkat | 2024.3.1 Patch 2
+Android Studio Quail 1 | 2026.1.1 Patch 2
+
+
 
 # Platform
 Ubuntu 24.04
@@ -31,22 +33,37 @@ You need to log out and log in to activate your new group privilege.
 On the Kebbi robot, you need to enable its USB debugging mode.
 Kebbi's OS is Android 9, and you need to click "About Kebbi" (關於凱比) 10 times to turn on the Android developer mode.
 
-<img src="Photo_AboutKebbi.jpg" alt="Photo_AboutKebbi.jpg" height="200"/>
+<img src="ReadMe_Photos/AboutKebbi.jpg" alt="AboutKebbi.jpg" height="200"/>
 
-<img src="Photo_System.jpg" alt="Photo_System.jpg" height="200"/>
+Click the HOME SETTINGS (啟動器設定), you should see this Default apps screen.
 
-<img src="Photo_DeveloperOptions.jpg" alt="Photo_DeveloperOptions.jpg" height="200"/>
+<img src="ReadMe_Photos/Default_apps.jpg" alt="Default_apps.jpg" height="200"/>
 
-When the Android developer mode is available, go to the "Developer Options" and enable the "USB debugging".
+Click the left arrow symbol at the left-top corner to go back to the previous screen. Then you should see this search settings screen.
+
+<img src="ReadMe_Photos/Search_settings.jpg" alt="Search_settings.jpg" height="200"/>
+
+Scroll down until you see the "System" item. Click the "System", and then you should see this System screen.
+
+<img src="ReadMe_Photos/System.jpg" alt="System.jpg" height="200"/>
+
+Open the "Advanced" submenu, then click "Developer options".
+
+Scroll down until you see the "USB debugging" item.
+
+<img src="ReadMe_Photos/USB_debugging.jpg" alt="USB_debugging.jpg" height="200"/>
+
+Turn it on.
+
 After connecting to PC, you will see a dialog window to confirm your intention to connect this Android device to this PC. 
 
-<img src="Photo_ADB.jpg" alt="Photo_ADB.jpg" height="200"/>
+<img src="ReadMe_Photos/ADB.jpg" alt="ADB.jpg" height="200"/>
 
 Here, you need to key in the ADB (Android Debug Bridge) password !Q@W#E$R to ensure this step.
 
-<img src="Screenshot_Device.png" alt="Screenshot_Device.png" height="200"/>
+<img src="ReadMe_Photos/Screenshot_Device.png" alt="Screenshot_Device.png" height="200"/>
 
-<img src="Screenshot_DeviceDebugging.png" alt="Screenshot_DeviceDebugging.png" height="200"/>
+<img src="ReadMe_Photos/Screenshot_DeviceDebugging.png" alt="Screenshot_DeviceDebugging.png" height="200"/>
 
 
 There is another way to install our app through an APK file. From the Android Studio, create an APK and manually copy the APK file to a micro SD card. Insert the micro SD card into Kebbi's head socket, which is hided by a rectangle plastic lid. Launch Kebbi's file manager to open the APK file and install our app.

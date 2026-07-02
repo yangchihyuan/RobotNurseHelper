@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "utility_compass.hpp"
 #include <opencv2/features2d.hpp>
 #include <opencv2/calib3d.hpp>
 #include <opencv2/imgproc.hpp>
@@ -674,50 +675,23 @@ void MainWindow::on_pushButton_generate_response_clicked()
 //    thread_LLM.strPrompt = text.toStdString();      //The string is used here.
 }
 
-void MainWindow::on_pushButton_photo_0_clicked()
+void MainWindow::on_pushButton_take_photo_clicked()
 {
-    rotateAndTakePhoto(0, "photo_0");
-}
+    bool ok = false;
+    int angle = ui->lineEdit_photo_angle->text().toInt(&ok);
+    if (!ok) {
+        QMessageBox::warning(this, "Invalid Input", "Please enter a valid integer for the angle.");
+        return;
+    }
 
-void MainWindow::on_pushButton_photo_45_clicked()
-{
-    rotateAndTakePhoto(45, "photo_45");
-}
+    // Normalize angle to [0, 359]
+    angle = (angle % 360 + 360) % 360;
 
-void MainWindow::on_pushButton_photo_90_clicked()
-{
-    rotateAndTakePhoto(90, "photo_90");
-}
-
-void MainWindow::on_pushButton_photo_135_clicked()
-{
-    rotateAndTakePhoto(135, "photo_135");
-}
-
-void MainWindow::on_pushButton_photo_180_clicked()
-{
-    rotateAndTakePhoto(180, "photo_180");
-}
-
-void MainWindow::on_pushButton_photo_225_clicked()
-{
-    rotateAndTakePhoto(225, "photo_225");
-}
-
-void MainWindow::on_pushButton_photo_270_clicked()
-{
-    rotateAndTakePhoto(270, "photo_270");
-}
-
-void MainWindow::on_pushButton_photo_315_clicked()
-{
-    rotateAndTakePhoto(315, "photo_315");
+    rotateAndTakePhoto(angle, "photo_" + QString::number(angle));
 }
 
 void MainWindow::on_pushButton_test_clicked()
 {
-    std::cout << "Test button clicked: Estimating robot orientation using ORB..." << std::endl;
-
     // 1. Get current image
     cv::Mat queryImg = thread_process_image.getLatestFrame();
     if (queryImg.empty()) {
@@ -726,193 +700,23 @@ void MainWindow::on_pushButton_test_clicked()
         return;
     }
 
-    // Convert query image to grayscale if it is color
-    cv::Mat queryGray;
-    if (queryImg.channels() == 3) {
-        cv::cvtColor(queryImg, queryGray, cv::COLOR_BGR2GRAY);
-    } else {
-        queryGray = queryImg;
-    }
-
-    // 2. Locate the 8 saved photos in VisualCompass directory
-    QString dirPath = QString::fromStdString(ReplaceShellVariable(msetting.ImageSaveDirectory)) + "/VisualCompass";
-    QDir dir(dirPath);
-    if (!dir.exists()) {
-        std::cout << "Error: VisualCompass directory does not exist at: " << dirPath.toStdString() << std::endl;
-        QMessageBox::warning(this, "Orientation Estimation", "Error: VisualCompass directory does not exist: " + dirPath);
-        return;
-    }
-
-    QStringList filters;
-    filters << "photo_*_*.jpg";
-    QStringList fileList = dir.entryList(filters, QDir::Files, QDir::Time);
-
-    std::map<int, QString> latestPhotos;
-    std::vector<int> angles = {0, 45, 90, 135, 180, 225, 270, 315};
-    for (const QString &fileName : fileList) {
-        QStringList parts = fileName.split('_');
-        if (parts.size() >= 3 && parts[0] == "photo") {
-            bool ok = false;
-            int angle = parts[1].toInt(&ok);
-            if (ok && std::find(angles.begin(), angles.end(), angle) != angles.end()) {
-                if (latestPhotos.find(angle) == latestPhotos.end()) {
-                    latestPhotos[angle] = dir.absoluteFilePath(fileName);
-                }
-            }
-        }
-    }
-
-    if (latestPhotos.empty()) {
-        std::cout << "Error: No saved photos found in: " << dirPath.toStdString() << std::endl;
-        QMessageBox::warning(this, "Orientation Estimation", "Error: No saved photos found in directory.");
-        return;
-    }
-
-    // 3. Initialize ORB detector & BFMatcher
-    //cv::Ptr<> is OpenCV's smart pointer , similar to C++11 std::shared_ptr
-    cv::Ptr<cv::ORB> orb = cv::ORB::create(1000); // 1000 features
-    std::vector<cv::KeyPoint> queryKeypoints;
-    cv::Mat queryDescriptors;
-    orb->detectAndCompute(queryGray, cv::noArray(), queryKeypoints, queryDescriptors);
-
-    if (queryDescriptors.empty()) {
-        std::cout << "Error: No ORB features detected in the current frame." << std::endl;
-        QMessageBox::warning(this, "Orientation Estimation", "Error: No ORB features detected in current frame.");
-        return;
-    }
-
-    cv::BFMatcher matcher(cv::NORM_HAMMING, true); // crossCheck = true
-
-    std::vector<std::pair<int, int>> angleScores;
-    QString scoreDetails = "ORB Matching Scores (Homography Inliers):\n";
-
-    // 4. Compare current frame with each of the 8 saved photos
-    for (int angle : angles) {
-        if (latestPhotos.find(angle) == latestPhotos.end()) {
-            scoreDetails += QString::number(angle) + "°: No photo saved\n";
-            continue;
-        }
-
-        QString photoPath = latestPhotos[angle];
-        cv::Mat dbImg = cv::imread(photoPath.toStdString(), cv::IMREAD_GRAYSCALE);
-        if (dbImg.empty()) {
-            scoreDetails += QString::number(angle) + "°: Failed to load photo\n";
-            continue;
-        }
-
-        std::vector<cv::KeyPoint> dbKeypoints;
-        cv::Mat dbDescriptors;
-        //The second argument is the mask, which is used to specify the region of interest.
-        //cv::noArray() means no mask is used. In this case, the whole image is used.
-        //The third and fourth arguments are the keypoints and descriptors.
-        //Each row in dbDescriptors corresponds to a keypoint in dbKeypoints. In ORB, each descriptor is a 32-byte binary vector representing the surrounding pixel pattern. These descriptors are what the matcher compares to find matches between different images.
-        orb->detectAndCompute(dbImg, cv::noArray(), dbKeypoints, dbDescriptors);
-
-        if (dbDescriptors.empty()) {
-            scoreDetails += QString::number(angle) + "°: No database ORB features\n";
-            continue;
-        }
-
-        std::vector<cv::DMatch> matches;            //matches is a vector of cv::DMatch objects. Each cv::DMatch object stores the indices of the matched keypoints (queryIdx and trainIdx) and the distance between the two descriptors. In this case, 
-        matcher.match(queryDescriptors, dbDescriptors, matches);
-
-        // Filter good matches
-        double minDist = 100.0;     //This is an initial large value
-        for (const auto &match : matches) {
-            if (match.distance < minDist) minDist = match.distance;
-        }
-        std::vector<cv::DMatch> goodMatches;
-        for (const auto &match : matches) {
-            //This is an adaptive threshold. The minimal is 30. If the minDist is large, i.e. bad matches, it will use a loose threshold.
-            if (match.distance <= std::max(2.0 * minDist, 30.0)) {
-                goodMatches.push_back(match);
-            }
-        }
-
-        // RANSAC homography check for geometric validation
-        int score = 0;
-        if (goodMatches.size() >= 4) {
-            std::vector<cv::Point2f> srcPoints, dstPoints;
-            for (const auto &m : goodMatches) {
-                srcPoints.push_back(queryKeypoints[m.queryIdx].pt);
-                dstPoints.push_back(dbKeypoints[m.trainIdx].pt);
-            }
-            cv::Mat mask;     //this is the output array of the findHomography function. 
-            cv::Mat H = cv::findHomography(srcPoints, dstPoints, cv::RANSAC, 3.0, mask);
-            if (!H.empty()) {
-                score = cv::countNonZero(mask);
+    std::cout << "Test button clicked: Estimating robot orientation using ORB..." << std::endl;
+    std::string errorDetails;
+    double estimatedAngle = ::ComputeVisualCompassTheta(queryImg, msetting.ImageSaveDirectory, errorDetails);
+    if (estimatedAngle < 0.0) {
+        if (!errorDetails.empty()) {
+            if (errorDetails.rfind("Error:", 0) == 0) {
+                QMessageBox::warning(this, "Orientation Estimation", QString::fromStdString(errorDetails));
             } else {
-                score = goodMatches.size();
+                QMessageBox::information(this, "Orientation Estimation", QString::fromStdString(errorDetails));
             }
-        } else {
-            score = goodMatches.size();
         }
-
-        //score in fact is the number of goodMatches.
-        scoreDetails += QString::number(angle) + "°: " + QString::number(score) + " inliers (from " + photoPath.split('/').last() + ")\n";
-        angleScores.push_back({score, angle});
+        return;
     }
+    QString resultMessage = QString("Estimated orientation angle: %1° (interpolated)\n")
+                            .arg(QString::number(estimatedAngle, 'f', 1));
 
-    // Filter valid scores (> 0)
-    // The scores are always greater than 0. I never saw it's 0.
-    std::vector<std::pair<int, int>> validScores;
-    for (const auto &p : angleScores) {     //There are 8 elements in angleScores. One for each 45 degrees.
-        if (p.first > 0) {
-            validScores.push_back(p);
-        }
-    }
-
-    if (validScores.empty()) {
-        std::cout << "Failed to determine orientation (no matching features)." << std::endl;
-        QMessageBox::information(this, "Orientation Estimation", "Failed to determine orientation (no matching features).\n\n" + scoreDetails);
-    } else {
-        // Sort in descending order of scores
-        std::sort(validScores.begin(), validScores.end(), [](const std::pair<int, int> &a, const std::pair<int, int> &b) {
-            return a.first > b.first;
-        });
-
-        double estimatedAngle = 0.0;
-        QString resultMessage;
-
-        //This case is very unlikely to happen.
-        if (validScores.size() == 1) {
-            estimatedAngle = validScores[0].second;
-            resultMessage = QString("Estimated orientation angle: %1°\n(Best Match: %2° with Score: %3)")
-                            .arg(estimatedAngle)
-                            .arg(validScores[0].second)
-                            .arg(validScores[0].first);
-        } else {
-            // Interpolate using the two best matches
-            int S_1 = validScores[0].first;         //score of the best match
-            int theta1 = validScores[0].second;     //angle of the best match
-            int S_2 = validScores[1].first;         //score of the second best match
-            int theta2 = validScores[1].second;     //angle of the second best match
-
-            const double PI = 3.14159265358979323846;
-            double theta1_rad = theta1 * PI / 180.0;
-            double theta2_rad = theta2 * PI / 180.0;
-
-            double x = S_1 * cos(theta1_rad) + S_2 * cos(theta2_rad);       //the averaged x component
-            double y = S_1 * sin(theta1_rad) + S_2 * sin(theta2_rad);       //the averaged y component
-            double interp_rad = atan2(y, x);
-            estimatedAngle = interp_rad * 180.0 / PI;
-            if (estimatedAngle < 0) {
-                estimatedAngle += 360.0;
-            }
-
-            resultMessage = QString("Estimated orientation angle: %1° (interpolated)\n"
-                                    "Best Match: %2° (Score: %3)\n"
-                                    "Second Best Match: %4° (Score: %5)")
-                            .arg(QString::number(estimatedAngle, 'f', 1))
-                            .arg(theta1)
-                            .arg(S_1)
-                            .arg(theta2)
-                            .arg(S_2);
-        }
-
-        std::cout << resultMessage.toStdString() << std::endl;
-        QMessageBox::information(this, "Orientation Estimation", resultMessage + "\n\n" + scoreDetails);
-    }
+    std::cout << resultMessage.toStdString() << std::endl;
+    QMessageBox::information(this, "Orientation Estimation", resultMessage);
 }
-
 

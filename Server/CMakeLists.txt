@@ -109,6 +109,7 @@ set(SOURCES AnythingLLM.cpp
             utility_string.cpp
             utility_time.cpp
             utility_KebbiMotion.cpp
+            utility_compass.cpp
             silero-vad-onnx.cpp
     )
 

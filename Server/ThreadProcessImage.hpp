@@ -11,6 +11,7 @@
 #include <thread>
 #include <condition_variable>
 #include <atomic>
+#include <chrono>
 #include "ThreadSafeQueue.hpp"
 #include "SendMessageManager.hpp"
 #include "ActionOption.hpp"
@@ -175,6 +176,11 @@ protected:
 
     string msPatientGender = "Unknown"; //default
     int miPatientAge = -1; //default -1 means unknown age
+
+    std::chrono::time_point<std::chrono::system_clock> m_LastPersonDetectedTime;
+    std::chrono::time_point<std::chrono::system_clock> m_LastCompassCheckTime;
+    bool m_bTurningToZero = false;
+    bool m_bBodyAtZero = false;
 };
 
 #endif
