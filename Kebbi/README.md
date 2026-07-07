@@ -31,11 +31,11 @@ sudo apt-get install android-sdk-platform-tools-common
 You need to log out and log in to activate your new group privilege.
 
 On the Kebbi robot, you need to enable its USB debugging mode.
-Kebbi's OS is Android 9, and you need to click "About Kebbi" (關於凱比) 10 times to turn on the Android developer mode.
+Kebbi's OS is Android 9, and you need to click "About Kebbi"10 times to turn on the Android developer mode.
 
 <img src="ReadMe_Photos/AboutKebbi.jpg" alt="AboutKebbi.jpg" height="200"/>
 
-Click the HOME SETTINGS (啟動器設定), you should see this Default apps screen.
+Click the HOME SETTINGS, you should see this Default apps screen.
 
 <img src="ReadMe_Photos/Default_apps.jpg" alt="Default_apps.jpg" height="200"/>
 
