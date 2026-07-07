@@ -314,9 +314,9 @@ void ThreadProcessImage::run() {
                         NL_pose = get_landmarks_pose(libmp_pose); // I use this to guide robot's movement
                         //260702 How to get the confidence of each landmark?
                         //No, the 3rd column is not the confidence. It is the z coordinate.
-                        for (int i = 0; i < 3; i++) {
-                            cout << "Landmark " << i << ": " << NL_pose[0][i][0] << ", " << NL_pose[0][i][1] << ", " << NL_pose[0][i][2] << endl;
-                        }
+                        //for (int i = 0; i < 3; i++) {
+                        //    cout << "Landmark " << i << ": " << NL_pose[0][i][0] << ", " << NL_pose[0][i][1] << ", " << NL_pose[0][i][2] << endl;
+                        //}
                     }
                 }
 
