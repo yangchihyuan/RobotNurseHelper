@@ -1,6 +1,6 @@
 This folder contains the code files for the server side program of RobotNurseHelper. It provides an Graphic User Interface (GUI) for a user to remotely control the robot's action. The GUI currently looks like the image below and allows a user to send commands to the robot-side's app, which calls Zenbo SDK or Kebbi SDK to execute those commands.
 
-![GUI](GUI.jpg "GUI")
+![GUI](README_Images/GUI.jpg "GUI")
 
 # Install
 We create a script file to install our code and all required libraries MediaPipe, OpenCV, git, gcc, Protocol Buffer, Qt, and PortAudio.
