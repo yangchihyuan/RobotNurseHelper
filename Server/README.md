@@ -23,30 +23,31 @@ Our server-side program requires a GPU to run Whisper.cpp and AnythingLLM rapidl
 
 The install.sh file install AnythingLLM in your machine, but it cannot configure the program. We need to do it manually. The steps are descrbied here.
 
-1. Launch AnythingLLM
-2. Create a new workspace named 'cataract'.
+(1) Launch AnythingLLM
 
-![CreateWorkspace](README_Images/CreateWorkspace.png)
+(2) Create a new workspace named 'cataract'.
 
-3. Upload the CataractRAG.txt to cataract workspace if your language is Chinese and CataractRAG_English.txt to cataract workspace if your language is English.
+<img src="./README_Images/CreateWorkspace.png" alt="CreateWorkspace" height="200">
 
-![UploadRAGText](README_Images/UploadRAGText.png)
+(3) Upload the CataractRAG.txt to cataract workspace if your language is Chinese and CataractRAG_English.txt to cataract workspace if your language is English.
 
-4. Set the workspace LLM provider as Ollama, and set the model as gemma3:1b (default). If your machine has more than 16G VRAM, you can also set the model as gemma3:4b or gemma3:12b to let the RAG function have a better performance. But it will be slower to generate the first token because the model is larger. However, the larger the model, the longer the inference latency. You need to consider the trade-off between your machine's computational capability and the model performance.
+<img src="./README_Images/UploadRAGText.png" alt="UploadRAGText" height="300">
 
-![LLMModelSetting](README_Images/LLMModelSetting.png)
+(4) Set the workspace LLM provider as Ollama, and set the model as gemma3:1b (default). If your machine has more than 16G VRAM, you can also set the model as gemma3:4b or gemma3:12b to let the RAG function have a better performance. But it will be slower to generate the first token because the model is larger. However, the larger the model, the longer the inference latency. You need to consider the trade-off between your machine's computational capability and the model performance.
 
-5. Copy the System Prompt from the file LLM/AnythingLLM_Setting.txt, then paste it to the System Prompt in the workspace settings. Remember to click the "Update Workspace" button.
+<img src="./README_Images/LLMModelSetting.png" alt="LLMModelSetting" height="200">
 
-![SystemPrompt](README_Images/SystemPrompt.png)
+(5) Copy the System Prompt from the file LLM/AnythingLLM_Setting.txt, then paste it to the System Prompt in the workspace settings. Remember to click the "Update Workspace" button.
 
-6. Create a new API key.
+<img src="./README_Images/SystemPrompt.png" alt="SystemPrompt" height="200">
 
-![APIKeys](README_Images/APIKeys.png)
+(6) Create a new API key.
+
+<img src="./README_Images/APIKeys.png" alt="APIKeys" height="300">
 
 7. Copy the API key and paste it in your setting file to the item AnythingLLM_API_key, and ensure the item AnythingLLM_workspace_slug is set to 'cataract'. Sometimes, the workspace name is different from the workspace slug when you have multiple workspaces with the same name, so you need to check it and copy the correct one. But if your first workspace is named 'cataract', then the workspace slug is 'cataract'.
 
-![SettingFile](README_Images/SettingFile.png)
+<img src="./README_Images/SettingFile.png" alt="SettingFile">
 
 # Setting file
 Every machine will have its own configuation such as AnythingLLM API key. You need to edit your own setting in a JSON file. There are several files availabe in the json directory. You need to use the one suitable for your machine and language. Here is an example to run the program on a PC with Chinese.
