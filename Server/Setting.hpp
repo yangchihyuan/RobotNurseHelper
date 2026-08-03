@@ -31,6 +31,8 @@ struct Setting
     string AnythingLLM_workspace_slug;
     bool bHideCursor = true;
     string Machine = "PC";                      //AGXOrin, PC
+    int iTextFontSize = 48;
+    
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Setting, StateControlFile, bServerPlaysRobotReceivedAudio, bVideoWindowFullScreen, bShowPreviewWindow, bSaveImages,iImageSaveIntervalMillisecond, bFacialExpressionRecognition, bHumanPoseEstimation, bHandLandmarkDetection, bUseDlibForFaceRecognition, bFaceDetection, PoseEstimationModel, FaceDetectionModel, bUseVisualCompass, WhisperModel, ImageSaveDirectory, LanguageModel, Language, AnythingLLM_API_key, AnythingLLM_workspace_slug, bHideCursor, Machine

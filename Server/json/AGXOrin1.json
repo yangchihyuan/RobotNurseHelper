@@ -20,5 +20,6 @@
     "AnythingLLM_API_key": "B5Q49XV-0P04PY2-KJ4TRSQ-250ZSYE",
     "AnythingLLM_workspace_slug": "cataract",
     "Machine": "AGXOrin",                      //AGXOrin, PC
-    "bHideCursor": true
+    "bHideCursor": true,
+    "iTextFontSize": 48
 }

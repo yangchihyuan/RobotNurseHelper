@@ -64,7 +64,12 @@ void ThreadStateControl::run()
         if(mStates[m_iStateIndex].bInitial)
         {
             cout << "Enter state " << m_iStateIndex << endl;
-            if( mStates[m_iStateIndex].sImageFileName != "" )
+            
+            if(mStates[m_iStateIndex].sDisplayString != "")
+            {
+                emit playTextRequest(mStates[m_iStateIndex].sDisplayString.c_str());
+            }
+            else if( mStates[m_iStateIndex].sImageFileName != "" )
             {
                 emit playImageRequest(mStates[m_iStateIndex].sImageFileName.c_str());
             }
@@ -164,6 +169,7 @@ void ThreadStateControl::run()
                             }
                             else        //string comparison
                             {
+                                //ToDo: I need to clear this piece of code. This is Mohamed's requirement.
                                 if(WhisperResult.sOutput.find("及") != string::npos || WhisperResult.sOutput.find("吉") != string::npos || WhisperResult.sOutput.find("極") != string::npos || WhisperResult.sOutput.find("級") != string::npos)
                                 {
                                     chosen_dance = 1;
@@ -385,7 +391,7 @@ string ThreadStateControl::GetPatientName(string input_sentence){
     options["temperature"] = 0.3;
     options["num_ctx"] = 131072; //number of context tokens, which is the maximum number of tokens the model can handle in a single request
 
-
+    //Todo: I need to repleace the Chinese prompt to English prompt.
     // 建立更嚴謹的 Prompt，要求模型只輸出 JSON 或純名字
     string prompt = "你是一個機器人助手。請從以下句子中提取說話者的姓名。"
                     "規則：1.只回傳姓名 2.不要有任何標點或解釋。"

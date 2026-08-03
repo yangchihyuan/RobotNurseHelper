@@ -241,6 +241,8 @@ MainWindow::MainWindow(QWidget *parent)
           &MainWindow::onPlayVideoRequested);
   connect(&thread_state_control, &ThreadStateControl::playImageRequest, this,
           &MainWindow::onPlayImageRequested);
+  connect(&thread_state_control, &ThreadStateControl::playTextRequest, this,
+          &MainWindow::onPlayTextRequested);
 
   // Delay showing the video window so it renders after MainWindow
   // and successfully steals focus to become the top window.
@@ -399,8 +401,19 @@ void MainWindow::onPlayImageRequested(const QString &imagePath) {
   if (pVideoWindow) {
     pVideoWindow->showImage(imagePath);
     // Also bring the window to the front
-    pVideoWindow->raise();
-    pVideoWindow->activateWindow();
+//    pVideoWindow->raise();
+//    pVideoWindow->activateWindow();
+  }
+}
+
+void MainWindow::onPlayTextRequested(const QString &ShowString) {
+  if (pVideoWindow) {
+    QString formattedText = ShowString;
+    formattedText.replace("\n", "<br>");
+    QString styledText = "<span style='font-family: Arial; font-size: " + QString::number(msetting.iTextFontSize) + "pt; font-weight: bold;'>" + formattedText + "</span>";
+    pVideoWindow->showString(styledText);
+//    pVideoWindow->raise();
+//    pVideoWindow->activateWindow();
   }
 }
 

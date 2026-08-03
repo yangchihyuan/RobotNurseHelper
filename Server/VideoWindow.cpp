@@ -84,7 +84,21 @@ void VideoWindow::showImage(const QString &fileName)
     if (player->playbackState() == QMediaPlayer::PlayingState) {
         player->stop();
     }
+    imageLabel->setStyleSheet(""); // Clear background styles for images
     imageLabel->setPixmap(pixmap);
+    stackedWidget->setCurrentWidget(imageLabel);
+}
+
+void VideoWindow::showString(const QString &ShowString)
+{
+    // Stop any video that might be playing
+    if (player->playbackState() == QMediaPlayer::PlayingState) {
+        player->stop();
+    }
+    // Set black background, white text, and enable word wrap
+    imageLabel->setStyleSheet("background-color: black; color: white;");
+    imageLabel->setWordWrap(true);
+    imageLabel->setText(ShowString);
     stackedWidget->setCurrentWidget(imageLabel);
 }
 

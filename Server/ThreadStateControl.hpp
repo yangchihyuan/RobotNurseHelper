@@ -43,11 +43,12 @@ struct State
     //Special variables for some states
     int iStage = 0;             //Only wok for the Ask Dance state. Stage 0 is conversation, Stage 1 is dance performance.
     string sImageFileName;
+    string sDisplayString;
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(State, iStateIndex, m_strStateName, iDurationLimitSeconds, 
     m_strFirstSentence, iNextStateIndex, sFace, sMotion, vSmallMotion, v_str_KeyWordMoveToNextState,
-    v_str_Action, sStateType, sImageFileName
+    v_str_Action, sStateType, sImageFileName, sDisplayString
 )
 class ThreadLLM; //Because ThreadLLM.hpp and ThreadStateControl.hpp include each other, I need to use forward declaration
 
@@ -78,6 +79,7 @@ public:
 signals:
     void playVideoRequest(const QString& videoPath);
     void playImageRequest(const QString& imagePath);
+    void playTextRequest(const QString& text);
 
 protected:
     void run();

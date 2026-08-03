@@ -19,6 +19,7 @@ public:
     explicit VideoWindow(QWidget *parent = nullptr);
     void playVideo(const QString &fileName);
     void showImage(const QString &fileName);
+    void showString(const QString &ShowString);
     ThreadStateControl* pThreadStateControl = nullptr;
 
 public slots:

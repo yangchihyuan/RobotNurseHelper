@@ -1,5 +1,5 @@
 {
-    "StateControlFile": "json/Cataractproject_English.json",
+    "StateControlFile": "json/Cataractproject_English_Test.json",
     "bServerPlaysRobotReceivedAudio": false,
     "bVideoWindowFullScreen": false,
     "bShowPreviewWindow": true,
@@ -20,5 +20,6 @@
     "AnythingLLM_API_key": "B5Q49XV-0P04PY2-KJ4TRSQ-250ZSYE",
     "AnythingLLM_workspace_slug": "cataract",
     "Machine": "PC", //AGXOrin, PC
-    "bHideCursor": false
+    "bHideCursor": false,
+    "iTextFontSize": 48
 }

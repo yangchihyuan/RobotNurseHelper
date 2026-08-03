@@ -20,5 +20,6 @@
     "AnythingLLM_API_key": "1J3PDWX-ZN3MYHX-MWRFGMY-FXRQSDQ", //The machine in Prof. Yang's office.
     "AnythingLLM_workspace_slug": "cataract",
     "Machine": "AGXOrin", //AGXOrin, PC
-    "bHideCursor": false
+    "bHideCursor": false,
+    "iTextFontSize": 48
 }

@@ -1,0 +1,26 @@
+\documentclass[a4paper]{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{tikz}
+\usepackage[margin=0in]{geometry} % Gives you ~16.5cm of text width on standard paper
+
+\title{TwentyDegree}
+\author{yangchihyuan }
+\date{July 2026}
+
+\begin{document}
+\thispagestyle{empty}
+
+\begin{center}
+\begin{tikzpicture}[remember picture, overlay, shift={(current page.center)}]
+    % Loop to draw 18 lines starting from the origin (0,0)
+    % The angles go from 0 to 340 degrees in steps of 20
+    \foreach \angle in {0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340} {
+        % Draw a line from the origin to a point at a distance of 3 units
+        \draw[thick] (0,0) -- (\angle:15);
+    }
+    
+    % Optional: Add a small circle at the origin to emphasize the center
+    \filldraw[black] (0,0) circle (2pt);
+\end{tikzpicture}
+\end{center}
+\end{document}
