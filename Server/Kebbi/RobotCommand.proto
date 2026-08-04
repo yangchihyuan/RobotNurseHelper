@@ -5,6 +5,7 @@ package RobotCommandProtobuf;
 import "google/protobuf/timestamp.proto";
 
 //The command that the server sends to the robot
+//Only Kebbi has the turnspeed command.
 message RobotCommand {
   optional string speak_sentence = 1;
   optional int32 turnspeed = 9;

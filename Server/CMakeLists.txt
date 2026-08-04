@@ -23,6 +23,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC_EXECUTABLE "/usr/lib/qt6/libexec/uic")
 
 function(my_protobuf_generate_cpp PROTO_SRCS PROTO_HDRS PROTO_FILES)    
   foreach(PROTO_FILE ${PROTO_FILES})
@@ -73,7 +74,7 @@ my_protobuf_generate_cpp(PROTO_SRC PROTO_HDR ${PROTO_FILE})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 find_package(OpenCV COMPONENTS core highgui videoio imgproc imgcodecs dnn calib3d REQUIRED)
-find_package(Qt6 COMPONENTS Core Widgets Network Multimedia MultimediaWidgets REQUIRED)   
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Network Multimedia MultimediaWidgets Tools)
 find_package(ICU REQUIRED COMPONENTS uc)
 
 file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
@@ -212,6 +213,12 @@ endif()
 #add the include directories
 include_directories(${CMAKE_SOURCE_DIR} ${ROBOT_MODEL} ${PROTOBUF_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} ${OLLAMA_HPP_INCLUDE_DIR} ${ONNX_HPP_INCLUDE_DIR} ${SILERO_HPP_INCLUDE_DIR})
 set_target_properties(${TARGET_NAME} PROPERTIES "CMAKE_CXX_FLAGS" "${CMAKE_CXX_FLAGS}")
+
+target_include_directories(RobotNurseHelper PRIVATE
+  ${CMAKE_CURRENT_BINARY_DIR}/Zenbo
+  ${CMAKE_CURRENT_BINARY_DIR}/Kebbi
+  ${CMAKE_CURRENT_BINARY_DIR}/RobotNurseHelper_autogen/include
+)
 
 target_link_libraries(RobotNurseHelper LIBWHISPER
     Qt::Core Qt::Widgets Qt::Network

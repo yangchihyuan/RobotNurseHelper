@@ -1,4 +1,4 @@
-This folder contains the source files of our robot-side app of the ZenboNurseHelper project.
+This folder contains the source files of our robot-side app of the RobotNurseHelper project.
 
 # Requirement
 This app runs on a Zenbo robot made by Asus Inc. Although this app can be installed on other Android devices, the Zenbo's features will not work.

@@ -31,6 +31,10 @@ import tw.edu.cgu.ai.zenbo.env.Logger;
 
 import java.io.ByteArrayOutputStream;
 
+import com.google.protobuf.ByteString;
+import com.google.protobuf.Timestamp;
+import RobotCommandProtobuf.RobotCommandOuterClass;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -132,11 +136,11 @@ class ImageListener implements OnImageAvailableListener {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             argbFrameBitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
 
-            String Timestamp = Long.toString(timestamp_image);
+            String timestampStr = Long.toString(timestamp_image);
             byte[] array_JPEG = baos.toByteArray();
             String JPEG_length = String.format("%05d", array_JPEG.length);
 
-            int message_length = (int) (Timestamp.length() + 1 + 3 + 1 + JPEG_length.length() + 1 + array_JPEG.length);
+            int message_length = (int) (timestampStr.length() + 1 + 3 + 1 + JPEG_length.length() + 1 + array_JPEG.length);
             int buffer_length = message_length + 25;     //"Begin:" and messagelength (8 bytes) and "EndOfAFrame"
             String PitchDegree;
             /*
@@ -151,9 +155,11 @@ class ImageListener implements OnImageAvailableListener {
             ByteBuffer buffer = ByteBuffer.allocate(buffer_length);
             buffer.order(ByteOrder.LITTLE_ENDIAN); // Ubuntu byte order
 
+        //2026/8/4 The Server-Robot Protocol changes. I need to update here.
+        /*
             buffer.put("Begin:".getBytes());
             buffer.putLong(message_length);
-            buffer.put(Timestamp.getBytes());
+            buffer.put(timestampStr.getBytes());
             buffer.put("_".getBytes());
             buffer.put(PitchDegree.getBytes());
             String Null = "\0";
@@ -162,7 +168,25 @@ class ImageListener implements OnImageAvailableListener {
             buffer.put(Null.getBytes());
             buffer.put(array_JPEG);
             buffer.put("EndOfAFrame".getBytes());
+        */
 
+            Bitmap bitmap = argbFrameBitmap;      // argbFrameBitmap is the processed Bitmap
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            int quality = 90;
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, stream);
+            byte[] jpegData = stream.toByteArray();
+
+            Timestamp eventTime = Timestamp.newBuilder()
+                    .setSeconds(timestamp_image / 1000)
+                    .setNanos((int) ((timestamp_image % 1000) * 1000000))
+                    .build();
+
+            RobotCommandOuterClass.RobotToServerMessage message =
+                    RobotCommandOuterClass.RobotToServerMessage.newBuilder()
+                            .setEventTime(eventTime)
+                            .setJpegdatalength(jpegData.length)
+                            .setJpegdata(ByteString.copyFrom(jpegData))
+                            .build();
             socketManager.sendImage(buffer);
 //        }
 //        else {

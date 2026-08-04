@@ -720,3 +720,53 @@ void MainWindow::on_pushButton_test_clicked()
     QMessageBox::information(this, "Orientation Estimation", resultMessage);
 }
 
+void MainWindow::onPlayVideoRequested(const QString &videoPath) {
+  if (pVideoWindow) {
+    // Calling showFullScreen() is often enough to show, raise, and focus the
+    // window. Combining it with other calls like move() can confuse the window
+    // manager.
+    // temporary comment to avoid the window being full-screen at the beginning
+    // pVideoWindow->showFullScreen();
+    pVideoWindow->raise();
+    pVideoWindow->activateWindow();
+    pVideoWindow->playVideo(videoPath);
+  }
+}
+
+void MainWindow::onPlayImageRequested(const QString &imagePath) {
+  if (pVideoWindow) {
+    pVideoWindow->showImage(imagePath);
+    // Also bring the window to the front
+//    pVideoWindow->raise();
+//    pVideoWindow->activateWindow();
+  }
+}
+
+void MainWindow::onPlayTextRequested(const QString &ShowString) {
+  if (pVideoWindow) {
+    QString formattedText = ShowString;
+    formattedText.replace("\n", "<br>");
+    QString styledText = "<span style='font-family: Arial; font-size: " + QString::number(msetting.iTextFontSize) + "pt; font-weight: bold;'>" + formattedText + "</span>";
+    pVideoWindow->showString(styledText);
+//    pVideoWindow->raise();
+//    pVideoWindow->activateWindow();
+  }
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+  if (pVideoWindow) {
+    pVideoWindow->close();
+  }
+  QMainWindow::closeEvent(event);
+}
+
+void MainWindow::on_pushButton_onTTSComplete_clicked() {
+  thread_state_control.NotifyEvent("onTTSComplete",
+                                   chrono::system_clock::now());
+}
+
+void MainWindow::on_pushButton_killapp_clicked() {
+  RobotCommandProtobuf::RobotCommand command;
+  command.set_killapp(true);
+  sendMessageManager.AddMessage(command);
+}

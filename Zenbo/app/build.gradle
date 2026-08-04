@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.protobuf'
+apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
     //Chih-Yuan Yang: I need the compileSdkVersion item for Android 6 SDK. Don't remove it. Don't
@@ -10,8 +11,8 @@ android {
         applicationId 'tw.edu.cgu.ai.zenbo'
         minSdk 23
         targetSdkVersion 23
-        versionCode 10
-        versionName 'v25.07.24'
+        versionCode 11
+        versionName 'v2026.08.03'
         externalNativeBuild {
             cmake {
                 cppFlags ""
@@ -59,6 +60,9 @@ android {
                 }
             }
         }
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
 }
 

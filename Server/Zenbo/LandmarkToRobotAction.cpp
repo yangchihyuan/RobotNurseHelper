@@ -163,3 +163,56 @@ int PoseLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
 
     return 1;
 }
+
+int PoseLandmarks_to_RobotAction_yolo(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
+    RobotStatus &status, 
+    ActionOption action_option,
+    RobotCommandProtobuf::RobotCommand &command)
+{
+    //Currently, Mediapipe only detects one person.
+    int num_poses = normalized_landmarks.size();
+
+    for(int i=0; i<num_poses; i++)
+    {
+        std::vector<std::array<float, 3>> pose_landmarks = normalized_landmarks[i];
+
+        //index 0 is the nose
+        float x = pose_landmarks[0][0];
+        float y = pose_landmarks[0][1];
+
+//        std::cout << "Pose node 0 Normalized position: (" << x << ", " << y << ")" << std::endl;
+        // Calculate the distance between the eyes
+
+        if (action_option.move_mode == action_option.MOVE_BODY)
+        {
+            //Only Zenbo has theta, Kebbi does not have it.
+            float theta = -(x-0.5)*62.5;
+            command.set_degree(static_cast<int>(theta));
+            command.set_yaw(0);
+            status.yaw_degree = 0;
+
+            int dummy_yaw, pitch;
+            ComputeTargetYawPitch(x, y, status, action_option.bUseVisualCompass, dummy_yaw, pitch);
+            if( pitch < -20 ) pitch = -20;
+            if( pitch > 20 ) pitch = 20;
+            command.set_pitch(pitch);
+            status.pitch_degree = pitch;
+        }
+        else  //move head
+        {
+            int yaw, pitch;
+            ComputeTargetYawPitch(x, y, status, action_option.bUseVisualCompass, yaw, pitch);
+            if( yaw < -40) yaw = -40;
+            if( yaw > 40) yaw = 40;
+            command.set_yaw(yaw);
+            status.yaw_degree = yaw;
+
+            if( pitch < -20 ) pitch = -20;
+            if( pitch > 20 ) pitch = 20;
+            command.set_pitch(pitch);
+            command.set_headspeed(100);     //I need to associate with UI later.
+            status.pitch_degree = pitch;
+        }
+    }
+    return 1;
+}

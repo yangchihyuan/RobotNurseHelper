@@ -1,14 +1,12 @@
 package tw.edu.cgu.ai.zenbo
 
 import android.Manifest
-import android.content.pm.PackageManager
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.util.Log
 import android.os.Handler
-import androidx.annotation.RequiresPermission
-import androidx.core.app.ActivityCompat
+import android.support.annotation.RequiresPermission
 
 class AudioManager {
     //    private int audioSouce = MediaRecorder.AudioSource.MIC;
@@ -41,7 +39,7 @@ class AudioManager {
         ) //5376* 10
         Log.d("VS", "Recorder initialized")
 
-        recorder?.startRecording();    //The recorder means the audio recorder
+        recorder?.startRecording()    //The recorder means the audio recorder
     }
 
     fun stopRecording()
@@ -51,29 +49,25 @@ class AudioManager {
 
     fun startTransmitToServer(handlerSendAudio: Handler, socketManager: SocketManager) {
         //Start audio recorder
-        handlerSendAudio.post(
-            object : Runnable {
-                override fun run() {
-                    val buffer = ShortArray(minBufSize) //minBufSize = 5376
-                    Log.d(
-                        "VS",
-                        "Buffer created of size " + minBufSize
-                    ) // every 5 second, the log message occurs. It does not make sense.
+        handlerSendAudio.post {
+            val buffer = ShortArray(minBufSize) //minBufSize = 5376
+            Log.d(
+                "VS",
+                "Buffer created of size $minBufSize"
+            ) // every 5 second, the log message occurs. It does not make sense.
 
-                    var readSize: Int
-                    while (status) {
-                        //reading data from MIC into buffer
-                        readSize = recorder!!.read(buffer, 0, buffer.size)
-                        if (readSize >= 0) {
-                            val byteBuffer = Converter.ShortToByte_Twiddle_Method(buffer)
-                            socketManager.sendAudio(byteBuffer)
-                        } else {
-                            Log.e("recorder", "recorder.read() error")
-                        }
-                    }
+            var readSize: Int
+            while (status) {
+                //reading data from MIC into buffer
+                readSize = recorder!!.read(buffer, 0, buffer.size)
+                if (readSize >= 0) {
+                    val byteBuffer = Converter.ShortToByte_Twiddle_Method(buffer)
+                    socketManager.sendAudio(byteBuffer)
+                } else {
+                    Log.e("recorder", "recorder.read() error")
                 }
             }
-        )
+        }
     }
 
 }

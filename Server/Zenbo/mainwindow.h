@@ -13,9 +13,10 @@
 #include <QTcpSocket>
 #include "ThreadProcessImage.hpp"
 #include "ThreadPortAudio.hpp"
-#include "ThreadTablet.hpp"
+#include "ThreadReceiveMessage.hpp"
 #include "ThreadWhisper.hpp"
 #include "ThreadLLM.hpp"
+#include "ThreadStateControl.hpp"
 #include <queue>
 #include <QMediaDevices>
 #include <QAudioDevice>
@@ -23,6 +24,11 @@
 #include "utility_directory.hpp"
 #include "SocketBufferParser.hpp"
 #include "SendMessageManager.hpp"
+#include "SocketClientHandler.hpp"
+#include <memory>
+#include "../VideoWindow.hpp"
+#include "Setting.hpp"
+
  
 using namespace std;
 
@@ -40,15 +46,20 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void setLanguage(QString Language);
+    void setSettingFile(const QString &filePath);
+    void startThreads();
+
     void setWhisperModelFile(QString filePath);
     void setLanguageModelName(QString ModelName);
     void setPreviousContextFile(QString filePath);
     void setState(int N);
     void setImageSaveEveryNFrame(int N);
-    void setLanguage(QString Language);
     void setImageSaveDirectory(QString ImageSaveDirectory);
     void setDefaultSaveImage(bool bDefaultSaveImage);
-    void startThreads();
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
 
 protected:
     QAudioDevice  devAudio;
@@ -57,11 +68,13 @@ protected:
 
 private:
     Ui::MainWindow *ui;
+    QTimer *timer;
+
 
     QTcpServer* m_server_receive_image;
     QSet<QTcpSocket*> connection_set;
     ThreadProcessImage thread_process_image;
-    SocketHandler socketHandler1;
+//    SocketClientHandler socketHandler1;
 
     QTcpServer* m_server_send_command;
     QSet<QTcpSocket*> connection_set2;   //for send back command
@@ -70,55 +83,65 @@ private:
     QSet<QTcpSocket*> connection_set3;   //for receive audio
     ThreadProcessAudio thread_process_audio;
 
-    QTcpServer* thread_receive_messages;
+    QTcpServer* m_server_receive_message;
     QSet<QTcpSocket*> connection_set4;   //for Tablet
-    SocketHandler socketHandler4;
-    ThreadTablet thread_tablet;
+    SocketBufferParser socketHandler4;
+    ThreadReceiveMessage thread_receive_message;
+//    SocketClientHandler socketHandler4;
+//    ThreadTablet thread_tablet;
+
+    QSet<SocketClientHandler*> Handler_set;
 
     ThreadWhisper thread_whisper;
 
-    ThreadLLM thread_ollama;
+    ThreadLLM thread_LLM;
+    ThreadStateControl thread_state_control;
+
+    std::unique_ptr<VideoWindow> pVideoWindow;
 
     QString QString_SentCommands;
     void send_move_body_command(float x, float y, int degree, int speed);
     void send_move_head_command(int yaw, int pitch, int speed);
-    int current_body_angle = 0;
-    void rotateAndTakePhoto(int targetAngle, const QString& prefix);
 
     SendMessageManager sendMessageManager;
     bool bstream_recognition = false;
+
+    WhisperData oldWhisperData;     //for timer_event update UI
+
+    Setting msetting;
+    int current_body_angle = 0;
+    void rotateAndTakePhoto(int targetAngle, const QString& prefix);
 
 signals:
     void newMessage(QString);   //where is the connect for this signal?
     void addSendCommandMessage(RobotCommandProtobuf::RobotCommand);
 
 private slots:
-    void newConnection();
-    void appendToSocketList(QTcpSocket* socket);
-    void appendToSocketList2(QTcpSocket* socket);
-    void appendToSocketList3(QTcpSocket* socket);
-    void appendToSocketList4(QTcpSocket* socket);
+    void onPlayVideoRequested(const QString& videoPath);
+    void onPlayImageRequested(const QString& imagePath);
+    void onPlayTextRequested(const QString& ShowString);
 
-    void readSocket();
-    void readSocket3();
-    void readSocket4();
-
-    void discardSocket();
-    void discardSocket2();
-    void discardSocket3();
-    void discardSocket4();
-    void displayError(QAbstractSocket::SocketError socketError);
-
+    void newConnection_receive_image();
     void newConnection_send_command();
     void newConnection_receive_audio();
-    void newConnection_Tablet();
+    void newConnection_receive_message();
+    void appendToSocketList2(QTcpSocket* socket);
+    void appendToSocketList3(QTcpSocket* socket);
+
+    void readSocket3();
+
+    void discardSocket2();
+    void discardSocket3();
+
+    void displayError(QAbstractSocket::SocketError socketError);
 
     void on_pushButton_speak_clicked();
     void on_pushButton_movebody_clicked();
     void on_pushButton_movehead_clicked();
     void on_pushButton_stop_action_clicked();
-    void on_pushButton_stop_song_clicked();
     void on_pushButton_voice_to_text_clicked();
+    void on_pushButton_killapp_clicked();
+    void on_pushButton_onTTSComplete_clicked();
 
     void on_listView_FacialExpressions_doubleClicked(const QModelIndex &index);
     void on_listView_PredefinedAction_doubleClicked(const QModelIndex &index);
@@ -145,6 +168,7 @@ private slots:
     void on_pushButton_generate_response_clicked();
     void on_pushButton_speak_2_clicked();
     void on_pushButton_hideface_clicked();
+    void on_pushButton_stop_song_clicked();
     void on_pushButton_take_photo_clicked();
     void on_pushButton_test_clicked();
 

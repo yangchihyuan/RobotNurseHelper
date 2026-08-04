@@ -181,6 +181,7 @@ protected:
     std::chrono::time_point<std::chrono::system_clock> m_LastCompassCheckTime;
     bool m_bTurningToZero = false;
     bool m_bBodyAtZero = false;
+    string s_RobotModel = "Unknown"; //default value is Unknown. It will be set to "Kebbi" or "Zenbo" when the robot sends the first status message.
 };
 
 #endif

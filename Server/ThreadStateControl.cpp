@@ -184,12 +184,13 @@ void ThreadStateControl::run()
 
                             if( chosen_dance != 0 )
                             {
-                                //debug
-                                //cout << "(J) chosen_dance " << chosen_dance << endl;
+                                #if defined(Kebbi)
                                 RobotCommandProtobuf::RobotCommand dance_command;
+                                //Only Kebbi has the dancetype command. Zenbo does not have this command.
                                 dance_command.set_dancetype(chosen_dance);
                                 m_pSendMessageManager->AddMessage(dance_command);
                                 mStates[m_iStateIndex].iStage = 1; //Waiting for Dance Complete
+                                #endif
                                 dance_start_time = chrono::system_clock::now();
                             }
                         }

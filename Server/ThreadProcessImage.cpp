@@ -122,6 +122,13 @@ ThreadProcessImage::ThreadProcessImage() {
     m_LastCompassCheckTime = std::chrono::system_clock::now();
     m_bTurningToZero = false;
     m_bBodyAtZero = false;
+
+#ifdef USE_KEBBI
+    s_RobotModel = "Kebbi";    
+#elif USE_ZENBO
+    s_RobotModel = "Zenbo";
+#endif
+
 }
 
 ThreadProcessImage::~ThreadProcessImage() {
@@ -673,9 +680,12 @@ void ThreadProcessImage::run() {
                                         m_bBodyAtZero = true;
                                         m_bTurningToZero = false;
                                     }
+                                    #ifdef USE_KEBBI
                                     RobotCommandProtobuf::RobotCommand command;
+                                    // This command is used by Kebbi only. I need to change the command to be compatible with Zenbo. I will do it later.
                                     command.set_turnspeed(turnSpeed);           //This is Kebbi's limitation, which can only control the robot to turn at a constant speed, not the angle to turn.
                                     pSendMessageManager->AddMessage(command);
+                                    #endif
                                 } else {
                                     std::cout << "VisualCompass failed to determine orientation: " << errorDetails
                                               << std::endl;

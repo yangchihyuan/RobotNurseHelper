@@ -25,7 +25,7 @@
 extern std::mutex gMutex_audio_buffer;
 extern std::queue<short> AudioBuffer;
 extern std::condition_variable cond_var_audio;
-extern cv::Mat outFrame;
+//extern cv::Mat outFrame;
 extern int PortAudio_stop_and_terminate();
 extern bool gbPlayAudio;
 extern RobotStatus robot_status;
@@ -146,14 +146,12 @@ MainWindow::MainWindow(QWidget *parent)
     //One QTcpServer only listens to one port. If you want to listen to multiple ports, you need to create multiple QTcpServer objects.
     m_server_receive_image = new QTcpServer();
     //2024/12/27 The port number is also hard-coded. I need to modify it in the future.
-    if(m_server_receive_image->listen(QHostAddress::Any, 8895))
-    {
-       connect(m_server_receive_image, &QTcpServer::newConnection, this, &MainWindow::newConnection);
-    }
-    else
-    {
-        exit(EXIT_FAILURE);
-    }
+  if (m_server_receive_image->listen(QHostAddress::Any, 8895)) {
+    connect(m_server_receive_image, &QTcpServer::newConnection, this,
+            &MainWindow::newConnection_receive_image);
+  } else {
+    exit(EXIT_FAILURE);
+  }
 
     m_server_send_command = new QTcpServer();
     if(m_server_send_command->listen(QHostAddress::Any, 8896))
@@ -175,16 +173,14 @@ MainWindow::MainWindow(QWidget *parent)
         exit(EXIT_FAILURE);
     }
 
-    thread_receive_messages = new QTcpServer();
-    if(thread_receive_messages->listen(QHostAddress::Any, 8898))
-    {
-       connect(thread_receive_messages, &QTcpServer::newConnection, this, &MainWindow::newConnection_Tablet);
-       cout << "Listening port 8898" << endl;
-    }
-    else
-    {
-        exit(EXIT_FAILURE);
-    }
+  m_server_receive_message = new QTcpServer();
+  if (m_server_receive_message->listen(QHostAddress::Any, 8898)) {
+    connect(m_server_receive_message, &QTcpServer::newConnection, this,
+            &MainWindow::newConnection_receive_message);
+    cout << "Listening port 8898" << endl;
+  } else {
+    exit(EXIT_FAILURE);
+  }
 
 
     QTimer *timer = new QTimer(this);
@@ -205,9 +201,11 @@ MainWindow::MainWindow(QWidget *parent)
         "Holistic"});
     connect(ui->comboBox_DetectionMode,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),this,&MainWindow::comboBox_DetectionMode_changed);
 
+/*
     ui->comboBox_Processor->addItems({"CPU",
         "GPU"});
     connect(ui->comboBox_Processor,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),this,&MainWindow::comboBox_Processor_changed);
+*/    
 
     ui->comboBox_Language->addItems({"Chinese",
         "English",
@@ -237,9 +235,41 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     thread_process_image.pSendMessageManager = &sendMessageManager;
-    thread_process_image.pSocketHandler = &socketHandler1;
-    thread_tablet.pSocketHandler = &socketHandler4;
-    thread_tablet.pSendMessageManager = &sendMessageManager;
+  thread_receive_message.pSendMessageManager = &sendMessageManager;
+  thread_receive_message.mpThreadStateControl = &thread_state_control;
+  thread_receive_message.mpThreadProcessImage = &thread_process_image;
+
+  thread_state_control.m_pSendMessageManager = &sendMessageManager;
+  thread_state_control.mpThreadWhisper = &thread_whisper;
+  thread_state_control.mpThreadLLM = &thread_LLM;
+  thread_state_control.mpThreadProcessImage = &thread_process_image;
+
+  thread_LLM.mpThreadStateControl = &thread_state_control;
+
+  pVideoWindow = std::make_unique<VideoWindow>(nullptr);
+  thread_state_control.pVideoWindow = pVideoWindow.get();
+  pVideoWindow->pThreadStateControl = &thread_state_control;
+
+  connect(&thread_state_control, &ThreadStateControl::playVideoRequest, this,
+          &MainWindow::onPlayVideoRequested);
+  connect(&thread_state_control, &ThreadStateControl::playImageRequest, this,
+          &MainWindow::onPlayImageRequested);
+  connect(&thread_state_control, &ThreadStateControl::playTextRequest, this,
+          &MainWindow::onPlayTextRequested);
+
+  // Delay showing the video window so it renders after MainWindow
+  // and successfully steals focus to become the top window.
+  QTimer::singleShot(300, this, [this]() {
+    if (pVideoWindow) {
+      if (msetting.bVideoWindowFullScreen) {
+        pVideoWindow->showFullScreen();
+      } else {
+        pVideoWindow->show();
+      }
+      pVideoWindow->raise();
+      pVideoWindow->activateWindow();
+    }
+  });
 }
 
 void MainWindow::on_pushButton_speak_clicked()
@@ -326,6 +356,11 @@ void MainWindow::on_pushButton_stop_song_clicked()
     sendMessageManager.AddMessage(command);
 }
 
+void MainWindow::comboBox_Processor_changed()
+{
+    // Placeholder implementation to satisfy the Qt connection.
+}
+
 void MainWindow::timer_event()
 {
     if(thread_process_image.bNewoutFrame )
@@ -335,8 +370,8 @@ void MainWindow::timer_event()
         //to the window such as mouse hovering. It seems caused by the hardward driver.
         //imshow is a high-level GUI. There is no extra argument for this function.
         //How to force the problem to update the window?
-        cv::imshow("Image", outFrame);
-        cv::waitKey(1);    //I miss this line so that Ubuntu does not update the window.
+//        cv::imshow("Image", outFrame);
+//        cv::waitKey(1);    //I miss this line so that Ubuntu does not update the window.
         thread_process_image.bNewoutFrame = false;
 
         //update pitch and yaw
@@ -350,33 +385,36 @@ void MainWindow::timer_event()
         ui->plainTextEdit_speak->setPlainText(QString::fromStdString(thread_whisper.strOperatorSentence));
     }
 
+/*
     if( thread_whisper.b_new_RobotSentence )
     {
         thread_whisper.b_new_RobotSentence = false;
         ui->plainTextEdit_received->setPlainText(QString::fromStdString(thread_whisper.strRobotSentence));
     }
+*/
 
+/*
     if( thread_whisper.b_RobotSentence_End )
     {
         thread_whisper.b_RobotSentence_End = false;
         //send a command as the push button clicked
         ui->pushButton_generate_response->click();      //This funciton will call the MainWindow::on_pushButton_generate_response_clicked() function.
     }
+*/    
 
-    if( thread_ollama.b_new_LLM_response )
-    {
-        thread_ollama.b_new_LLM_response = false;
-        ui->plainTextEdit_LLM_response->setPlainText(QString::fromStdString(thread_ollama.strResponse));
-        //speak out
-        bool bAutoSpeakOut = true;
-        if( bAutoSpeakOut)
-        {
-            RobotCommandProtobuf::RobotCommand command;
-            command.set_speak_sentence(thread_ollama.strResponse);
-            sendMessageManager.AddMessage(command);
-        }
+  if (thread_LLM.b_new_LLM_response) {
+    thread_LLM.b_new_LLM_response = false;
+    ui->plainTextEdit_LLM_response->setPlainText(
+        QString::fromStdString(thread_LLM.strResponse));
+
+    // speak out
+    bool bAutoSpeakOut = false;
+    if (bAutoSpeakOut) {
+      RobotCommandProtobuf::RobotCommand command;
+      command.set_speak_sentence(thread_LLM.strResponse);
+      sendMessageManager.AddMessage(command);
     }
-
+  }
     sendMessageManager.Send();
 }
 
