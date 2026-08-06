@@ -1,0 +1,6 @@
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+include ':app'
+include ':app_pressnumber'
+include ':app_tablet_controller'

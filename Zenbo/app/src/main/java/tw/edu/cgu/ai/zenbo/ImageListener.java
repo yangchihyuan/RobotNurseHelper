@@ -29,9 +29,12 @@ import android.media.ImageReader.OnImageAvailableListener;
 import tw.edu.cgu.ai.zenbo.env.ImageUtils;
 import tw.edu.cgu.ai.zenbo.env.Logger;
 
+import com.google.protobuf.ByteString;
+import com.google.protobuf.Timestamp;
+import RobotCommandProtobuf.RobotCommandOuterClass;
+
 import java.io.ByteArrayOutputStream;
 
-import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 class ImageListener implements OnImageAvailableListener {
@@ -76,100 +79,71 @@ class ImageListener implements OnImageAvailableListener {
             return; //such a case happens.
 
         final long timestamp_image = System.currentTimeMillis();
-        //2025/1/6 Do I need this? unless there is l
-        //long frame_send_postpone = 100; //in millisecond
-//        long frame_send_postpone = 0; //in millisecond
-//        if (timestamp_image - timestamp_prevous_processed_image > frame_send_postpone) {
-//            timestamp_prevous_processed_image = timestamp_image;
 
-            final Plane[] planes = image.getPlanes();
 
-            yuvBytes = new byte[planes.length][];
-            for (int i = 0; i < planes.length; ++i) {
-                yuvBytes[i] = new byte[planes[i].getBuffer().capacity()];
-                planes[i].getBuffer().get(yuvBytes[i]);
-            }
+        final Plane[] planes = image.getPlanes();
 
-            try {
-                final int yRowStride = planes[0].getRowStride();
-                final int uvRowStride = planes[1].getRowStride();
-                final int uvPixelStride = planes[1].getPixelStride();
+        yuvBytes = new byte[planes.length][];
+        for (int i = 0; i < planes.length; ++i) {
+            yuvBytes[i] = new byte[planes[i].getBuffer().capacity()];
+            planes[i].getBuffer().get(yuvBytes[i]);
+        }
 
-                //2024/6/24 Chih-Yuan Yang: Exception occurs in this statement, why?
-                ImageUtils.convertYUV420ToARGB8888(
-                        yuvBytes[0],
-                        yuvBytes[1],
-                        yuvBytes[2],
-                        argbBytes,
-                        previewWidth,
-                        previewHeight,
-                        yRowStride,
-                        uvRowStride,
-                        uvPixelStride,
-                        false);
+        try {
+            final int yRowStride = planes[0].getRowStride();
+            final int uvRowStride = planes[1].getRowStride();
+            final int uvPixelStride = planes[1].getPixelStride();
 
+            //2024/6/24 Chih-Yuan Yang: Exception occurs in this statement, why?
+            ImageUtils.convertYUV420ToARGB8888(
+                    yuvBytes[0],
+                    yuvBytes[1],
+                    yuvBytes[2],
+                    argbBytes,
+                    previewWidth,
+                    previewHeight,
+                    yRowStride,
+                    uvRowStride,
+                    uvPixelStride,
+                    false);
+
+            image.close();
+        } catch (final Exception e) {
+            if (image != null) {
                 image.close();
-            } catch (final Exception e) {
-                if (image != null) {
-                    image.close();
-                }
-                LOGGER.e(e, "Exception!");
-                return;
             }
-            Bitmaptemp.setPixels(argbBytes, 0, previewWidth, 0, 0, previewWidth, previewHeight);
+            LOGGER.e(e, "Exception!");
+            return;
+        }
+        Bitmaptemp.setPixels(argbBytes, 0, previewWidth, 0, 0, previewWidth, previewHeight);
 
-            //my laptop's webcam generates upside down images to the simulator. Thus, I need to flip the image.
-            boolean rotateImage = false;
-            if( EmulatorDetector.isEmulator())
-                argbFrameBitmap = converter.RotateImage180Degree(Bitmaptemp);
-            else
-                argbFrameBitmap = Bitmaptemp;
+        //my laptop's webcam generates upside down images to the simulator. Thus, I need to flip the image.
+        boolean rotateImage = false;
+        if( EmulatorDetector.isEmulator())
+            argbFrameBitmap = converter.RotateImage180Degree(Bitmaptemp);
+        else
+            argbFrameBitmap = Bitmaptemp;
 
-            inputView.setBitmap(argbFrameBitmap);
-            inputView.postInvalidate();
+        inputView.setBitmap(argbFrameBitmap);
+        inputView.postInvalidate();
 
-            //Prepare buffer
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            argbFrameBitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+        //Prepare message
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        argbFrameBitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
+        byte[] jpegData = baos.toByteArray();
 
-            String Timestamp = Long.toString(timestamp_image);
-            byte[] array_JPEG = baos.toByteArray();
-            String JPEG_length = String.format("%05d", array_JPEG.length);
+        Timestamp eventTime = Timestamp.newBuilder()
+                .setSeconds(timestamp_image / 1000)
+                .setNanos((int) ((timestamp_image % 1000) * 1000000))
+                .build();
 
-            int message_length = (int) (Timestamp.length() + 1 + 3 + 1 + JPEG_length.length() + 1 + array_JPEG.length);
-            int buffer_length = message_length + 25;     //"Begin:" and messagelength (8 bytes) and "EndOfAFrame"
-            String PitchDegree;
-            /*
-            if (mActionRunnable.pitchDegree >= 0)
-                PitchDegree = String.format("%03d", mActionRunnable.pitchDegree);
-            else
-                PitchDegree = String.format("%02d", Math.abs(mActionRunnable.pitchDegree));
-            */
-            //I no longer need this.
-            PitchDegree = String.format("%03d", 0);
+        RobotCommandOuterClass.RobotToServerMessage message =
+                RobotCommandOuterClass.RobotToServerMessage.newBuilder()
+                        .setEventTime(eventTime)
+                        .setJpegdatalength(jpegData.length)
+                        .setJpegdata(ByteString.copyFrom(jpegData))
+                        .build();
 
-            ByteBuffer buffer = ByteBuffer.allocate(buffer_length);
-            buffer.order(ByteOrder.LITTLE_ENDIAN); // Ubuntu byte order
-
-            buffer.put("Begin:".getBytes());
-            buffer.putLong(message_length);
-            buffer.put(Timestamp.getBytes());
-            buffer.put("_".getBytes());
-            buffer.put(PitchDegree.getBytes());
-            String Null = "\0";
-            buffer.put(Null.getBytes());
-            buffer.put(JPEG_length.getBytes());
-            buffer.put(Null.getBytes());
-            buffer.put(array_JPEG);
-            buffer.put("EndOfAFrame".getBytes());
-
-            socketManager.sendImage(buffer);
-//        }
-//        else {
-            // skip this frame
-//            if (image != null) {
-//                image.close();
-//            }
-//        }
+        socketManager.sendImage(message);
     }
 }

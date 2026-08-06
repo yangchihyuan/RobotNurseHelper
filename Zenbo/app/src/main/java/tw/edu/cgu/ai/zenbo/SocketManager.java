@@ -17,6 +17,7 @@ import java.io.BufferedInputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,25 +28,31 @@ public class SocketManager {
     public String mServerURL;
     public Integer mPortNumber;
 
-    public Socket socketReceiveCommand;
-    public Socket mSocketSendImages;
-    public Socket mSocketSendAudio;
+    public Socket mSocketSendImages;      //port 8895
+    public Socket mSocketReceiveCommand;     //port 8896
+    public Socket mSocketSendAudio;       //port 8897
+    public Socket mSocketSendMessages;      //port 8898    //Can I merge this socket with mmSocketReceiveCommand?
+
 
     private HandlerThread threadSendToServer;
     private Handler handlerSendToServer;
     private HandlerThread threadReceiveCommand;
     private Handler handlerReceiveCommand;
-    private HandlerThread mThreadExecuteCommand;
-    private Handler mHandlerExecuteCommand;
+//    private HandlerThread mThreadExecuteCommand;
+//    private Handler mHandlerExecuteCommand;
     private boolean mbReceiveCommand;
 
     private HandlerThread threadCheckDiconnection;
     private Handler handlerCheckDiconnection;
 
+    private HandlerThread threadSendAudio;
+    public Handler handlerSendAudio;
+
     byte[] mMessagePool = new byte[8192];
     int effective_length = 0;
-    String beginString = "BeginOfAMessage";
-    String endString = "EndOfAMessage";
+
+    String beginString = "BeginOfADataFrame";
+    String endString = "EndOfADataFrame";
 
     public RobotAPI mRobotAPI;
     ArrayList<RobotCommandOuterClass.RobotCommand> ArrayListCommand = new ArrayList<RobotCommandOuterClass.RobotCommand>();
@@ -65,10 +72,10 @@ public class SocketManager {
                 mbReceiveCommand = true;
                 while(mbReceiveCommand) {
 //                    Log.d ("mbReceiveCommand","still running");
-                    if (socketReceiveCommand != null && socketReceiveCommand.isConnected()) {
+                    if (mSocketReceiveCommand != null && mSocketReceiveCommand.isConnected()) {
 //                        Log.d ("mbReceiveCommand","Enter if");
                         try {
-                            BufferedInputStream dIn = new BufferedInputStream(socketReceiveCommand.getInputStream());
+                            BufferedInputStream dIn = new BufferedInputStream(mSocketReceiveCommand.getInputStream());
 //                            Log.d("BufferedInputStream", "created");
                             int length = 4096;
                             byte[] message = new byte[length];
@@ -177,7 +184,7 @@ public class SocketManager {
                         } catch (Exception e) {
                             Log.e("Exception", e.getMessage());
                             try {
-                                socketReceiveCommand.close();
+                                mSocketReceiveCommand.close();
                             }
                             catch( Exception e2)
                             {
@@ -185,7 +192,7 @@ public class SocketManager {
                             }
                             finally
                             {
-                                socketReceiveCommand = null;
+                                mSocketReceiveCommand = null;
                             }
                         }
                     }
@@ -198,7 +205,14 @@ public class SocketManager {
     {
         mbReceiveCommand = false;
     }
-    void sendImage(ByteBuffer imageAndData)
+
+    void sendImage(RobotCommandOuterClass.RobotToServerMessage message)
+    {
+        sendAMessage(message, mSocketSendImages);
+    }
+    /*
+    //I need to add the startString and endString to the message.
+    void sendImage(RobotCommandOuterClass.RobotToServerMessage message)
     {
         if( mSocketSendImages != null && mSocketSendImages.isConnected()) {
             final boolean post = handlerSendToServer.post(
@@ -207,7 +221,7 @@ public class SocketManager {
                     public void run() {
                         try {
                             OutputStream os = mSocketSendImages.getOutputStream();
-                            os.write(imageAndData.array());
+                            message.writeTo(os);
 
                         } catch (Exception e) {
                             //Debug Information 2025/4/17, the socket don't change mode even if my server is down
@@ -229,6 +243,8 @@ public class SocketManager {
             );
         }
     }
+    */
+
 
     void sendAudio(byte[] audioData)
     {
@@ -254,25 +270,27 @@ public class SocketManager {
     }
 
     //Main thread will call this function. Thus, I need to create a new thread to execute it
-    public void connectSockets()
-    {
-        HandlerThread thread = new HandlerThread("Connect Sockets");
-        thread.start();
-        Handler handler = new Handler(thread.getLooper());
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    mSocketSendImages = new Socket(mServerURL, mPortNumber);
-                    socketReceiveCommand = new Socket(mServerURL, mPortNumber+1);
-                    mSocketSendAudio =  new Socket(mServerURL, mPortNumber+2);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.e("new sockets fail", "new sockets fail" + e.getMessage());
+    public void connectSockets() {
+//        HandlerThread thread = new HandlerThread("Connect Sockets");
+//        thread.start();
+//        Handler handler = new Handler(thread.getLooper());
+//        handler.post(new Runnable() {
+        if (handlerCheckDiconnection != null) {
+            handlerCheckDiconnection.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        mSocketSendImages = new Socket(mServerURL, mPortNumber);
+                        mSocketReceiveCommand = new Socket(mServerURL, mPortNumber + 1);
+                        mSocketSendAudio = new Socket(mServerURL, mPortNumber + 2);
+                        mSocketSendMessages = new Socket(mServerURL, mPortNumber + 3);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e("new sockets fail", "new sockets fail" + e.getMessage());
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     public void startThreads() {
@@ -284,13 +302,13 @@ public class SocketManager {
         threadReceiveCommand.start();
         handlerReceiveCommand = new Handler(threadReceiveCommand.getLooper());
 
-        mThreadExecuteCommand = new HandlerThread(("threadExecuteCommand"));
-        mThreadExecuteCommand.start();
-        mHandlerExecuteCommand = new Handler(mThreadExecuteCommand.getLooper(), new ExecuteCommandCallback());
-
         threadCheckDiconnection = new HandlerThread(("threadCheckDisconnection"));
         threadCheckDiconnection.start();
         handlerCheckDiconnection = new Handler(threadCheckDiconnection.getLooper());
+
+        threadSendAudio = new HandlerThread(("threadSendAudio"));
+        threadSendAudio.start();
+        handlerSendAudio = new Handler(threadSendAudio.getLooper());
     }
 
     public void startDisconnectionChecker()
@@ -355,7 +373,7 @@ public class SocketManager {
         //Debug Info 25/4/23: The socketRecieveCommand may be broken by the server-side program's error. Thus, I need to close the three sockets separately.
         //Other, the process will jump out of the try when running this command and skip the mSocketSendAudio.close()
         try {
-            socketReceiveCommand.close();
+            mSocketReceiveCommand.close();
         } catch (Exception e) {
             Log.e("disconnectSockets ReceiveCommand", e.getMessage());
         }
@@ -371,8 +389,9 @@ public class SocketManager {
     public void stopThreads() {
         threadSendToServer.quitSafely();
         threadReceiveCommand.quitSafely();
-        mThreadExecuteCommand.quitSafely();
+//        mThreadExecuteCommand.quitSafely();
         threadCheckDiconnection.quitSafely();
+        threadSendAudio.quitSafely();
         try {
             threadSendToServer.join();
             threadSendToServer = null;
@@ -382,13 +401,18 @@ public class SocketManager {
             threadReceiveCommand = null;
             handlerReceiveCommand = null;
 
-            mThreadExecuteCommand.join();
-            mThreadExecuteCommand = null;
-            mHandlerExecuteCommand = null;
+//            mThreadExecuteCommand.join();
+//            mThreadExecuteCommand = null;
+//            mHandlerExecuteCommand = null;
 
             threadCheckDiconnection.join();
             threadCheckDiconnection = null;
             handlerCheckDiconnection = null;
+
+            threadSendAudio.join();
+            threadSendAudio = null;
+            handlerSendAudio = null;
+
         } catch (final InterruptedException e) {
             Log.e("Exception stopThreads", e.getMessage());
         }
@@ -397,8 +421,40 @@ public class SocketManager {
 
     public boolean isConnected()
     {
-        return (socketReceiveCommand != null && socketReceiveCommand.isConnected() &&
+        return (mSocketReceiveCommand != null && mSocketReceiveCommand.isConnected() &&
                 mSocketSendImages != null && mSocketSendImages.isConnected() &&
                 mSocketSendAudio != null && mSocketSendAudio.isConnected());
     }
+
+    public void sendAMessage( RobotCommandOuterClass.RobotToServerMessage message, Socket mSocket)
+    {
+        if( handlerSendToServer != null){
+            handlerSendToServer.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (mSocket.isConnected()) {
+                            OutputStream os = mSocket.getOutputStream();
+                            os.write("BeginOfADataFrame".getBytes());
+
+                            byte[] byteArray = message.toByteArray();
+
+                            int message_length = byteArray.length;
+                            ByteBuffer message_length_buffer = ByteBuffer.allocate(4);
+                            message_length_buffer.order(ByteOrder.LITTLE_ENDIAN); // Ubuntu byte order
+                            message_length_buffer.putInt(message_length);
+                            os.write(message_length_buffer.array());
+
+                            os.write(message.toByteArray());
+                            Log.d("Debug", "message length: " + message.getSerializedSize());
+                            os.write("EndOfADataFrame".getBytes());
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
+
 }

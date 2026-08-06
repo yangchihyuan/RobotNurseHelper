@@ -2,6 +2,8 @@ syntax = "proto2";
 
 package RobotCommandProtobuf;
 
+import "google/protobuf/timestamp.proto";
+
 message RobotCommand {
   optional uint64 time_stamp = 1;
   optional int32 pitch_degree = 2;
@@ -60,3 +62,14 @@ message RobotCommand {
   optional int32 stopsong = 20;
 }
 
+//The message that the robot sends to the server
+message RobotToServerMessage {
+  optional google.protobuf.Timestamp event_time = 1;
+  optional int32 jpegdatalength = 2;
+  optional bytes jpegdata = 3;
+  optional string description = 4;
+  optional int32 numberpressed = 5;
+  optional float yaw = 6;           //why I cannot use float in my message?
+  optional float pitch = 7;
+  optional string tabletcommand = 8;
+}
