@@ -22,7 +22,8 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //Proguard will reduce unused library code when packaging into an APK file.
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     externalNativeBuild {
@@ -31,6 +32,14 @@ android {
         }
     }
     namespace 'tw.edu.cgu.ai.zenbo'
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    lint {
+        disable 'ExpiredTargetSdkVersion'
+    }
 
     sourceSets{
         main{
@@ -45,7 +54,7 @@ android {
 
     protobuf {
         protoc {
-            artifact = 'com.google.protobuf:protoc:3.12.4'
+            artifact = 'com.google.protobuf:protoc:3.19.1'
         }
 //        //配置生成目录，编译后会在 build 的目录下生成对应的java文件
         generateProtoTasks {
@@ -66,9 +75,16 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support.constraint:constraint-layout:2.0.4'
-    testImplementation 'junit:junit:4.12'
+    //junit is a library which can automatically generate test code to test your logic code
+    //It is only used for testing and is not included in the APK file.
+    //It is a standard to include the junit library.
+    testImplementation 'junit:junit:4.13.2'
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation project(':ZenboSDK')
-    implementation 'com.google.protobuf:protobuf-javalite:3.8.0'
+    //protobuf-javalite is a protobuf library for java devices. Lite means that it is
+    //efficient and fast, because Android device's memory is limited.
+    //It turns .proto code into java code.
+    //Because my server-side protobuf version is 3.19.1, I should use the same version for robot apps.
+    implementation 'com.google.protobuf:protobuf-javalite:3.19.1'
 }
 

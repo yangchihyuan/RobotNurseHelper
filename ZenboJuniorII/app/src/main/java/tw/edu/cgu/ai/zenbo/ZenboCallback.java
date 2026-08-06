@@ -8,7 +8,12 @@ import com.asus.robotframework.API.RobotCmdState;
 import com.asus.robotframework.API.RobotErrorCode;
 import com.asus.robotframework.API.RobotCommand;
 
+import com.google.protobuf.Timestamp;
+import RobotCommandProtobuf.RobotCommandOuterClass;
+
 public class ZenboCallback extends RobotCallback {
+
+    public SocketManager socketManager;
 
     public boolean RobotMovementFinished_Head = true;
     public boolean RobotMovementFinished_Body = true;
@@ -16,8 +21,6 @@ public class ZenboCallback extends RobotCallback {
     public long TimeStamp_MovementFinished_Body = Long.MIN_VALUE;
     public long TimeStamp_MovementHead_Active = 0;      //can not use Long.Max_Value, out of range after the subtraction.
     public long TimeStamp_MovementBody_Active = 0;
-
-    public long TimeStamp_TTSCompleted = 0;
 
     @Override
     public void onStateChange(int cmd, int serial, RobotErrorCode err_code, RobotCmdState state) {
@@ -84,8 +87,22 @@ public class ZenboCallback extends RobotCallback {
         {
             if( state == RobotCmdState.SUCCEED)
             {
-                TimeStamp_TTSCompleted = System.currentTimeMillis();
                 //Send a command to Server
+                if (socketManager != null && socketManager.mSocketSendMessages != null) {
+                    long timestamp = System.currentTimeMillis();
+                    Timestamp eventTime = Timestamp.newBuilder()
+                            .setSeconds(timestamp / 1000)
+                            .setNanos((int) ((timestamp % 1000) * 1000000))
+                            .build();
+
+                    RobotCommandOuterClass.RobotToServerMessage message =
+                            RobotCommandOuterClass.RobotToServerMessage.newBuilder()
+                                    .setEventTime(eventTime)
+                                    .setDescription("onTTSComplete")
+                                    .build();
+
+                    socketManager.sendAMessage(message, socketManager.mSocketSendMessages);
+                }
 
             }
         }
