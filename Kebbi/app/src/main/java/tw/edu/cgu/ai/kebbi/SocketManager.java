@@ -228,37 +228,6 @@ public class SocketManager {
     {
         mbReceiveCommand = false;
     }
-    void sendImage(ByteBuffer imageAndData)
-    {
-        if( mSocketSendImages != null && mSocketSendImages.isConnected()) {
-            final boolean post = handlerSendToServer.post(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            OutputStream os = mSocketSendImages.getOutputStream();
-                            os.write(imageAndData.array());
-
-                        } catch (Exception e) {
-                            //Debug Information 2025/4/17, the socket don't change mode even if my server is down
-                            try {
-                                mSocketSendImages.close();
-                            }
-                            catch( Exception e2)
-                            {
-                                Log.d("closing socket fails", "closing socket fails" + e2.getMessage()); //sendto failed: EPIPE (Broken pipe)
-                            }
-                            finally
-                            {
-                                mSocketSendImages = null;
-                            }
-                            Log.d("Exception Send to Server fails", e.getMessage()); //sendto failed: EPIPE (Broken pipe)
-                        }
-                    }
-                }
-            );
-        }
-    }
 
     void sendImage(RobotCommandOuterClass.RobotToServerMessage message)
     {

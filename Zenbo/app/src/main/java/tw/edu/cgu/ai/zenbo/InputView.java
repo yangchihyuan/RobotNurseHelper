@@ -7,6 +7,7 @@ package tw.edu.cgu.ai.zenbo;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.util.AttributeSet;
 import android.view.View;
 

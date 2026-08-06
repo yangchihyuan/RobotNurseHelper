@@ -2,7 +2,7 @@
 
 buildscript {
     ext {
-        agp_version = '9.0.1'
+        agp_version = '9.3.1'
         kotlin_version = '1.8.22' // Set your desired Kotlin version here
     }
     repositories {

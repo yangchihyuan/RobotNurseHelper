@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.protobuf'
-apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
     //Chih-Yuan Yang: I need the compileSdkVersion item for Android 6 SDK. Don't remove it. Don't
@@ -12,7 +11,7 @@ android {
         minSdk 23
         targetSdkVersion 23
         versionCode 11
-        versionName 'v2026.08.03'
+        versionName 'v2026.08.06'
         externalNativeBuild {
             cmake {
                 cppFlags ""
@@ -48,7 +47,7 @@ android {
 
     protobuf {
         protoc {
-            artifact = 'com.google.protobuf:protoc:3.12.4'
+            artifact = 'com.google.protobuf:protoc:3.19.1'
         }
 //        //配置生成目录，编译后会在 build 的目录下生成对应的java文件
         generateProtoTasks {
@@ -61,9 +60,6 @@ android {
             }
         }
     }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
 }
 
 dependencies {
@@ -71,6 +67,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     implementation 'com.android.support:appcompat-v7:23.1.1'
     implementation project(':ZenboSDK')
-    implementation 'com.google.protobuf:protobuf-javalite:3.8.0'
+    implementation 'com.google.protobuf:protobuf-javalite:3.19.1'
 }
 

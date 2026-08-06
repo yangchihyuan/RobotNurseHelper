@@ -276,6 +276,11 @@ void MainWindow::on_pushButton_speak_clicked() {
       ui->plainTextEdit_SentCommands->verticalScrollBar()->maximum());
 }
 
+void MainWindow::on_pushButton_onTTSComplete_clicked() {
+  thread_state_control.NotifyEvent("onTTSComplete",
+                                   chrono::system_clock::now());
+}
+
 // Kebbi doesn't support move body command. How to map to Kebbi motion?
 void MainWindow::send_move_body_command(float x, float y, int degree,
                                         int speed) {
@@ -306,6 +311,12 @@ void MainWindow::on_pushButton_speak_2_clicked() {
 void MainWindow::on_pushButton_hideface_clicked() {
   RobotCommandProtobuf::RobotCommand command;
   command.set_hideface(true);
+  sendMessageManager.AddMessage(command);
+}
+
+void MainWindow::on_pushButton_killapp_clicked() {
+  RobotCommandProtobuf::RobotCommand command;
+  command.set_killapp(true);
   sendMessageManager.AddMessage(command);
 }
 
@@ -371,6 +382,35 @@ void MainWindow::timer_event() {
     }
   }
   sendMessageManager.Send();
+}
+
+void MainWindow::onPlayVideoRequested(const QString &videoPath) {
+  if (pVideoWindow) {
+    // Calling showFullScreen() is often enough to show, raise, and focus the
+    // window. Combining it with other calls like move() can confuse the window
+    // manager.
+    // temporary comment to avoid the window being full-screen at the beginning
+    // pVideoWindow->showFullScreen();
+    pVideoWindow->raise();
+    pVideoWindow->activateWindow();
+    pVideoWindow->playVideo(videoPath);
+  }
+}
+
+void MainWindow::onPlayImageRequested(const QString &imagePath) {
+  if (pVideoWindow) {
+    pVideoWindow->showImage(imagePath);
+    // Also bring the window to the front
+    pVideoWindow->raise();
+    pVideoWindow->activateWindow();
+  }
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+  if (pVideoWindow) {
+    pVideoWindow->close();
+  }
+  QMainWindow::closeEvent(event);
 }
 
 //Although both Kebbi and Zenbo can use this function, the implementation is different.
