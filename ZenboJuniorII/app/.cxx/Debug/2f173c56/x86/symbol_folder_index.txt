@@ -1,1 +1,0 @@
-/home/chihyuan/RobotNurseHelper/ZenboJuniorII/app/build/intermediates/cxx/Debug/2f173c56/obj/x86

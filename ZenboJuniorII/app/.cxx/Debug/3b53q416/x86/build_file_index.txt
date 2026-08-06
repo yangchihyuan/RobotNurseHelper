@@ -1,1 +1,0 @@
-/home/chihyuan/ZenboNurseHelper/ZenboJuniorII/app/CMakeLists.txt

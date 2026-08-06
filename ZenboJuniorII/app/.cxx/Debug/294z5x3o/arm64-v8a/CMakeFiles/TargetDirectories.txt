@@ -1,3 +1,0 @@
-/home/chihyuan/RobotNurseHelper/ZenboJuniorII/app/.cxx/Debug/294z5x3o/arm64-v8a/CMakeFiles/native-lib.dir
-/home/chihyuan/RobotNurseHelper/ZenboJuniorII/app/.cxx/Debug/294z5x3o/arm64-v8a/CMakeFiles/edit_cache.dir
-/home/chihyuan/RobotNurseHelper/ZenboJuniorII/app/.cxx/Debug/294z5x3o/arm64-v8a/CMakeFiles/rebuild_cache.dir

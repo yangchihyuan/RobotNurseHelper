@@ -1,1 +1,0 @@
-/home/chihyuan/StudioProjects/ZenboNurseHelper_RobotSide/app/build/intermediates/cxx/Debug/6r3b6aaf/obj/armeabi-v7a
