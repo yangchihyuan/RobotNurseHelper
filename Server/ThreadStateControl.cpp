@@ -5,7 +5,7 @@
 #include <cstdlib> // For rand() and srand()
 #include <ctime>   // For time()
 #include "utility_json.hpp"
-#include "ollama.hpp"
+#include "ollama.hpp"           //This file is in the /home/Username/RobotNurseHelper_build/ollama-hpp/include
 
 ThreadStateControl::ThreadStateControl()
 {

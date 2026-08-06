@@ -1,0 +1,5 @@
+# ninja log v5
+0	27	1785988857460776037	CMakeFiles/native-lib.dir/src/main/jni/rgb2yuv.cc.o	4f2d9a540859dc60
+1	33	1785988857466775894	CMakeFiles/native-lib.dir/src/main/jni/yuv2rgb.cc.o	22fe8b40b9248fa9
+0	50	1785988857485775441	CMakeFiles/native-lib.dir/src/main/jni/imageutils_jni.cc.o	ed92e78c4813f0b8
+50	72	1785988857507774916	../../../../build/intermediates/cxx/Debug/294z5x3o/obj/armeabi-v7a/libnative-lib.so	5959b7094e624f21

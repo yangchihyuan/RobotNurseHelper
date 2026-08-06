@@ -45,7 +45,7 @@ android {
 
     protobuf {
         protoc {
-            artifact = 'com.google.protobuf:protoc:3.12.4'
+            artifact = 'com.google.protobuf:protoc:3.19.1'
         }
 //        //配置生成目录，编译后会在 build 的目录下生成对应的java文件
         generateProtoTasks {
@@ -67,8 +67,8 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support.constraint:constraint-layout:2.0.4'
     testImplementation 'junit:junit:4.12'
-    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:appcompat-v7:23.1.1'
     implementation project(':ZenboSDK')
-    implementation 'com.google.protobuf:protobuf-javalite:3.8.0'
+    implementation 'com.google.protobuf:protobuf-javalite:3.19.1'
 }
 

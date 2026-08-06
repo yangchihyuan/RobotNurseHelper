@@ -3,20 +3,53 @@ apply plugin: 'com.google.protobuf'
 apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
-    compileSdk 36
-
-    //Chih-Yuan Yang: I need the compileSdkVersion item for Android 6 SDK. Don't remove it. Don't
-    //follow new gradle version's suggestion.
-
+    compileSdk = 37  //AGP 9 need the "=" assignment symbol because compileSdk becomes a property
     defaultConfig {
-        applicationId 'tw.edu.cgu.ai.kebbi'
-        minSdk 28
-    //    targetSdkVersion 28     //Chih-Yuan Yang: this targetSdkVersion item is used for Android 6 SDK.
-        //   Android 9 no longer needs it.
-        versionCode 15
-        versionName 'v15 25.2.12'
-        targetSdk 28
+        applicationId 'tw.edu.cgu.ai'
     }
+
+    flavorDimensions 'RobotType'
+
+    productFlavors {
+        Kebbi {
+            dimension 'RobotType'
+            minSdk 28
+            targetSdk 28
+            versionName 'v15 25.2.12'
+            versionCode 15
+            applicationIdSuffix ".kebbi"
+            versionNameSuffix "-kebbi"
+        }
+        Zenbo{
+            dimension 'RobotType'
+            minSdk 23
+            targetSdkVersion 23
+            versionName 'v2026.08.06'
+            versionCode 11
+            applicationIdSuffix ".znebo"
+            versionNameSuffix "-zenbo"
+            externalNativeBuild {
+                cmake {
+                    cppFlags ""
+                }
+            }
+        }
+        ZenboJrII{
+            dimension 'RobotType'
+            minSdk 29
+            targetSdkVersion 29
+            versionName 'v2026.08.06'
+            versionCode 11
+            applicationIdSuffix ".znebojrii"
+            versionNameSuffix "-zenbojrii"
+            externalNativeBuild {
+                cmake {
+                    cppFlags ""
+                }
+            }
+        }
+    }
+
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11

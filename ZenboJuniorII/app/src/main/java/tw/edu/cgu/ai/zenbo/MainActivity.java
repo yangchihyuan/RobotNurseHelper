@@ -283,7 +283,7 @@ public class MainActivity extends Activity {
         mRobotAPI.robot.setPressOnHeadAction(false);
         mRobotAPI.robot.setVoiceTrigger(false);     //disable the voice trigger
 
-        mRobotAPI.robot.speak("哈囉，你好。");
+        mRobotAPI.robot.speak("Hello, Nice to see you.");
     }  //end of onCreate
 
     //2025/1/3 This is a call back function, using the same thread as onCreate(). Thus, it is only be called after the onCreated is completed.
