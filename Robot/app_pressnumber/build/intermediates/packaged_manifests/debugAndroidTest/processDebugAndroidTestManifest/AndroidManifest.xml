@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="tw.edu.cgu.ai.kebbi.pressnumber.test" >
+
+    <uses-sdk
+        android:minSdkVersion="31"
+        android:targetSdkVersion="31" />
+
+    <instrumentation
+        android:name="androidx.test.runner.AndroidJUnitRunner"
+        android:functionalTest="false"
+        android:handleProfiling="false"
+        android:label="Tests for tw.edu.cgu.ai.kebbi.pressnumber"
+        android:targetPackage="tw.edu.cgu.ai.kebbi.pressnumber" />
+
+    <queries>
+        <package android:name="androidx.test.orchestrator" />
+        <package android:name="androidx.test.services" />
+        <package android:name="com.google.android.apps.common.testing.services" />
+    </queries>
+
+    <application
+        android:debuggable="true"
+        android:extractNativeLibs="false" />
+
+</manifest>

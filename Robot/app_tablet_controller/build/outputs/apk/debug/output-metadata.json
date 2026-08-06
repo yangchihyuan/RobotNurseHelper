@@ -1,0 +1,21 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "tw.edu.cgu.ai.robotnursehelper.tabletcontroller",
+  "variantName": "debug",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 2,
+      "versionName": "v2 26.05.19",
+      "outputFile": "app_tablet_controller-debug.apk"
+    }
+  ],
+  "elementType": "File",
+  "minSdkVersionForDexing": 31
+}

@@ -1,0 +1,21 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "tw.edu.cgu.ai.kebbi",
+  "variantName": "KebbiDebug",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 15,
+      "versionName": "v15 25.2.12-kebbi",
+      "outputFile": "app-Kebbi-debug.apk"
+    }
+  ],
+  "elementType": "File",
+  "minSdkVersionForDexing": 28
+}

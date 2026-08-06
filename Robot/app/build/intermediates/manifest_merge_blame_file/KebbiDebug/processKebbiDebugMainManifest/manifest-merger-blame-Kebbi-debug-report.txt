@@ -1,0 +1,385 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<!--
+3 Copyright 2014 The Android Open Source Project
+4
+5 Licensed under the Apache License, Version 2.0 (the "License");
+6 you may not use this file except in compliance with the License.
+7 You may obtain a copy of the License at
+8
+9     http://www.apache.org/licenses/LICENSE-2.0
+10
+11 Unless required by applicable law or agreed to in writing, software
+12 distributed under the License is distributed on an "AS IS" BASIS,
+13 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+14 See the License for the specific language governing permissions and
+15 limitations under the License.
+16        android:icon="@drawable/ic_launcher"
+17-->
+18<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+19    package="tw.edu.cgu.ai.kebbi"
+20    android:versionCode="15"
+21    android:versionName="v15 25.2.12-kebbi" >
+22
+23    <uses-sdk
+23-->INJECTED
+24        android:minSdkVersion="28"
+24-->INJECTED
+25        android:targetSdkVersion="28" />
+25-->INJECTED
+26
+27    <uses-permission android:name="android.permission.CAMERA" />
+27-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:23:5-65
+27-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:23:22-62
+28
+29    <uses-feature android:name="android.hardware.camera" />
+29-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:24:5-60
+29-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:24:19-57
+30    <uses-feature android:name="android.hardware.camera.autofocus" />
+30-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:25:5-70
+30-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:25:19-67
+31
+32    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+32-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:26:5-80
+32-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:26:22-78
+33    <uses-permission android:name="android.permission.INTERNET" />
+33-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:27:5-67
+33-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:27:22-64
+34    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+34-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:28:5-70
+34-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:28:22-68
+35
+36    <!-- 2025/8/24 for camera as a service -->
+37    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+37-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:31:5-77
+37-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:31:22-74
+38    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
+38-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:32:5-84
+38-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:32:22-81
+39
+40    <permission
+40-->[androidx.core:core:1.17.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/5bdff025dbb46609e00c3ed0a2c3b55e/transformed/core-1.17.0/AndroidManifest.xml:22:5-24:47
+41        android:name="tw.edu.cgu.ai.kebbi.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+41-->[androidx.core:core:1.17.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/5bdff025dbb46609e00c3ed0a2c3b55e/transformed/core-1.17.0/AndroidManifest.xml:23:9-81
+42        android:protectionLevel="signature" />
+42-->[androidx.core:core:1.17.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/5bdff025dbb46609e00c3ed0a2c3b55e/transformed/core-1.17.0/AndroidManifest.xml:24:9-44
+43
+44    <uses-permission android:name="tw.edu.cgu.ai.kebbi.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" /> <!-- To store the heap dumps and leak analysis results. -->
+44-->[androidx.core:core:1.17.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/5bdff025dbb46609e00c3ed0a2c3b55e/transformed/core-1.17.0/AndroidManifest.xml:26:5-97
+44-->[androidx.core:core:1.17.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/5bdff025dbb46609e00c3ed0a2c3b55e/transformed/core-1.17.0/AndroidManifest.xml:26:22-94
+45    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- To allow posting notifications on Android 13 -->
+45-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:25:5-80
+45-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:25:22-77
+46    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+46-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:29:5-77
+46-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:29:22-74
+47    <uses-permission android:name="android.permission.INSTALL_PACKAGES" />
+47-->[:NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7:] /home/chihyuan/.gradle/caches/9.5.0/transforms/8aa425c25eab04b6a549fa53a706e080/transformed/jetified-NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7/AndroidManifest.xml:11:5-75
+47-->[:NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7:] /home/chihyuan/.gradle/caches/9.5.0/transforms/8aa425c25eab04b6a549fa53a706e080/transformed/jetified-NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7/AndroidManifest.xml:11:22-72
+48    <uses-permission android:name="android.permission.DELETE_PACKAGES" />
+48-->[:NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7:] /home/chihyuan/.gradle/caches/9.5.0/transforms/8aa425c25eab04b6a549fa53a706e080/transformed/jetified-NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7/AndroidManifest.xml:12:5-74
+48-->[:NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7:] /home/chihyuan/.gradle/caches/9.5.0/transforms/8aa425c25eab04b6a549fa53a706e080/transformed/jetified-NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7/AndroidManifest.xml:12:22-71
+49
+50    <application
+50-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:34:5-51:19
+51        android:allowBackup="true"
+51-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:34:18-44
+52        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+52-->[androidx.core:core:1.17.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/5bdff025dbb46609e00c3ed0a2c3b55e/transformed/core-1.17.0/AndroidManifest.xml:28:18-86
+53        android:debuggable="true"
+54        android:extractNativeLibs="false"
+54-->INJECTED
+55        android:icon="@mipmap/ic_launcher"
+55-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:36:9-43
+56        android:label="@string/app_name"
+56-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:35:9-41
+57        android:theme="@style/MaterialTheme" >
+57-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:37:9-45
+58        <activity
+58-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:38:9-48:20
+59            android:name="tw.edu.cgu.ai.kebbi.MainActivity"
+59-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:38:19-66
+60            android:label="@string/app_name"
+60-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:40:19-51
+61            android:screenOrientation="landscape" >
+61-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:39:19-56
+62            <intent-filter>
+62-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:41:13-47:29
+63                <action android:name="android.intent.action.MAIN" />
+63-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:42:17-69
+63-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:42:25-66
+64
+65                <category android:name="android.intent.category.LAUNCHER" />
+65-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:43:17-77
+65-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:43:27-74
+66                <category android:name="com.asus.intent.category.ZENBO" />
+66-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:44:17-75
+66-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:44:27-72
+67                <category android:name="com.asus.intent.category.ZENBO_LAUNCHER" />
+67-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:45:17-84
+67-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:45:27-81
+68
+69                <data android:name="com.asus.intent.data.MIN_ROBOT_API_LEVEL.1" />
+69-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:46:17-83
+69-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:46:23-80
+70            </intent-filter>
+71        </activity>
+72        <!-- Starting in Android 9 (API level 28), you must specify the foregroundServiceType for any service that will be a foreground service -->
+73        <service
+73-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:50:9-89
+74            android:name="tw.edu.cgu.ai.kebbi.CameraService"
+74-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:50:18-47
+75            android:foregroundServiceType="camera" />
+75-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:50:48-86
+76        <!--
+77        Service for holding metadata. Cannot be instantiated.
+78        Metadata will be merged from other manifests.
+79        -->
+80        <service
+80-->[androidx.camera:camera-core:1.5.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/d5160ee38871b1c461bd56750885edda/transformed/jetified-camera-core-1.5.0/AndroidManifest.xml:29:9-33:78
+81            android:name="androidx.camera.core.impl.MetadataHolderService"
+81-->[androidx.camera:camera-core:1.5.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/d5160ee38871b1c461bd56750885edda/transformed/jetified-camera-core-1.5.0/AndroidManifest.xml:30:13-75
+82            android:enabled="false"
+82-->[androidx.camera:camera-core:1.5.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/d5160ee38871b1c461bd56750885edda/transformed/jetified-camera-core-1.5.0/AndroidManifest.xml:31:13-36
+83            android:exported="false" >
+83-->[androidx.camera:camera-core:1.5.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/d5160ee38871b1c461bd56750885edda/transformed/jetified-camera-core-1.5.0/AndroidManifest.xml:32:13-37
+84            <meta-data
+84-->[androidx.camera:camera-camera2:1.5.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/2dd77682326bd38a134b53ce800ca980/transformed/jetified-camera-camera2-1.5.0/AndroidManifest.xml:30:13-32:89
+85                android:name="androidx.camera.core.impl.MetadataHolderService.DEFAULT_CONFIG_PROVIDER"
+85-->[androidx.camera:camera-camera2:1.5.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/2dd77682326bd38a134b53ce800ca980/transformed/jetified-camera-camera2-1.5.0/AndroidManifest.xml:31:17-103
+86                android:value="androidx.camera.camera2.Camera2Config$DefaultProvider" />
+86-->[androidx.camera:camera-camera2:1.5.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/2dd77682326bd38a134b53ce800ca980/transformed/jetified-camera-camera2-1.5.0/AndroidManifest.xml:32:17-86
+87        </service>
+88
+89        <provider
+89-->[androidx.emoji2:emoji2:1.3.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/cf7d85298e1e4093f036232ca333516e/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:24:9-32:20
+90            android:name="androidx.startup.InitializationProvider"
+90-->[androidx.emoji2:emoji2:1.3.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/cf7d85298e1e4093f036232ca333516e/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:25:13-67
+91            android:authorities="tw.edu.cgu.ai.kebbi.androidx-startup"
+91-->[androidx.emoji2:emoji2:1.3.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/cf7d85298e1e4093f036232ca333516e/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:26:13-68
+92            android:exported="false" >
+92-->[androidx.emoji2:emoji2:1.3.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/cf7d85298e1e4093f036232ca333516e/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:27:13-37
+93            <meta-data
+93-->[androidx.emoji2:emoji2:1.3.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/cf7d85298e1e4093f036232ca333516e/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:29:13-31:52
+94                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+94-->[androidx.emoji2:emoji2:1.3.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/cf7d85298e1e4093f036232ca333516e/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:30:17-75
+95                android:value="androidx.startup" />
+95-->[androidx.emoji2:emoji2:1.3.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/cf7d85298e1e4093f036232ca333516e/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:31:17-49
+96            <meta-data
+96-->[androidx.lifecycle:lifecycle-process:2.9.4] /home/chihyuan/.gradle/caches/9.5.0/transforms/fad31d846f2ceb8afb88743c7c8385d8/transformed/jetified-lifecycle-process-2.9.4/AndroidManifest.xml:29:13-31:52
+97                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+97-->[androidx.lifecycle:lifecycle-process:2.9.4] /home/chihyuan/.gradle/caches/9.5.0/transforms/fad31d846f2ceb8afb88743c7c8385d8/transformed/jetified-lifecycle-process-2.9.4/AndroidManifest.xml:30:17-78
+98                android:value="androidx.startup" />
+98-->[androidx.lifecycle:lifecycle-process:2.9.4] /home/chihyuan/.gradle/caches/9.5.0/transforms/fad31d846f2ceb8afb88743c7c8385d8/transformed/jetified-lifecycle-process-2.9.4/AndroidManifest.xml:31:17-49
+99            <meta-data
+99-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/316abbe873ee275b79c823b1386c191e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:29:13-31:52
+100                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+100-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/316abbe873ee275b79c823b1386c191e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:30:17-85
+101                android:value="androidx.startup" />
+101-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/316abbe873ee275b79c823b1386c191e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:31:17-49
+102        </provider>
+103        <provider
+103-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:32:9-40:20
+104            android:name="leakcanary.internal.LeakCanaryFileProvider"
+104-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:33:13-70
+105            android:authorities="com.squareup.leakcanary.fileprovider.tw.edu.cgu.ai.kebbi"
+105-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:34:13-88
+106            android:exported="false"
+106-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:35:13-37
+107            android:grantUriPermissions="true" >
+107-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:36:13-47
+108            <meta-data
+108-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:37:13-39:66
+109                android:name="android.support.FILE_PROVIDER_PATHS"
+109-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:38:17-67
+110                android:resource="@xml/leak_canary_file_paths" />
+110-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:39:17-63
+111        </provider>
+112
+113        <activity
+113-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:42:9-73:20
+114            android:name="leakcanary.internal.activity.LeakActivity"
+114-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:43:13-69
+115            android:exported="true"
+115-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:44:13-36
+116            android:icon="@mipmap/leak_canary_icon"
+116-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:45:13-52
+117            android:label="@string/leak_canary_display_activity_label"
+117-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:46:13-71
+118            android:taskAffinity="com.squareup.leakcanary.tw.edu.cgu.ai.kebbi"
+118-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:47:13-76
+119            android:theme="@style/leak_canary_LeakCanary.Base" >
+119-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:48:13-63
+120            <intent-filter android:label="@string/leak_canary_import_hprof_file" >
+120-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:49:13-72:29
+120-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:49:28-81
+121                <action android:name="android.intent.action.VIEW" />
+121-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:50:17-69
+121-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:50:25-66
+122
+123                <category android:name="android.intent.category.DEFAULT" />
+123-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:52:17-76
+123-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:52:27-73
+124                <category android:name="android.intent.category.BROWSABLE" />
+124-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:53:17-78
+124-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:53:27-75
+125
+126                <data android:scheme="file" />
+126-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:46:17-83
+127                <data android:scheme="content" />
+127-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:46:17-83
+128                <data android:mimeType="*/*" />
+128-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:46:17-83
+129                <data android:host="*" />
+129-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:46:17-83
+130                <data android:pathPattern=".*\\.hprof" />
+130-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:46:17-83
+131                <data android:pathPattern=".*\\..*\\.hprof" />
+131-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:46:17-83
+132                <data android:pathPattern=".*\\..*\\..*\\.hprof" />
+132-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:46:17-83
+133                <data android:pathPattern=".*\\..*\\..*\\..*\\.hprof" />
+133-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:46:17-83
+134                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.hprof" />
+134-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:46:17-83
+135                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.hprof" />
+135-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:46:17-83
+136                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.hprof" />
+136-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:46:17-83
+137                <!--
+138            Since hprof isn't a standard MIME type, we have to declare such patterns.
+139            Most file providers will generate URIs including their own package name,
+140            which contains `.` characters that must be explicitly escaped in pathPattern.
+141            @see https://stackoverflow.com/a/31028507/703646
+142                -->
+143            </intent-filter>
+144        </activity>
+145
+146        <activity-alias
+146-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:75:9-92:26
+147            android:name="leakcanary.internal.activity.LeakLauncherActivity"
+147-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:76:13-77
+148            android:banner="@drawable/leak_canary_tv_icon"
+148-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:77:13-59
+149            android:enabled="@bool/leak_canary_add_launcher_icon"
+149-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:78:13-66
+150            android:exported="true"
+150-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:79:13-36
+151            android:icon="@mipmap/leak_canary_icon"
+151-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:80:13-52
+152            android:label="@string/leak_canary_display_activity_label"
+152-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:81:13-71
+153            android:targetActivity="leakcanary.internal.activity.LeakActivity"
+153-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:82:13-79
+154            android:taskAffinity="com.squareup.leakcanary.tw.edu.cgu.ai.kebbi"
+154-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:83:13-76
+155            android:theme="@style/leak_canary_LeakCanary.Base" >
+155-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:84:13-63
+156            <intent-filter>
+156-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:85:13-91:29
+157                <action android:name="android.intent.action.MAIN" />
+157-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:42:17-69
+157-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:42:25-66
+158
+159                <category android:name="android.intent.category.LAUNCHER" />
+159-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:43:17-77
+159-->/home/chihyuan/RobotNurseHelper/Robot/app/src/main/AndroidManifest.xml:43:27-74
+160                <!-- Android TV launcher intent -->
+161                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+161-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:90:17-86
+161-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:90:27-83
+162            </intent-filter>
+163        </activity-alias>
+164
+165        <activity
+165-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:94:9-100:68
+166            android:name="leakcanary.internal.RequestPermissionActivity"
+166-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:95:13-73
+167            android:excludeFromRecents="true"
+167-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:96:13-46
+168            android:icon="@mipmap/leak_canary_icon"
+168-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:97:13-52
+169            android:label="@string/leak_canary_storage_permission_activity_label"
+169-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:98:13-82
+170            android:taskAffinity="com.squareup.leakcanary.tw.edu.cgu.ai.kebbi"
+170-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:99:13-76
+171            android:theme="@style/leak_canary_Theme.Transparent" />
+171-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:100:13-65
+172
+173        <receiver android:name="leakcanary.internal.NotificationReceiver" />
+173-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:102:9-77
+173-->[com.squareup.leakcanary:leakcanary-android-core:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/d426675a3923d4185639dd557d86f1ee/transformed/jetified-leakcanary-android-core-2.13/AndroidManifest.xml:102:19-74
+174
+175        <provider
+175-->[com.squareup.leakcanary:leakcanary-object-watcher-android:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/2546162d5ca649f4ee4aef5b4d9f675b/transformed/jetified-leakcanary-object-watcher-android-2.13/AndroidManifest.xml:8:9-12:40
+176            android:name="leakcanary.internal.MainProcessAppWatcherInstaller"
+176-->[com.squareup.leakcanary:leakcanary-object-watcher-android:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/2546162d5ca649f4ee4aef5b4d9f675b/transformed/jetified-leakcanary-object-watcher-android-2.13/AndroidManifest.xml:9:13-78
+177            android:authorities="tw.edu.cgu.ai.kebbi.leakcanary-installer"
+177-->[com.squareup.leakcanary:leakcanary-object-watcher-android:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/2546162d5ca649f4ee4aef5b4d9f675b/transformed/jetified-leakcanary-object-watcher-android-2.13/AndroidManifest.xml:10:13-72
+178            android:enabled="@bool/leak_canary_watcher_auto_install"
+178-->[com.squareup.leakcanary:leakcanary-object-watcher-android:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/2546162d5ca649f4ee4aef5b4d9f675b/transformed/jetified-leakcanary-object-watcher-android-2.13/AndroidManifest.xml:11:13-69
+179            android:exported="false" />
+179-->[com.squareup.leakcanary:leakcanary-object-watcher-android:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/2546162d5ca649f4ee4aef5b4d9f675b/transformed/jetified-leakcanary-object-watcher-android-2.13/AndroidManifest.xml:12:13-37
+180        <provider
+180-->[com.squareup.leakcanary:plumber-android:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/08d5a609a6c7b74e506dfaa7eaeb84fc/transformed/jetified-plumber-android-2.13/AndroidManifest.xml:8:9-12:40
+181            android:name="leakcanary.internal.PlumberInstaller"
+181-->[com.squareup.leakcanary:plumber-android:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/08d5a609a6c7b74e506dfaa7eaeb84fc/transformed/jetified-plumber-android-2.13/AndroidManifest.xml:9:13-64
+182            android:authorities="tw.edu.cgu.ai.kebbi.plumber-installer"
+182-->[com.squareup.leakcanary:plumber-android:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/08d5a609a6c7b74e506dfaa7eaeb84fc/transformed/jetified-plumber-android-2.13/AndroidManifest.xml:10:13-69
+183            android:enabled="@bool/leak_canary_plumber_auto_install"
+183-->[com.squareup.leakcanary:plumber-android:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/08d5a609a6c7b74e506dfaa7eaeb84fc/transformed/jetified-plumber-android-2.13/AndroidManifest.xml:11:13-69
+184            android:exported="false" />
+184-->[com.squareup.leakcanary:plumber-android:2.13] /home/chihyuan/.gradle/caches/9.5.0/transforms/08d5a609a6c7b74e506dfaa7eaeb84fc/transformed/jetified-plumber-android-2.13/AndroidManifest.xml:12:13-37
+185
+186        <receiver
+186-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/316abbe873ee275b79c823b1386c191e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:34:9-52:20
+187            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+187-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/316abbe873ee275b79c823b1386c191e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:35:13-76
+188            android:directBootAware="false"
+188-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/316abbe873ee275b79c823b1386c191e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:36:13-44
+189            android:enabled="true"
+189-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/316abbe873ee275b79c823b1386c191e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:37:13-35
+190            android:exported="true"
+190-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/316abbe873ee275b79c823b1386c191e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:38:13-36
+191            android:permission="android.permission.DUMP" >
+191-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/316abbe873ee275b79c823b1386c191e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:39:13-57
+192            <intent-filter>
+192-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/316abbe873ee275b79c823b1386c191e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:40:13-42:29
+193                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+193-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/316abbe873ee275b79c823b1386c191e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:41:17-91
+193-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/316abbe873ee275b79c823b1386c191e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:41:25-88
+194            </intent-filter>
+195            <intent-filter>
+195-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/316abbe873ee275b79c823b1386c191e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:43:13-45:29
+196                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+196-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/316abbe873ee275b79c823b1386c191e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:44:17-85
+196-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/316abbe873ee275b79c823b1386c191e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:44:25-82
+197            </intent-filter>
+198            <intent-filter>
+198-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/316abbe873ee275b79c823b1386c191e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:46:13-48:29
+199                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+199-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/316abbe873ee275b79c823b1386c191e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:47:17-88
+199-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/316abbe873ee275b79c823b1386c191e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:47:25-85
+200            </intent-filter>
+201            <intent-filter>
+201-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/316abbe873ee275b79c823b1386c191e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:49:13-51:29
+202                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+202-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/316abbe873ee275b79c823b1386c191e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:50:17-95
+202-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chihyuan/.gradle/caches/9.5.0/transforms/316abbe873ee275b79c823b1386c191e/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:50:25-92
+203            </intent-filter>
+204        </receiver>
+205
+206        <meta-data
+206-->[:NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7:] /home/chihyuan/.gradle/caches/9.5.0/transforms/8aa425c25eab04b6a549fa53a706e080/transformed/jetified-NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7/AndroidManifest.xml:15:9-17:49
+207            android:name="SDK_VERSION"
+207-->[:NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7:] /home/chihyuan/.gradle/caches/9.5.0/transforms/8aa425c25eab04b6a549fa53a706e080/transformed/jetified-NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7/AndroidManifest.xml:16:13-39
+208            android:value="NUWA internal SDK" />
+208-->[:NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7:] /home/chihyuan/.gradle/caches/9.5.0/transforms/8aa425c25eab04b6a549fa53a706e080/transformed/jetified-NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7/AndroidManifest.xml:17:13-46
+209        <meta-data
+209-->[:NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7:] /home/chihyuan/.gradle/caches/9.5.0/transforms/8aa425c25eab04b6a549fa53a706e080/transformed/jetified-NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7/AndroidManifest.xml:18:9-20:35
+210            android:name="SDK_KEY"
+210-->[:NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7:] /home/chihyuan/.gradle/caches/9.5.0/transforms/8aa425c25eab04b6a549fa53a706e080/transformed/jetified-NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7/AndroidManifest.xml:19:13-35
+211            android:value="123" />
+211-->[:NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7:] /home/chihyuan/.gradle/caches/9.5.0/transforms/8aa425c25eab04b6a549fa53a706e080/transformed/jetified-NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7/AndroidManifest.xml:20:13-32
+212    </application>
+213
+214</manifest>

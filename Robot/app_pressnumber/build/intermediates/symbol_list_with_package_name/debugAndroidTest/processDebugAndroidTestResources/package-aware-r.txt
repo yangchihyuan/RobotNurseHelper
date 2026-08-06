@@ -1,0 +1,3 @@
+tw.edu.cgu.ai.kebbi.pressnumber.test
+style WhiteBackgroundDialogTheme
+style WhiteBackgroundTheme

@@ -1,0 +1,21 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "tw.edu.cgu.ai.robotnursehelper.tabletcontroller.test",
+  "variantName": "debugAndroidTest",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 0,
+      "versionName": "",
+      "outputFile": "app_tablet_controller-debug-androidTest.apk"
+    }
+  ],
+  "elementType": "File",
+  "minSdkVersionForDexing": 31
+}

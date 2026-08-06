@@ -1,0 +1,45 @@
+{
+    "logs": [
+        {
+            "outputFile": "tw.edu.cgu.ai.kebbi.app-mergeKebbiDebugResources-38:/values-v11/values-v11.xml",
+            "map": [
+                {
+                    "source": "/home/chihyuan/RobotNurseHelper/Robot/app/src/main/res/values-v11/template-styles.xml",
+                    "from": {
+                        "startLines": "19",
+                        "startColumns": "4",
+                        "startOffsets": "650",
+                        "endColumns": "65",
+                        "endOffsets": "711"
+                    },
+                    "to": {
+                        "startLines": "15",
+                        "startColumns": "4",
+                        "startOffsets": "660",
+                        "endColumns": "64",
+                        "endOffsets": "720"
+                    }
+                },
+                {
+                    "source": "/home/chihyuan/RobotNurseHelper/Robot/app/src/main/res/values-v11/styles.xml",
+                    "from": {
+                        "startLines": "7,19,11",
+                        "startColumns": "2,2,2",
+                        "startOffsets": "210,763,340",
+                        "endLines": "9,21,17",
+                        "endColumns": "10,10,10",
+                        "endOffsets": "336,927,759"
+                    },
+                    "to": {
+                        "startLines": "2,5,8",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,137,236",
+                        "endLines": "4,7,14",
+                        "endColumns": "10,10,10",
+                        "endOffsets": "132,231,655"
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "tw.edu.cgu.ai.kebbi.tabletcontroller.app_tablet_controller-mergeDebugResources-8:/values-hdpi-v4/values-hdpi-v4.xml",
+            "map": [
+                {
+                    "source": "/home/chihyuan/.gradle/caches/9.5.0/transforms/6189142d38ae0ab991fe23bf140af5c0/transformed/appcompat-1.0.2/res/values-hdpi-v4/values-hdpi-v4.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "6",
+                        "endColumns": "13",
+                        "endOffsets": "327"
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,108 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="tw.edu.cgu.ai.robotnursehelper.tabletcontroller"
+4    android:versionCode="2"
+5    android:versionName="v2 26.05.19" >
+6
+7    <uses-sdk
+7-->INJECTED
+8        android:minSdkVersion="31"
+8-->INJECTED
+9        android:targetSdkVersion="31" />
+9-->INJECTED
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:4:5-67
+11-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:4:22-64
+12    <uses-permission android:name="android.permission.REORDER_TASKS" />
+12-->[androidx.test:core:1.6.1] /home/chihyuan/.gradle/caches/9.5.0/transforms/4d7934602b501db02058cefabd889505/transformed/jetified-core-1.6.1/AndroidManifest.xml:24:5-72
+12-->[androidx.test:core:1.6.1] /home/chihyuan/.gradle/caches/9.5.0/transforms/4d7934602b501db02058cefabd889505/transformed/jetified-core-1.6.1/AndroidManifest.xml:24:22-69
+13
+14    <application
+14-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:6:5-24:19
+15        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+15-->[androidx.core:core:1.0.1] /home/chihyuan/.gradle/caches/9.5.0/transforms/3a44683ff995cb8f42a2cfa78b5916c6/transformed/core-1.0.1/AndroidManifest.xml:22:18-86
+16        android:debuggable="true"
+17        android:extractNativeLibs="false"
+17-->INJECTED
+18        android:icon="@mipmap/ic_launcher"
+18-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:7:9-43
+19        android:label="@string/app_name"
+19-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:8:9-41
+20        android:roundIcon="@mipmap/ic_launcher_round"
+20-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:9:9-54
+21        android:theme="@style/Theme.TabletController" >
+21-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:10:9-54
+22
+23        <!-- MainActivity: 首頁 -->
+24        <activity
+24-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:13:9-20:20
+25            android:name="tw.edu.cgu.ai.kebbi.tabletcontroller.MainActivity"
+25-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:14:13-41
+26            android:exported="true" >
+26-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:15:13-36
+27            <intent-filter>
+27-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:16:13-19:29
+28                <action android:name="android.intent.action.MAIN" />
+28-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:17:17-69
+28-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:17:25-66
+29
+30                <category android:name="android.intent.category.LAUNCHER" />
+30-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:18:17-77
+30-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:18:27-74
+31            </intent-filter>
+32        </activity>
+33        <activity android:name="tw.edu.cgu.ai.kebbi.tabletcontroller.NetworkSettingActivity" />
+33-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:22:9-23:54
+33-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:23:13-51
+34        <activity
+34-->[androidx.test:core:1.6.1] /home/chihyuan/.gradle/caches/9.5.0/transforms/4d7934602b501db02058cefabd889505/transformed/jetified-core-1.6.1/AndroidManifest.xml:27:9-34:20
+35            android:name="androidx.test.core.app.InstrumentationActivityInvoker$BootstrapActivity"
+35-->[androidx.test:core:1.6.1] /home/chihyuan/.gradle/caches/9.5.0/transforms/4d7934602b501db02058cefabd889505/transformed/jetified-core-1.6.1/AndroidManifest.xml:28:13-99
+36            android:exported="true"
+36-->[androidx.test:core:1.6.1] /home/chihyuan/.gradle/caches/9.5.0/transforms/4d7934602b501db02058cefabd889505/transformed/jetified-core-1.6.1/AndroidManifest.xml:29:13-36
+37            android:theme="@style/WhiteBackgroundTheme" >
+37-->[androidx.test:core:1.6.1] /home/chihyuan/.gradle/caches/9.5.0/transforms/4d7934602b501db02058cefabd889505/transformed/jetified-core-1.6.1/AndroidManifest.xml:30:13-56
+38            <intent-filter android:priority="-100" >
+38-->[androidx.test:core:1.6.1] /home/chihyuan/.gradle/caches/9.5.0/transforms/4d7934602b501db02058cefabd889505/transformed/jetified-core-1.6.1/AndroidManifest.xml:31:13-33:29
+38-->[androidx.test:core:1.6.1] /home/chihyuan/.gradle/caches/9.5.0/transforms/4d7934602b501db02058cefabd889505/transformed/jetified-core-1.6.1/AndroidManifest.xml:31:28-51
+39                <category android:name="android.intent.category.LAUNCHER" />
+39-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:18:17-77
+39-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:18:27-74
+40            </intent-filter>
+41        </activity>
+42        <activity
+42-->[androidx.test:core:1.6.1] /home/chihyuan/.gradle/caches/9.5.0/transforms/4d7934602b501db02058cefabd889505/transformed/jetified-core-1.6.1/AndroidManifest.xml:35:9-42:20
+43            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity"
+43-->[androidx.test:core:1.6.1] /home/chihyuan/.gradle/caches/9.5.0/transforms/4d7934602b501db02058cefabd889505/transformed/jetified-core-1.6.1/AndroidManifest.xml:36:13-95
+44            android:exported="true"
+44-->[androidx.test:core:1.6.1] /home/chihyuan/.gradle/caches/9.5.0/transforms/4d7934602b501db02058cefabd889505/transformed/jetified-core-1.6.1/AndroidManifest.xml:37:13-36
+45            android:theme="@style/WhiteBackgroundTheme" >
+45-->[androidx.test:core:1.6.1] /home/chihyuan/.gradle/caches/9.5.0/transforms/4d7934602b501db02058cefabd889505/transformed/jetified-core-1.6.1/AndroidManifest.xml:38:13-56
+46            <intent-filter android:priority="-100" >
+46-->[androidx.test:core:1.6.1] /home/chihyuan/.gradle/caches/9.5.0/transforms/4d7934602b501db02058cefabd889505/transformed/jetified-core-1.6.1/AndroidManifest.xml:31:13-33:29
+46-->[androidx.test:core:1.6.1] /home/chihyuan/.gradle/caches/9.5.0/transforms/4d7934602b501db02058cefabd889505/transformed/jetified-core-1.6.1/AndroidManifest.xml:31:28-51
+47                <category android:name="android.intent.category.LAUNCHER" />
+47-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:18:17-77
+47-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:18:27-74
+48            </intent-filter>
+49        </activity>
+50        <activity
+50-->[androidx.test:core:1.6.1] /home/chihyuan/.gradle/caches/9.5.0/transforms/4d7934602b501db02058cefabd889505/transformed/jetified-core-1.6.1/AndroidManifest.xml:43:9-50:20
+51            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyFloatingActivity"
+51-->[androidx.test:core:1.6.1] /home/chihyuan/.gradle/caches/9.5.0/transforms/4d7934602b501db02058cefabd889505/transformed/jetified-core-1.6.1/AndroidManifest.xml:44:13-103
+52            android:exported="true"
+52-->[androidx.test:core:1.6.1] /home/chihyuan/.gradle/caches/9.5.0/transforms/4d7934602b501db02058cefabd889505/transformed/jetified-core-1.6.1/AndroidManifest.xml:45:13-36
+53            android:theme="@style/WhiteBackgroundDialogTheme" >
+53-->[androidx.test:core:1.6.1] /home/chihyuan/.gradle/caches/9.5.0/transforms/4d7934602b501db02058cefabd889505/transformed/jetified-core-1.6.1/AndroidManifest.xml:46:13-62
+54            <intent-filter android:priority="-100" >
+54-->[androidx.test:core:1.6.1] /home/chihyuan/.gradle/caches/9.5.0/transforms/4d7934602b501db02058cefabd889505/transformed/jetified-core-1.6.1/AndroidManifest.xml:31:13-33:29
+54-->[androidx.test:core:1.6.1] /home/chihyuan/.gradle/caches/9.5.0/transforms/4d7934602b501db02058cefabd889505/transformed/jetified-core-1.6.1/AndroidManifest.xml:31:28-51
+55                <category android:name="android.intent.category.LAUNCHER" />
+55-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:18:17-77
+55-->/home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/AndroidManifest.xml:18:27-74
+56            </intent-filter>
+57        </activity>
+58    </application>
+59
+60</manifest>

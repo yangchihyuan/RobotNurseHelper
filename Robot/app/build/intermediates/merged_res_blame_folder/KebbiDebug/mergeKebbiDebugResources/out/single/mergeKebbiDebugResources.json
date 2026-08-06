@@ -1,0 +1,106 @@
+[
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/mipmap-xxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/drawable_ic_camera.xml.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/drawable/ic_camera.xml"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/drawable_ic_launcher_background.xml.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/mipmap-mdpi_ic_launcher_foreground.webp.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/mipmap-mdpi/ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/mipmap-xhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/drawable-hdpi_tile.9.png.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/drawable-hdpi/tile.9.png"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/mipmap-hdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/drawable-mdpi_ic_action_info.png.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/drawable-mdpi/ic_action_info.png"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/drawable-hdpi_photo_camera.png.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/drawable-hdpi/photo_camera.png"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/mipmap-hdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/mipmap-mdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/drawable-xxhdpi_ic_action_info.png.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/drawable-xxhdpi/ic_action_info.png"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/drawable-xhdpi_ic_action_info.png.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/drawable-xhdpi/ic_action_info.png"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/mipmap-xhdpi_ic_launcher_foreground.webp.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/mipmap-xhdpi/ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/mipmap-xxxhdpi_ic_launcher_foreground.webp.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/mipmap-xxxhdpi/ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/mipmap-xhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/mipmap-mdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/mipmap-xxxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/mipmap-xxhdpi_ic_launcher_foreground.webp.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/mipmap-xxhdpi/ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/drawable-hdpi_ic_action_info.png.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/drawable-hdpi/ic_action_info.png"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/mipmap-hdpi_ic_launcher_foreground.webp.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/mipmap-hdpi/ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/mipmap-xxxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/layout_main_activity.xml.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/layout/main_activity.xml"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/mipmap-xxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "tw.edu.cgu.ai.kebbi.app-KebbiDebug-40:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "tw.edu.cgu.ai.kebbi.app-main-44:/mipmap-anydpi-v26/ic_launcher.xml"
+    }
+]

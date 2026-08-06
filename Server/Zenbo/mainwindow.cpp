@@ -393,14 +393,13 @@ void MainWindow::timer_event()
     }
 */
 
-/*
-    if( thread_whisper.b_RobotSentence_End )
-    {
-        thread_whisper.b_RobotSentence_End = false;
-        //send a command as the push button clicked
-        ui->pushButton_generate_response->click();      //This funciton will call the MainWindow::on_pushButton_generate_response_clicked() function.
-    }
-*/    
+   
+  WhisperData thisWhisperData = thread_whisper.getLatestResult();
+  if (thisWhisperData.tSTTComplete != oldWhisperData.tSTTComplete) {
+    ui->plainTextEdit_received->setPlainText(
+        QString::fromStdString(thisWhisperData.sOutput));
+    oldWhisperData = thisWhisperData;
+  }
 
   if (thread_LLM.b_new_LLM_response) {
     thread_LLM.b_new_LLM_response = false;

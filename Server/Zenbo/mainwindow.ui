@@ -874,7 +874,7 @@
      <string>Recognized from Robot's microphone</string>
     </property>
     <property name="checked">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLabel" name="label_26">

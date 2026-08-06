@@ -50,13 +50,13 @@ public:
     void setSettingFile(const QString &filePath);
     void startThreads();
 
-    void setWhisperModelFile(QString filePath);
-    void setLanguageModelName(QString ModelName);
-    void setPreviousContextFile(QString filePath);
-    void setState(int N);
-    void setImageSaveEveryNFrame(int N);
-    void setImageSaveDirectory(QString ImageSaveDirectory);
-    void setDefaultSaveImage(bool bDefaultSaveImage);
+//    void setWhisperModelFile(QString filePath);
+//    void setLanguageModelName(QString ModelName);
+//    void setPreviousContextFile(QString filePath);
+//    void setState(int N);
+//    void setImageSaveEveryNFrame(int N);
+//    void setImageSaveDirectory(QString ImageSaveDirectory);
+//    void setDefaultSaveImage(bool bDefaultSaveImage);
 
 protected:
     void closeEvent(QCloseEvent *event) override;
@@ -104,7 +104,7 @@ private:
     void send_move_head_command(int yaw, int pitch, int speed);
 
     SendMessageManager sendMessageManager;
-    bool bstream_recognition = false;
+    bool bstream_recognition = true;        //whether to stream the voice recognition result
 
     WhisperData oldWhisperData;     //for timer_event update UI
 

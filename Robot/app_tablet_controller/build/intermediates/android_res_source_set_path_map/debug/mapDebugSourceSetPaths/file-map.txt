@@ -1,0 +1,9 @@
+tw.edu.cgu.ai.kebbi.tabletcontroller.app_tablet_controller-pngs-0 /home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/build/generated/res/pngs/debug
+tw.edu.cgu.ai.kebbi.tabletcontroller.app_tablet_controller-resValues-1 /home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/build/generated/res/resValues/debug
+tw.edu.cgu.ai.kebbi.tabletcontroller.app_tablet_controller-updated_navigation_xml-2 /home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/build/generated/updated_navigation_xml/debug
+tw.edu.cgu.ai.kebbi.tabletcontroller.app_tablet_controller-mergeDebugResources-3 /home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/build/intermediates/incremental/debug/mergeDebugResources/merged.dir
+tw.edu.cgu.ai.kebbi.tabletcontroller.app_tablet_controller-mergeDebugResources-4 /home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/build/intermediates/incremental/debug/mergeDebugResources/stripped.dir
+tw.edu.cgu.ai.kebbi.tabletcontroller.app_tablet_controller-debug-5 /home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/build/intermediates/merged_res/debug/mergeDebugResources
+tw.edu.cgu.ai.kebbi.tabletcontroller.app_tablet_controller-debug-6 /home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/debug/res
+tw.edu.cgu.ai.kebbi.tabletcontroller.app_tablet_controller-main-7 /home/chihyuan/RobotNurseHelper/Robot/app_tablet_controller/src/main/res
+gradleHome-0 /home/chihyuan/.gradle

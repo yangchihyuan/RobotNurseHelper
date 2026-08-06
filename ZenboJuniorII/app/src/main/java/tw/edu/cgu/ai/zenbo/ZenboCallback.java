@@ -17,6 +17,8 @@ public class ZenboCallback extends RobotCallback {
     public long TimeStamp_MovementHead_Active = 0;      //can not use Long.Max_Value, out of range after the subtraction.
     public long TimeStamp_MovementBody_Active = 0;
 
+    public long TimeStamp_TTSCompleted = 0;
+
     @Override
     public void onStateChange(int cmd, int serial, RobotErrorCode err_code, RobotCmdState state) {
         //check, what will happen is the power core is plugged?
@@ -78,6 +80,15 @@ public class ZenboCallback extends RobotCallback {
             }
         }
 
+        if( cmd == RobotCommand.SPEAK.getValue())
+        {
+            if( state == RobotCmdState.SUCCEED)
+            {
+                TimeStamp_TTSCompleted = System.currentTimeMillis();
+                //Send a command to Server
+
+            }
+        }
         super.onStateChange(cmd, serial, err_code, state);
     }
 

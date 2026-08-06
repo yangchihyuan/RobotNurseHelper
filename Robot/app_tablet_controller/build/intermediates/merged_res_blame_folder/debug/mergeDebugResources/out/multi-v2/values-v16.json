@@ -1,0 +1,38 @@
+{
+    "logs": [
+        {
+            "outputFile": "tw.edu.cgu.ai.kebbi.tabletcontroller.app_tablet_controller-mergeDebugResources-8:/values-v16/values-v16.xml",
+            "map": [
+                {
+                    "source": "/home/chihyuan/.gradle/caches/9.5.0/transforms/6189142d38ae0ab991fe23bf140af5c0/transformed/appcompat-1.0.2/res/values-v16/values-v16.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "5",
+                        "endColumns": "12",
+                        "endOffsets": "223"
+                    },
+                    "to": {
+                        "startLines": "3",
+                        "startColumns": "4",
+                        "startOffsets": "121",
+                        "endLines": "6",
+                        "endColumns": "12",
+                        "endOffsets": "289"
+                    }
+                },
+                {
+                    "source": "/home/chihyuan/.gradle/caches/9.5.0/transforms/3a44683ff995cb8f42a2cfa78b5916c6/transformed/core-1.0.1/res/values-v16/values-v16.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "65",
+                        "endOffsets": "116"
+                    }
+                }
+            ]
+        }
+    ]
+}

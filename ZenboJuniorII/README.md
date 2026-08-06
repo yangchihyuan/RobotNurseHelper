@@ -4,7 +4,7 @@ This folder contains the source files of our robot-side app of the ZenboNurseHel
 This app runs on a Zenbo robot made by Asus Inc. Although this app can be installed on other Android devices, the Zenbo's features will not work.
 
 # Developing Tool
-Android Studio Koala (2024.1.1)
+Android Studio Quail 3 | 2026.1.3
 
 # Platform
 Ubuntu 24.04
@@ -33,8 +33,3 @@ You can find the app 'Zenbo Nurse Helper' in both the robot's Android apps panel
 # Known problems and workarounds
 ## libprotobuf incompatible problem
 Zenbo's Android version is 6, which is too old to be supported by the newly released protobuf libraries. The app will raise an exception if it receive a message with a variable of the type boolean or float. However, there is no exception for the types string, int32 and int64. Therefore, in our ServerSend.proto file, we replace the type of OpenPoseCoordinate.x and OpenPoseCoordinate.y from float to int32 to shun this problem.
-
-# Change log
-v2 (2025.03.17) change the transmittion protocol
-v3 (2025.03.31) add the rotation only command
-v4 (2025.04.16) enable socket auto-reconnection
