@@ -389,7 +389,6 @@ public class SocketManager {
     public void stopThreads() {
         threadSendToServer.quitSafely();
         threadReceiveCommand.quitSafely();
-//        mThreadExecuteCommand.quitSafely();
         threadCheckDiconnection.quitSafely();
         threadSendAudio.quitSafely();
         try {
@@ -400,10 +399,6 @@ public class SocketManager {
             threadReceiveCommand.join();
             threadReceiveCommand = null;
             handlerReceiveCommand = null;
-
-//            mThreadExecuteCommand.join();
-//            mThreadExecuteCommand = null;
-//            mHandlerExecuteCommand = null;
 
             threadCheckDiconnection.join();
             threadCheckDiconnection = null;

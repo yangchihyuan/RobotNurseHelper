@@ -370,8 +370,8 @@ void MainWindow::timer_event()
         //to the window such as mouse hovering. It seems caused by the hardward driver.
         //imshow is a high-level GUI. There is no extra argument for this function.
         //How to force the problem to update the window?
-//        cv::imshow("Image", outFrame);
-//        cv::waitKey(1);    //I miss this line so that Ubuntu does not update the window.
+        cv::imshow("Image", thread_process_image.getOutFrame());
+        cv::waitKey(1);    //I miss this line so that Ubuntu does not update the window.
         thread_process_image.bNewoutFrame = false;
 
         //update pitch and yaw

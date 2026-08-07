@@ -35,8 +35,6 @@ import RobotCommandProtobuf.RobotCommandOuterClass;
 
 import java.io.ByteArrayOutputStream;
 
-import java.nio.ByteOrder;
-
 class ImageListener implements OnImageAvailableListener {
 
     static {
