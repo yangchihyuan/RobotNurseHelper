@@ -2,6 +2,8 @@ syntax = "proto2";
 
 package RobotCommandProtobuf;
 
+option java_package = "tw.edu.cgu.ai";
+
 import "google/protobuf/timestamp.proto";
 
 //The command that the server sends to the robot

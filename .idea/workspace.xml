@@ -4,7 +4,266 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f48b784e-d430-4cb8-8416-aa6648814765" name="Changes" comment="" />
+    <list default="true" id="f48b784e-d430-4cb8-8416-aa6648814765" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Robot/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/12345.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/KebbiAirS.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/Kebbi_SDK.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/Kebbi_motion.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/Kebbi_motion_3D.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/Kebbi_motion_3D_list.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/NUWA_Document.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/Photo_DeveloperOptions.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/Photo_System.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/ReadMe_Photos/ADB.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/ReadMe_Photos/AboutKebbi.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/ReadMe_Photos/Default_apps.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/ReadMe_Photos/Screenshot_Device.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/ReadMe_Photos/Screenshot_DeviceDebugging.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/ReadMe_Photos/Search_settings.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/ReadMe_Photos/System.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/ReadMe_Photos/USB_debugging.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/libs/NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7.aar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/proguard-rules.pro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/AndroidManifest.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/TrashCan/ActionRunnable.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/TrashCan/AnalyzedFrame.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/TrashCan/AutoFitTextureView.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/TrashCan/AverageFrame.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/TrashCan/CameraService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/TrashCan/DataBuffer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/TrashCan/ImageListener.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/TrashCan/InputView.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/TrashCan/KeyPointView.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/TrashCan/MessageView.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/ic_launcher-playstore.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/java/tw/edu/cgu/ai/kebbi/AudioManager.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/java/tw/edu/cgu/ai/kebbi/CameraService.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/java/tw/edu/cgu/ai/kebbi/Converter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/java/tw/edu/cgu/ai/kebbi/EmulatorDetector.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/java/tw/edu/cgu/ai/kebbi/ExecuteCommandCallback.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/java/tw/edu/cgu/ai/kebbi/MainActivity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/java/tw/edu/cgu/ai/kebbi/SocketManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/java/tw/edu/cgu/ai/kebbi/env/ImageUtils.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/java/tw/edu/cgu/ai/kebbi/env/Logger.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/jni/imageutils_jni.cc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/jni/rgb2yuv.cc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/jni/rgb2yuv.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/jni/yuv2rgb.cc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/jni/yuv2rgb.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/proto/RobotCommand.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/drawable-hdpi/ic_action_info.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/drawable-hdpi/photo_camera.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/drawable-hdpi/tile.9.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/drawable-mdpi/ic_action_info.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/drawable-xhdpi/ic_action_info.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/drawable-xxhdpi/ic_action_info.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/drawable/ic_camera.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/drawable/ic_launcher_background.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/layout/main_activity.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/mipmap-hdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/mipmap-hdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/mipmap-mdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/mipmap-xhdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/mipmap-xxhdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/values-sw600dp/template-dimens.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/values-sw600dp/template-styles.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/values-v11/styles.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/values-v11/template-styles.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/values-v14/styles.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/values-v21/base-template-styles.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/values/attrs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/values/colors.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/values/strings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/values/styles.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/values/template-dimens.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app/src/main/res/values/template-styles.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/proguard-rules.pro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/AndroidManifest.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/ic_launcher-playstore.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/java/tw/edu/cgu/ai/kebbi/pressnumber/MainActivity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/java/tw/edu/cgu/ai/kebbi/pressnumber/NetworkSettingActivity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/proto/RobotCommand.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/drawable-v24/ic_launcher_foreground.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/drawable/face0.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/drawable/face10.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/drawable/face2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/drawable/face4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/drawable/face6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/drawable/face8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/drawable/ic_launcher_background.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/drawable/number1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/drawable/number2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/drawable/number3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/drawable/number4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/drawable/number5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/drawable/pain_btn.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/drawable/pain_scale.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/drawable/video_btn.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/layout-land/activity_main.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/layout-land/activity_network_setting.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/layout/activity_face_result.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/layout/activity_main.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/layout/activity_pain.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/layout/activity_video.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/mipmap-hdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/mipmap-hdpi/ic_launcher_foreground.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/mipmap-hdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/mipmap-mdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/mipmap-mdpi/ic_launcher_foreground.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/mipmap-mdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/mipmap-xhdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/mipmap-xhdpi/ic_launcher_foreground.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/mipmap-xhdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/mipmap-xxhdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/values/colors.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/values/ic_launcher_background.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/values/strings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_pressnumber/src/main/res/values/styles.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/proguard-rules.pro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/AndroidManifest.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/ic_launcher-playstore.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/java/tw/edu/cgu/ai/kebbi/tabletcontroller/MainActivity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/java/tw/edu/cgu/ai/kebbi/tabletcontroller/NetworkSettingActivity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/proto/RobotCommand.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/drawable-v24/ic_launcher_foreground.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/drawable/ic_launcher_background.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/layout-land/activity_main.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/layout-land/activity_network_setting.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/layout/activity_main.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/layout/activity_network_setting.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/mipmap-hdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/mipmap-hdpi/ic_launcher_foreground.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/mipmap-hdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/mipmap-mdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/mipmap-mdpi/ic_launcher_foreground.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/mipmap-mdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/mipmap-xhdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/mipmap-xhdpi/ic_launcher_foreground.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/mipmap-xhdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/mipmap-xxhdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/values/colors.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/values/ic_launcher_background.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/values/strings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/app_tablet_controller/src/main/res/values/styles.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/daemon/8.5/registry.bin.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/daemon/8.6/registry.bin.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/daemon/8.7/registry.bin.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/gradle.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/gradle/daemon/8.5/registry.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/gradle/daemon/8.5/registry.bin.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/gradle/daemon/8.6/registry.bin.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/gradle/daemon/8.7/registry.bin.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/gradle/daemon/CACHEDIR.TAG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/gradle/gradle-daemon-jvm.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/gradle/native/38dada09dfb8b06ba9b0570ebf7e218e3eb74d4ef43ca46872605cf95ebc2f47/linux-amd64/libnative-platform-file-events.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/gradle/native/38dada09dfb8b06ba9b0570ebf7e218e3eb74d4ef43ca46872605cf95ebc2f47/linux-amd64/libnative-platform-file-events.so.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/gradle/native/c067742578af261105cb4f569cf0c3c89f3d7b1fecec35dd04571415982c5e48/linux-amd64/libnative-platform.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/gradle/native/c067742578af261105cb4f569cf0c3c89f3d7b1fecec35dd04571415982c5e48/linux-amd64/libnative-platform.so.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/gradle/native/jansi/1.18/linux64/libjansi.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/gradlew" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/gradlew.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/libs/NuwaSDK-2021-07-08_1058_2.1.0.08_e21fe7.aar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/proguard-rules.pro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/Kebbi.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/androidTest/java/tw/edu/cgu/ai/queuetest/ExampleInstrumentedTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/AndroidManifest.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/ic_launcher-playstore.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/java/tw/edu/cgu/ai/queuetest/MainActivity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/drawable/ic_launcher_background.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/drawable/ic_launcher_foreground.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/layout/activity_main.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/mipmap-hdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/mipmap-hdpi/ic_launcher_foreground.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/mipmap-hdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/mipmap-mdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/mipmap-mdpi/ic_launcher_foreground.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/mipmap-mdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/mipmap-xhdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/mipmap-xhdpi/ic_launcher_foreground.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/mipmap-xhdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/mipmap-xxhdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/values-night/themes.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/values/colors.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/values/strings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/main/res/values/themes.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/queuetest/src/test/java/tw/edu/cgu/ai/queuetest/ExampleUnitTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/build.gradle.kts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/proguard-rules.pro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/androidTest/java/tw/edu/cgu/ai/servicetest/ExampleInstrumentedTest.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/AndroidManifest.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/java/tw/edu/cgu/ai/servicetest/CameraFrameService.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/java/tw/edu/cgu/ai/servicetest/MainActivity.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/java/tw/edu/cgu/ai/servicetest/ui/theme/Color.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/java/tw/edu/cgu/ai/servicetest/ui/theme/Theme.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/java/tw/edu/cgu/ai/servicetest/ui/theme/Type.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/res/drawable/ic_launcher_background.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/res/drawable/ic_launcher_foreground.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/res/mipmap-anydpi/ic_launcher.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/res/mipmap-anydpi/ic_launcher_round.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/res/mipmap-hdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/res/mipmap-hdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/res/mipmap-mdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/res/mipmap-mdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/res/mipmap-xhdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/res/mipmap-xhdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/res/mipmap-xxhdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/res/values/colors.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/res/values/strings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/main/res/values/themes.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/servicetest/src/test/java/tw/edu/cgu/ai/servicetest/ExampleUnitTest.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Robot/settings.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/Kebbi/RobotCommand.proto" beforeDir="false" afterPath="$PROJECT_DIR$/Server/Kebbi/RobotCommand.proto" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -16,9 +275,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 6
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
   <component name="ProjectId" id="2zDXh2sNm9GzdFIJjV0EmDwurZz" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -34,7 +293,7 @@
     "cidr.known.project.marker": "true",
     "git-widget-placeholder": "master",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/chihyuan/RobotNurseHelper/Kebbi"
+    "last_opened_file_path": "/home/chihyuan/RobotNurseHelper/Android"
   }
 }]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
