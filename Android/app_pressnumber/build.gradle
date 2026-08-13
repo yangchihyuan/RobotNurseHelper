@@ -1,0 +1,82 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.protobuf'
+
+android {
+    compileSdk 36
+    defaultConfig {
+        applicationId "tw.edu.cgu.ai.kebbi.pressnumber"
+        minSdk 31
+        targetSdk 31
+        versionCode 1
+        versionName 'v1 25.08.06'
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    // This is the `sourceSets` block you asked about, but a more common modern version.
+    sourceSets {
+        main {
+            // Android Studio/Gradle defaults often make this unnecessary, but it's good for clarity.
+            java {
+                srcDir 'src/main/java'
+            }
+            proto {
+                // Pointing to where your .proto files are located.
+                srcDir 'src/main/proto'
+            }
+        }
+    }
+
+    namespace "tw.edu.cgu.ai.kebbi.pressnumber"
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.test.ext:junit:1.2.1'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    // Protobuf dependencies
+    // You need the Protobuf Java lite runtime to use the generated classes.
+    implementation "com.google.protobuf:protobuf-javalite:3.19.1"
+}
+
+// Configure the Protobuf plugin.
+protobuf {
+    // Defines the Protoc tool, which is a compiler for .proto files.
+    protoc {
+        // You can specify a local version or use the bundled one.
+        artifact = 'com.google.protobuf:protoc:3.19.1'
+    }
+
+    // Configure the plugins used by the Protoc compiler
+    //Is this instruction necessary?
+    plugins {
+        // The "javalite" plugin generates Java code that is optimized for Android.
+        javalite {
+            artifact = "com.google.protobuf:protoc-gen-javalite:3.19.1"
+        }
+    }
+
+    // Generate the code using the `javalite` plugin.
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                // This tells the task to use the `javalite` plugin
+                // to generate the Java source code from the .proto files.
+                java{
+                    option "lite"
+                }
+            }
+        }
+    }
+}
+
