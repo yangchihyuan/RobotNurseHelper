@@ -53,7 +53,6 @@ public class SocketManager {
 
     public RobotAPI mRobotAPI;
     ArrayList<RobotCommandOuterClass.RobotCommand> ArrayListCommand = new ArrayList<RobotCommandOuterClass.RobotCommand>();
-    Converter converter;
 
     public MediaPlayer mediaPlayer;
     public MediaPlayer mediaPlayer2;
@@ -124,20 +123,23 @@ public class SocketManager {
                                     }
                                     if (command.hasFace() && command.hasSpeakSentence()) {
                                         Log.d("command", command.toString());
-                                        RobotFace newFace = converter.FaceIndexToRobotFace(command.getFace());
+                                        RobotFace newFace = Converter.FaceIndexToRobotFace(command.getFace());
                                         ExpressionConfig config = new ExpressionConfig();
-                                        config.volume(command.getVolume()).speed(command.getSpeed()).pitch(command.getSpeakPitch());
+                                        int volume = command.hasVolume() ? command.getVolume() : 100;
+                                        int speed = command.hasSpeed() ? command.getSpeed() : 100;
+                                        int pitch = command.hasSpeakPitch() ? command.getSpeakPitch() : 100;
+                                        config.volume(volume).speed(speed).pitch(pitch);
                                         mRobotAPI.robot.setExpression(newFace, command.getSpeakSentence(), config);
                                     } else if (command.hasSpeakSentence()) {
                                         Log.d("Speak Sentence", command.getSpeakSentence());
                                         SpeakConfig config = new SpeakConfig();
-                                        if( command.hasVolume() && command.hasSpeed() && command.hasPitch())
-                                            config.volume(command.getVolume()).speed(command.getSpeed()).pitch(command.getSpeakPitch());
-                                        else  //use the default values
-                                            config.volume(100).speed(100).pitch(100);
+                                        int volume = command.hasVolume() ? command.getVolume() : 100;
+                                        int speed = command.hasSpeed() ? command.getSpeed() : 100;
+                                        int pitch = command.hasSpeakPitch() ? command.getSpeakPitch() : 100;
+                                        config.volume(volume).speed(speed).pitch(pitch);
                                         mRobotAPI.robot.speak(command.getSpeakSentence(), config);
                                     } else if (command.hasFace()) {
-                                        RobotFace newFace = converter.FaceIndexToRobotFace(command.getFace());
+                                        RobotFace newFace = Converter.FaceIndexToRobotFace(command.getFace());
                                         mRobotAPI.robot.setExpression(newFace);
                                     }
 
@@ -146,7 +148,7 @@ public class SocketManager {
                                     }
                                     if (command.hasPredefinedAction()) {
                                         //it will still return a serial, but for loop action, will the onResult() in the CallBack be called?
-                                        int serial = mRobotAPI.utility.playAction(converter.PredefinedActionIndexToPlayAction(command.getPredefinedAction()));
+                                        int serial = mRobotAPI.utility.playAction(Converter.PredefinedActionIndexToPlayAction(command.getPredefinedAction()));
                                     }
                                     if (command.hasHideface()) {
                                         if( command.getHideface() == 1) {

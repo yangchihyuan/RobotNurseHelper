@@ -16,9 +16,5 @@ if [ $# == 1 ]; then
         cmake --build build -j $(nproc)
     fi
 else
-    echo "Building for Kebbi"
-    rm -rf build
-    cmake -S . -B build -DROBOT_MODEL=Kebbi -DCMAKE_CXX_FLAGS="-Wno-psabi"
-    cmake --build build -j $(nproc)
-
+    echo "Usage: ./build_project.sh [clean|Zenbo|ZenboJrII|Kebbi]"
 fi

@@ -1,0 +1,26 @@
+{
+    "StateControlFile": "json/Cataractproject_English_Test.json",
+    "bServerPlaysRobotReceivedAudio": false,
+    "bVideoWindowFullScreen": false,
+    "bShowPreviewWindow": true,
+    "bSaveImages": false,
+    "iImageSaveIntervalMillisecond": 5000,
+    "bFacialExpressionRecognition": false,
+    "bHumanPoseEstimation": true,
+    "PoseEstimationModel": "MediaPipe_Pose",        //Yolo11n_Pose, MediaPipe_Pose
+    "bHandLandmarkDetection": false,
+    "bUseDlibForFaceRecognition": false,
+    "bFaceDetection": true,
+    "FaceDetectionModel": "InspireFace",             //MediaPipe_Face, InspireFace
+    "bUseVisualCompass": false,
+    "WhisperModel": "$HOME/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin",
+    "ImageSaveDirectory": "$HOME/Downloads/raw_images",
+    "LanguageModel": "gemma3:1b",           //The setting does not work. Now the model is controlled by the AnythingLLM workspace. The setting is reserved for future use.
+    "Language": "English",
+    "AnythingLLM_API_key": "B5Q49XV-0P04PY2-KJ4TRSQ-250ZSYE",
+    "AnythingLLM_workspace_slug": "cataract",
+    "AnythingLLM_Port": 8895,
+    "Machine": "PC",                      //AGXOrin, PC
+    "bHideCursor": false,
+    "iTextFontSize": 48
+}

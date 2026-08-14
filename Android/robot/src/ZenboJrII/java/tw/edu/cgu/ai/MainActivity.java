@@ -193,6 +193,18 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
+        // Catch the setScreenAvoidRMode NoSuchMethodError from Zenbo SDK
+        final Thread.UncaughtExceptionHandler defaultHandler = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                if (e instanceof NoSuchMethodError && e.getMessage() != null && e.getMessage().contains("setScreenAvoidRMode")) {
+                    Log.e("ZenboSDKFix", "Caught and ignored expected NoSuchMethodError: " + e.getMessage());
+                } else if (defaultHandler != null) {
+                    defaultHandler.uncaughtException(t, e);
+                }
+            }
+        });
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main_activity);

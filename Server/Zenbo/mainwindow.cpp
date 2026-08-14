@@ -1,6 +1,6 @@
 #include "mainwindow.h"
-#include "./ui_mainwindow.h"     //in      RobotNurseHelper/Server/build/RobotNurseHelper_autogen/include/Zenbo
-                                 //also in RobotNurseHelper/Server/build/RobotNurseHelper_autogen/include
+#include "./ui_mainwindow.h" //in      RobotNurseHelper/Server/build/RobotNurseHelper_autogen/include/Zenbo
+                             //also in RobotNurseHelper/Server/build/RobotNurseHelper_autogen/include
 #include <QSoundEffect>
 #include <QUrl>
 #include <QPixmap>
@@ -10,9 +10,9 @@
 #include <QAbstractItemView>
 #include <iostream>
 #ifdef USE_KEBBI
-    #include "Kebbi/RobotCommand.pb.h"
+#include "Kebbi/RobotCommand.pb.h"
 #elif USE_ZENBO
-    #include "Zenbo/RobotCommand.pb.h"
+#include "Zenbo/RobotCommand.pb.h"
 #endif
 #include <QTimer>
 #include <opencv2/core.hpp>
@@ -25,15 +25,14 @@
 extern std::mutex gMutex_audio_buffer;
 extern std::queue<short> AudioBuffer;
 extern std::condition_variable cond_var_audio;
-//extern cv::Mat outFrame;
+// extern cv::Mat outFrame;
 extern int PortAudio_stop_and_terminate();
 extern bool gbPlayAudio;
 extern RobotStatus robot_status;
 extern ActionOption action_option;
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+    : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
@@ -64,9 +63,9 @@ MainWindow::MainWindow(QWidget *parent)
     strList.append("TIRED");
     strList.append("WORRIED");
 
-    QStandardItemModel* ItemModel = new QStandardItemModel(this);
+    QStandardItemModel *ItemModel = new QStandardItemModel(this);
     int nCount = strList.size();
-    for(int i = 0; i < nCount; i++)
+    for (int i = 0; i < nCount; i++)
     {
         QString string = static_cast<QString>(strList.at(i));
         QStandardItem *item = new QStandardItem(string);
@@ -116,9 +115,9 @@ MainWindow::MainWindow(QWidget *parent)
     strList_action.append("Turn_right_reverse_1 neck 22.5");
     strList_action.append("Turn_right_reverse_2 body 20");
 
-    QStandardItemModel* ItemModel_action = new QStandardItemModel(this);
+    QStandardItemModel *ItemModel_action = new QStandardItemModel(this);
     nCount = strList_action.size();
-    for(int i = 0; i < nCount; i++)
+    for (int i = 0; i < nCount; i++)
     {
         QString string = static_cast<QString>(strList_action.at(i));
         QStandardItem *item = new QStandardItem(string);
@@ -127,14 +126,13 @@ MainWindow::MainWindow(QWidget *parent)
     ui->listView_PredefinedAction->setModel(ItemModel_action);
     ui->listView_PredefinedAction->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-
     QStringList strList_customaction;
     strList_customaction.append("小布也愛你喲");
     strList_customaction.append("Chipi Chipi");
 
-    QStandardItemModel* ItemModel_customaction = new QStandardItemModel(this);
+    QStandardItemModel *ItemModel_customaction = new QStandardItemModel(this);
     nCount = strList_customaction.size();
-    for(int i = 0; i < nCount; i++)
+    for (int i = 0; i < nCount; i++)
     {
         QString string = static_cast<QString>(strList_customaction.at(i));
         QStandardItem *item = new QStandardItem(string);
@@ -143,18 +141,21 @@ MainWindow::MainWindow(QWidget *parent)
     ui->listView_Song->setModel(ItemModel_customaction);
     ui->listView_Song->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    //One QTcpServer only listens to one port. If you want to listen to multiple ports, you need to create multiple QTcpServer objects.
+    // One QTcpServer only listens to one port. If you want to listen to multiple ports, you need to create multiple QTcpServer objects.
     m_server_receive_image = new QTcpServer();
-    //2024/12/27 The port number is also hard-coded. I need to modify it in the future.
-  if (m_server_receive_image->listen(QHostAddress::Any, 8895)) {
-    connect(m_server_receive_image, &QTcpServer::newConnection, this,
-            &MainWindow::newConnection_receive_image);
-  } else {
-    exit(EXIT_FAILURE);
-  }
+    // 2024/12/27 The port number is also hard-coded. I need to modify it in the future.
+    if (m_server_receive_image->listen(QHostAddress::Any, 8895))
+    {
+        connect(m_server_receive_image, &QTcpServer::newConnection, this,
+                &MainWindow::newConnection_receive_image);
+    }
+    else
+    {
+        exit(EXIT_FAILURE);
+    }
 
     m_server_send_command = new QTcpServer();
-    if(m_server_send_command->listen(QHostAddress::Any, 8896))
+    if (m_server_send_command->listen(QHostAddress::Any, 8896))
     {
         connect(m_server_send_command, &QTcpServer::newConnection, this, &MainWindow::newConnection_send_command);
     }
@@ -164,56 +165,57 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     m_server_receive_audio = new QTcpServer();
-    if(m_server_receive_audio->listen(QHostAddress::Any, 8897))
+    if (m_server_receive_audio->listen(QHostAddress::Any, 8897))
     {
-       connect(m_server_receive_audio, &QTcpServer::newConnection, this, &MainWindow::newConnection_receive_audio);
+        connect(m_server_receive_audio, &QTcpServer::newConnection, this, &MainWindow::newConnection_receive_audio);
     }
     else
     {
         exit(EXIT_FAILURE);
     }
 
-  m_server_receive_message = new QTcpServer();
-  if (m_server_receive_message->listen(QHostAddress::Any, 8898)) {
-    connect(m_server_receive_message, &QTcpServer::newConnection, this,
-            &MainWindow::newConnection_receive_message);
-    cout << "Listening port 8898" << endl;
-  } else {
-    exit(EXIT_FAILURE);
-  }
-
+    m_server_receive_message = new QTcpServer();
+    if (m_server_receive_message->listen(QHostAddress::Any, 8898))
+    {
+        connect(m_server_receive_message, &QTcpServer::newConnection, this,
+                &MainWindow::newConnection_receive_message);
+        cout << "Listening port 8898" << endl;
+    }
+    else
+    {
+        exit(EXIT_FAILURE);
+    }
 
     QTimer *timer = new QTimer(this);
-    connect( timer, &QTimer::timeout, this, &MainWindow::timer_event);
+    connect(timer, &QTimer::timeout, this, &MainWindow::timer_event);
     timer->start(10);
 
-    //add move mode items
+    // add move mode items
     QStringList strList_MoveMode;
 
     ui->comboBox_MoveMode->addItems({"Manual",
                                      "Move body",
                                      "Move head"});
-    connect(ui->comboBox_MoveMode,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),this,&MainWindow::comboBox_MoveMode_changed);
+    connect(ui->comboBox_MoveMode, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::comboBox_MoveMode_changed);
 
     ui->comboBox_DetectionMode->addItems({"None",
-        "Face",
-        "Pose",
-        "Holistic"});
-    connect(ui->comboBox_DetectionMode,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),this,&MainWindow::comboBox_DetectionMode_changed);
+                                          "Face",
+                                          "Pose",
+                                          "Holistic"});
+    connect(ui->comboBox_DetectionMode, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::comboBox_DetectionMode_changed);
 
-/*
-    ui->comboBox_Processor->addItems({"CPU",
-        "GPU"});
-    connect(ui->comboBox_Processor,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),this,&MainWindow::comboBox_Processor_changed);
-*/    
+    /*
+        ui->comboBox_Processor->addItems({"CPU",
+            "GPU"});
+        connect(ui->comboBox_Processor,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),this,&MainWindow::comboBox_Processor_changed);
+    */
 
     ui->comboBox_Language->addItems({"Chinese",
-        "English",
-        "Arabic"});
-    connect(ui->comboBox_Language,static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),this,&MainWindow::comboBox_Language_changed);
+                                     "English",
+                                     "Arabic"});
+    connect(ui->comboBox_Language, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::comboBox_Language_changed);
 
-
-    //Get keyboard press event
+    // Get keyboard press event
     setFocusPolicy(Qt::StrongFocus);
 
     devAudio = QMediaDevices::defaultAudioInput();
@@ -235,31 +237,32 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     thread_process_image.pSendMessageManager = &sendMessageManager;
-  thread_receive_message.pSendMessageManager = &sendMessageManager;
-  thread_receive_message.mpThreadStateControl = &thread_state_control;
-  thread_receive_message.mpThreadProcessImage = &thread_process_image;
+    thread_receive_message.pSendMessageManager = &sendMessageManager;
+    thread_receive_message.mpThreadStateControl = &thread_state_control;
+    thread_receive_message.mpThreadProcessImage = &thread_process_image;
 
-  thread_state_control.m_pSendMessageManager = &sendMessageManager;
-  thread_state_control.mpThreadWhisper = &thread_whisper;
-  thread_state_control.mpThreadLLM = &thread_LLM;
-  thread_state_control.mpThreadProcessImage = &thread_process_image;
+    thread_state_control.m_pSendMessageManager = &sendMessageManager;
+    thread_state_control.mpThreadWhisper = &thread_whisper;
+    thread_state_control.mpThreadLLM = &thread_LLM;
+    thread_state_control.mpThreadProcessImage = &thread_process_image;
 
-  thread_LLM.mpThreadStateControl = &thread_state_control;
+    thread_LLM.mpThreadStateControl = &thread_state_control;
 
-  pVideoWindow = std::make_unique<VideoWindow>(nullptr);
-  thread_state_control.pVideoWindow = pVideoWindow.get();
-  pVideoWindow->pThreadStateControl = &thread_state_control;
+    pVideoWindow = std::make_unique<VideoWindow>(nullptr);
+    thread_state_control.pVideoWindow = pVideoWindow.get();
+    pVideoWindow->pThreadStateControl = &thread_state_control;
 
-  connect(&thread_state_control, &ThreadStateControl::playVideoRequest, this,
-          &MainWindow::onPlayVideoRequested);
-  connect(&thread_state_control, &ThreadStateControl::playImageRequest, this,
-          &MainWindow::onPlayImageRequested);
-  connect(&thread_state_control, &ThreadStateControl::playTextRequest, this,
-          &MainWindow::onPlayTextRequested);
+    connect(&thread_state_control, &ThreadStateControl::playVideoRequest, this,
+            &MainWindow::onPlayVideoRequested);
+    connect(&thread_state_control, &ThreadStateControl::playImageRequest, this,
+            &MainWindow::onPlayImageRequested);
+    connect(&thread_state_control, &ThreadStateControl::playTextRequest, this,
+            &MainWindow::onPlayTextRequested);
 
-  // Delay showing the video window so it renders after MainWindow
-  // and successfully steals focus to become the top window.
-  QTimer::singleShot(300, this, [this]() {
+    // Delay showing the video window so it renders after MainWindow
+    // and successfully steals focus to become the top window.
+    QTimer::singleShot(300, this, [this]()
+                       {
     if (pVideoWindow) {
       if (msetting.bVideoWindowFullScreen) {
         pVideoWindow->showFullScreen();
@@ -268,14 +271,13 @@ MainWindow::MainWindow(QWidget *parent)
       }
       pVideoWindow->raise();
       pVideoWindow->activateWindow();
-    }
-  });
+    } });
 }
 
 void MainWindow::on_pushButton_speak_clicked()
 {
-    //Get the content of the plainTextEdit_speak object, and send it to Robot.
-    QString text = ui->plainTextEdit_speak->toPlainText();   //This line causes an exception. Why?
+    // Get the content of the plainTextEdit_speak object, and send it to Robot.
+    QString text = ui->plainTextEdit_speak->toPlainText(); // This line causes an exception. Why?
     QString speed = ui->lineEdit_speed->text();
     QString volume = ui->lineEdit_volume->text();
     QString speak_pitch = ui->lineEdit_speak_pitch->text();
@@ -284,7 +286,7 @@ void MainWindow::on_pushButton_speak_clicked()
     command.set_speed(speed.toInt());
     command.set_volume(volume.toInt());
     command.set_speak_pitch(speak_pitch.toInt());
-    if( ui->checkBox_withface->isChecked() )
+    if (ui->checkBox_withface->isChecked())
     {
         QModelIndex index = ui->listView_FacialExpressions->currentIndex();
         command.set_face(index.row());
@@ -323,7 +325,7 @@ void MainWindow::on_listView_Song_doubleClicked(const QModelIndex &index)
     RobotCommandProtobuf::RobotCommand command;
     command.set_song(index.row());
     sendMessageManager.AddMessage(command);
-    //debug
+    // debug
     cout << "Custom action: " << index.row() << endl;
 }
 
@@ -340,7 +342,6 @@ void MainWindow::on_pushButton_speak_2_clicked()
     command.set_speak_pitch(speak_pitch.toInt());
     sendMessageManager.AddMessage(command);
 }
-
 
 void MainWindow::on_pushButton_hideface_clicked()
 {
@@ -363,64 +364,67 @@ void MainWindow::comboBox_Processor_changed()
 
 void MainWindow::timer_event()
 {
-    if(thread_process_image.bNewoutFrame )
+    if (thread_process_image.bNewoutFrame)
     {
-        //2024/12/30, Debug info: I use a timer to update the frame. On some low-end PC, 
-        //although I call imshow, the window does not refresh unless there is a signal sent
-        //to the window such as mouse hovering. It seems caused by the hardward driver.
-        //imshow is a high-level GUI. There is no extra argument for this function.
-        //How to force the problem to update the window?
+        // 2024/12/30, Debug info: I use a timer to update the frame. On some low-end PC,
+        // although I call imshow, the window does not refresh unless there is a signal sent
+        // to the window such as mouse hovering. It seems caused by the hardward driver.
+        // imshow is a high-level GUI. There is no extra argument for this function.
+        // How to force the problem to update the window?
         cv::imshow("Image", thread_process_image.getOutFrame());
-        cv::waitKey(1);    //I miss this line so that Ubuntu does not update the window.
+        cv::waitKey(1); // I miss this line so that Ubuntu does not update the window.
         thread_process_image.bNewoutFrame = false;
 
-        //update pitch and yaw
+        // update pitch and yaw
         ui->lineEdit_yaw_now->setText(QString::number(robot_status.yaw_degree));
         ui->lineEdit_pitch_now->setText(QString::number(robot_status.pitch_degree));
     }
 
-    if( thread_whisper.b_new_OperatorSentence )
+    if (thread_whisper.b_new_OperatorSentence)
     {
         thread_whisper.b_new_OperatorSentence = false;
         ui->plainTextEdit_speak->setPlainText(QString::fromStdString(thread_whisper.strOperatorSentence));
     }
 
-/*
-    if( thread_whisper.b_new_RobotSentence )
+    /*
+        if( thread_whisper.b_new_RobotSentence )
+        {
+            thread_whisper.b_new_RobotSentence = false;
+            ui->plainTextEdit_received->setPlainText(QString::fromStdString(thread_whisper.strRobotSentence));
+        }
+    */
+
+    WhisperData thisWhisperData = thread_whisper.getLatestResult();
+    if (thisWhisperData.tSTTComplete != oldWhisperData.tSTTComplete)
     {
-        thread_whisper.b_new_RobotSentence = false;
-        ui->plainTextEdit_received->setPlainText(QString::fromStdString(thread_whisper.strRobotSentence));
+        ui->plainTextEdit_received->setPlainText(
+            QString::fromStdString(thisWhisperData.sOutput));
+        oldWhisperData = thisWhisperData;
     }
-*/
 
-   
-  WhisperData thisWhisperData = thread_whisper.getLatestResult();
-  if (thisWhisperData.tSTTComplete != oldWhisperData.tSTTComplete) {
-    ui->plainTextEdit_received->setPlainText(
-        QString::fromStdString(thisWhisperData.sOutput));
-    oldWhisperData = thisWhisperData;
-  }
+    if (thread_LLM.b_new_LLM_response)
+    {
+        thread_LLM.b_new_LLM_response = false;
+        ui->plainTextEdit_LLM_response->setPlainText(
+            QString::fromStdString(thread_LLM.strResponse));
 
-  if (thread_LLM.b_new_LLM_response) {
-    thread_LLM.b_new_LLM_response = false;
-    ui->plainTextEdit_LLM_response->setPlainText(
-        QString::fromStdString(thread_LLM.strResponse));
-
-    // speak out
-    bool bAutoSpeakOut = false;
-    if (bAutoSpeakOut) {
-      RobotCommandProtobuf::RobotCommand command;
-      command.set_speak_sentence(thread_LLM.strResponse);
-      sendMessageManager.AddMessage(command);
+        // speak out
+        bool bAutoSpeakOut = false;
+        if (bAutoSpeakOut)
+        {
+            RobotCommandProtobuf::RobotCommand command;
+            command.set_speak_sentence(thread_LLM.strResponse);
+            sendMessageManager.AddMessage(command);
+        }
     }
-  }
     sendMessageManager.Send();
 }
 
-void MainWindow::rotateAndTakePhoto(int targetAngle, const QString& prefix)
+void MainWindow::rotateAndTakePhoto(int targetAngle, const QString &prefix)
 {
     static QSoundEffect *shutterSound = nullptr;
-    if (!shutterSound) {
+    if (!shutterSound)
+    {
         shutterSound = new QSoundEffect(this);
         shutterSound->setSource(QUrl::fromLocalFile("camera-shutter.wav"));
         shutterSound->setVolume(1.0f);
@@ -428,28 +432,34 @@ void MainWindow::rotateAndTakePhoto(int targetAngle, const QString& prefix)
 
     int relative = targetAngle - current_body_angle;
     // Normalize to [-180, 180]
-    while (relative > 180) relative -= 360;
-    while (relative <= -180) relative += 360;
+    while (relative > 180)
+        relative -= 360;
+    while (relative <= -180)
+        relative += 360;
 
     int speed = ui->lineEdit_bodyspeed->text().toInt();
-    if (speed <= 0) speed = 3; // Default fallback
+    if (speed <= 0)
+        speed = 3; // Default fallback
 
-    if (relative != 0) {
+    if (relative != 0)
+    {
         send_move_body_command(0, 0, relative, speed);
         std::cout << "Rotating robot body by: " << relative << " degrees to target " << targetAngle << " degrees at speed " << speed << std::endl;
-    } else {
+    }
+    else
+    {
         std::cout << "Robot body already at target " << targetAngle << " degrees." << std::endl;
     }
     int delay = (relative != 0) ? 2500 : 500;
 
-    QTimer::singleShot(delay, this, [this, prefix]() {
+    QTimer::singleShot(delay, this, [this, prefix]()
+                       {
         thread_process_image.requestedPhotoPrefix = prefix.toStdString();
         thread_process_image.bSaveRequestedPhoto = true;
         std::cout << "Triggered single photo capture for: " << prefix.toStdString() << std::endl;
         if (shutterSound) {
             shutterSound->play();
-        }
-    });
+        } });
 
     current_body_angle = targetAngle;
 }

@@ -5,6 +5,8 @@ import com.asus.robotframework.API.Utility;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 
+import java.util.Objects;
+
 public class Converter {
     static public RobotFace FaceIndexToRobotFace(int FaceIndex)
     {
@@ -85,6 +87,64 @@ public class Converter {
             case 24:
                 newFace = RobotFace.WORRIED;
                 break;
+        }
+        return newFace;
+    };
+
+    static public RobotFace sFaceToRobotFace(String sFace)
+    {
+        RobotFace newFace = RobotFace.DEFAULT;
+
+        if (Objects.equals(sFace, "ACTIVE")) {
+            newFace = RobotFace.ACTIVE;
+        } else if (Objects.equals(sFace, "AWARE_LEFT")) {
+            newFace = RobotFace.AWARE_LEFT;
+        } else if (Objects.equals(sFace, "AWARE_RIGHT")) {
+            newFace = RobotFace.AWARE_RIGHT;
+        } else if (Objects.equals(sFace, "CONFIDENT")) {
+            newFace = RobotFace.CONFIDENT;
+        } else if (Objects.equals(sFace, "DEFAULT")) {
+            newFace = RobotFace.DEFAULT;
+        } else if (Objects.equals(sFace, "DEFAULT_STILL")) {
+            newFace = RobotFace.DEFAULT_STILL;
+        } else if (Objects.equals(sFace, "DOUBTING")) {
+            newFace = RobotFace.DOUBTING;
+        } else if (Objects.equals(sFace, "EXPECTING")) {
+            newFace = RobotFace.EXPECTING;
+        } else if (Objects.equals(sFace, "HAPPY")) {
+            newFace = RobotFace.HAPPY;
+        } else if (Objects.equals(sFace, "HELPLESS")) {
+            newFace = RobotFace.HELPLESS;
+        } else if (Objects.equals(sFace, "HIDEFACE")) {
+            newFace = RobotFace.HIDEFACE;
+        } else if (Objects.equals(sFace, "IMPATIENT")) {
+            newFace = RobotFace.IMPATIENT;
+        } else if (Objects.equals(sFace, "INNOCENT")) {
+            newFace = RobotFace.INNOCENT;
+        } else if (Objects.equals(sFace, "INTERESTED")) {
+            newFace = RobotFace.INTERESTED;
+        } else if (Objects.equals(sFace, "LAZY")) {
+            newFace = RobotFace.LAZY;
+        } else if (Objects.equals(sFace, "PLEASED")) {
+            newFace = RobotFace.PLEASED;
+        } else if (Objects.equals(sFace, "PRETENDING")) {
+            newFace = RobotFace.PRETENDING;
+        } else if (Objects.equals(sFace, "PROUD")) {
+            newFace = RobotFace.PROUD;
+        } else if (Objects.equals(sFace, "QUESTIONING")) {
+            newFace = RobotFace.QUESTIONING;
+        } else if (Objects.equals(sFace, "SERIOUS")) {
+            newFace = RobotFace.SERIOUS;
+        } else if (Objects.equals(sFace, "SHOCKED")) {
+            newFace = RobotFace.SHOCKED;
+        } else if (Objects.equals(sFace, "SHY")) {
+            newFace = RobotFace.SHY;
+        } else if (Objects.equals(sFace, "SINGING")) {
+            newFace = RobotFace.SINGING;
+        } else if (Objects.equals(sFace, "TIRED")) {
+            newFace = RobotFace.TIRED;
+        } else if (Objects.equals(sFace, "WORRIED")) {
+            newFace = RobotFace.WORRIED;
         }
         return newFace;
     };
@@ -211,6 +271,91 @@ public class Converter {
             case 39:
                 theAction = Utility.PlayAction.Turn_right_reverse_2;
                 break;
+        }
+        return theAction;
+    }
+
+    static public int sMotionToPlayAction(String sMotion)
+    {
+        int theAction = Utility.PlayAction.Default_1;
+        if (Objects.equals(sMotion, "Body_twist_1")) {
+            theAction = Utility.PlayAction.Body_twist_1;
+        } else if (Objects.equals(sMotion, "Body_twist_2")) {
+            theAction = Utility.PlayAction.Body_twist_2;
+        } else if (Objects.equals(sMotion, "Dance_2_loop")) {
+            theAction = Utility.PlayAction.Dance_2_loop;
+        } else if (Objects.equals(sMotion, "Dance_3_loop")) {
+            theAction = Utility.PlayAction.Dance_3_loop;
+        } else if (Objects.equals(sMotion, "Dance_b_1_loop")) {
+            theAction = Utility.PlayAction.Dance_b_1_loop;
+        } else if (Objects.equals(sMotion, "Dance_s_1_loop")) {
+            theAction = Utility.PlayAction.Dance_s_1_loop;
+        } else if (Objects.equals(sMotion, "Default_1")) {
+            theAction = Utility.PlayAction.Default_1;
+        } else if (Objects.equals(sMotion, "Default_2")) {
+            theAction = Utility.PlayAction.Default_2;
+        } else if (Objects.equals(sMotion, "Find_face")) {
+            theAction = Utility.PlayAction.Find_face;
+        } else if (Objects.equals(sMotion, "Head_down_1")) {
+            theAction = Utility.PlayAction.Head_down_1;
+        } else if (Objects.equals(sMotion, "Head_down_2")) {
+            theAction = Utility.PlayAction.Head_down_2;
+        } else if (Objects.equals(sMotion, "Head_down_3")) {
+            theAction = Utility.PlayAction.Head_down_3;
+        } else if (Objects.equals(sMotion, "Head_down_4")) {
+            theAction = Utility.PlayAction.Head_down_4;
+        } else if (Objects.equals(sMotion, "Head_down_5")) {
+            theAction = Utility.PlayAction.Head_down_5;
+        } else if (Objects.equals(sMotion, "Head_down_7")) {
+            theAction = Utility.PlayAction.Head_down_7;
+        } else if (Objects.equals(sMotion, "Head_twist_1_loop")) {
+            theAction = Utility.PlayAction.Head_twist_1_loop;
+        } else if (Objects.equals(sMotion, "Head_up_1")) {
+            theAction = Utility.PlayAction.Head_up_1;
+        } else if (Objects.equals(sMotion, "Head_up_2")) {
+            theAction = Utility.PlayAction.Head_up_2;
+        } else if (Objects.equals(sMotion, "Head_up_3")) {
+            theAction = Utility.PlayAction.Head_up_3;
+        } else if (Objects.equals(sMotion, "Head_up_4")) {
+            theAction = Utility.PlayAction.Head_up_4;
+        } else if (Objects.equals(sMotion, "Head_up_5")) {
+            theAction = Utility.PlayAction.Head_up_5;
+        } else if (Objects.equals(sMotion, "Head_up_6")) {
+            theAction = Utility.PlayAction.Head_up_6;
+        } else if (Objects.equals(sMotion, "Head_up_7")) {
+            theAction = Utility.PlayAction.Head_up_7;
+        } else if (Objects.equals(sMotion, "Music_1_loop")) {
+            theAction = Utility.PlayAction.Music_1_loop;
+        } else if (Objects.equals(sMotion, "Nod_1")) {
+            theAction = Utility.PlayAction.Nod_1;
+        } else if (Objects.equals(sMotion, "Shake_head_1")) {
+            theAction = Utility.PlayAction.Shake_head_1;
+        } else if (Objects.equals(sMotion, "Shake_head_2")) {
+            theAction = Utility.PlayAction.Shake_head_2;
+        } else if (Objects.equals(sMotion, "Shake_head_3")) {
+            theAction = Utility.PlayAction.Shake_head_3;
+        } else if (Objects.equals(sMotion, "Shake_head_4_loop")) {
+            theAction = Utility.PlayAction.Shake_head_4_loop;
+        } else if (Objects.equals(sMotion, "Shake_head_5")) {
+            theAction = Utility.PlayAction.Shake_head_5;
+        } else if (Objects.equals(sMotion, "Shake_head_6")) {
+            theAction = Utility.PlayAction.Shake_head_6;
+        } else if (Objects.equals(sMotion, "Turn_left_1")) {
+            theAction = Utility.PlayAction.Turn_left_1;
+        } else if (Objects.equals(sMotion, "Turn_left_2")) {
+            theAction = Utility.PlayAction.Turn_left_2;
+        } else if (Objects.equals(sMotion, "Turn_left_reverse_1")) {
+            theAction = Utility.PlayAction.Turn_left_reverse_1;
+        } else if (Objects.equals(sMotion, "Turn_left_reverse_2")) {
+            theAction = Utility.PlayAction.Turn_left_reverse_2;
+        } else if (Objects.equals(sMotion, "Turn_right_1")) {
+            theAction = Utility.PlayAction.Turn_right_1;
+        } else if (Objects.equals(sMotion, "Turn_right_2")) {
+            theAction = Utility.PlayAction.Turn_right_2;
+        } else if (Objects.equals(sMotion, "Turn_right_reverse_1")) {
+            theAction = Utility.PlayAction.Turn_right_reverse_1;
+        } else if (Objects.equals(sMotion, "Turn_right_reverse_2")) {
+            theAction = Utility.PlayAction.Turn_right_reverse_2;
         }
         return theAction;
     }

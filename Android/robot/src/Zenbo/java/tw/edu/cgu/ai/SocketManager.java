@@ -38,8 +38,6 @@ public class SocketManager {
     private Handler handlerSendToServer;
     private HandlerThread threadReceiveCommand;
     private Handler handlerReceiveCommand;
-//    private HandlerThread mThreadExecuteCommand;
-//    private Handler mHandlerExecuteCommand;
     private boolean mbReceiveCommand;
 
     private HandlerThread threadCheckDiconnection;
@@ -56,7 +54,6 @@ public class SocketManager {
 
     public RobotAPI mRobotAPI;
     ArrayList<RobotCommandOuterClass.RobotCommand> ArrayListCommand = new ArrayList<RobotCommandOuterClass.RobotCommand>();
-    Converter converter;
 
     public MediaPlayer mediaPlayer;
     public MediaPlayer mediaPlayer2;
@@ -125,31 +122,55 @@ public class SocketManager {
                                         }
                                         mRobotAPI.motion.moveHead(command.getYaw(), command.getPitch(), speed);
                                     }
-                                    if (command.hasFace() && command.hasSpeakSentence()) {
-                                        Log.d("command", command.toString());
-                                        RobotFace newFace = converter.FaceIndexToRobotFace(command.getFace());
+                                    if( command.hasSface() && command.hasSpeakSentence())
+                                    {
+                                        RobotFace newFace = Converter.sFaceToRobotFace(command.getSface());
+                                        String sentence = command.getSpeakSentence();
+                                        int volume = command.hasVolume() ? command.getVolume() : 100;
+                                        int speed = command.hasSpeed() ? command.getSpeed() : 100;
+                                        int pitch = command.hasSpeakPitch() ? command.getSpeakPitch() : 100;
+
+                                        Log.d("RobotAction", String.format("Unified Expression: Face=%s, Sentence='%s', Vol=%d, Speed=%d, Pitch=%d",
+                                                newFace.name(), sentence, volume, speed, pitch));
+
                                         ExpressionConfig config = new ExpressionConfig();
-                                        config.volume(command.getVolume()).speed(command.getSpeed()).pitch(command.getSpeakPitch());
-                                        mRobotAPI.robot.setExpression(newFace, command.getSpeakSentence(), config);
+                                        config.volume(volume).speed(speed).pitch(pitch);
+                                        mRobotAPI.robot.setExpression(newFace, sentence, config);
+                                    } else if (command.hasFace() && command.hasSpeakSentence()) {
+                                        Log.d("command", command.toString());
+                                        RobotFace newFace = Converter.FaceIndexToRobotFace(command.getFace());
+                                        String sentence = command.getSpeakSentence();
+                                        int volume = command.hasVolume() ? command.getVolume() : 100;
+                                        int speed = command.hasSpeed() ? command.getSpeed() : 100;
+                                        int pitch = command.hasSpeakPitch() ? command.getSpeakPitch() : 100;
+
+                                        Log.d("RobotAction", String.format("Unified Expression (Index): Face=%s, Sentence='%s', Vol=%d, Speed=%d, Pitch=%d",
+                                                newFace.name(), sentence, volume, speed, pitch));
+
+                                        ExpressionConfig config = new ExpressionConfig();
+                                        config.volume(volume).speed(speed).pitch(pitch);
+                                        mRobotAPI.robot.setExpression(newFace, sentence, config);
                                     } else if (command.hasSpeakSentence()) {
                                         Log.d("Speak Sentence", command.getSpeakSentence());
                                         SpeakConfig config = new SpeakConfig();
-                                        if( command.hasVolume() && command.hasSpeed() && command.hasPitch())
-                                            config.volume(command.getVolume()).speed(command.getSpeed()).pitch(command.getSpeakPitch());
-                                        else  //use the default values
-                                            config.volume(100).speed(100).pitch(100);
+                                        int volume = command.hasVolume() ? command.getVolume() : 100;
+                                        int speed = command.hasSpeed() ? command.getSpeed() : 100;
+                                        int pitch = command.hasSpeakPitch() ? command.getSpeakPitch() : 100;
+                                        config.volume(volume).speed(speed).pitch(pitch);
                                         mRobotAPI.robot.speak(command.getSpeakSentence(), config);
                                     } else if (command.hasFace()) {
-                                        RobotFace newFace = converter.FaceIndexToRobotFace(command.getFace());
+                                        RobotFace newFace = Converter.FaceIndexToRobotFace(command.getFace());
                                         mRobotAPI.robot.setExpression(newFace);
+                                        Log.d("RobotAction", String.format("Unified Expression (Index): Face=%s", newFace.name()));
                                     }
+
 
                                     if (command.hasStopmove()) {
                                         mRobotAPI.motion.stopMoving();   //this function does not work.
                                     }
                                     if (command.hasPredefinedAction()) {
                                         //it will still return a serial, but for loop action, will the onResult() in the CallBack be called?
-                                        int serial = mRobotAPI.utility.playAction(converter.PredefinedActionIndexToPlayAction(command.getPredefinedAction()));
+                                        int serial = mRobotAPI.utility.playAction(Converter.PredefinedActionIndexToPlayAction(command.getPredefinedAction()));
                                     }
                                     if (command.hasHideface()) {
                                         if( command.getHideface() == 1) {
@@ -175,6 +196,10 @@ public class SocketManager {
                                             mediaPlayer2.stop();
                                             mediaPlayer2.prepare();
                                         }
+                                    }
+                                    if( command.hasSmotion())
+                                    {
+                                        int serial = mRobotAPI.utility.playAction(Converter.sMotionToPlayAction(command.getSmotion()));
                                     }
                                 }
                             } else {
@@ -210,42 +235,6 @@ public class SocketManager {
     {
         sendAMessage(message, mSocketSendImages);
     }
-    /*
-    //I need to add the startString and endString to the message.
-    void sendImage(RobotCommandOuterClass.RobotToServerMessage message)
-    {
-        if( mSocketSendImages != null && mSocketSendImages.isConnected()) {
-            final boolean post = handlerSendToServer.post(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            OutputStream os = mSocketSendImages.getOutputStream();
-                            message.writeTo(os);
-
-                        } catch (Exception e) {
-                            //Debug Information 2025/4/17, the socket don't change mode even if my server is down
-                            try {
-                                mSocketSendImages.close();
-                            }
-                            catch( Exception e2)
-                            {
-                                Log.d("closing socket fails", "closing socket fails" + e2.getMessage()); //sendto failed: EPIPE (Broken pipe)
-                            }
-                            finally
-                            {
-                                mSocketSendImages = null;
-                            }
-                            Log.d("Exception Send to Server fails", e.getMessage()); //sendto failed: EPIPE (Broken pipe)
-                        }
-                    }
-                }
-            );
-        }
-    }
-    */
-
-
     void sendAudio(byte[] audioData)
     {
         if( mSocketSendAudio != null && mSocketSendAudio.isConnected()) {
@@ -271,10 +260,6 @@ public class SocketManager {
 
     //Main thread will call this function. Thus, I need to create a new thread to execute it
     public void connectSockets() {
-//        HandlerThread thread = new HandlerThread("Connect Sockets");
-//        thread.start();
-//        Handler handler = new Handler(thread.getLooper());
-//        handler.post(new Runnable() {
         if (handlerCheckDiconnection != null) {
             handlerCheckDiconnection.post(new Runnable() {
                 @Override
@@ -389,7 +374,6 @@ public class SocketManager {
     public void stopThreads() {
         threadSendToServer.quitSafely();
         threadReceiveCommand.quitSafely();
-//        mThreadExecuteCommand.quitSafely();
         threadCheckDiconnection.quitSafely();
         threadSendAudio.quitSafely();
         try {
@@ -400,10 +384,6 @@ public class SocketManager {
             threadReceiveCommand.join();
             threadReceiveCommand = null;
             handlerReceiveCommand = null;
-
-//            mThreadExecuteCommand.join();
-//            mThreadExecuteCommand = null;
-//            mHandlerExecuteCommand = null;
 
             threadCheckDiconnection.join();
             threadCheckDiconnection = null;

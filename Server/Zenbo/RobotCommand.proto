@@ -66,7 +66,76 @@ message RobotCommand {
   optional int32 stopsong = 20;
   optional bool killapp = 21;
   optional string sface = 22;
+  /*
+  ACTIVE
+  AWARE_LEFT
+  AWARE_RIGHT
+  CONFIDENT
+  DEFAULT
+  DEFAULT_STILL
+  DOUBTING
+  EXPECTING
+  HAPPY
+  HELPLESS
+  HIDEFACE
+  IMPATIENT
+  INNOCENT
+  INTERESTED
+  LAZY
+  PLEASED
+  PRETENDING
+  PROUD
+  QUESTIONING
+  SERIOUS
+  SHOCKED
+  SHY
+  SINGING
+  TIRED
+  WORRIED
+  */
+
   optional string smotion = 23;
+  /*
+  Body_twist_1
+  Body_twist_2
+  Dance_2_loop
+  Dance_3_loop
+  Dance_b_1_loop
+  Dance_s_1_loop
+  Default_1
+  Default_2
+  Find_face
+  Head_down_1
+  Head_down_2
+  Head_down_3
+  Head_down_4
+  Head_down_5
+  Head_down_7
+  Head_twist_1_loop
+  Head_up_1
+  Head_up_2
+  Head_up_3
+  Head_up_4
+  Head_up_5
+  Head_up_6
+  Head_up_7
+  Music_1_loop
+  Nod_1
+  Shake_head_1
+  Shake_head_2
+  Shake_head_3
+  Shake_head_4_loop
+  Shake_head_5
+  Shake_head_6
+  Turn_left_1
+  Turn_left_2
+  Turn_left_reverse_1
+  Turn_left_reverse_2
+  Turn_right_1
+  Turn_right_2
+  Turn_right_reverse_1
+  Turn_right_reverse_2
+  */
 
 }
 
