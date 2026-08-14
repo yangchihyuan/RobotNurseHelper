@@ -1,8 +1,0 @@
-lib/arm64-v8a/libimage_processing_util_jni.so->androidx.camera:camera-core:1.5.0
-lib/arm64-v8a/libsurface_util_jni.so->androidx.camera:camera-core:1.5.0
-lib/armeabi-v7a/libimage_processing_util_jni.so->androidx.camera:camera-core:1.5.0
-lib/armeabi-v7a/libsurface_util_jni.so->androidx.camera:camera-core:1.5.0
-lib/x86/libimage_processing_util_jni.so->androidx.camera:camera-core:1.5.0
-lib/x86/libsurface_util_jni.so->androidx.camera:camera-core:1.5.0
-lib/x86_64/libimage_processing_util_jni.so->androidx.camera:camera-core:1.5.0
-lib/x86_64/libsurface_util_jni.so->androidx.camera:camera-core:1.5.0

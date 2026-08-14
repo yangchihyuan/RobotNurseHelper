@@ -1,3 +1,0 @@
-tw.edu.cgu.ai.kebbi.tabletcontroller.test
-style WhiteBackgroundDialogTheme
-style WhiteBackgroundTheme
