@@ -1,9 +1,0 @@
-tw.edu.cgu.ai.kebbi.pressnumber.app_pressnumber-pngs-0 /home/chihyuan/RobotNurseHelper/Robot/app_pressnumber/build/generated/res/pngs/debug
-tw.edu.cgu.ai.kebbi.pressnumber.app_pressnumber-resValues-1 /home/chihyuan/RobotNurseHelper/Robot/app_pressnumber/build/generated/res/resValues/debug
-tw.edu.cgu.ai.kebbi.pressnumber.app_pressnumber-updated_navigation_xml-2 /home/chihyuan/RobotNurseHelper/Robot/app_pressnumber/build/generated/updated_navigation_xml/debug
-tw.edu.cgu.ai.kebbi.pressnumber.app_pressnumber-mergeDebugResources-3 /home/chihyuan/RobotNurseHelper/Robot/app_pressnumber/build/intermediates/incremental/debug/mergeDebugResources/merged.dir
-tw.edu.cgu.ai.kebbi.pressnumber.app_pressnumber-mergeDebugResources-4 /home/chihyuan/RobotNurseHelper/Robot/app_pressnumber/build/intermediates/incremental/debug/mergeDebugResources/stripped.dir
-tw.edu.cgu.ai.kebbi.pressnumber.app_pressnumber-debug-5 /home/chihyuan/RobotNurseHelper/Robot/app_pressnumber/build/intermediates/merged_res/debug/mergeDebugResources
-tw.edu.cgu.ai.kebbi.pressnumber.app_pressnumber-debug-6 /home/chihyuan/RobotNurseHelper/Robot/app_pressnumber/src/debug/res
-tw.edu.cgu.ai.kebbi.pressnumber.app_pressnumber-main-7 /home/chihyuan/RobotNurseHelper/Robot/app_pressnumber/src/main/res
-gradleHome-0 /home/chihyuan/.gradle
