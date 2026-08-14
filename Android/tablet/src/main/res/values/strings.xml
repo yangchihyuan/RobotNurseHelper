@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Tablet Controller</string>
+
+    <!-- Network Setting Strings -->
+    <string name="server_and_port_label">Server URL and Port:</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_test">Test</string>
+    <string name="btn_return">Return</string>
+    <string name="default_server_url">192.168.0.8</string>
+    <string name="default_port">8898</string>
+
+    <!-- Home screen buttons -->
+    <string name="btn_restart">Restart</string>
+    <string name="btn_mandarin">Mandarin</string>
+    <string name="btn_english">English</string>
+    <string name="btn_network_setting">Network Settings</string>
+    <string name="network_setting">Network Setting</string>
+</resources>
