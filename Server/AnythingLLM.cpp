@@ -38,15 +38,17 @@ std::string AnythingLLM::ask(std::string slug, std::string message) {
             auto res_json = nlohmann::json::parse(res->body);
             return res_json["textResponse"];
         } else {
-            return "HTTP Error: " + std::to_string(res->status) + " - " + res->body;
+            // Replaced raw HTTP/Chinese string with a friendly English spoken error
+            return "I am sorry, I am experiencing a network error and cannot process your request.";
         }
     }
     
-    return "Connection Failed.";
+    // Replaced generic connection failure with a friendly English spoken error
+    return "I am sorry, my AI connection failed.";
 }
 
 void AnythingLLM::startNewPatient() {
     auto now = std::chrono::system_clock::now().time_since_epoch().count();
     current_session = "patient-" + std::to_string(now);
     std::cout << "[System] New conversation session ID: " << current_session << std::endl;
-}    
+}

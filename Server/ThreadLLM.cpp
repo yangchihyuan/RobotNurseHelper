@@ -12,7 +12,7 @@ ThreadLLM::~ThreadLLM()
 
 void ThreadLLM::run()
 {
-    AnythingLLM anythingLLM("127.0.0.1", 3001, msetting.AnythingLLM_API_key);
+    AnythingLLM anythingLLM("127.0.0.1", msetting.AnythingLLM_Port, msetting.AnythingLLM_API_key);
 
     mutex mtx;
     unique_lock<mutex> lk(mtx);

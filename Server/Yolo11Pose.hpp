@@ -3,11 +3,13 @@
 
 #include <opencv2/opencv.hpp>
 #include <onnxruntime_cxx_api.h>
+#include <memory>
 
 class Yolo11Pose
 {
 public:
     Yolo11Pose();
+    bool Initialize();
     std::vector<std::vector<std::array<float, 3>>> Process(cv::Mat& frame);
 
     // COCO 17 skeleton pairs
@@ -42,13 +44,15 @@ protected:
 
     Ort::Env env;
     Ort::SessionOptions session_options;
-    Ort::Session session;
+    std::unique_ptr<Ort::Session> session;
     Ort::AllocatorWithDefaultOptions allocator;
-    Ort::AllocatedStringPtr input_name_ptr;
-    char* input_name;
-    size_t out_count;
+    // Store names as strings to avoid depending on ONNX allocated pointer types
+    std::string input_name_str;
+    const char* input_name = nullptr;
+    bool initialized = false;
+    size_t out_count = 0;
     std::vector<const char*> output_names;
-    std::vector<Ort::AllocatedStringPtr> out_name_ptrs;
+    std::vector<std::string> output_name_strs;
 
 };
 

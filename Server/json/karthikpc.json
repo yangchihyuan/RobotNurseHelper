@@ -17,8 +17,9 @@
     "ImageSaveDirectory": "$HOME/Downloads/raw_images",
     "LanguageModel": "gemma3:1b",           //The setting does not work. Now the model is controlled by the AnythingLLM workspace. The setting is reserved for future use.
     "Language": "English",
-    "AnythingLLM_API_key": "HP840RN-2CKMV0A-G1YM8J2-FBT39FX",
+    "AnythingLLM_API_key": "88EMVRN-1AD4TXJ-MHNZM5V-7G3MCH6",
     "AnythingLLM_workspace_slug": "cataract",
+    "AnythingLLM_Port": 8895,
     "Machine": "PC",                      //AGXOrin, PC
     "bHideCursor": true,
     "iTextFontSize": 48

@@ -4,6 +4,7 @@
 
 //#include <onnxruntime_cxx_api.h>
 //#include <opencv2/opencv.hpp>
+#include <filesystem>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -61,8 +62,10 @@ std::vector<int> nms_indices(const std::vector<cv::Rect2f>& boxes,
 Yolo11Pose::Yolo11Pose()
 :env(ORT_LOGGING_LEVEL_ERROR, "YOLOv11Pose"),
 session_options(),
-session(env, MODEL_PATH.c_str(), session_options),
-input_name_ptr(session.GetInputNameAllocated(0, allocator))
+session(nullptr),
+input_name(nullptr),
+initialized(false),
+out_count(0)
 {
     //Set colors
     COLOR_HEAD = cv::Scalar(0, 255, 255);
@@ -86,27 +89,52 @@ input_name_ptr(session.GetInputNameAllocated(0, allocator))
     catch (const std::exception& e) {
         std::cout << "[WARN] CUDA not used: " << e.what() << "\n";
     }
+}
 
-//    Ort::Session session(env, MODEL_PATH.c_str(), session_options);
-//    psession = new Ort::Session(env, MODEL_PATH.c_str(), session_options);
-//    Ort::AllocatorWithDefaultOptions allocator;
+bool Yolo11Pose::Initialize()
+{
+    if (initialized) {
+        return true;
+    }
 
-//    Ort::AllocatedStringPtr input_name_ptr = session.GetInputNameAllocated(0, allocator);
-    input_name_ptr = session.GetInputNameAllocated(0, allocator);
-//    const char* input_name = input_name_ptr.get();
-    input_name = input_name_ptr.get();
+    try {
+        if (!std::filesystem::exists(MODEL_PATH)) {
+            std::cerr << "[ERROR] Yolo11n-Pose model file not found: " << MODEL_PATH << std::endl;
+            return false;
+        }
 
-    size_t out_count = session.GetOutputCount();
-//    std::vector<const char*> output_names;
-//    std::vector<Ort::AllocatedStringPtr> out_name_ptrs;
-    for (size_t i = 0; i < out_count; ++i) {
-        out_name_ptrs.push_back(session.GetOutputNameAllocated(i, allocator));
-        output_names.push_back(out_name_ptrs.back().get());
+        session = std::make_unique<Ort::Session>(env, MODEL_PATH.c_str(), session_options);
+
+        // Get input name and copy into a std::string to own the storage
+        {
+            auto in_name_ptr = session->GetInputNameAllocated(0, allocator);
+            input_name_str = in_name_ptr.get();
+            input_name = input_name_str.c_str();
+        }
+
+        out_count = session->GetOutputCount();
+        output_names.clear();
+        output_name_strs.clear();
+        for (size_t i = 0; i < out_count; ++i) {
+            auto out_ptr = session->GetOutputNameAllocated(i, allocator);
+            output_name_strs.push_back(out_ptr.get());
+            output_names.push_back(output_name_strs.back().c_str());
+        }
+
+        initialized = true;
+        return true;
+    }
+    catch (const std::exception& e) {
+        std::cerr << "[ERROR] Failed to initialize Yolo11Pose: " << e.what() << std::endl;
+        return false;
     }
 }
 
 std::vector<std::vector<std::array<float, 3>>> Yolo11Pose::Process(cv::Mat& frame) {
     std::vector<std::vector<std::array<float, 3>>> return_keypoints;
+    if (!initialized && !Initialize()) {
+        return return_keypoints;
+    }
     try {
             int origW = frame.cols, origH = frame.rows;
 
@@ -135,7 +163,7 @@ std::vector<std::vector<std::array<float, 3>>> Yolo11Pose::Process(cv::Mat& fram
                 input_dims.data(), input_dims.size()
             );
 
-            auto output_tensors = session.Run(Ort::RunOptions{ nullptr },
+            auto output_tensors = session->Run(Ort::RunOptions{ nullptr },
                 &input_name, &input_tensor, 1,
                 output_names.data(), (int)output_names.size());
 
