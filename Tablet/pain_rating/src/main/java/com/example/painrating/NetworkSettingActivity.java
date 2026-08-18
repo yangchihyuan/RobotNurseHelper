@@ -1,12 +1,15 @@
-package tw.edu.cgu.ai.kebbi.tabletcontroller;
+package com.example.painrating;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.provider.Contacts;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -14,11 +17,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.net.Socket;
 
-import tw.edu.cgu.ai.kebbi.tabletcontroller.R;
-
 public class NetworkSettingActivity extends AppCompatActivity {
 
-    private Button btnTest, btnSave, btn_return;
+    private Button btnTest, btnSave;
     private EditText editText_Server;
     private EditText editText_Port;
 
@@ -33,7 +34,7 @@ public class NetworkSettingActivity extends AppCompatActivity {
     }
 
     protected void RetrieveSharedPreferences(){
-        SharedPreferences sharedPref = getSharedPreferences("TabletController_Preference", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPreferences("PainRating_Preference", Context.MODE_PRIVATE);
         String ServerURL = sharedPref.getString("ServerURL", "");
         if (!ServerURL.isEmpty()) {
             editText_Server.setText(ServerURL);
@@ -50,7 +51,7 @@ public class NetworkSettingActivity extends AppCompatActivity {
     protected void SaveSharedPreferences(){
         UItoVariables();
 
-        SharedPreferences sharedPref = getSharedPreferences("TabletController_Preference", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPreferences("PainRating_Preference", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("ServerURL", mServerURL.toString());
         editor.putString("PortNumber", mPortNumber.toString());
@@ -66,7 +67,6 @@ public class NetworkSettingActivity extends AppCompatActivity {
         editText_Server = (EditText) findViewById(R.id.editText_Server);
         btnSave = (Button) findViewById(R.id.btnSave);
         btnTest = (Button) findViewById(R.id.btnTest);
-        btn_return = (Button) findViewById(R.id.btn_return);
 
         UItoVariables();
         RetrieveSharedPreferences();
@@ -102,13 +102,6 @@ public class NetworkSettingActivity extends AppCompatActivity {
                         }
                     }
                 });
-            }
-        });
-
-        btn_return.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
             }
         });
 
