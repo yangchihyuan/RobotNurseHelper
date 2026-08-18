@@ -153,8 +153,12 @@ void ThreadStateControl::run()
         {
             if( mbWaitForTTSComplete)
             {
+                //debug
+                //cout << "mbWaitForTTSComplete is true" << endl;
                 if( mbTTSComplete)
                 {
+                    //debug
+                    //cout << "mbTTSComplete is true" << endl;
                     WhisperData WhisperResult = mpThreadWhisper->getLatestResult();
                     if( mStates[m_iStateIndex].m_strStateName == "Ask dance")
                     {

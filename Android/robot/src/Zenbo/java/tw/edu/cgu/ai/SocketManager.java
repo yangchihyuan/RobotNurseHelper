@@ -136,6 +136,7 @@ public class SocketManager {
                                         ExpressionConfig config = new ExpressionConfig();
                                         config.volume(volume).speed(speed).pitch(pitch);
                                         mRobotAPI.robot.setExpression(newFace, sentence, config);
+                                        //For Zenbo, this first setExpression will launch the warning message.
                                     } else if (command.hasFace() && command.hasSpeakSentence()) {
                                         Log.d("command", command.toString());
                                         RobotFace newFace = Converter.FaceIndexToRobotFace(command.getFace());

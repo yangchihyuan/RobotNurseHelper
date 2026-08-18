@@ -1,5 +1,5 @@
-#ifndef __THREAD_OLLAMA_hpp__
-#define __THREAD_OLLAMA_hpp__
+#ifndef __THREAD_LLM_hpp__
+#define __THREAD_LLM_hpp__
 
 #include <QThread>
 #include <iostream>

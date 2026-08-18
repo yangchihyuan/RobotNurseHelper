@@ -1,5 +1,5 @@
 {
-    "StateControlFile": "json/Cataractproject_English_Test.json",
+    "StateControlFile": "json/Cataractproject_English_Zenbo.json",
     "bServerPlaysRobotReceivedAudio": false,
     "bVideoWindowFullScreen": false,
     "bShowPreviewWindow": true,
@@ -18,9 +18,8 @@
     "LanguageModel": "gemma3:1b",           //The setting does not work. Now the model is controlled by the AnythingLLM workspace. The setting is reserved for future use.
     "Language": "English",
     "AnythingLLM_API_key": "B5Q49XV-0P04PY2-KJ4TRSQ-250ZSYE",
-    "AnythingLLM_workspace_slug": "cataract",
-    "AnythingLLM_Port": 8895,
-    "Machine": "PC",                      //AGXOrin, PC
+    "AnythingLLM_workspace_slug": "cataract_english",
+    "Machine": "PC",  //AGXOrin, PC
     "bHideCursor": false,
     "iTextFontSize": 48
 }

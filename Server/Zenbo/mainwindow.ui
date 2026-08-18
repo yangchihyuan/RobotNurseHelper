@@ -23,7 +23,7 @@
       <x>10</x>
       <y>220</y>
       <width>321</width>
-      <height>70</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="plainText">
@@ -508,71 +508,71 @@
      <string>Face</string>
     </property>
    </widget>
-    <widget class="QListView" name="listView_PredefinedAction">
-     <property name="geometry">
-      <rect>
-       <x>470</x>
-       <y>30</y>
-       <width>291</width>
-       <height>400</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_photo_title">
-     <property name="geometry">
-      <rect>
-       <x>470</x>
-       <y>440</y>
-       <width>291</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>360° Surrounding Photos</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="lineEdit_photo_angle">
-     <property name="geometry">
-      <rect>
-       <x>470</x>
-       <y>470</y>
-       <width>100</width>
-       <height>30</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>0</string>
-     </property>
-     <property name="placeholderText">
-      <string>Angle (e.g. 90)</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_take_photo">
-     <property name="geometry">
-      <rect>
-       <x>580</x>
-       <y>470</y>
-       <width>180</width>
-       <height>30</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Take Reference Photo</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_test">
-     <property name="geometry">
-      <rect>
-       <x>470</x>
-       <y>515</y>
-       <width>90</width>
-       <height>30</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Test</string>
-     </property>
-    </widget>
+   <widget class="QListView" name="listView_PredefinedAction">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>30</y>
+      <width>291</width>
+      <height>400</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_photo_title">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>440</y>
+      <width>291</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>360° Surrounding Photos</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_photo_angle">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>470</y>
+      <width>100</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>0</string>
+    </property>
+    <property name="placeholderText">
+     <string>Angle (e.g. 90)</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_take_photo">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>470</y>
+      <width>180</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Take Reference Photo</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_test">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>515</y>
+      <width>90</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Test</string>
+    </property>
+   </widget>
    <widget class="QLabel" name="label_22">
     <property name="geometry">
      <rect>
@@ -786,8 +786,8 @@
    <widget class="QCheckBox" name="checkBox_SaveImages">
     <property name="geometry">
      <rect>
-      <x>770</x>
-      <y>810</y>
+      <x>10</x>
+      <y>270</y>
       <width>111</width>
       <height>23</height>
      </rect>
@@ -1012,6 +1012,32 @@
     </property>
     <property name="text">
      <string>Stop song</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_onTTSComplete">
+    <property name="geometry">
+     <rect>
+      <x>910</x>
+      <y>810</y>
+      <width>101</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>onTTSComplete</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_killapp">
+    <property name="geometry">
+     <rect>
+      <x>772</x>
+      <y>810</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Kill app</string>
     </property>
    </widget>
   </widget>

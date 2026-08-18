@@ -217,6 +217,7 @@ public class MainActivity extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         robotCallback = new ZenboCallback();
+        robotCallback.socketManager = socketManager;
         mRobotAPI = new RobotAPI(this, robotCallback);
         socketManager.mRobotAPI = mRobotAPI;
         socketManager.startThreads();

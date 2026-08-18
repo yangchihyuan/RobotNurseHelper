@@ -1,5 +1,5 @@
 
-package tw.edu.cgu.ai;
+package tw.edu.cgu.ai.zenbo;
 
 import android.util.Log;
 
@@ -8,7 +8,12 @@ import com.asus.robotframework.API.RobotCmdState;
 import com.asus.robotframework.API.RobotErrorCode;
 import com.asus.robotframework.API.RobotCommand;
 
+import com.google.protobuf.Timestamp;
+import tw.edu.cgu.ai.RobotCommandOuterClass;
+
 public class ZenboCallback extends RobotCallback {
+
+    public SocketManager socketManager;
 
     public boolean RobotMovementFinished_Head = true;
     public boolean RobotMovementFinished_Body = true;
@@ -78,6 +83,29 @@ public class ZenboCallback extends RobotCallback {
             }
         }
 
+        if( cmd == RobotCommand.SPEAK.getValue())
+        {
+            if( state == RobotCmdState.SUCCEED)
+            {
+                //Send a command to Server
+                if (socketManager != null && socketManager.mSocketSendMessages != null) {
+                    long timestamp = System.currentTimeMillis();
+                    Timestamp eventTime = Timestamp.newBuilder()
+                            .setSeconds(timestamp / 1000)
+                            .setNanos((int) ((timestamp % 1000) * 1000000))
+                            .build();
+
+                    RobotCommandOuterClass.RobotToServerMessage message =
+                            RobotCommandOuterClass.RobotToServerMessage.newBuilder()
+                                    .setEventTime(eventTime)
+                                    .setDescription("onTTSComplete")
+                                    .build();
+
+                    socketManager.sendAMessage(message, socketManager.mSocketSendMessages);
+                }
+
+            }
+        }
         super.onStateChange(cmd, serial, err_code, state);
     }
 

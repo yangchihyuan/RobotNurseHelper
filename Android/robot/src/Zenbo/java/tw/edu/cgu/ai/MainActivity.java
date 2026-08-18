@@ -217,7 +217,9 @@ public class MainActivity extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         robotCallback = new ZenboCallback();
+        robotCallback.socketManager = socketManager;
         mRobotAPI = new RobotAPI(this, robotCallback);
+        mRobotAPI.robot.registerListenCallback(robotCallback);
         socketManager.mRobotAPI = mRobotAPI;
         socketManager.startThreads();
         mediaPlayer = MediaPlayer.create(this, R.raw.zenbo_love_you_too_manderin); // R.raw.your_mp3_filename
