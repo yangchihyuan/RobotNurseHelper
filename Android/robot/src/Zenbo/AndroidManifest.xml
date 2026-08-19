@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application>
+        <activity
+            android:name="tw.edu.cgu.ai.MainActivity"
+            tools:node="merge">
+            <intent-filter>
+                <category android:name="com.asus.intent.category.ZENBO" />
+                <category android:name="com.asus.intent.category.ZENBO_LAUNCHER" />
+                <data android:name="com.asus.intent.data.MIN_ROBOT_API_LEVEL.1" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

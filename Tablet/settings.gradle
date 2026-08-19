@@ -1,5 +1,7 @@
 plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 }
-include ':app'
+include ':pain_rating'
+include ':robot_controller'
 rootProject.name='Tablet'
+include ':press_number'

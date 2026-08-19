@@ -1,6 +1,0 @@
-tw.edu.cgu.ai.kebbi.test.app-Kebbi-0 /home/chihyuan/RobotNurseHelper/Robot/app/build/generated/res/resValues/androidTest/Kebbi/debug
-tw.edu.cgu.ai.kebbi.test.app-updated_navigation_xml-1 /home/chihyuan/RobotNurseHelper/Robot/app/build/generated/updated_navigation_xml/KebbiDebugAndroidTest
-tw.edu.cgu.ai.kebbi.test.app-mergeKebbiDebugAndroidTestResources-2 /home/chihyuan/RobotNurseHelper/Robot/app/build/intermediates/incremental/KebbiDebugAndroidTest/mergeKebbiDebugAndroidTestResources/merged.dir
-tw.edu.cgu.ai.kebbi.test.app-mergeKebbiDebugAndroidTestResources-3 /home/chihyuan/RobotNurseHelper/Robot/app/build/intermediates/incremental/KebbiDebugAndroidTest/mergeKebbiDebugAndroidTestResources/stripped.dir
-tw.edu.cgu.ai.kebbi.test.app-KebbiDebugAndroidTest-4 /home/chihyuan/RobotNurseHelper/Robot/app/build/intermediates/merged_res/KebbiDebugAndroidTest/mergeKebbiDebugAndroidTestResources
-gradleHome-0 /home/chihyuan/.gradle

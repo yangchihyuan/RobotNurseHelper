@@ -1,0 +1,7 @@
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+include ':robot'
+include ':Tablet:robot_controller'
+include ':Tablet:pain_rating'
+include ':Tablet:press_number'

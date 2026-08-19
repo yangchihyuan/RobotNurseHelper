@@ -668,7 +668,7 @@ void ThreadProcessImage::run() {
                                 double estimatedAngle =
                                     ::ComputeVisualCompassTheta(inputImage, ImageSaveDirectory, errorDetails);
                                 //print the estimated theta out
-                                std::cout << "Estimated theta: " << estimatedAngle << std::endl;
+                                //std::cout << "Estimated theta: " << estimatedAngle << std::endl;
                                 if (estimatedAngle >= 0.0) {
                                     float turnSpeed = 0.0f;
                                     if (estimatedAngle > 5.0 && estimatedAngle <= 180.0) {

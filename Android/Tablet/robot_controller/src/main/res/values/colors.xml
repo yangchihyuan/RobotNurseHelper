@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Material Colors -->
+    <color name="purple_500">#6200EE</color>
+    <color name="purple_700">#3700B3</color>
+    <color name="teal_200">#03DAC5</color>
+
+    <!-- Basic -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+
+    <!-- Background -->
+    <color name="background">#F5F8FC</color>
+    <color name="cardBackground">#FFFFFF</color>
+
+    <!-- Text -->
+    <color name="textPrimary">#1B2A4A</color>
+    <color name="textSecondary">#667085</color>
+
+    <!-- Connection -->
+    <color name="connected">#22C55E</color>
+    <color name="disconnected">#EF4444</color>
+
+    <!-- Buttons -->
+    <color name="greenButton">#14B87A</color>
+    <color name="orangeButton">#F59E0B</color>
+    <color name="blueButton">#2563EB</color>
+    <color name="redButton">#EF4444</color>
+
+    <!-- Button Background -->
+    <color name="greenLight">#E8FFF5</color>
+    <color name="orangeLight">#FFF6E5</color>
+    <color name="blueLight">#EEF4FF</color>
+    <color name="redLight">#FFF1F1</color>
+
+    <!-- Borders -->
+    <color name="border">#E4E7EC</color>
+
+    <!-- Language -->
+    <color name="languageSelected">#2563EB</color>
+    <color name="languageBackground">#FFFFFF</color>
+
+</resources>

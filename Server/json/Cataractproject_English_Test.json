@@ -6,17 +6,9 @@
         "m_strFirstSentence": "I am ready. Please say \"start\" to begin the health education, or say \"introduce\" to hear my self-introduction.",
         "m_strStateName": "Waiting for start",
         "sFace": "HAPPY",
-        "sMotion": "666_RE_Bow",
+        "sMotion": "Head_up_4",
         "sStateType": "Conversation",
-        "vSmallMotion": [
-            "666_BA_ArmSCircle",
-            "666_BA_ArmSSquare",
-            "666_BA_RArmCircleL",
-            "666_BA_RArmCircleR",
-            "666_BA_Nodhead",
-            "666_SA_Think",
-            "666_SP_Cheer"
-        ],
+        "vSmallMotion": [],
         "v_str_KeyWordMoveToNextState": [
             "start",
             "begin",
@@ -34,17 +26,16 @@
         "iStateIndex": 1,
         "m_strFirstSentence": "Hello, I am glad to be of service to you. I am Zenbo Junior, the health education robot. How may I address you?",
         "m_strStateName": "Greeting 1 and ask name",
-        "sFace": "HAPPY",
-        "sMotion": "666_RE_Bow",
+        "sFace": "WORRIED",
+        "sMotion": "Body_twist_1",
         "sStateType": "Conversation",
         "vSmallMotion": [
-            "666_BA_ArmSCircle",
-            "666_BA_ArmSSquare",
-            "666_BA_RArmCircleL",
-            "666_BA_RArmCircleR",
-            "666_BA_Nodhead",
-            "666_SA_Think",
-            "666_SP_Cheer"
+            "Head_down_1",
+            "Head_down_2",
+            "Head_down_3",
+            "Head_down_4",
+            "Head_down_5",
+            "Head_down_7"
         ],
         "v_str_KeyWordMoveToNextState": [],
         "v_str_Action": [
@@ -59,14 +50,16 @@
         "iStateIndex": 2,
         "m_strFirstSentence": "Hello {PatientTitle} {PatientName}, the doctor just checked and confirmed that you have cataracts. Have you recently felt that your vision is blurry, as if looking through a sheet of frosted glass, or do lights at night seem very scattered?",
         "m_strStateName": "Greeting 2",
-        "sFace": "QUESTION",
-        "sMotion": "666_BA_Nodhead",
+        "sFace": "QUESTIONING",
+        "sMotion": "Nod_1",
         "sStateType": "Conversation",
         "vSmallMotion": [
-            "666_BA_ArmSCircle",
-            "666_BA_ArmSSquare",
-            "666_BA_RArmCircleL",
-            "666_BA_RArmCircleR"
+            "Head_down_1",
+            "Head_down_2",
+            "Head_down_3",
+            "Head_down_4",
+            "Head_down_5",
+            "Head_down_7"
         ],
         "v_str_KeyWordMoveToNextState": [],
         "v_str_Action": [

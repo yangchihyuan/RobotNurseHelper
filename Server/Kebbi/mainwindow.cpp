@@ -314,11 +314,14 @@ void MainWindow::on_pushButton_hideface_clicked() {
   sendMessageManager.AddMessage(command);
 }
 
+//20260817 Do I need this? The function is implemented in the shared mainwindow.cpp. I think I don't need it. I will comment it out for now.
+/*
 void MainWindow::on_pushButton_killapp_clicked() {
   RobotCommandProtobuf::RobotCommand command;
   command.set_killapp(true);
   sendMessageManager.AddMessage(command);
 }
+*/
 
 void MainWindow::on_listView_Content_doubleClicked(const QModelIndex &index) {
   RobotCommandProtobuf::RobotCommand command;

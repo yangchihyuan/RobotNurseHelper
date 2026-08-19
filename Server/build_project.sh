@@ -14,11 +14,10 @@ if [ $# == 1 ]; then
         echo "Building for Kebbi"
         cmake -S . -B build -DROBOT_MODEL=Kebbi -DCMAKE_CXX_FLAGS="-Wno-psabi"
         cmake --build build -j $(nproc)
+    else
+        echo "Invalid argument: $1"
+        echo "Usage: ./build_project.sh [clean|Zenbo|ZenboJrII|Kebbi]"
     fi
 else
-    echo "Building for Kebbi"
-    rm -rf build
-    cmake -S . -B build -DROBOT_MODEL=Kebbi -DCMAKE_CXX_FLAGS="-Wno-psabi"
-    cmake --build build -j $(nproc)
-
+    echo "Usage: ./build_project.sh [clean|Zenbo|ZenboJrII|Kebbi]"
 fi
