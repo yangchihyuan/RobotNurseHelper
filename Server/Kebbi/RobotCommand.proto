@@ -42,6 +42,8 @@ message RobotCommand {
   optional bool killapp = 12;
   optional string sface = 13;
   optional string smotion = 14;
+  //Barge-in support: interrupt whatever the robot is currently saying immediately.
+  optional bool stop_speaking = 15;
 }
 
 //The message that the robot sends to the server

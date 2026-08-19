@@ -12,6 +12,7 @@
 #include <QModelIndex>
 #include <QAbstractItemView>
 #include <iostream>
+#include <cmath>
 #ifdef USE_KEBBI
     #include "Kebbi/RobotCommand.pb.h"
     #include "Kebbi/ui_mainwindow.h"
@@ -27,6 +28,7 @@
 #include "ActionOption.hpp"
 #include "ThreadLLM.hpp"
 #include "LandmarkToRobotAction.hpp" //[MOHAMED]
+#include "BargeInControl.hpp"
 
 extern std::mutex gMutex_audio_buffer;
 extern std::queue<short> AudioBuffer;
@@ -331,12 +333,13 @@ void MainWindow::readSocket3()
     char* buffer_head = pbuffer.get();
     qint64 length = socketStream.readRawData(buffer_head, byteAvailable);
     short *pShort = (short *)buffer_head;
+    long long sampleCount = length/2;
 
     //Disable here if I don't want to play audio on the server side.
     if( msetting.bServerPlaysRobotReceivedAudio )
     {
         gMutex_audio_buffer.lock();
-        for( long long i = 0; i<length/2 ; i++)
+        for( long long i = 0; i<sampleCount ; i++)
         {
             short value = *(pShort + i);
             AudioBuffer.push(value);       //This AudioBuffer is used to play audio on the server
@@ -344,17 +347,44 @@ void MainWindow::readSocket3()
         gMutex_audio_buffer.unlock();
     }
 
-    if( bstream_recognition)
+    //Echo-loop guard: while the robot is speaking, this incoming mic audio is
+    //almost always the robot overhearing its own TTS. Feeding that into Whisper
+    //makes the robot transcribe and reply to itself, causing an infinite
+    //conversation loop. So mute it here, UNLESS it is loud enough to be a
+    //deliberate patient barge-in, in which case let it through and flag
+    //ThreadStateControl to interrupt the robot immediately.
+    bool bFeedWhisper = bstream_recognition;
+    if( robotSpeaking.load() && sampleCount > 0 )
+    {
+        //RMS energy, not raw peak: a single clipped sample or click can spike the
+        //peak without being sustained speech, so RMS gives a cleaner separation
+        //between the robot's own (quiet) TTS echo and a person actually talking
+        //at it. See BargeInControl.hpp for the threshold and how to retune it.
+        double sumSquares = 0.0;
+        for( long long i = 0; i < sampleCount; i++)
+        {
+            double v = *(pShort + i);
+            sumSquares += v * v;
+        }
+        double rms = std::sqrt(sumSquares / static_cast<double>(sampleCount));
+
+        if( rms > kBargeInAmplitudeThreshold )
+            stopRequested.store(true);   //Let ThreadStateControl send the STOP command and reset to listening.
+        else
+            bFeedWhisper = false;        //Mute: this is the robot hearing itself, not the patient.
+    }
+
+    if( bFeedWhisper )
     {
         thread_whisper.mtx_whisper_buffer.lock();
-        for( long long i = 0; i<length/2 ; i++)
+        for( long long i = 0; i<sampleCount ; i++)
         {
             short value = *(pShort + i);
             thread_whisper.pcmf32_new[i+thread_whisper.bufferlength] = ((float)value / 32768.0f);
         }
-        thread_whisper.bufferlength += length/2;
+        thread_whisper.bufferlength += sampleCount;
         thread_whisper.mtx_whisper_buffer.unlock();
-//        std::cout << "thread_whisper.pcmf32_queue size: " << thread_whisper.pcmf32_queue.size() << std::endl;  
+//        std::cout << "thread_whisper.pcmf32_queue size: " << thread_whisper.pcmf32_queue.size() << std::endl;
     }
 
 

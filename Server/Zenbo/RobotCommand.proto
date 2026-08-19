@@ -66,6 +66,8 @@ message RobotCommand {
   optional int32 stopsong = 20;
   optional bool killapp = 21;
   optional string sface = 22;
+  //Barge-in support: interrupt whatever the robot is currently saying immediately.
+  optional bool stop_speaking = 24;
   /*
   ACTIVE
   AWARE_LEFT

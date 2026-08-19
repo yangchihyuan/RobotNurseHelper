@@ -24,6 +24,11 @@ inline void LoadJSONFile(T &Struct, const std::string& file_path)
             std::cerr << "JSON Parse Error in " << file_path << ": " << e.what() << std::endl;
         } catch (nlohmann::json::type_error& e) {
             std::cerr << "JSON Type Error (Mapping to Struct failed): " << e.what() << std::endl;
+        } catch (nlohmann::json::exception& e) {
+            //Catch-all for the rest of nlohmann's exception hierarchy (e.g. out_of_range
+            //from a required key missing). Without this, a single incompatible field
+            //would throw past LoadJSONFile and crash the whole server at startup.
+            std::cerr << "JSON Error while loading " << file_path << ": " << e.what() << std::endl;
         }
         file_setting.close();
     } else {

@@ -1,6 +1,7 @@
 #include "ThreadStateControl.hpp"
 #include <fstream>
 #include "utility_time.hpp"
+#include "BargeInControl.hpp"
 
 #include <cstdlib> // For rand() and srand()
 #include <ctime>   // For time()
@@ -60,6 +61,26 @@ void ThreadStateControl::run()
     while(b_WhileLoop)
     {
         current_time = chrono::system_clock::now();
+        b_IsIdleState.store(m_iStateIndex == 0);
+
+        //Barge-in: a loud audio spike was detected while the robot was speaking.
+        //Interrupt it immediately and fall back to listening instead of waiting
+        //for the (now-obsolete) onTTSComplete signal.
+        if( stopRequested.load() )
+        {
+            stopRequested.store(false);
+            robotSpeaking.store(false);
+
+            RobotCommandProtobuf::RobotCommand stop_command;
+            stop_command.set_stop_speaking(true);
+            m_pSendMessageManager->AddMessage(stop_command);
+
+            cout << "Barge-in detected: sent STOP command, resuming listening." << endl;
+
+            mbTTSComplete = true;
+            mtimestamp_TTSComplete = current_time;
+            mbWaitForTTSComplete = true;
+        }
 
         if(mStates[m_iStateIndex].bInitial)
         {
@@ -130,6 +151,7 @@ void ThreadStateControl::run()
                 }
                 m_pSendMessageManager->AddMessage(command);
                 mbTTSComplete = false;
+                robotSpeaking.store(true);
 
                 //just for display on UI
                 mpThreadLLM->strResponse = sReplacedFirstSentence;
@@ -302,6 +324,8 @@ void ThreadStateControl::run()
                             str_assistant_message = msLLMResult;
                         }
                         command.set_speak_sentence(str_assistant_message);
+                        if( !msLLMResultFace.empty() )
+                            command.set_sface(msLLMResultFace);    //emotion tag ThreadLLM parsed out of the LLM's raw response
                         //randomly choose a motion
                         if( mStates[m_iStateIndex].vSmallMotion.size() > 0)
                         {
@@ -311,6 +335,7 @@ void ThreadStateControl::run()
 
                         m_pSendMessageManager->AddMessage(command);
                         mbTTSComplete = false;
+                        robotSpeaking.store(true);
                         mbWaitForTTSComplete = true;
                         mbWaitForLLMResult = false;
                         mbLLMResult = false;
@@ -347,11 +372,12 @@ void ThreadStateControl::run()
     }
 }
 
-void ThreadStateControl::NotifyEvent(string description, chrono::time_point<chrono::system_clock> timestamp, string sLLMResult)
+void ThreadStateControl::NotifyEvent(string description, chrono::time_point<chrono::system_clock> timestamp, string sLLMResult, string sFace)
 {
     if( description == "onTTSComplete")
     {
         mbTTSComplete = true;
+        robotSpeaking.store(false);
         mtimestamp_TTSComplete = timestamp;
         //debug
         //cout << "(E)" << endl;
@@ -362,6 +388,7 @@ void ThreadStateControl::NotifyEvent(string description, chrono::time_point<chro
         mbLLMResult = true;
         mtimestamp_LLMResult = timestamp;
         msLLMResult = sLLMResult;
+        msLLMResultFace = sFace;    //emotion tag ThreadLLM extracted and stripped out of sLLMResult, e.g. "HAPPY"
         //debug
         //cout << "(H)" << endl;
         //cout << "NotifyEvent onLLMResult" << endl;
@@ -378,6 +405,19 @@ void ThreadStateControl::NotifyEvent(string description, chrono::time_point<chro
         mbReadyToChangeState = true;
         mbOldStateComplete = true;
         mtimestamp_VideoComplete = timestamp;     //In fact, it is not TTSComplete, but I reuse this variable to store the time when video is complete.
+    }
+    else if( description == "onPersonDetected")
+    {
+        //Proactive vision wake-up: only fires from the idle/standby state (state 0).
+        //Once state advances past 0 this becomes a no-op until the state machine
+        //returns to idle again, so ThreadProcessImage does not need to know or
+        //care what state we're actually in.
+        if( m_iStateIndex == 0 )
+        {
+            cout << "Proactive vision: person detected while idle, waking up." << endl;
+            mbReadyToChangeState = true;
+            mbOldStateComplete = true;
+        }
     }
 }
 
