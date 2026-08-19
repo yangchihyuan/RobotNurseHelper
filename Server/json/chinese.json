@@ -1,0 +1,32 @@
+{
+    "StateControlFile": "json/Cataractproject.json",
+    "bServerPlaysRobotReceivedAudio": false,
+    "bVideoWindowFullScreen": false,
+    "bShowPreviewWindow": true,
+    "bSaveImages": true,
+    "iImageSaveIntervalMillisecond": 5000,
+    "bFacialExpressionRecognition": false,
+    "bHumanPoseEstimation": true,
+    "PoseEstimationModel": "MediaPipe_Pose",
+    "PoseTaskPath": "/home/shruti/RobotNurseHelper_build/models/pose_landmarker_full.task",
+
+    "bHandLandmarkDetection": true,
+    "bUseDlibForFaceRecognition": false,
+    "bFaceDetection": true,
+    "FaceDetectionModel": "InspireFace",
+    "bObjectDetection": true,
+    "ObjectDetectionModel": "MediaPipe_Object",
+    "ObjectTaskPath": "/home/shruti/RobotNurseHelper/Server/mediapipe/models/ssdlite_object_detection.tflite",
+    "bUseVisualCompass": false,
+
+    "WhisperModel": "/home/shruti/RobotNurseHelper_build/whisper.cpp/models/ggml-large-v3-turbo.bin",
+
+    "ImageSaveDirectory": "/home/shruti/Downloads/raw_images",
+
+    "LanguageModel": "gemma3:1b",
+    "Language": "Chinese",
+    "AnythingLLM_API_key": "1A4MPKM-ASBMV6A-MYHCJFM-1M6YB1B",
+    "AnythingLLM_workspace_slug": "my-workspace",
+    "Machine": "PC",
+    "bHideCursor": true
+}

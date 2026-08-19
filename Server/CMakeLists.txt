@@ -101,7 +101,8 @@ set(SOURCES AnythingLLM.cpp
             ThreadWhisper.cpp
             ThreadLLM.cpp
             VideoWindow.cpp
-            Yolo11Pose.cpp 
+            Yolo11Pose.cpp
+            YoloDetector.cpp
             main.cpp
             mainwindow.cpp
             utility_directory.cpp

@@ -19,7 +19,7 @@
     "Language": "English",
     "AnythingLLM_API_key": "88EMVRN-1AD4TXJ-MHNZM5V-7G3MCH6",
     "AnythingLLM_workspace_slug": "cataract",
-    "AnythingLLM_Port": 8895,
+    "AnythingLLM_Port": 3001,
     "Machine": "PC",                      //AGXOrin, PC
     "bHideCursor": true,
     "iTextFontSize": 48
