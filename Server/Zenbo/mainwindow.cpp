@@ -188,7 +188,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &MainWindow::timer_event);
-    timer->start(10);
+    timer->start(10); // interval 10 milliseconds.
 
     // add move mode items
     QStringList strList_MoveMode;
@@ -361,64 +361,6 @@ void MainWindow::on_pushButton_stop_song_clicked()
 void MainWindow::comboBox_Processor_changed()
 {
     // Placeholder implementation to satisfy the Qt connection.
-}
-
-void MainWindow::timer_event()
-{
-    if (thread_process_image.bNewoutFrame)
-    {
-        // 2024/12/30, Debug info: I use a timer to update the frame. On some low-end PC,
-        // although I call imshow, the window does not refresh unless there is a signal sent
-        // to the window such as mouse hovering. It seems caused by the hardward driver.
-        // imshow is a high-level GUI. There is no extra argument for this function.
-        // How to force the problem to update the window?
-        cv::imshow("Image", thread_process_image.getOutFrame());
-        cv::waitKey(1); // I miss this line so that Ubuntu does not update the window.
-        thread_process_image.bNewoutFrame = false;
-
-        // update pitch and yaw
-        ui->lineEdit_yaw_now->setText(QString::number(robot_status.yaw_degree));
-        ui->lineEdit_pitch_now->setText(QString::number(robot_status.pitch_degree));
-    }
-
-    if (thread_whisper.b_new_OperatorSentence)
-    {
-        thread_whisper.b_new_OperatorSentence = false;
-        ui->plainTextEdit_speak->setPlainText(QString::fromStdString(thread_whisper.strOperatorSentence));
-    }
-
-    /*
-        if( thread_whisper.b_new_RobotSentence )
-        {
-            thread_whisper.b_new_RobotSentence = false;
-            ui->plainTextEdit_received->setPlainText(QString::fromStdString(thread_whisper.strRobotSentence));
-        }
-    */
-
-    WhisperData thisWhisperData = thread_whisper.getLatestResult();
-    if (thisWhisperData.tSTTComplete != oldWhisperData.tSTTComplete)
-    {
-        ui->plainTextEdit_received->setPlainText(
-            QString::fromStdString(thisWhisperData.sOutput));
-        oldWhisperData = thisWhisperData;
-    }
-
-    if (thread_LLM.b_new_LLM_response)
-    {
-        thread_LLM.b_new_LLM_response = false;
-        ui->plainTextEdit_LLM_response->setPlainText(
-            QString::fromStdString(thread_LLM.strResponse));
-
-        // speak out
-        bool bAutoSpeakOut = false;
-        if (bAutoSpeakOut)
-        {
-            RobotCommandProtobuf::RobotCommand command;
-            command.set_speak_sentence(thread_LLM.strResponse);
-            sendMessageManager.AddMessage(command);
-        }
-    }
-    sendMessageManager.Send();
 }
 
 void MainWindow::rotateAndTakePhoto(int targetAngle, const QString &prefix)

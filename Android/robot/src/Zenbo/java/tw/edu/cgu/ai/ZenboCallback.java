@@ -90,9 +90,11 @@ public class ZenboCallback extends RobotCallback implements RobotCallback.Listen
           MOTION_MOVE_BODY       39
           SPEAK_FROM_DS          104
          */
-        if( cmd == RobotCommand.SPEAK.getValue())
+        //mRobotAPI.robot.setExpression(face, sentence, config) belongs to RobotCommand.SET_EXPRESSION rather than RobotCommand.SPEAK
+        //The first "Zenbo Nurse Helper have the feature of camera recording..." may be the SPEAK_FROM_DS command.
+        if( cmd == RobotCommand.SPEAK.getValue() || cmd == RobotCommand.SET_EXPRESSION.getValue() || cmd == RobotCommand.SPEAK_FROM_DS.getValue())
         {
-            Log.d("ZenboCallback", "onStateChange: cmd = " + cmd + " serial = " + serial + " err_code = " + err_code.toString() + " state = " + state.toString());
+            Log.d("ZenboCallback", "RobotCommand.SPEAK: cmd = " + cmd + " serial = " + serial + " err_code = " + err_code.toString() + " state = " + state.toString());
             if( state == RobotCmdState.SUCCEED)
             {
                 //Send a command to Server

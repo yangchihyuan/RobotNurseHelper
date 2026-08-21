@@ -6,8 +6,8 @@ android {
     compileSdk = 37  //AGP 9 need the "=" assignment symbol because compileSdk becomes a property
     defaultConfig {
         applicationId = 'tw.edu.cgu.ai'
-        versionCode = 260818
-        versionName = 'v2026.08.18'
+        versionCode = 260819
+        versionName = 'v2026.08.19'
         externalNativeBuild {
             cmake {
                 cppFlags ""

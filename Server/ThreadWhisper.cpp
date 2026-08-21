@@ -82,9 +82,11 @@ void ThreadWhisper::run()
     while(b_WhileLoop)
     {
         // << n_iter << "R\n";
+        //Now we rarely use the operator buffer.
+        //The operator buffer is designed for Fang-yu, but she types fast and rarely use this feature.
         if(bOperatorBuffer_open && pOperatorBuffer->size() > 0)
         {
-            //Why is the length /4? Because the input format is float rather than short.
+            //Why is the length /4? Because the input format is float (4 bytes) rather than short.
             //But the recording format is short.
             if (whisper_full(ctx, wparams, (float*)pOperatorBuffer->buffer().constData(), pOperatorBuffer->size() / 4) == 0)
             {
@@ -96,6 +98,7 @@ void ThreadWhisper::run()
             }
         }
 
+        //If the incoming audio data is greater than 0.5 seconds, we will merge them into our pcmf32 buffer. If the pcmf32 buffer is greater than 5 seconds, we will ignore the first-coming data.
         if(bufferlength >= n_samples_step)  //n_samples_step = 8000; bufferlength is the new coming audio data.
         {
             //n_samples_len = 80000; // 5 seconds, in samples
@@ -151,7 +154,7 @@ void ThreadWhisper::run()
             
             //debug
             //cout << "pcmf32.size() " << pcmf32.size() << endl;
-            if( last_speech_end < pcmf32.size() - n_samples_silent)    //to ensure that there is a slience greater than 0.3 seconds.
+            if( last_speech_end < pcmf32.size() - n_samples_silent)    //Now, n_samples_silent is 0.
             {
                 WhisperData tempData;
                 tempData.tSpeechEnd = chrono::system_clock::now();

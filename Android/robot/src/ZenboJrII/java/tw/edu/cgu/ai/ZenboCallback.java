@@ -1,5 +1,5 @@
 
-package tw.edu.cgu.ai.zenbo;
+package tw.edu.cgu.ai;
 
 import android.util.Log;
 
@@ -9,9 +9,9 @@ import com.asus.robotframework.API.RobotErrorCode;
 import com.asus.robotframework.API.RobotCommand;
 
 import com.google.protobuf.Timestamp;
-import tw.edu.cgu.ai.RobotCommandOuterClass;
+import org.json.JSONObject;
 
-public class ZenboCallback extends RobotCallback {
+public class ZenboCallback extends RobotCallback implements RobotCallback.Listen {
 
     public SocketManager socketManager;
 
@@ -25,7 +25,7 @@ public class ZenboCallback extends RobotCallback {
     @Override
     public void onStateChange(int cmd, int serial, RobotErrorCode err_code, RobotCmdState state) {
         //check, what will happen is the power core is plugged?
-        Log.d("onStateChange", String.format("cmd %d serial %d ",cmd, serial) + "err_code " + err_code.toString() + " state " + state.toString());
+        Log.d("ZenboCallback", "onStateChange " + String.format("cmd %d serial %d ",cmd, serial) + "err_code " + err_code.toString() + " state " + state.toString());
         if (cmd == RobotCommand.MOTION_MOVE_BODY.getValue()) {        //cmd == 39 movebody
             if (state == RobotCmdState.ACTIVE) {
                 //It happen this callback is erased by the Zenbo system prompt.
@@ -83,8 +83,16 @@ public class ZenboCallback extends RobotCallback {
             }
         }
 
+        /*Command Name           Integer Value (getValue())
+          SET_EXPRESSION         31
+          SPEAK                  33
+          STOP_SPEAK             34
+          MOTION_MOVE_BODY       39
+          SPEAK_FROM_DS          104
+         */
         if( cmd == RobotCommand.SPEAK.getValue())
         {
+            Log.d("RobotCommand.SPEAK", "onStateChange: cmd = " + cmd + " serial = " + serial + " err_code = " + err_code.toString() + " state = " + state.toString());
             if( state == RobotCmdState.SUCCEED)
             {
                 //Send a command to Server
@@ -110,12 +118,63 @@ public class ZenboCallback extends RobotCallback {
     }
 
     //
+    @Override
     public void onResult(int cmd,
                          int serial,
                          RobotErrorCode err_code,
                          android.os.Bundle result)
     {
-        Log.d("onResult", Integer.toString(cmd));
+        //Check this. If I can catch the result of the speak() function.
+        Log.d("ZenboCallback", "onResult: cmd " + Integer.toString(cmd));
         super.onResult(cmd, serial, err_code, result);
+
+    }
+
+    @Override
+    public void onFinishRegister() {
+
+    }
+
+    @Override
+    public void onVoiceDetect(JSONObject jsonObject) {
+
+    }
+
+    @Override
+    public void onSpeakComplete(String s, String s1) {
+        Log.d("ZenboCallback", "onSpeakComplete: " + s);
+        //Send a command to Server
+        if (socketManager != null && socketManager.mSocketSendMessages != null) {
+            long timestamp = System.currentTimeMillis();
+            Timestamp eventTime = Timestamp.newBuilder()
+                    .setSeconds(timestamp / 1000)
+                    .setNanos((int) ((timestamp % 1000) * 1000000))
+                    .build();
+
+            RobotCommandOuterClass.RobotToServerMessage message =
+                    RobotCommandOuterClass.RobotToServerMessage.newBuilder()
+                            .setEventTime(eventTime)
+                            .setDescription("onTTSComplete")
+                            .build();
+
+            socketManager.sendAMessage(message, socketManager.mSocketSendMessages);
+            Log.d("ZenboCallback", "Send onSpeakComplete: " + s);
+        }
+    }
+
+    @Override
+    public void onEventUserUtterance(JSONObject jsonObject) {
+
+    }
+
+    @Override
+    public void onResult(JSONObject jsonObject) {
+        Log.d("ZenboCallback", "onResult: " + jsonObject.toString());
+
+    }
+
+    @Override
+    public void onRetry(JSONObject jsonObject) {
+
     }
 }

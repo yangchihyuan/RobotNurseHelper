@@ -70,14 +70,17 @@ public class SocketManager {
                 while(mbReceiveCommand) {
 //                    Log.d ("mbReceiveCommand","still running");
                     if (mSocketReceiveCommand != null && mSocketReceiveCommand.isConnected()) {
-//                        Log.d ("mbReceiveCommand","Enter if");
+                        //debug
+                        Log.d ("mbReceiveCommand","Enter if");
                         try {
                             BufferedInputStream dIn = new BufferedInputStream(mSocketReceiveCommand.getInputStream());
+                            //debug
 //                            Log.d("BufferedInputStream", "created");
                             int length = 4096;
                             byte[] message = new byte[length];
                             int bytesRead = dIn.read(message, 0, length);
-//                            Log.d("bytesRead", Integer.toString((bytesRead)));
+                            //debug
+                            Log.d("bytesRead", Integer.toString((bytesRead)));
                             if (bytesRead != -1) {
                                 System.arraycopy(message, 0, mMessagePool, effective_length, bytesRead);
                                 effective_length += bytesRead;
@@ -96,7 +99,7 @@ public class SocketManager {
                                     effective_length = remaining;
 
                                     RobotCommandOuterClass.RobotCommand command = RobotCommandOuterClass.RobotCommand.parseFrom(slice);
-                                    Log.d("Debug", "Receive a message");
+                                    Log.d("Debug", "Receive a message" + command.toString());
                                     if (command.hasX()) {
                                         Log.d("move body", command.toString());
                                         int serial = mRobotAPI.motion.moveBody(((float) command.getX()) / 100.0f, ((float) command.getY()) / 100.0f, command.getDegree());
@@ -201,6 +204,13 @@ public class SocketManager {
                                     if( command.hasSmotion())
                                     {
                                         int serial = mRobotAPI.utility.playAction(Converter.sMotionToPlayAction(command.getSmotion()));
+                                    }
+                                    if( command.hasKillapp() && command.getKillapp())
+                                    {
+                                        //This is the correct one
+                                        android.os.Process.killProcess(android.os.Process.myPid());
+                                        // this function only kill this activity
+                                        //activity.finish();
                                     }
                                 }
                             } else {

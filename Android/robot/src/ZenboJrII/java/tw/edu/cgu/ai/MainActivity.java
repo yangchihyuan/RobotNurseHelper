@@ -70,7 +70,7 @@ import android.media.MediaRecorder;
 import android.util.Log;
 import android.widget.Button;
 
-import tw.edu.cgu.ai.env.Logger; //Where do I use the Logger?
+import tw.edu.cgu.ai.env.Logger;
 
 public class MainActivity extends Activity {
     private static final int PERMISSIONS_REQUEST = 1;
@@ -219,6 +219,7 @@ public class MainActivity extends Activity {
         robotCallback = new ZenboCallback();
         robotCallback.socketManager = socketManager;
         mRobotAPI = new RobotAPI(this, robotCallback);
+        mRobotAPI.robot.registerListenCallback(robotCallback);
         socketManager.mRobotAPI = mRobotAPI;
         socketManager.startThreads();
         mediaPlayer = MediaPlayer.create(this, R.raw.zenbo_love_you_too_manderin); // R.raw.your_mp3_filename

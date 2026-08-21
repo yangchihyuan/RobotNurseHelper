@@ -31,6 +31,8 @@ import tw.edu.cgu.ai.env.Logger;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Timestamp;
+import tw.edu.cgu.ai.RobotCommandOuterClass;
+
 import java.io.ByteArrayOutputStream;
 
 import java.nio.ByteOrder;
