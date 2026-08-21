@@ -74,8 +74,9 @@ public:
     string strLanguage = "zh"; // default language is Chinese
 
     void ClearBuffer();
+    void SkipCurrentSpeech();
 
-    VadIterator *pVad = NULL;             //This is the silero vad iterator.
+    VadIterator *pVad = NULL;             //This is the Silero VAD iterator.
 
     WhisperData getLatestResult();
 protected:
@@ -93,6 +94,7 @@ protected:
     //ToDo: delete this function. I do not use it.
     float ComputeVolume(const std::vector<float>& pcmf32);
     WhisperData mResult;
+    bool bSkipCurrentSpeech = false;  //This variable is used to skip the current speech.
 };
 
 #endif

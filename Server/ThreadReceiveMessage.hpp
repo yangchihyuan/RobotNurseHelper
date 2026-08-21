@@ -36,6 +36,7 @@ public:
     ThreadSafeQueue<DataFrame> DataFrames_queue;
     ThreadStateControl *mpThreadStateControl;
     ThreadProcessImage *mpThreadProcessImage;
+    ThreadWhisper *mpWhisper;
 protected:
     void run();
 

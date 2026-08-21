@@ -155,6 +155,7 @@ void ThreadWhisper::run()
             //debug
             //cout << "pcmf32.size() " << pcmf32.size() << endl;
             if( last_speech_end < pcmf32.size() - n_samples_silent)    //Now, n_samples_silent is 0.
+            //It means that the speech has ended, and we can run the whisper inference.
             {
                 WhisperData tempData;
                 tempData.tSpeechEnd = chrono::system_clock::now();
@@ -177,6 +178,11 @@ void ThreadWhisper::run()
                 pcmf32.clear();
                 tempData.sOutput = strTemp;
                 tempData.tSTTComplete = chrono::system_clock::now();
+                if( bSkipCurrentSpeech )
+                {
+                    bSkipCurrentSpeech = false;
+                    continue;   //skip the current speech
+                }
                 mtx.lock();
                 mResult = tempData;
                 mtx.unlock();
@@ -208,7 +214,6 @@ void ThreadWhisper::ClearBuffer()
     pcmf32.clear();
     pcmf32_new.clear();
     bufferlength = 0;
-//    strRobotSentence = "";
     strTemp = "";
     mtx_whisper_buffer.unlock();
 }
@@ -222,4 +227,15 @@ float ThreadWhisper::ComputeVolume(const std::vector<float>& pcmf32)
     }
     volume /= pcmf32.size();
     return volume;
+}
+
+void ThreadWhisper::SkipCurrentSpeech()
+{
+    bSkipCurrentSpeech = true;
+    mtx_whisper_buffer.lock();
+    pcmf32.clear();
+    pcmf32_new.clear();
+    bufferlength = 0;
+    strTemp = "";
+    mtx_whisper_buffer.unlock();
 }

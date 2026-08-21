@@ -74,7 +74,6 @@ private:
     QTcpServer* m_server_receive_image;
     QSet<QTcpSocket*> connection_set;
     ThreadProcessImage thread_process_image;
-//    SocketClientHandler socketHandler1;
 
     QTcpServer* m_server_send_command;
     QSet<QTcpSocket*> connection_set2;   //for send back command
@@ -87,8 +86,6 @@ private:
     QSet<QTcpSocket*> connection_set4;   //for Tablet
     SocketBufferParser socketHandler4;
     ThreadReceiveMessage thread_receive_message;
-//    SocketClientHandler socketHandler4;
-//    ThreadTablet thread_tablet;
 
     QSet<SocketClientHandler*> Handler_set;
 
