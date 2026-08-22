@@ -29,7 +29,6 @@
 
 #include "GetLandmarks.hpp"
 #include "LandmarkToRobotAction.hpp"
-#include "ThreadStateControl.hpp"   //safe here: only ThreadStateControl.hpp -> ThreadProcessImage.hpp is a header cycle, this .cpp isn't included by anything
 
 // xt::argmax
 #include "xtensor/containers/xarray.hpp"
@@ -150,22 +149,6 @@ void ThreadProcessImage::run() {
                                                             // channel order. I will convert it to RGB order before
                                                             // sending it to MediaPipe because MediaPipe uses RGB order.
     chrono::time_point<chrono::system_clock> previous_image_save_time;
-
-    // Proactive vision wake-up: load the person-detection model once up front.
-    // msetting is already populated by the time run() starts (SetSettingFile()
-    // runs before startThreads() in main.cpp). If the model file isn't present,
-    // log it and leave the feature disabled instead of retrying every frame.
-    bool bYoloDetectorReady = false;
-    if (msetting.bProactiveGreeting) {
-        bYoloDetectorReady = mYoloDetector.initialize(msetting.PersonDetectionModel);
-        if (!bYoloDetectorReady) {
-            std::cerr << "Proactive vision: failed to load person-detection model '"
-                      << msetting.PersonDetectionModel
-                      << "'. Proactive greeting is disabled for this run." << std::endl;
-        }
-    }
-    const float kPersonDetectionConfidenceThreshold = 0.70f;
-
     while (b_WhileLoop) {
         if (DataFrames_queue.size() > 0) {
             auto start = std::chrono::high_resolution_clock::now();
@@ -669,20 +652,12 @@ void ThreadProcessImage::run() {
                             iNoPersonFrameCount = 0;
                         }
 
-                        // Return to zero orientation using Visual Compass if no human detected for 1 second.
-                        // Disabled by default (action_option.bUseVisualCompass / Setting::bUseVisualCompass):
-                        // this flag existed but was never actually checked here, so
-                        // ComputeVisualCompassTheta() ran unconditionally every 500ms whenever no
-                        // person was in frame. With no reference photos saved under
-                        // ImageSaveDirectory/VisualCompass it fails every time and retries forever
-                        // (m_bBodyAtZero never becomes true), which starves other threads (e.g. Whisper's
-                        // GPU inference) of CPU/GPU and blocks the robot from listening. Populate that
-                        // VisualCompass photo directory and flip bUseVisualCompass on to re-enable.
+                        // Return to zero orientation using Visual Compass if no human detected for 1 second
                         auto now = std::chrono::system_clock::now();
                         auto elapsed_no_person =
                             std::chrono::duration_cast<std::chrono::milliseconds>(now - m_LastPersonDetectedTime)
                                 .count();
-                        if (action_option.bUseVisualCompass && elapsed_no_person >= 1000 && !m_bBodyAtZero) {
+                        if (elapsed_no_person >= 1000 && !m_bBodyAtZero) {
                             m_bTurningToZero = true;
                             auto elapsed_compass =
                                 std::chrono::duration_cast<std::chrono::milliseconds>(now - m_LastCompassCheckTime)
@@ -720,26 +695,6 @@ void ThreadProcessImage::run() {
                     }
                 } // if( mbWatchPatient )
                 mtx_Task.unlock();
-
-                // Proactive vision wake-up: only bother running the detector while the
-                // state machine is actually idle (state 0) -- this is both a compute
-                // saver (skip an extra ONNX inference on every frame during normal
-                // conversation) and doubles as the very trigger condition being asked
-                // for. ThreadStateControl re-checks its own state index before acting,
-                // so a race where the state changes between this check and the
-                // NotifyEvent call just results in a harmless no-op there.
-                if (bYoloDetectorReady && mpThreadStateControl != nullptr &&
-                    mpThreadStateControl->b_IsIdleState.load()) {
-                    std::vector<YoloBox> detections;
-                    if (mYoloDetector.detect(inputImage, detections)) {
-                        for (const YoloBox &box : detections) {
-                            if (box.label == "person" && box.confidence > kPersonDetectionConfidenceThreshold) {
-                                mpThreadStateControl->NotifyEvent("onPersonDetected", chrono::system_clock::now());
-                                break;
-                            }
-                        }
-                    }
-                }
             } // if( bCorrectlyDecoded )
 
             // debug code, to messure the processing time

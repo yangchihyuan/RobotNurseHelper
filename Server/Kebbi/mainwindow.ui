@@ -812,6 +812,22 @@
      <string>Hide face</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_stop_song">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>590</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Stop song</string>
+    </property>
+   </widget>
    <widget class="QComboBox" name="comboBox_Language">
     <property name="geometry">
      <rect>

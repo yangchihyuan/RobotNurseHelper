@@ -14,6 +14,7 @@
 #include "ThreadStateControl.hpp"
 #include "ThreadProcessImage.hpp"
 #include "ThreadSafeQueue.hpp"
+#include "Logger.hpp"
 
 #ifdef USE_KEBBI
     #include "Kebbi/RobotCommand.pb.h"
@@ -37,6 +38,7 @@ public:
     ThreadStateControl *mpThreadStateControl;
     ThreadProcessImage *mpThreadProcessImage;
     ThreadWhisper *mpWhisper;
+    Logger *mpLogger;
 protected:
     void run();
 

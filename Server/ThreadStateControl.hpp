@@ -4,7 +4,6 @@
 #include <chrono>
 #include <string>
 #include <map>
-#include <atomic>
 #include <QThread>
 #include "SendMessageManager.hpp"
 #include "ThreadWhisper.hpp"
@@ -69,14 +68,9 @@ public:
     ThreadWhisper *mpThreadWhisper;
     ThreadLLM *mpThreadLLM;
     ThreadProcessImage *mpThreadProcessImage;
-    void NotifyEvent(string description, chrono::time_point<chrono::system_clock> timestamp, string sLLMResult = "", string sFace = "");
+    void NotifyEvent(string description, chrono::time_point<chrono::system_clock> timestamp, string sLLMResult = "");
     condition_variable cond_var_state_control;
     void SetIntialStateIndex(int index);
-
-    //True whenever the state machine is sitting in the idle/standby state (state 0).
-    //ThreadProcessImage reads this to decide whether it's worth running the
-    //proactive-vision person detector on the current frame.
-    std::atomic<bool> b_IsIdleState{true};
 
     VideoWindow* pVideoWindow = nullptr;
     void SetSettingFile(const QString &filePath);
@@ -107,7 +101,6 @@ protected:
     bool mbWaitForLLMResult = false;
     chrono::time_point<chrono::system_clock> mtimestamp_LLMResult;
     string msLLMResult;
-    string msLLMResultFace;     //Face/emotion tag extracted from the LLM response by ThreadLLM, e.g. "HAPPY"
     int chosen_dance = 0;
 
     bool mbActivity_mbtx_Complete = false;

@@ -21,5 +21,7 @@
     "AnythingLLM_workspace_slug": "cataract_english",
     "Machine": "PC",  //AGXOrin, PC
     "bHideCursor": false,
-    "iTextFontSize": 48
+    "iTextFontSize": 48,
+    "LogDirectory": "$HOME/RobotNurseHelper/Server/logs",
+    "LogFileName": "RobotNurseHelper.log"
 }

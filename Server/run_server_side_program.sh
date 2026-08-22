@@ -1,6 +1,6 @@
 #!/bin/bash
 #Author: Chih-Yuan Yang
-#2026 June 29
+#2026 Aug 22
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
@@ -8,7 +8,7 @@ set -e
 TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
 
 # 2. Define the filename using that timestamp
-FILENAME="log/${TIMESTAMP}.log"
+FILENAME="logs/TerminalOutput_${TIMESTAMP}.log"
 
 # Change to the directory of the script to ensure relative paths work correctly
 cd "$(dirname "$0")"
@@ -62,6 +62,6 @@ if [[ "$Machine" = "AGXOrin" ]]; then
 fi
 
 echo "Starting RobotNurseHelper with Setting file: $Setting_file"
-build/RobotNurseHelper --SettingFile "$Setting_file" | tee "$FILENAME" # Log output to a file with timestamp
+build/RobotNurseHelper --SettingFile "$Setting_file" 2>&1 | tee "$FILENAME" # Log output to a file with timestamp
 
 exit 0 # Indicate successful execution

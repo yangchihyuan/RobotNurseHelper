@@ -15,13 +15,11 @@
 #include "ThreadSafeQueue.hpp"
 #include "SendMessageManager.hpp"
 #include "ActionOption.hpp"
-#include "YoloDetector.hpp"
 #include <opencv2/opencv.hpp>
 
 #include "Setting.hpp"
 
 struct DataFrame;
-class ThreadStateControl;   //forward declaration only: ThreadStateControl.hpp includes this header, so it cannot include back
 
 //EmotiEffLib
 #include "emotiefflib/facial_analysis.h"
@@ -149,12 +147,6 @@ public:
     int GetPatientAge();
     void SetSettingFile(const QString &filePath);
 
-    //Wired externally (mainwindow constructor) so this thread can notify the
-    //state machine of proactive-vision events. Left null-safe: every call site
-    //checks it before dereferencing, so robot builds that don't wire it up
-    //(e.g. Kebbi, for now) simply skip proactive greeting instead of crashing.
-    ThreadStateControl *mpThreadStateControl = nullptr;
-
 protected:
     void run();
     std::shared_ptr<mediapipe::LibMP> libmp_face;
@@ -175,7 +167,6 @@ protected:
     anet_type net;
 
     Yolo11Pose yolo11pose;
-    YoloDetector mYoloDetector;   //separate from yolo11pose: a bounding-box/class detector for the proactive-greeting "person" check, not a pose estimator
     std::string mstr_captured_timestamp;
 
     Setting msetting;

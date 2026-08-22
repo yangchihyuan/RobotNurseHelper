@@ -32,22 +32,11 @@ struct Setting
     bool bHideCursor = true;
     string Machine = "PC";                      //AGXOrin, PC
     int iTextFontSize = 48;
-
-    //Proactive vision wake-up: when true, ThreadProcessImage runs a YOLO person
-    //detector while the robot is idle (state 0) and wakes it up on sight of a
-    //person instead of waiting for a voice command. Requires a YOLO detection
-    //(not pose) ONNX model at PersonDetectionModel; if that file is missing the
-    //feature disables itself at startup with a warning rather than failing.
-    bool bProactiveGreeting = true;
-    string PersonDetectionModel = "yolo11n.onnx";
-
+    string LogDirectory = "$HOME/RobotNurseHelper/Server/logs";
+    string LogFileName = "RobotNurseHelper.log";
 };
 
-//WITH_DEFAULT: any field missing from an existing settings JSON file (e.g. one
-//that predates a newly added field) falls back to the in-class default above
-//instead of throwing json::out_of_range and aborting LoadJSONFile for every
-//other field too.
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(Setting, StateControlFile, bServerPlaysRobotReceivedAudio, bVideoWindowFullScreen, bShowPreviewWindow, bSaveImages,iImageSaveIntervalMillisecond, bFacialExpressionRecognition, bHumanPoseEstimation, bHandLandmarkDetection, bUseDlibForFaceRecognition, bFaceDetection, PoseEstimationModel, FaceDetectionModel, bUseVisualCompass, WhisperModel, ImageSaveDirectory, LanguageModel, Language, AnythingLLM_API_key, AnythingLLM_workspace_slug, bHideCursor, Machine, bProactiveGreeting, PersonDetectionModel
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Setting, StateControlFile, bServerPlaysRobotReceivedAudio, bVideoWindowFullScreen, bShowPreviewWindow, bSaveImages,iImageSaveIntervalMillisecond, bFacialExpressionRecognition, bHumanPoseEstimation, bHandLandmarkDetection, bUseDlibForFaceRecognition, bFaceDetection, PoseEstimationModel, FaceDetectionModel, bUseVisualCompass, WhisperModel, ImageSaveDirectory, LanguageModel, Language, AnythingLLM_API_key, AnythingLLM_workspace_slug, bHideCursor, Machine, LogDirectory, LogFileName
 )
 
 #endif // SETTING_HPP

@@ -50,26 +50,15 @@ public:
     void setSettingFile(const QString &filePath);
     void startThreads();
 
-//    void setWhisperModelFile(QString filePath);
-//    void setLanguageModelName(QString ModelName);
-//    void setPreviousContextFile(QString filePath);
-//    void setState(int N);
-//    void setImageSaveEveryNFrame(int N);
-//    void setImageSaveDirectory(QString ImageSaveDirectory);
-//    void setDefaultSaveImage(bool bDefaultSaveImage);
-
 protected:
     void closeEvent(QCloseEvent *event) override;
-
-protected:
     QAudioDevice  devAudio;
     QAudioSource* audioSrc = nullptr;
     bool bListening = false;
+    void UISetting(Ui::MainWindow *ui);
 
-private:
     Ui::MainWindow *ui;
     QTimer *timer;
-
 
     QTcpServer* m_server_receive_image;
     QSet<QTcpSocket*> connection_set;
@@ -109,6 +98,8 @@ private:
     int current_body_angle = 0;
     void rotateAndTakePhoto(int targetAngle, const QString& prefix);
 
+    Logger mlogger;
+
 signals:
     void newMessage(QString);   //where is the connect for this signal?
     void addSendCommandMessage(RobotCommandProtobuf::RobotCommand);
@@ -142,7 +133,8 @@ private slots:
 
     void on_listView_FacialExpressions_doubleClicked(const QModelIndex &index);
     void on_listView_PredefinedAction_doubleClicked(const QModelIndex &index);
-    void on_listView_Song_doubleClicked(const QModelIndex &index);
+    void on_listView_Content_doubleClicked(const QModelIndex &index);       //Kebbi's mbtx file
+    void on_listView_Song_doubleClicked(const QModelIndex &index);          //Zenbo's song file
     void on_listView_Sentence1_doubleClicked(const QModelIndex &index);
     void on_listView_Sentence1_clicked(const QModelIndex &index);
     void on_listView_Sentence2_doubleClicked(const QModelIndex &index);

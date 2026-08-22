@@ -3,8 +3,10 @@ This project aims to develop an interactive desktop multimedia robot system to a
 
 #### Progress
 YouTube video:
-[<img src="https://img.youtube.com/vi/fq8i4wgnws4/hqdefault.jpg" width="600" height="300"
-/>](https://www.youtube.com/embed/fq8i4wgnws4?si=rasj7HPLbr9MRAso)
+<iframe width="560" height="315" src="https://www.youtube.com/embed/gl8OrY62YNc?si=gfzQKkw7pNgGDvGY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/itbHiq3a3BM?si=0wJArCKnm1h_--hw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 
 #### Robot Models
 For the desktop uage, robots in a small size are proper. We use Kebbi Air-S and Zenbo Junior II in our project.

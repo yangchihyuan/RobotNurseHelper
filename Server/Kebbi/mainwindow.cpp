@@ -31,12 +31,230 @@ extern RobotStatus robot_status;
 extern ActionOption action_option;
 
 time_t start_dance_time = 0;
-
+/*
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
+
+    // One QTcpServer only listens to one port. If you want to listen to multiple
+    // ports, you need to create multiple QTcpServer objects.
+    m_server_receive_image = new QTcpServer();
+    // 2024/12/27 The port number is also hard-coded. I need to modify it in the
+    // future.
+    if (m_server_receive_image->listen(QHostAddress::Any, 8895))
+    {
+        connect(m_server_receive_image, &QTcpServer::newConnection, this,
+                &MainWindow::newConnection_receive_image);
+    }
+    else
+    {
+        exit(EXIT_FAILURE);
+    }
+
+    m_server_send_command = new QTcpServer();
+    if (m_server_send_command->listen(QHostAddress::Any, 8896))
+    {
+        connect(m_server_send_command, &QTcpServer::newConnection, this,
+                &MainWindow::newConnection_send_command);
+    }
+    else
+    {
+        exit(EXIT_FAILURE);
+    }
+
+    m_server_receive_audio = new QTcpServer();
+    if (m_server_receive_audio->listen(QHostAddress::Any, 8897))
+    {
+        connect(m_server_receive_audio, &QTcpServer::newConnection, this,
+                &MainWindow::newConnection_receive_audio);
+    }
+    else
+    {
+        exit(EXIT_FAILURE);
+    }
+
+    m_server_receive_message = new QTcpServer();
+    if (m_server_receive_message->listen(QHostAddress::Any, 8898))
+    {
+        connect(m_server_receive_message, &QTcpServer::newConnection, this,
+                &MainWindow::newConnection_receive_message);
+        cout << "Listening port 8898" << endl;
+    }
+    else
+    {
+        exit(EXIT_FAILURE);
+    }
+
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &MainWindow::timer_event);
+    timer->start(10);
+
+    // Get keyboard press event
+    setFocusPolicy(Qt::StrongFocus);
+
+    devAudio = QMediaDevices::defaultAudioInput();
+    std::cout << "devAudio.description()" << devAudio.description().toStdString()
+              << std::endl;
+
+    // setup audio format
+    QAudioFormat format;
+    format.setSampleRate(WHISPER_SAMPLE_RATE);
+    format.setChannelCount(1);
+    format.setSampleFormat(QAudioFormat::Float);
+
+    if (devAudio.isFormatSupported(format))
+    {
+        audioSrc = new QAudioSource(devAudio, format);
+    }
+    else
+    {
+        std::cout << "Audio format not supported" << std::endl;
+    }
+
+    thread_process_image.pSendMessageManager = &sendMessageManager;
+    thread_receive_message.pSendMessageManager = &sendMessageManager;
+    thread_receive_message.mpThreadStateControl = &thread_state_control;
+    thread_receive_message.mpThreadProcessImage = &thread_process_image;
+
+    thread_state_control.m_pSendMessageManager = &sendMessageManager;
+    thread_state_control.mpThreadWhisper = &thread_whisper;
+    thread_state_control.mpThreadLLM = &thread_LLM;
+    thread_state_control.mpThreadProcessImage = &thread_process_image;
+
+    thread_LLM.mpThreadStateControl = &thread_state_control;
+
+    pVideoWindow = std::make_unique<VideoWindow>(nullptr);
+    thread_state_control.pVideoWindow = pVideoWindow.get();
+    pVideoWindow->pThreadStateControl = &thread_state_control;
+
+    connect(&thread_state_control, &ThreadStateControl::playVideoRequest, this,
+            &MainWindow::onPlayVideoRequested);
+    connect(&thread_state_control, &ThreadStateControl::playImageRequest, this,
+            &MainWindow::onPlayImageRequested);
+    connect(&thread_state_control, &ThreadStateControl::playTextRequest, this,
+            &MainWindow::onPlayTextRequested);
+
+    // Delay showing the video window so it renders after MainWindow
+    // and successfully steals focus to become the top window.
+    QTimer::singleShot(300, this, [this]()
+                       {
+    if (pVideoWindow) {
+      if (msetting.bVideoWindowFullScreen) {
+        pVideoWindow->showFullScreen();
+      } else {
+        pVideoWindow->show();
+      }
+      pVideoWindow->raise();
+      pVideoWindow->activateWindow();
+    } });
+}
+*/
+
+void MainWindow::on_pushButton_speak_clicked()
+{
+    // Get the content of the plainTextEdit_speak object, and send it to Robot.
+    QString text = ui->plainTextEdit_speak
+                       ->toPlainText(); // This line causes an exception. Why?
+    RobotCommandProtobuf::RobotCommand command;
+    command.set_speak_sentence(text.toStdString());
+    sendMessageManager.AddMessage(command);
+
+    QString action;
+    action = "speak " + ui->plainTextEdit_speak->toPlainText();
+    QString_SentCommands.append(action + "\n");
+    ui->plainTextEdit_SentCommands->document()->setPlainText(
+        QString_SentCommands);
+    ui->plainTextEdit_SentCommands->verticalScrollBar()->setValue(
+        ui->plainTextEdit_SentCommands->verticalScrollBar()->maximum());
+}
+
+// Kebbi doesn't support move body command. How to map to Kebbi motion?
+void MainWindow::send_move_body_command(float x, float y, int degree,
+                                        int speed)
+{
+    RobotCommandProtobuf::RobotCommand command;
+    x *= 100;
+    //    command.set_x(static_cast<int>(x));
+    y *= 100;
+    //    command.set_y(static_cast<int>(y));
+    //    command.set_degree(degree);
+    //    command.set_bodyspeed(speed);
+    sendMessageManager.AddMessage(command);
+}
+
+void MainWindow::on_listView_PredefinedAction_doubleClicked(
+    const QModelIndex &index)
+{
+    RobotCommandProtobuf::RobotCommand command;
+    command.set_motion(index.row());
+    sendMessageManager.AddMessage(command);
+}
+
+void MainWindow::on_pushButton_speak_2_clicked()
+{
+    QString text = ui->plainTextEdit_LLM_response->toPlainText();
+    RobotCommandProtobuf::RobotCommand command;
+    command.set_speak_sentence(text.toStdString());
+    sendMessageManager.AddMessage(command);
+}
+
+void MainWindow::on_pushButton_hideface_clicked()
+{
+    RobotCommandProtobuf::RobotCommand command;
+    command.set_hideface(true);
+    sendMessageManager.AddMessage(command);
+}
+
+// Although both Kebbi and Zenbo can use this function, the implementation is different.
+// Kebbi cannot control the rotate angle, only the velocity, so the implementation is different.
+void MainWindow::rotateAndTakePhoto(int targetAngle, const QString &prefix)
+{
+    static QSoundEffect *shutterSound = nullptr;
+    if (!shutterSound)
+    {
+        shutterSound = new QSoundEffect(this);
+        shutterSound->setSource(QUrl::fromLocalFile("camera-shutter.wav"));
+        shutterSound->setVolume(1.0f);
+    }
+
+    int relative = targetAngle - current_body_angle;
+    // Normalize to [-180, 180]
+    while (relative > 180)
+        relative -= 360;
+    while (relative <= -180)
+        relative += 360;
+
+    // In Kebbi's case, we need to manually change Kebbi's angle to the target angle.
+    /*
+    int speed = ui->lineEdit_bodyspeed->text().toInt();
+    if (speed <= 0) speed = 3; // Default fallback
+
+    if (relative != 0) {
+        //This function only work for Zenbo because Kebbi only controls the velocity, not the angle.
+        send_move_body_command(0, 0, relative, speed);
+        std::cout << "Rotating robot body by: " << relative << " degrees to target " << targetAngle << " degrees at speed " << speed << std::endl;
+    } else {
+        std::cout << "Robot body already at target " << targetAngle << " degrees." << std::endl;
+    }
+    int delay = (relative != 0) ? 2500 : 500;
+    */
+    int delay = 0;
+    QTimer::singleShot(delay, this, [this, prefix]()
+                       {
+        thread_process_image.requestedPhotoPrefix = prefix.toStdString();
+        thread_process_image.bSaveRequestedPhoto = true;
+        std::cout << "Triggered single photo capture for: " << prefix.toStdString() << std::endl;
+        if (shutterSound) {
+            shutterSound->play();
+        } });
+
+    current_body_angle = targetAngle;
+}
+
+void MainWindow::UISetting(Ui::MainWindow *ui)
+{
     QStringList strList;
     strList.append("TTS_AngerA");
     strList.append("TTS_AngerB");
@@ -142,59 +360,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->listView_Content->setModel(ItemModel_content);
     ui->listView_Content->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    // One QTcpServer only listens to one port. If you want to listen to multiple
-    // ports, you need to create multiple QTcpServer objects.
-    m_server_receive_image = new QTcpServer();
-    // 2024/12/27 The port number is also hard-coded. I need to modify it in the
-    // future.
-    if (m_server_receive_image->listen(QHostAddress::Any, 8895))
-    {
-        connect(m_server_receive_image, &QTcpServer::newConnection, this,
-                &MainWindow::newConnection_receive_image);
-    }
-    else
-    {
-        exit(EXIT_FAILURE);
-    }
-
-    m_server_send_command = new QTcpServer();
-    if (m_server_send_command->listen(QHostAddress::Any, 8896))
-    {
-        connect(m_server_send_command, &QTcpServer::newConnection, this,
-                &MainWindow::newConnection_send_command);
-    }
-    else
-    {
-        exit(EXIT_FAILURE);
-    }
-
-    m_server_receive_audio = new QTcpServer();
-    if (m_server_receive_audio->listen(QHostAddress::Any, 8897))
-    {
-        connect(m_server_receive_audio, &QTcpServer::newConnection, this,
-                &MainWindow::newConnection_receive_audio);
-    }
-    else
-    {
-        exit(EXIT_FAILURE);
-    }
-
-    m_server_receive_message = new QTcpServer();
-    if (m_server_receive_message->listen(QHostAddress::Any, 8898))
-    {
-        connect(m_server_receive_message, &QTcpServer::newConnection, this,
-                &MainWindow::newConnection_receive_message);
-        cout << "Listening port 8898" << endl;
-    }
-    else
-    {
-        exit(EXIT_FAILURE);
-    }
-
-    timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &MainWindow::timer_event);
-    timer->start(10);
-
     // add move mode items
     QStringList strList_MoveMode;
 
@@ -218,187 +383,4 @@ MainWindow::MainWindow(QWidget *parent)
         static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &MainWindow::comboBox_Language_changed);
 
-    // Get keyboard press event
-    setFocusPolicy(Qt::StrongFocus);
-
-    devAudio = QMediaDevices::defaultAudioInput();
-    std::cout << "devAudio.description()" << devAudio.description().toStdString()
-              << std::endl;
-
-    // setup audio format
-    QAudioFormat format;
-    format.setSampleRate(WHISPER_SAMPLE_RATE);
-    format.setChannelCount(1);
-    format.setSampleFormat(QAudioFormat::Float);
-
-    if (devAudio.isFormatSupported(format))
-    {
-        audioSrc = new QAudioSource(devAudio, format);
-    }
-    else
-    {
-        std::cout << "Audio format not supported" << std::endl;
-    }
-
-    thread_process_image.pSendMessageManager = &sendMessageManager;
-    thread_receive_message.pSendMessageManager = &sendMessageManager;
-    thread_receive_message.mpThreadStateControl = &thread_state_control;
-    thread_receive_message.mpThreadProcessImage = &thread_process_image;
-
-    thread_state_control.m_pSendMessageManager = &sendMessageManager;
-    thread_state_control.mpThreadWhisper = &thread_whisper;
-    thread_state_control.mpThreadLLM = &thread_LLM;
-    thread_state_control.mpThreadProcessImage = &thread_process_image;
-
-    thread_LLM.mpThreadStateControl = &thread_state_control;
-
-    pVideoWindow = std::make_unique<VideoWindow>(nullptr);
-    thread_state_control.pVideoWindow = pVideoWindow.get();
-    pVideoWindow->pThreadStateControl = &thread_state_control;
-
-    connect(&thread_state_control, &ThreadStateControl::playVideoRequest, this,
-            &MainWindow::onPlayVideoRequested);
-    connect(&thread_state_control, &ThreadStateControl::playImageRequest, this,
-            &MainWindow::onPlayImageRequested);
-    connect(&thread_state_control, &ThreadStateControl::playTextRequest, this,
-            &MainWindow::onPlayTextRequested);
-
-    // Delay showing the video window so it renders after MainWindow
-    // and successfully steals focus to become the top window.
-    QTimer::singleShot(300, this, [this]()
-                       {
-    if (pVideoWindow) {
-      if (msetting.bVideoWindowFullScreen) {
-        pVideoWindow->showFullScreen();
-      } else {
-        pVideoWindow->show();
-      }
-      pVideoWindow->raise();
-      pVideoWindow->activateWindow();
-    } });
-}
-
-void MainWindow::on_pushButton_speak_clicked()
-{
-    // Get the content of the plainTextEdit_speak object, and send it to Robot.
-    QString text = ui->plainTextEdit_speak
-                       ->toPlainText(); // This line causes an exception. Why?
-    RobotCommandProtobuf::RobotCommand command;
-    command.set_speak_sentence(text.toStdString());
-    sendMessageManager.AddMessage(command);
-
-    QString action;
-    action = "speak " + ui->plainTextEdit_speak->toPlainText();
-    QString_SentCommands.append(action + "\n");
-    ui->plainTextEdit_SentCommands->document()->setPlainText(
-        QString_SentCommands);
-    ui->plainTextEdit_SentCommands->verticalScrollBar()->setValue(
-        ui->plainTextEdit_SentCommands->verticalScrollBar()->maximum());
-}
-
-// Kebbi doesn't support move body command. How to map to Kebbi motion?
-void MainWindow::send_move_body_command(float x, float y, int degree,
-                                        int speed)
-{
-    RobotCommandProtobuf::RobotCommand command;
-    x *= 100;
-    //    command.set_x(static_cast<int>(x));
-    y *= 100;
-    //    command.set_y(static_cast<int>(y));
-    //    command.set_degree(degree);
-    //    command.set_bodyspeed(speed);
-    sendMessageManager.AddMessage(command);
-}
-
-void MainWindow::on_listView_PredefinedAction_doubleClicked(
-    const QModelIndex &index)
-{
-    RobotCommandProtobuf::RobotCommand command;
-    command.set_motion(index.row());
-    sendMessageManager.AddMessage(command);
-}
-
-void MainWindow::on_pushButton_speak_2_clicked()
-{
-    QString text = ui->plainTextEdit_LLM_response->toPlainText();
-    RobotCommandProtobuf::RobotCommand command;
-    command.set_speak_sentence(text.toStdString());
-    sendMessageManager.AddMessage(command);
-}
-
-void MainWindow::on_pushButton_hideface_clicked()
-{
-    RobotCommandProtobuf::RobotCommand command;
-    command.set_hideface(true);
-    sendMessageManager.AddMessage(command);
-}
-
-// 20260817 Do I need this? The function is implemented in the shared mainwindow.cpp. I think I don't need it. I will comment it out for now.
-/*
-void MainWindow::on_pushButton_killapp_clicked() {
-  RobotCommandProtobuf::RobotCommand command;
-  command.set_killapp(true);
-  sendMessageManager.AddMessage(command);
-}
-*/
-
-void MainWindow::on_listView_Content_doubleClicked(const QModelIndex &index)
-{
-    RobotCommandProtobuf::RobotCommand command;
-    command.set_content(static_cast<QString>(
-                            ui->listView_Content->model()->data(index).toString())
-                            .toStdString());
-    sendMessageManager.AddMessage(command);
-    // debug
-    cout << "Content: "
-         << static_cast<QString>(
-                ui->listView_Content->model()->data(index).toString())
-                .toStdString()
-         << endl;
-}
-
-// Although both Kebbi and Zenbo can use this function, the implementation is different.
-// Kebbi cannot control the rotate angle, only the velocity, so the implementation is different.
-void MainWindow::rotateAndTakePhoto(int targetAngle, const QString &prefix)
-{
-    static QSoundEffect *shutterSound = nullptr;
-    if (!shutterSound)
-    {
-        shutterSound = new QSoundEffect(this);
-        shutterSound->setSource(QUrl::fromLocalFile("camera-shutter.wav"));
-        shutterSound->setVolume(1.0f);
-    }
-
-    int relative = targetAngle - current_body_angle;
-    // Normalize to [-180, 180]
-    while (relative > 180)
-        relative -= 360;
-    while (relative <= -180)
-        relative += 360;
-
-    // In Kebbi's case, we need to manually change Kebbi's angle to the target angle.
-    /*
-    int speed = ui->lineEdit_bodyspeed->text().toInt();
-    if (speed <= 0) speed = 3; // Default fallback
-
-    if (relative != 0) {
-        //This function only work for Zenbo because Kebbi only controls the velocity, not the angle.
-        send_move_body_command(0, 0, relative, speed);
-        std::cout << "Rotating robot body by: " << relative << " degrees to target " << targetAngle << " degrees at speed " << speed << std::endl;
-    } else {
-        std::cout << "Robot body already at target " << targetAngle << " degrees." << std::endl;
-    }
-    int delay = (relative != 0) ? 2500 : 500;
-    */
-    int delay = 0;
-    QTimer::singleShot(delay, this, [this, prefix]()
-                       {
-        thread_process_image.requestedPhotoPrefix = prefix.toStdString();
-        thread_process_image.bSaveRequestedPhoto = true;
-        std::cout << "Triggered single photo capture for: " << prefix.toStdString() << std::endl;
-        if (shutterSound) {
-            shutterSound->play();
-        } });
-
-    current_body_angle = targetAngle;
 }

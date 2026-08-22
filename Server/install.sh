@@ -424,6 +424,7 @@ git checkout v0.34.0
 
 #Build our own program
 cd ~/RobotNurseHelper/Server
+mkdir logs
 ./build_project.sh $RobotModel
 #copy the required mediapipe files to Server
 cp -r ~/mediapipe/bazel-bin/mediapipe/examples/desktop/libmp/libmp_gpu.so.runfiles/mediapipe/mediapipe .
