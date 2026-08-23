@@ -37,19 +37,18 @@ void ComputeTargetYawPitch(float x, float y, const RobotStatus &status, bool bUs
     }
 }
 
-
-int FaceLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
-    RobotStatus &status, 
-    ActionOption action_option,
-    RobotCommandProtobuf::RobotCommand &message)
+int FaceLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks,
+                                 RobotStatus &status,
+                                 ActionOption action_option,
+                                 RobotCommandProtobuf::RobotCommand &command)
 {
-    //If there are multiple faces, find the largest one.
+    // If there are multiple faces, find the largest one.
     int num_faces = normalized_landmarks.size();
 
-    std::array<int, 9> left_eye{{  33 , 133, 246, 161, 160, 159, 158, 157, 173 }};
-    std::array<int, 9> right_eye{{ 362, 263, 390, 389, 388, 387, 386, 385, 384 }};
- 
-    for(int i=0; i<num_faces; i++)
+    std::array<int, 9> left_eye{{33, 133, 246, 161, 160, 159, 158, 157, 173}};
+    std::array<int, 9> right_eye{{362, 263, 390, 389, 388, 387, 386, 385, 384}};
+
+    for (int i = 0; i < num_faces; i++)
     {
         std::vector<std::array<float, 3>> face_landmarks = normalized_landmarks[i];
         float left_eye_x = 0;
@@ -57,7 +56,7 @@ int FaceLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
         float right_eye_x = 0;
         float right_eye_y = 0;
 
-        for(int j=0; j<left_eye.size(); j++)
+        for (int j = 0; j < left_eye.size(); j++)
         {
             left_eye_x += face_landmarks[left_eye[j]][0];
             left_eye_y += face_landmarks[left_eye[j]][1];
@@ -78,30 +77,36 @@ int FaceLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
 
         if (action_option.move_mode == action_option.MOVE_BODY)
         {
-            float theta = -(x-0.5)*62.5;
-            message.set_degree(static_cast<int>(theta));
-            message.set_yaw(0);
+            float theta = -(x - 0.5) * 62.5;
+            command.set_degree(static_cast<int>(theta));
+            command.set_yaw(0);
             status.yaw_degree = 0;
 
             int dummy_yaw, pitch;
             ComputeTargetYawPitch(x, y, status, action_option.bUseVisualCompass, dummy_yaw, pitch);
-            if( pitch < -15 ) pitch = -15;
-            if( pitch > 55 ) pitch = 55;
-            message.set_pitch(pitch);
+            if (pitch < -15)
+                pitch = -15;
+            if (pitch > 55)
+                pitch = 55;
+            command.set_pitch(pitch);
             status.pitch_degree = pitch;
         }
-        else  //move head
+        else // move head
         {
             int yaw, pitch;
             ComputeTargetYawPitch(x, y, status, action_option.bUseVisualCompass, yaw, pitch);
-            if( yaw < -45) yaw = -45;
-            if( yaw > 45) yaw = 45;
-            message.set_yaw(yaw);
+            if (yaw < -45)
+                yaw = -45;
+            if (yaw > 45)
+                yaw = 45;
+            command.set_yaw(yaw);
             status.yaw_degree = yaw;
 
-            if( pitch < -15 ) pitch = -15;
-            if( pitch > 55 ) pitch = 55;
-            message.set_pitch(pitch);
+            if (pitch < -15)
+                pitch = -15;
+            if (pitch > 55)
+                pitch = 55;
+            command.set_pitch(pitch);
             status.pitch_degree = pitch;
         }
     }
@@ -109,22 +114,22 @@ int FaceLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
     return 1;
 }
 
-int PoseLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
-    RobotStatus &status, 
-    ActionOption action_option,
-    RobotCommandProtobuf::RobotCommand &message)
+int PoseLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks,
+                                 RobotStatus &status,
+                                 ActionOption action_option,
+                                 RobotCommandProtobuf::RobotCommand &command)
 {
-    //If there are multiple faces, find the largest one.
+    // If there are multiple faces, find the largest one.
     int num_poses = normalized_landmarks.size();
 
-//    std::array<int, 9> left_eye{{  33 , 133, 246, 161, 160, 159, 158, 157, 173 }};
-//    std::array<int, 9> right_eye{{ 362, 263, 390, 389, 388, 387, 386, 385, 384 }};
- 
-    for(int i=0; i<num_poses; i++)
+    //    std::array<int, 9> left_eye{{  33 , 133, 246, 161, 160, 159, 158, 157, 173 }};
+    //    std::array<int, 9> right_eye{{ 362, 263, 390, 389, 388, 387, 386, 385, 384 }};
+
+    for (int i = 0; i < num_poses; i++)
     {
         std::vector<std::array<float, 3>> pose_landmarks = normalized_landmarks[i];
 
-        //index 0 is the nose
+        // index 0 is the nose
         float x = pose_landmarks[0][0];
         float y = pose_landmarks[0][1];
 
@@ -133,30 +138,36 @@ int PoseLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
 
         if (action_option.move_mode == action_option.MOVE_BODY)
         {
-            float theta = -(x-0.5)*62.5;
-            message.set_degree(static_cast<int>(theta));
-            message.set_yaw(0);
+            float theta = -(x - 0.5) * 62.5;
+            command.set_degree(static_cast<int>(theta));
+            command.set_yaw(0);
             status.yaw_degree = 0;
 
             int dummy_yaw, pitch;
             ComputeTargetYawPitch(x, y, status, action_option.bUseVisualCompass, dummy_yaw, pitch);
-            if( pitch < -15 ) pitch = -15;
-            if( pitch > 55 ) pitch = 55;
-            message.set_pitch(pitch);
+            if (pitch < -15)
+                pitch = -15;
+            if (pitch > 55)
+                pitch = 55;
+            command.set_pitch(pitch);
             status.pitch_degree = pitch;
         }
-        else  //move head
+        else // move head
         {
             int yaw, pitch;
             ComputeTargetYawPitch(x, y, status, action_option.bUseVisualCompass, yaw, pitch);
-            if( yaw < -45) yaw = -45;
-            if( yaw > 45) yaw = 45;
-            message.set_yaw(yaw);
+            if (yaw < -45)
+                yaw = -45;
+            if (yaw > 45)
+                yaw = 45;
+            command.set_yaw(yaw);
             status.yaw_degree = yaw;
 
-            if( pitch < -15 ) pitch = -15;
-            if( pitch > 55 ) pitch = 55;
-            message.set_pitch(pitch);
+            if (pitch < -15)
+                pitch = -15;
+            if (pitch > 55)
+                pitch = 55;
+            command.set_pitch(pitch);
             status.pitch_degree = pitch;
         }
     }
@@ -164,53 +175,59 @@ int PoseLandmarks_to_RobotAction(std::vector<std::vector<std::array<float, 3>>> 
     return 1;
 }
 
-int PoseLandmarks_to_RobotAction_yolo(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks, 
-    RobotStatus &status, 
-    ActionOption action_option,
-    RobotCommandProtobuf::RobotCommand &command)
+int PoseLandmarks_to_RobotAction_yolo(std::vector<std::vector<std::array<float, 3>>> normalized_landmarks,
+                                      RobotStatus &status,
+                                      ActionOption action_option,
+                                      RobotCommandProtobuf::RobotCommand &command)
 {
-    //Currently, Mediapipe only detects one person.
+    // Currently, Mediapipe only detects one person.
     int num_poses = normalized_landmarks.size();
 
-    for(int i=0; i<num_poses; i++)
+    for (int i = 0; i < num_poses; i++)
     {
         std::vector<std::array<float, 3>> pose_landmarks = normalized_landmarks[i];
 
-        //index 0 is the nose
+        // index 0 is the nose
         float x = pose_landmarks[0][0];
         float y = pose_landmarks[0][1];
 
-//        std::cout << "Pose node 0 Normalized position: (" << x << ", " << y << ")" << std::endl;
+        //        std::cout << "Pose node 0 Normalized position: (" << x << ", " << y << ")" << std::endl;
         // Calculate the distance between the eyes
 
         if (action_option.move_mode == action_option.MOVE_BODY)
         {
-            //Only Zenbo has theta, Kebbi does not have it.
-            float theta = -(x-0.5)*62.5;
+            // Only Zenbo has theta, Kebbi does not have it.
+            float theta = -(x - 0.5) * 62.5;
             command.set_degree(static_cast<int>(theta));
             command.set_yaw(0);
             status.yaw_degree = 0;
 
             int dummy_yaw, pitch;
             ComputeTargetYawPitch(x, y, status, action_option.bUseVisualCompass, dummy_yaw, pitch);
-            if( pitch < -20 ) pitch = -20;
-            if( pitch > 20 ) pitch = 20;
+            if (pitch < -20)
+                pitch = -20;
+            if (pitch > 20)
+                pitch = 20;
             command.set_pitch(pitch);
             status.pitch_degree = pitch;
         }
-        else  //move head
+        else // move head
         {
             int yaw, pitch;
             ComputeTargetYawPitch(x, y, status, action_option.bUseVisualCompass, yaw, pitch);
-            if( yaw < -40) yaw = -40;
-            if( yaw > 40) yaw = 40;
+            if (yaw < -40)
+                yaw = -40;
+            if (yaw > 40)
+                yaw = 40;
             command.set_yaw(yaw);
             status.yaw_degree = yaw;
 
-            if( pitch < -20 ) pitch = -20;
-            if( pitch > 20 ) pitch = 20;
+            if (pitch < -20)
+                pitch = -20;
+            if (pitch > 20)
+                pitch = 20;
             command.set_pitch(pitch);
-            command.set_headspeed(100);     //I need to associate with UI later.
+            command.set_headspeed(100); // I need to associate with UI later.
             status.pitch_degree = pitch;
         }
     }

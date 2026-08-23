@@ -68,7 +68,9 @@ get_filename_component(MEDIAPIPE_DIRNAME "${MEDIAPIPE_DIR}" NAME)
 #The protobuf_source_dir is used to find the protobuf source code
 set(protobuf_source_dir "${MEDIAPIPE_DIR}/bazel-${MEDIAPIPE_DIRNAME}/external/com_google_protobuf")
 include("${CMAKE_CURRENT_SOURCE_DIR}/libprotobuf.cmake")     #this is the modified cmake file provided by LibMP's author
-set(PROTO_FILE ${ROBOT_MODEL}/RobotCommand.proto)
+#set(PROTO_FILE ${ROBOT_MODEL}/RobotCommand.proto)
+set(PROTO_FILE RobotCommand.proto)
+
 #Because I don't use the pre-built opencv, I don't have the protobuf_generate_cpp function. I need to define it by myself.
 my_protobuf_generate_cpp(PROTO_SRC PROTO_HDR ${PROTO_FILE})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
@@ -100,6 +102,7 @@ set(SOURCES AnythingLLM.cpp
             ThreadStateControl.cpp
             ThreadWhisper.cpp
             ThreadLLM.cpp
+            ThreadReceiveMessage.cpp            
             VideoWindow.cpp
             Yolo11Pose.cpp
             YoloDetector.cpp
@@ -117,7 +120,6 @@ set(SOURCES AnythingLLM.cpp
 
 # robot-specific files    
 set(SOURCES2 ${ROBOT_MODEL}/LandmarkToRobotAction.cpp
-             ${ROBOT_MODEL}/ThreadReceiveMessage.cpp
              ${ROBOT_MODEL}/mainwindow.cpp
              ${ROBOT_MODEL}/mainwindow.ui
              ${PROTO_SRC})

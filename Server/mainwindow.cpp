@@ -14,12 +14,11 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
 #ifdef USE_KEBBI
-#include "Kebbi/RobotCommand.pb.h"
 #include "Kebbi/ui_mainwindow.h"
 #elif USE_ZENBO
-#include "Zenbo/RobotCommand.pb.h"
 #include "Zenbo/ui_mainwindow.h"
 #endif
+#include "RobotCommand.pb.h"
 #include "ActionOption.hpp"
 #include "BargeInControl.hpp"
 #include "LandmarkToRobotAction.hpp" //[MOHAMED]

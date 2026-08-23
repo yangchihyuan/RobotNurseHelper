@@ -8,11 +8,7 @@
 #include <QStandardItemModel>
 #include <QStringListModel>
 #include <iostream>
-#ifdef USE_KEBBI
-#include "Kebbi/RobotCommand.pb.h"
-#elif USE_ZENBO
-#include "Zenbo/RobotCommand.pb.h"
-#endif
+#include "RobotCommand.pb.h"
 #include "ActionOption.hpp"
 #include "RobotStatus.hpp"
 #include <QCloseEvent>
@@ -31,126 +27,6 @@ extern RobotStatus robot_status;
 extern ActionOption action_option;
 
 time_t start_dance_time = 0;
-/*
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow)
-{
-    ui->setupUi(this);
-
-
-    // One QTcpServer only listens to one port. If you want to listen to multiple
-    // ports, you need to create multiple QTcpServer objects.
-    m_server_receive_image = new QTcpServer();
-    // 2024/12/27 The port number is also hard-coded. I need to modify it in the
-    // future.
-    if (m_server_receive_image->listen(QHostAddress::Any, 8895))
-    {
-        connect(m_server_receive_image, &QTcpServer::newConnection, this,
-                &MainWindow::newConnection_receive_image);
-    }
-    else
-    {
-        exit(EXIT_FAILURE);
-    }
-
-    m_server_send_command = new QTcpServer();
-    if (m_server_send_command->listen(QHostAddress::Any, 8896))
-    {
-        connect(m_server_send_command, &QTcpServer::newConnection, this,
-                &MainWindow::newConnection_send_command);
-    }
-    else
-    {
-        exit(EXIT_FAILURE);
-    }
-
-    m_server_receive_audio = new QTcpServer();
-    if (m_server_receive_audio->listen(QHostAddress::Any, 8897))
-    {
-        connect(m_server_receive_audio, &QTcpServer::newConnection, this,
-                &MainWindow::newConnection_receive_audio);
-    }
-    else
-    {
-        exit(EXIT_FAILURE);
-    }
-
-    m_server_receive_message = new QTcpServer();
-    if (m_server_receive_message->listen(QHostAddress::Any, 8898))
-    {
-        connect(m_server_receive_message, &QTcpServer::newConnection, this,
-                &MainWindow::newConnection_receive_message);
-        cout << "Listening port 8898" << endl;
-    }
-    else
-    {
-        exit(EXIT_FAILURE);
-    }
-
-    timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &MainWindow::timer_event);
-    timer->start(10);
-
-    // Get keyboard press event
-    setFocusPolicy(Qt::StrongFocus);
-
-    devAudio = QMediaDevices::defaultAudioInput();
-    std::cout << "devAudio.description()" << devAudio.description().toStdString()
-              << std::endl;
-
-    // setup audio format
-    QAudioFormat format;
-    format.setSampleRate(WHISPER_SAMPLE_RATE);
-    format.setChannelCount(1);
-    format.setSampleFormat(QAudioFormat::Float);
-
-    if (devAudio.isFormatSupported(format))
-    {
-        audioSrc = new QAudioSource(devAudio, format);
-    }
-    else
-    {
-        std::cout << "Audio format not supported" << std::endl;
-    }
-
-    thread_process_image.pSendMessageManager = &sendMessageManager;
-    thread_receive_message.pSendMessageManager = &sendMessageManager;
-    thread_receive_message.mpThreadStateControl = &thread_state_control;
-    thread_receive_message.mpThreadProcessImage = &thread_process_image;
-
-    thread_state_control.m_pSendMessageManager = &sendMessageManager;
-    thread_state_control.mpThreadWhisper = &thread_whisper;
-    thread_state_control.mpThreadLLM = &thread_LLM;
-    thread_state_control.mpThreadProcessImage = &thread_process_image;
-
-    thread_LLM.mpThreadStateControl = &thread_state_control;
-
-    pVideoWindow = std::make_unique<VideoWindow>(nullptr);
-    thread_state_control.pVideoWindow = pVideoWindow.get();
-    pVideoWindow->pThreadStateControl = &thread_state_control;
-
-    connect(&thread_state_control, &ThreadStateControl::playVideoRequest, this,
-            &MainWindow::onPlayVideoRequested);
-    connect(&thread_state_control, &ThreadStateControl::playImageRequest, this,
-            &MainWindow::onPlayImageRequested);
-    connect(&thread_state_control, &ThreadStateControl::playTextRequest, this,
-            &MainWindow::onPlayTextRequested);
-
-    // Delay showing the video window so it renders after MainWindow
-    // and successfully steals focus to become the top window.
-    QTimer::singleShot(300, this, [this]()
-                       {
-    if (pVideoWindow) {
-      if (msetting.bVideoWindowFullScreen) {
-        pVideoWindow->showFullScreen();
-      } else {
-        pVideoWindow->show();
-      }
-      pVideoWindow->raise();
-      pVideoWindow->activateWindow();
-    } });
-}
-*/
 
 void MainWindow::on_pushButton_speak_clicked()
 {
@@ -382,5 +258,4 @@ void MainWindow::UISetting(Ui::MainWindow *ui)
         ui->comboBox_Language,
         static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &MainWindow::comboBox_Language_changed);
-
 }

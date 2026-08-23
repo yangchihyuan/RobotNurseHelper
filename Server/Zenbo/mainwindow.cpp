@@ -9,11 +9,7 @@
 #include <QModelIndex>
 #include <QAbstractItemView>
 #include <iostream>
-#ifdef USE_KEBBI
-#include "Kebbi/RobotCommand.pb.h"
-#elif USE_ZENBO
-#include "Zenbo/RobotCommand.pb.h"
-#endif
+#include "RobotCommand.pb.h"
 #include <QTimer>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
@@ -29,7 +25,6 @@ extern int PortAudio_stop_and_terminate();
 extern bool gbPlayAudio;
 extern RobotStatus robot_status;
 extern ActionOption action_option;
-
 
 void MainWindow::on_pushButton_speak_clicked()
 {
@@ -182,7 +177,6 @@ void MainWindow::UISetting(Ui::MainWindow *ui)
     ui->listView_FacialExpressions->setModel(ItemModel);
     ui->listView_FacialExpressions->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-
     QStringList strList_action;
     strList_action.append("Body_twist_1 large");
     strList_action.append("Body_twist_2 small");
@@ -223,7 +217,6 @@ void MainWindow::UISetting(Ui::MainWindow *ui)
     strList_action.append("Turn_right_2 body 20");
     strList_action.append("Turn_right_reverse_1 neck 22.5");
     strList_action.append("Turn_right_reverse_2 body 20");
-
 
     QStandardItemModel *ItemModel_action = new QStandardItemModel(this);
     nCount = strList_action.size();
@@ -269,5 +262,4 @@ void MainWindow::UISetting(Ui::MainWindow *ui)
                                      "English",
                                      "Arabic"});
     connect(ui->comboBox_Language, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::comboBox_Language_changed);
-
 }

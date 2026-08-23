@@ -1,0 +1,55 @@
+syntax = "proto2";
+
+package RobotCommandProtobuf;
+
+option java_package = "tw.edu.cgu.ai";
+option java_outer_classname = "RobotCommandOuterClass";
+
+import "google/protobuf/timestamp.proto";
+
+message RobotCommand {
+  //shared commands between Zenbo and Kebbi
+  optional string speak_sentence = 1;
+  optional bool   killapp        = 2;
+  optional string sface          = 3;
+  optional string smotion        = 4;
+  optional int32  yaw            = 5;
+  optional int32  pitch          = 6;
+  optional bool   hideface       = 7;
+
+  //Zenbo's commands
+  optional int32 x                 = 8;
+  optional int32 y                 = 9;
+  optional int32 degree            = 10;
+  optional int32 bodyspeed         = 11;
+  optional int32 headspeed         = 12;
+  optional int32 face              = 13;
+  optional int32 speed             = 14;
+  optional int32 volume            = 15;
+  optional int32 speak_pitch       = 16;
+  optional int32 predefined_action = 17;
+  optional int32 song              = 18;
+  optional int32 stopsong          = 19;
+
+  //Kebbi's commands
+  optional int32  turnspeed = 20;
+  optional int32  dancetype = 21;
+  optional int32  stopmove  = 22;
+  optional int32  motion    = 23;
+  optional string content   = 24;     //for play a mbtx file, the health education content.
+
+  //Barge-in support: interrupt whatever the robot is currently saying immediately.
+  optional bool stop_speaking = 25;
+}
+
+//The message that the robot sends to the server
+message RobotToServerMessage {
+  optional google.protobuf.Timestamp event_time     = 1;
+  optional int32                     jpegdatalength = 2;
+  optional bytes                     jpegdata       = 3;
+  optional string                    description    = 4;
+  optional int32                     numberpressed  = 5;
+  optional float                     yaw            = 6;           //why I cannot use float in my message?
+  optional float                     pitch          = 7;
+  optional string                    tabletcommand  = 8;
+}

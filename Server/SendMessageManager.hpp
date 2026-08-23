@@ -10,11 +10,7 @@
 #include <thread>
 #include <condition_variable>
 #include <queue>
-#ifdef USE_KEBBI
-    #include "Kebbi/RobotCommand.pb.h"
-#elif USE_ZENBO
-    #include "Zenbo/RobotCommand.pb.h"
-#endif
+#include "RobotCommand.pb.h"
 
 using namespace std;
 
@@ -26,7 +22,7 @@ public:
     void Send();
 
 protected:
-    char str_results[4096];     //is this buffer large enough?
+    char str_results[4096]; // is this buffer large enough?
     int str_results_len;
     mutex mutex_message_buffer;
     queue<RobotCommandProtobuf::RobotCommand> mQueue;

@@ -1,10 +1,5 @@
 #include "ThreadReceiveMessage.hpp"
 #include "utility_time.hpp"
-#ifdef USE_KEBBI
-#include "Kebbi/RobotCommand.pb.h"
-#elif USE_ZENBO
-#include "Zenbo/RobotCommand.pb.h"
-#endif
 
 void ThreadReceiveMessage::run()
 {
@@ -42,6 +37,7 @@ void ThreadReceiveMessage::run()
                     // mpThreadStateControl->NotifyEvent("onTTSComplete", protobufTimestampToTimePoint(timestamp));
                     // I have to use the server's time.
                     mpThreadStateControl->NotifyEvent("onTTSComplete", chrono::system_clock::now());
+                    mpWhisper->SkipCurrentSpeech(); // skip the current speech, because the robot has hear its own voice.
                     mpLogger->LogToFile("Receive onTTSComplete signal");
                 }
                 else if (RTSmessage.description() == "onCompleteOfMotionPlay")
@@ -62,33 +58,59 @@ void ThreadReceiveMessage::run()
 
                 std::string str_RobotSpeakSentence;
                 int RobotExpressionIndex = 0;
+                string sFace = "Unknown";
                 cout << "Receive number " << numberpressed << endl;
                 switch (numberpressed)
                 {
                 case 1:
                     str_RobotSpeakSentence = "一";
-                    RobotExpressionIndex = RobotCommandProtobuf::RobotCommand::FaceEnum::RobotCommand_FaceEnum_TTS_JoyA;
+                    if (s_RobotModel == "Zenbo" || s_RobotModel == "ZenboJrII")
+                        sFace = "ACTIVE";
+                    else if (s_RobotModel == "Kebbi")
+                        sFace = "TTS_JoyA";
+                    else
+                        cout << "Unknown robot model." << endl;
                     break;
                 case 2:
                     str_RobotSpeakSentence = "二";
-                    RobotExpressionIndex = RobotCommandProtobuf::RobotCommand::FaceEnum::RobotCommand_FaceEnum_TTS_JoyB;
+                    if (s_RobotModel == "Zenbo" || s_RobotModel == "ZenboJrII")
+                        sFace = "AWARE_LEFT";
+                    else if (s_RobotModel == "Kebbi")
+                        sFace = "TTS_JoyB";
+                    else
+                        cout << "Unknown robot model." << endl;
                     break;
                 case 3:
                     str_RobotSpeakSentence = "三";
-                    RobotExpressionIndex = RobotCommandProtobuf::RobotCommand::FaceEnum::RobotCommand_FaceEnum_TTS_JoyC;
+                    if (s_RobotModel == "Zenbo" || s_RobotModel == "ZenboJrII")
+                        sFace = "AWARE_RIGHT";
+                    else if (s_RobotModel == "Kebbi")
+                        sFace = "TTS_JoyC";
+                    else
+                        cout << "Unknown robot model." << endl;
                     break;
                 case 4:
                     str_RobotSpeakSentence = "四";
-                    RobotExpressionIndex = RobotCommandProtobuf::RobotCommand::FaceEnum::RobotCommand_FaceEnum_TTS_SadnessA;
+                    if (s_RobotModel == "Zenbo" || s_RobotModel == "ZenboJrII")
+                        sFace = "CONFIDENT";
+                    else if (s_RobotModel == "Kebbi")
+                        sFace = "TTS_SadnessA";
+                    else
+                        cout << "Unknown robot model." << endl;
                     break;
                 case 5:
                     str_RobotSpeakSentence = "五";
-                    RobotExpressionIndex = RobotCommandProtobuf::RobotCommand::FaceEnum::RobotCommand_FaceEnum_TTS_SadnessB;
+                    if (s_RobotModel == "Zenbo" || s_RobotModel == "ZenboJrII")
+                        sFace = "DOUBTING";
+                    else if (s_RobotModel == "Kebbi")
+                        sFace = "TTS_SadnessB";
+                    else
+                        cout << "Unknown robot model." << endl;
                     break;
                 }
                 RobotCommandProtobuf::RobotCommand robot_command;
                 robot_command.set_speak_sentence(str_RobotSpeakSentence);
-                robot_command.set_face(RobotExpressionIndex);
+                robot_command.set_sface(sFace);
                 pSendMessageManager->AddMessage(robot_command);
             }
 

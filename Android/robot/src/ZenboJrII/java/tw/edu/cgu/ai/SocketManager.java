@@ -174,7 +174,7 @@ public class SocketManager {
                                         int serial = mRobotAPI.utility.playAction(Converter.PredefinedActionIndexToPlayAction(command.getPredefinedAction()));
                                     }
                                     if (command.hasHideface()) {
-                                        if( command.getHideface() == 1) {
+                                        if (command.getHideface()) {
                                             RobotFace newFace = RobotFace.HIDEFACE;
                                             mRobotAPI.robot.setExpression(newFace);
                                         }

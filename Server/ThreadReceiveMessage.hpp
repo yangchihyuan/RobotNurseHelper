@@ -15,16 +15,11 @@
 #include "ThreadProcessImage.hpp"
 #include "ThreadSafeQueue.hpp"
 #include "Logger.hpp"
-
-#ifdef USE_KEBBI
-    #include "Kebbi/RobotCommand.pb.h"
-#elif USE_ZENBO
-    #include "Zenbo/RobotCommand.pb.h"
-#endif
+#include "RobotCommand.pb.h"
 
 using namespace std;
 
-class ThreadReceiveMessage: public QThread
+class ThreadReceiveMessage : public QThread
 {
     Q_OBJECT
 
@@ -33,17 +28,22 @@ public:
     condition_variable cond_var_receive_message;
 
     SendMessageManager *pSendMessageManager;
-    //Because there are two clients connecting to this port: Tablet and Robot app, te DataFrames_queue should be inside the ThreadReceiveMessage class.
+    // Because there are two clients connecting to this port: Tablet and Robot app, te DataFrames_queue should be inside the ThreadReceiveMessage class.
     ThreadSafeQueue<DataFrame> DataFrames_queue;
     ThreadStateControl *mpThreadStateControl;
     ThreadProcessImage *mpThreadProcessImage;
     ThreadWhisper *mpWhisper;
     Logger *mpLogger;
+
+    void SetRobotModel(string sRobotModel)
+    {
+        s_RobotModel = sRobotModel;
+    }
+
 protected:
     void run();
-
-private:
     mutex mtx;
+    string s_RobotModel = "Unknown"; // default value is Unknown. It will be set to "Kebbi" or "Zenbo" when the robot sends the first status message.
 };
 
 #endif

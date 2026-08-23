@@ -58,3 +58,88 @@ Every machine will have its own configuation such as AnythingLLM API key. You ne
 
 # Known problems and workarounds
 You cannot install the pre-built OpenCV and Protocol Buffer packages for Ubuntu 24.04. The pre-built OpenCV 4.6.0 conflicts with MediaPipe's dependent OpenCV version in terms of their included Protocol Buffer version.
+
+# Zenbo's face names
+    ACTIVE        = 0;
+    AWARE_LEFT    = 1;
+    AWARE_RIGHT   = 2;
+    CONFIDENT     = 3;
+    DEFAULT       = 4;
+    DEFAULT_STILL = 5;
+    DOUBTING      = 6;
+    EXPECTING     = 7;
+    HAPPY         = 8;
+    HELPLESS      = 9;
+    HIDEFACE      = 10;
+    IMPATIENT     = 11;
+    INNOCENT      = 12;
+    INTERESTED    = 13;
+    LAZY          = 14;
+    PLEASED       = 15;
+    PRETENDING    = 16;
+    PROUD         = 17;
+    QUESTIONING   = 18;
+    SERIOUS       = 19;
+    SHOCKED       = 20;
+    SHY           = 21;
+    SINGING       = 22;
+    TIRED         = 23;
+    WORRIED       = 24;
+
+# Zenbo's motion names
+    Body_twist_1
+    Body_twist_2
+    Dance_2_loop
+    Dance_3_loop
+    Dance_b_1_loop
+    Dance_s_1_loop
+    Default_1
+    Default_2
+    Find_face
+    Head_down_1
+    Head_down_2
+    Head_down_3
+    Head_down_4
+    Head_down_5
+    Head_down_7
+    Head_twist_1_loop
+    Head_up_1
+    Head_up_2
+    Head_up_3
+    Head_up_4
+    Head_up_5
+    Head_up_6
+    Head_up_7
+    Music_1_loop
+    Nod_1
+    Shake_head_1
+    Shake_head_2
+    Shake_head_3
+    Shake_head_4_loop
+    Shake_head_5
+    Shake_head_6
+    Turn_left_1
+    Turn_left_2
+    Turn_left_reverse_1
+    Turn_left_reverse_2
+    Turn_right_1
+    Turn_right_2
+    Turn_right_reverse_1
+    Turn_right_reverse_2
+
+# Kebbi's face names
+    TTS_AngerA   = 0;
+    TTS_AngerB   = 1;
+    TTS_Contempt = 2;
+    TTS_Disgust  = 3;
+    TTS_Fear     = 4;
+    TTS_JoyA     = 5;
+    TTS_JoyB     = 6;
+    TTS_JoyC     = 7;
+    TTS_PeaceA   = 8;
+    TTS_PeaceB   = 9;
+    TTS_PeaceC   = 10;
+    TTS_SadnessA = 11;
+    TTS_SadnessB = 12;
+    TTS_Surprise = 13;
+

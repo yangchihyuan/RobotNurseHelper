@@ -7,11 +7,7 @@
 #include "utility_time.hpp"
 #include <iostream>
 #include <numeric> // std::iota
-#ifdef USE_KEBBI
-#include "Kebbi/RobotCommand.pb.h"
-#elif USE_ZENBO
-#include "Zenbo/RobotCommand.pb.h"
-#endif
+#include "RobotCommand.pb.h"
 #include "utility_directory.hpp"
 
 #include "RobotStatus.hpp"
@@ -48,11 +44,13 @@ int is_dancing = 0;
 #include "SocketBufferParser.hpp" //DataFrame is defined in this hpp file
 #include "ThreadSafeQueue.hpp"
 
-void ThreadProcessImage::SetSettingFile(const QString &filePath) {
+void ThreadProcessImage::SetSettingFile(const QString &filePath)
+{
     LoadJSONFile(msetting, filePath.toStdString());
 }
 
-ThreadProcessImage::ThreadProcessImage() {
+ThreadProcessImage::ThreadProcessImage()
+{
     // Initialize the EmotiEffLib
     string backend = "onnx";
     string modelName = EmotiEffLib::getSupportedModels(backend)[0];
@@ -87,7 +85,8 @@ ThreadProcessImage::ThreadProcessImage() {
 
     string InspireFaceModelPath = Homepath + "/RobotNurseHelper_build/InspireFace/test_res/pack/Pikachu";
     const char *InspireFaceModelPath_cstr = InspireFaceModelPath.c_str();
-    if (HFLaunchInspireFace(InspireFaceModelPath_cstr) != HSUCCEED) {
+    if (HFLaunchInspireFace(InspireFaceModelPath_cstr) != HSUCCEED)
+    {
         std::cerr << "InspireFace Initializatino failure!" << std::endl;
     }
 
@@ -112,9 +111,12 @@ ThreadProcessImage::ThreadProcessImage() {
     HInt32 trackByDetectModeFPS = -1; // if MODE_TRACK_BY_DETECTION, default value -1 means 30fps
     HResult sessionRet = HFCreateInspireFaceSession(customParameter, detectMode, maxDetectFaceNum, detectPixelLevel,
                                                     trackByDetectModeFPS, &session);
-    if (sessionRet == HSUCCEED) {
+    if (sessionRet == HSUCCEED)
+    {
         std::cout << "Session Success" << std::endl;
-    } else {
+    }
+    else
+    {
         std::cout << "Session Failure. error code: " << sessionRet << std::endl;
     }
 
@@ -124,18 +126,19 @@ ThreadProcessImage::ThreadProcessImage() {
     m_bBodyAtZero = false;
 
 #ifdef USE_KEBBI
-    s_RobotModel = "Kebbi";    
+    s_RobotModel = "Kebbi";
 #elif USE_ZENBO
     s_RobotModel = "Zenbo";
 #endif
-
 }
 
-ThreadProcessImage::~ThreadProcessImage() {
+ThreadProcessImage::~ThreadProcessImage()
+{
     HFReleaseInspireFaceSession(session);
 }
 
-void ThreadProcessImage::run() {
+void ThreadProcessImage::run()
+{
     auto previous_time = std::chrono::high_resolution_clock::now();
 
     std::vector<std::vector<std::array<float, 3>>> last_landmarks;
@@ -149,13 +152,16 @@ void ThreadProcessImage::run() {
                                                             // channel order. I will convert it to RGB order before
                                                             // sending it to MediaPipe because MediaPipe uses RGB order.
     chrono::time_point<chrono::system_clock> previous_image_save_time;
-    while (b_WhileLoop) {
-        if (DataFrames_queue.size() > 0) {
+    while (b_WhileLoop)
+    {
+        if (DataFrames_queue.size() > 0)
+        {
             auto start = std::chrono::high_resolution_clock::now();
             DataFrame dataframe;
             // It takes 68 to 138 ms to process a frame, so I need to clear the queue
             // to reduce latency. Maybe it takes less time if I use a faster PC.
-            while (DataFrames_queue.size() > 0) {
+            while (DataFrames_queue.size() > 0)
+            {
                 DataFrames_queue.pop(dataframe);
             }
             char *data_ = dataframe.data.get();
@@ -167,40 +173,54 @@ void ThreadProcessImage::run() {
             // 2025/12/27 Debug, to parse socket buffer data, I should use
             // ParseFromArray instead of ParseFromString.
             bool parseSuccess = RTSmessage.ParseFromArray(data_, static_cast<int>(data_length));
-            if (!parseSuccess) {
+            if (!parseSuccess)
+            {
                 cout << "Failed to parse protobuf message" << endl;
                 continue;
             }
             std::vector<uchar> JPEG_Data;
-            if (RTSmessage.has_jpegdata() && RTSmessage.has_jpegdatalength()) {
+            if (RTSmessage.has_jpegdata() && RTSmessage.has_jpegdatalength())
+            {
                 string strJPEG_Data = RTSmessage.jpegdata();
-                if (strJPEG_Data.length() == 0) {
+                if (strJPEG_Data.length() == 0)
+                {
                     cout << "Warning: jpegdata is empty" << endl;
                 }
                 JPEG_Data.assign(strJPEG_Data.begin(), strJPEG_Data.end());
-            } else {
+            }
+            else
+            {
                 cout << "No jpegdata or jpegdatalength in the protobuf message" << endl;
                 continue;
             }
 
-            try {
-                if (JPEG_Data.empty()) {
+            try
+            {
+                if (JPEG_Data.empty())
+                {
                     cout << "JPEG_Data is empty, skipping imdecode." << endl;
                     continue;
                 }
                 inputImage = imdecode(JPEG_Data, IMREAD_COLOR);
-                if (inputImage.data) {
+                if (inputImage.data)
+                {
                     bCorrectlyDecoded = true;
-                } else {
+                }
+                else
+                {
                     cout << "imdecode fails." << endl;
                     continue;
                 }
-            } catch (exception &e) {
+            }
+            catch (exception &e)
+            {
                 cout << "imdecode try catch exception: " << e.what() << endl;
             }
 
-            if (bCorrectlyDecoded) {
-                if (iFrameCount == 0) {
+            if (bCorrectlyDecoded)
+            {
+                if (iFrameCount == 0)
+                {
                     inputImage.copyTo(outFrame); // To let outFrame has buffer
                     // I draw the outFrame by myself, so I don't need to use the
                     // output_video of MediaPipe. But MediaPipe requires an output buffer
@@ -217,11 +237,13 @@ void ThreadProcessImage::run() {
 
                 bool bSaveProcessResult = false; // default false, this variable is
                                                  // controlled by the iFrameCount
-                if (bSaveTransmittedImage) {
+                if (bSaveTransmittedImage)
+                {
                     chrono::time_point<chrono::system_clock> protobufTimestamp =
                         protobufTimestampToTimePoint(RTSmessage.event_time());
                     if (iFrameCount == 0 || protobufTimestamp - previous_image_save_time >
-                                                chrono::milliseconds(msetting.iImageSaveIntervalMillisecond)) {
+                                                chrono::milliseconds(msetting.iImageSaveIntervalMillisecond))
+                    {
                         const bool bMillisecond = true;
                         mstr_captured_timestamp =
                             ConvertProtobufTimestampToString(RTSmessage.event_time(),
@@ -230,8 +252,10 @@ void ThreadProcessImage::run() {
                                                                             // using the current time.
                         string filename = ImageSaveDirectory + "/" + mstr_captured_timestamp + ".jpg";
                         previous_image_save_time = protobufTimestamp;
-                        if (!m_bDirectoryCreated) {
-                            if (!CheckDirectoryExist(ImageSaveDirectory)) {
+                        if (!m_bDirectoryCreated)
+                        {
+                            if (!CheckDirectoryExist(ImageSaveDirectory))
+                            {
                                 CreateDirectory(ImageSaveDirectory);
                                 m_bDirectoryCreated = true;
                             }
@@ -241,13 +265,16 @@ void ThreadProcessImage::run() {
                     }
                 }
 
-                if (bSaveRequestedPhoto) {
+                if (bSaveRequestedPhoto)
+                {
                     bSaveRequestedPhoto = false;
                     const bool bMillisecond = true;
                     mstr_captured_timestamp = ConvertProtobufTimestampToString(RTSmessage.event_time(), bMillisecond);
                     string ImageSaveDirectory_VisualCompass = ImageSaveDirectory + "/VisualCompass/";
-                    if (!m_bDirectoryCreated_VisualCompass) {
-                        if (!CheckDirectoryExist(ImageSaveDirectory_VisualCompass)) {
+                    if (!m_bDirectoryCreated_VisualCompass)
+                    {
+                        if (!CheckDirectoryExist(ImageSaveDirectory_VisualCompass))
+                        {
                             CreateDirectory(ImageSaveDirectory_VisualCompass);
                             m_bDirectoryCreated_VisualCompass = true;
                         }
@@ -262,24 +289,34 @@ void ThreadProcessImage::run() {
                 mtx_UpdateOutFrame.lock();
                 // ToDo: remove this variable.
                 // if( b_HumanPoseEstimation)
-                if (msetting.bHumanPoseEstimation) {
+                if (msetting.bHumanPoseEstimation)
+                {
                     mtx_Task.lock();
                     bool use_Yolo11n_Pose = true;
-                    if (msetting.PoseEstimationModel == "Yolo11n_Pose") {
+                    if (msetting.PoseEstimationModel == "Yolo11n_Pose")
+                    {
                         use_Yolo11n_Pose = true;
-                    } else if (msetting.PoseEstimationModel == "MediaPipe_Pose") {
+                    }
+                    else if (msetting.PoseEstimationModel == "MediaPipe_Pose")
+                    {
                         use_Yolo11n_Pose = false;
-                    } else {
+                    }
+                    else
+                    {
                         cout << "Unknown PoseEstimationModel: " << msetting.PoseEstimationModel
                              << ". Use Yolo11n_Pose by default." << endl;
                         use_Yolo11n_Pose = true;
                     }
 
-                    if (use_Yolo11n_Pose) {
+                    if (use_Yolo11n_Pose)
+                    {
                         NL_pose = yolo11pose.Process(inputImage); // process the inputImage and
                                                                   // draw the pose on inputImage
-                    } else {
-                        if (!libmp_pose->Process2(inputImage)) {
+                    }
+                    else
+                    {
+                        if (!libmp_pose->Process2(inputImage))
+                        {
                             std::cerr << "Libmp_pose Proces() failed!" << std::endl;
                             break;
                         }
@@ -287,20 +324,24 @@ void ThreadProcessImage::run() {
 
                     // 2025 Nov 5. Debug: MediaPipe cannot run GPU and CPU at the same
                     // time.
-                    if (use_Yolo11n_Pose) {
+                    if (use_Yolo11n_Pose)
+                    {
                         int num_kps = 17; // for pose
                         const float KP_CONF_THRES = 0.4f;
                         inputImage.copyTo(outFrame);
                         size_t num_poses = NL_pose.size();
-                        for (int pose_num = 0; pose_num < num_poses; pose_num++) {
+                        for (int pose_num = 0; pose_num < num_poses; pose_num++)
+                        {
                             // draw skeleton
-                            for (auto &pr : yolo11pose.skeleton) {
+                            for (auto &pr : yolo11pose.skeleton)
+                            {
                                 int a = pr.first;
                                 int b2 = pr.second;
                                 float kp_conf_a = NL_pose[pose_num][a][2];
                                 float kp_conf_b2 = NL_pose[pose_num][b2][2];
                                 if (a < num_kps && b2 < num_kps && kp_conf_a > KP_CONF_THRES &&
-                                    kp_conf_b2 > KP_CONF_THRES) {
+                                    kp_conf_b2 > KP_CONF_THRES)
+                                {
                                     cv::Scalar col = yolo11pose.pair_color(a, b2);
                                     int a_x = static_cast<int>(NL_pose[pose_num][a][0] * inputImage.cols);
                                     int a_y = static_cast<int>(NL_pose[pose_num][a][1] * inputImage.rows);
@@ -311,42 +352,55 @@ void ThreadProcessImage::run() {
                             }
                         }
                         bNewoutFrame = true;
-                    } else {
-                        if (libmp_pose->WriteOutputImage(outFrame.data, libmp_pose->GetOutputPacket("output_video"))) {
+                    }
+                    else
+                    {
+                        if (libmp_pose->WriteOutputImage(outFrame.data, libmp_pose->GetOutputPacket("output_video")))
+                        {
                             bNewoutFrame = true;
-                        } else {
+                        }
+                        else
+                        {
                             cout << "WriteOutputImage fails." << std::endl;
                         }
 
                         NL_pose = get_landmarks_pose(libmp_pose); // I use this to guide robot's movement
-                        //260702 How to get the confidence of each landmark?
-                        //No, the 3rd column is not the confidence. It is the z coordinate.
-                        //for (int i = 0; i < 3; i++) {
-                        //    cout << "Landmark " << i << ": " << NL_pose[0][i][0] << ", " << NL_pose[0][i][1] << ", " << NL_pose[0][i][2] << endl;
-                        //}
+                        // 260702 How to get the confidence of each landmark?
+                        // No, the 3rd column is not the confidence. It is the z coordinate.
+                        // for (int i = 0; i < 3; i++) {
+                        //     cout << "Landmark " << i << ": " << NL_pose[0][i][0] << ", " << NL_pose[0][i][1] << ", " << NL_pose[0][i][2] << endl;
+                        // }
                     }
                 }
 
                 // Draw hand landmarks
-                if (msetting.bHandLandmarkDetection) {
-                    if (!libmp_hand->Process2(inputImage)) {
+                if (msetting.bHandLandmarkDetection)
+                {
+                    if (!libmp_hand->Process2(inputImage))
+                    {
                         std::cerr << "Libmp_hand Proces() failed!" << std::endl;
                         break;
                     }
 
                     // I don't need the frame because I only need the landmarks.
-                    if (libmp_hand->WriteOutputImage(tempFrame.data, libmp_hand->GetOutputPacket("output_video"))) {
+                    if (libmp_hand->WriteOutputImage(tempFrame.data, libmp_hand->GetOutputPacket("output_video")))
+                    {
                         bNewoutFrame = true;
-                    } else {
+                    }
+                    else
+                    {
                         cout << "libmp_hand WriteOutputImage fails." << std::endl;
                     }
 
                     std::vector<std::vector<std::array<float, 3>>> NL_hands; // normalized_landmarks;
                     NL_hands = get_landmarks_hand(libmp_hand);
-                    if (bDrawImageByOurOwn) {
+                    if (bDrawImageByOurOwn)
+                    {
                         size_t num_hands = NL_hands.size();
-                        for (int hand_num = 0; hand_num < num_hands; hand_num++) {
-                            for (const std::array<float, 3> &norm_xyz : NL_hands[hand_num]) {
+                        for (int hand_num = 0; hand_num < num_hands; hand_num++)
+                        {
+                            for (const std::array<float, 3> &norm_xyz : NL_hands[hand_num])
+                            {
                                 int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
                                 int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
                                 cv::circle(outFrame, cv::Point(x, y), 5, cv::Scalar(0, 0, 255), -1);
@@ -356,8 +410,10 @@ void ThreadProcessImage::run() {
                 }
 
                 std::vector<std::vector<std::array<float, 3>>> NL_faces; // normalized_landmarks;
-                if (msetting.bFaceDetection) {
-                    if (msetting.FaceDetectionModel == "InspireFace") {
+                if (msetting.bFaceDetection)
+                {
+                    if (msetting.FaceDetectionModel == "InspireFace")
+                    {
                         // Use InspireFace to detect faces.
                         HFImageBitmapData imageBitmapData;
                         imageBitmapData.data = inputImage.data;
@@ -368,14 +424,16 @@ void ThreadProcessImage::run() {
                         HResult result;
                         HFImageBitmap image;
                         result = HFCreateImageBitmap(&imageBitmapData, &image);
-                        if (result != HSUCCEED) {
+                        if (result != HSUCCEED)
+                        {
                             std::cerr << "Failed to create image bitmap." << std::endl;
                             break;
                         }
 
                         HFImageStream imageHandle = {0};
                         result = HFCreateImageStreamFromImageBitmap(image, HF_CAMERA_ROTATION_0, &imageHandle);
-                        if (result != HSUCCEED) {
+                        if (result != HSUCCEED)
+                        {
                             std::cerr << "Failed to set image format." << std::endl;
                             break;
                         }
@@ -383,44 +441,53 @@ void ThreadProcessImage::run() {
                         result = HFSessionSetFaceDetectThreshold(
                             session,
                             0.5); // Optional: Set confidence threshold for face detection, range is 0.0 to 1.0
-                        if (result != HSUCCEED) {
+                        if (result != HSUCCEED)
+                        {
                             std::cerr << "Failed to set face detection threshold." << std::endl;
                             break;
                         }
 
                         HFMultipleFaceData MultipleFaceData = {0};
                         result = HFExecuteFaceTrack(session, imageHandle, &MultipleFaceData);
-                        if (result != HSUCCEED) {
+                        if (result != HSUCCEED)
+                        {
                             std::cerr << "Failed to execute face tracking." << std::endl;
                             break;
                         }
 
-                        if (MultipleFaceData.detectedNum > 0) {
+                        if (MultipleFaceData.detectedNum > 0)
+                        {
                             HFSessionCustomParameter customParameter = {0}; // Initialize all to 0
                             // 2. Enable features as needed (1 is enabled, 0 is disabled)
                             customParameter.enable_recognition = 1; // Enable face recognition (feature extraction)
                             customParameter.enable_liveness = 0;    // Disable RGB liveness detection
                             customParameter.enable_face_attribute =
-                                1; // Enable face attribute analysis (e.g., gender, age)
+                                1;                                  // Enable face attribute analysis (e.g., gender, age)
                             customParameter.enable_ir_liveness = 0; // Disable IR liveness detection
 
                             result =
                                 HFMultipleFacePipelineProcess(session, imageHandle, &MultipleFaceData, customParameter);
-                            if (result != HSUCCEED) {
+                            if (result != HSUCCEED)
+                            {
                                 std::cerr << "Failed to process multiple face pipeline." << std::endl;
                                 break;
                             }
 
                             HFFaceAttributeResult faceAttributeResult;
                             HResult result = HFGetFaceAttributeResult(session, &faceAttributeResult);
-                            if (result == HSUCCEED) {
+                            if (result == HSUCCEED)
+                            {
                                 string FaceGender = "";
                                 string FaceAge = "";
-                                for (int i = 0; i < faceAttributeResult.num; i++) {
-                                    if (faceAttributeResult.gender[i] == 0) {
+                                for (int i = 0; i < faceAttributeResult.num; i++)
+                                {
+                                    if (faceAttributeResult.gender[i] == 0)
+                                    {
                                         FaceGender = "F";
                                         msPatientGender = "Female";
-                                    } else {
+                                    }
+                                    else
+                                    {
                                         FaceGender = "M";
                                         msPatientGender = "Male";
                                     }
@@ -433,7 +500,8 @@ void ThreadProcessImage::run() {
                                     ///< 6: 50-59 years old;
                                     ///< 7: 60-69 years old;
                                     ///< 8: more than 70 years old;
-                                    switch (faceAttributeResult.ageBracket[i]) {
+                                    switch (faceAttributeResult.ageBracket[i])
+                                    {
                                     case 0:
                                         FaceAge = "0-2";
                                         miPatientAge = 1;
@@ -487,14 +555,19 @@ void ThreadProcessImage::run() {
                                                 cv::Point(faceRect.x, faceRect.y - 10), cv::FONT_HERSHEY_SIMPLEX, 1,
                                                 cv::Scalar(0, 255, 0), 2);
                                 }
-                            } else {
+                            }
+                            else
+                            {
                                 cout << "Failed to get face attribute result, error code: " << result << endl;
                             }
                         }
                         HFReleaseImageStream(imageHandle);
-                    } else if (msetting.FaceDetectionModel == "MediaPipe_Face") {
+                    }
+                    else if (msetting.FaceDetectionModel == "MediaPipe_Face")
+                    {
                         // Use MediaPipe to detect faces.
-                        if (!libmp_face->Process2(inputImage)) {
+                        if (!libmp_face->Process2(inputImage))
+                        {
                             std::cerr << "libmp_face Process() failed!" << std::endl;
                             break;
                         }
@@ -503,16 +576,22 @@ void ThreadProcessImage::run() {
                         // Do I need the output_video of libmp_face? I only need the
                         // landmarks. I draw the MediaPipe output to tempFrame, which is not
                         // used outside this function.
-                        if (libmp_face->WriteOutputImage(tempFrame.data, libmp_face->GetOutputPacket("output_video"))) {
+                        if (libmp_face->WriteOutputImage(tempFrame.data, libmp_face->GetOutputPacket("output_video")))
+                        {
                             bNewoutFrame = true;
-                        } else {
+                        }
+                        else
+                        {
                             cout << "WriteOutputImage fails." << std::endl;
                         }
                         NL_faces = get_landmarks_face(libmp_face);
-                        if (bDrawImageByOurOwn) {
+                        if (bDrawImageByOurOwn)
+                        {
                             size_t num_faces = NL_faces.size();
-                            for (int face_num = 0; face_num < num_faces; face_num++) {
-                                for (const std::array<float, 3> &norm_xyz : NL_faces[face_num]) {
+                            for (int face_num = 0; face_num < num_faces; face_num++)
+                            {
+                                for (const std::array<float, 3> &norm_xyz : NL_faces[face_num])
+                                {
                                     int x = static_cast<int>(norm_xyz[0] * inputImage.cols);
                                     int y = static_cast<int>(norm_xyz[1] * inputImage.rows);
                                     cv::circle(outFrame, cv::Point(x, y), 1, cv::Scalar(0, 255, 0), -1);
@@ -522,9 +601,11 @@ void ThreadProcessImage::run() {
 
                         //                    if( m_bRecognizeFacialExpression &&
                         //                    !NL_faces.empty() )
-                        if (!NL_faces.empty()) {
+                        if (!NL_faces.empty())
+                        {
                             size_t num_faces = NL_faces.size();
-                            for (int face_num = 0; face_num < num_faces; face_num++) {
+                            for (int face_num = 0; face_num < num_faces; face_num++)
+                            {
                                 // crop the face region.
                                 // Why is the cropped region too small?
                                 Mat face = CropRegion(inputImage, NL_faces[face_num]);
@@ -532,7 +613,8 @@ void ThreadProcessImage::run() {
                                 // I sitll don't know why. But if I disable this imshow(),
                                 // Hinton works fine.
                                 //                            cv::imshow("Cropped face", face);
-                                if (msetting.bFacialExpressionRecognition) {
+                                if (msetting.bFacialExpressionRecognition)
+                                {
                                     auto res =
                                         fer->predictEmotions(face, false); // false will return the softmax scores
                                     Rect roi = GetBoundingBoxFromLandmarks(NL_faces[face_num], inputImage.cols,
@@ -560,7 +642,8 @@ void ThreadProcessImage::run() {
                                 // Get face recognition features
                                 // Although there is only one face, the dlib face recognition
                                 // model needs a vector of faces as input.
-                                if (msetting.bUseDlibForFaceRecognition) {
+                                if (msetting.bUseDlibForFaceRecognition)
+                                {
                                     std::vector<dlib::matrix<dlib::rgb_pixel>> faces;
                                     dlib::matrix<dlib::rgb_pixel> dlib_face;
                                     // The face size has to be 150x150, which is the input size of
@@ -568,7 +651,8 @@ void ThreadProcessImage::run() {
                                     // cropped face to 150x150 before sending it to the dlib
                                     // model. But resizing may cause distortion, so I will skip
                                     // this step if the face size is not correct.
-                                    if (face.cols != 150 || face.rows != 150) {
+                                    if (face.cols != 150 || face.rows != 150)
+                                    {
                                         // Use OpenCV to resize the face to 150x150. But it may
                                         // cause distortion. I will skip this step if the face size
                                         // is not correct.
@@ -591,20 +675,23 @@ void ThreadProcessImage::run() {
                                 // recognition? no idea now.
                             }
                         }
-
-                    } else {
+                    }
+                    else
+                    {
                         cout << "Unknown FaceDetectionModel: " << msetting.FaceDetectionModel
                              << ". Use InspireFace by default." << endl;
                     }
                 }
 
                 // Dump outFrame for debugging
-                if (bSaveProcessResult) {
+                if (bSaveProcessResult)
+                {
                     string filename = ImageSaveDirectory + "/" + mstr_captured_timestamp + ".outFrame.jpg";
                     cv::imwrite(filename, outFrame);
 
                     size_t num_faces = NL_faces.size();
-                    for (int face_num = 0; face_num < num_faces; face_num++) {
+                    for (int face_num = 0; face_num < num_faces; face_num++)
+                    {
                         Mat face = CropRegion(inputImage, NL_faces[face_num]);
                         filename =
                             ImageSaveDirectory + "/" + mstr_captured_timestamp + ".face" + to_string(face_num) + ".jpg";
@@ -616,7 +703,8 @@ void ThreadProcessImage::run() {
 
                 // This variable is used to prevent the robot from sending new commands
                 // while the previous command is being executed.
-                if (mbWatchPatient) {
+                if (mbWatchPatient)
+                {
                     if (!NL_pose.empty()) // If there is no person detected, the following
                                           // code will not be executed.
                     {
@@ -630,8 +718,10 @@ void ThreadProcessImage::run() {
                         auto duration = chrono::duration_cast<chrono::seconds>(current_time - previous_time);
                         // to prevent too many messages being sent to the robot, I set a
                         // time interval between two messages.
-                        if (duration.count() >= 1) {
-                            if (action_option.move_mode != action_option.MOVE_MANUAL) {
+                        if (duration.count() >= 1)
+                        {
+                            if (action_option.move_mode != action_option.MOVE_MANUAL)
+                            {
                                 RobotCommandProtobuf::RobotCommand command;
                                 // This function is only avaialbe in the Kebbi folder. I need to
                                 // think how to make it available in the Zenbo folder.
@@ -641,9 +731,12 @@ void ThreadProcessImage::run() {
                                                                           // PoseLandmarks_to_RobotAction function
                             }
                         }
-                    } else {
+                    }
+                    else
+                    {
                         iNoPersonFrameCount++;
-                        if (iNoPersonFrameCount > 30) {
+                        if (iNoPersonFrameCount > 30)
+                        {
                             RobotCommandProtobuf::RobotCommand command;
                             command.set_yaw(0);
                             command.set_pitch(0);
@@ -657,36 +750,46 @@ void ThreadProcessImage::run() {
                         auto elapsed_no_person =
                             std::chrono::duration_cast<std::chrono::milliseconds>(now - m_LastPersonDetectedTime)
                                 .count();
-                        if (elapsed_no_person >= 1000 && !m_bBodyAtZero) {
+                        if (elapsed_no_person >= 1000 && !m_bBodyAtZero)
+                        {
                             m_bTurningToZero = true;
                             auto elapsed_compass =
                                 std::chrono::duration_cast<std::chrono::milliseconds>(now - m_LastCompassCheckTime)
                                     .count();
-                            if (elapsed_compass >= 500) {
-                                m_LastCompassCheckTime = now;       //Check VisualCompass every 500ms. The interval may be too long. There is a delay of several hundred ms for the robot to turn.
+                            if (elapsed_compass >= 500)
+                            {
+                                m_LastCompassCheckTime = now; // Check VisualCompass every 500ms. The interval may be too long. There is a delay of several hundred ms for the robot to turn.
                                 std::string errorDetails;
                                 double estimatedAngle =
                                     ::ComputeVisualCompassTheta(inputImage, ImageSaveDirectory, errorDetails);
-                                //print the estimated theta out
-                                //std::cout << "Estimated theta: " << estimatedAngle << std::endl;
-                                if (estimatedAngle >= 0.0) {
+                                // print the estimated theta out
+                                // std::cout << "Estimated theta: " << estimatedAngle << std::endl;
+                                if (estimatedAngle >= 0.0)
+                                {
                                     float turnSpeed = 0.0f;
-                                    if (estimatedAngle > 5.0 && estimatedAngle <= 180.0) {
+                                    if (estimatedAngle > 5.0 && estimatedAngle <= 180.0)
+                                    {
                                         turnSpeed = -30.0f; // Turn right (clockwise)
-                                    } else if (estimatedAngle > 180.0 && estimatedAngle < 355.0) {
+                                    }
+                                    else if (estimatedAngle > 180.0 && estimatedAngle < 355.0)
+                                    {
                                         turnSpeed = 30.0f; // Turn left (counter-clockwise)
-                                    } else {
+                                    }
+                                    else
+                                    {
                                         turnSpeed = 0.0f; // Already at 0 degree (within 5 degree tolerance)
                                         m_bBodyAtZero = true;
                                         m_bTurningToZero = false;
                                     }
-                                    #ifdef USE_KEBBI
+#ifdef USE_KEBBI
                                     RobotCommandProtobuf::RobotCommand command;
                                     // This command is used by Kebbi only. I need to change the command to be compatible with Zenbo. I will do it later.
-                                    command.set_turnspeed(turnSpeed);           //This is Kebbi's limitation, which can only control the robot to turn at a constant speed, not the angle to turn.
+                                    command.set_turnspeed(turnSpeed); // This is Kebbi's limitation, which can only control the robot to turn at a constant speed, not the angle to turn.
                                     pSendMessageManager->AddMessage(command);
-                                    #endif
-                                } else {
+#endif
+                                }
+                                else
+                                {
                                     std::cout << "VisualCompass failed to determine orientation: " << errorDetails
                                               << std::endl;
                                 }
@@ -699,7 +802,8 @@ void ThreadProcessImage::run() {
 
             // debug code, to messure the processing time
             bool bShowTransmittedImage = false;
-            if (bShowTransmittedImage) {
+            if (bShowTransmittedImage)
+            {
                 auto stop = std::chrono::high_resolution_clock::now();
                 auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
                 std::cout << "Elapsed time: " << duration_ms.count() << " milliseconds" << std::endl;
@@ -713,40 +817,49 @@ void ThreadProcessImage::run() {
 }
 
 void ThreadProcessImage::NotifyEvent(string description, chrono::time_point<chrono::system_clock> timestamp, float yaw,
-                                     float pitch) {
-    if (description == "onCompleteOfMotionPlay") {
+                                     float pitch)
+{
+    if (description == "onCompleteOfMotionPlay")
+    {
         //        cout << "(A) onCompleteOfMotionPlay yaw " << yaw << " pitch " <<
         //        pitch << endl;
         robot_status.yaw_degree = (int)yaw;
         robot_status.pitch_degree = (int)pitch;
         mbWatchPatient = true;
-    } else if (description == "KebbiMoveHeadDuringMotion") {
+    }
+    else if (description == "KebbiMoveHeadDuringMotion")
+    {
         //        cout << "(B) KebbiMoveHeadDuringMotion " << endl;
         mbWatchPatient = false;
     }
 }
 
-Mat ThreadProcessImage::getOutFrame() {
+Mat ThreadProcessImage::getOutFrame()
+{
     Mat frame;
     mtx_UpdateOutFrame.lock();
-    if (bNewoutFrame) {
+    if (bNewoutFrame)
+    {
         outFrame.copyTo(frame);
     }
     mtx_UpdateOutFrame.unlock();
     return frame;
 }
 
-Mat ThreadProcessImage::CropRegion(Mat inputImage, std::vector<std::array<float, 3>> normalized_landmarks) {
+Mat ThreadProcessImage::CropRegion(Mat inputImage, std::vector<std::array<float, 3>> normalized_landmarks)
+{
     Rect roi = GetBoundingBoxFromLandmarks(normalized_landmarks, inputImage.cols, inputImage.rows);
     Mat cropped_face = inputImage(roi).clone(); // clone to ensure a deep copy
     return cropped_face;
 }
 
 cv::Rect ThreadProcessImage::GetBoundingBoxFromLandmarks(const std::vector<std::array<float, 3>> &normalized_landmarks,
-                                                         int img_width, int img_height) {
+                                                         int img_width, int img_height)
+{
     // Find the bounding box of the landmarks
     float x_min = 1.0, x_max = 0.0, y_min = 1.0, y_max = 0.0;
-    for (const auto &norm_xyz : normalized_landmarks) {
+    for (const auto &norm_xyz : normalized_landmarks)
+    {
         if (norm_xyz[0] < x_min)
             x_min = norm_xyz[0];
         if (norm_xyz[0] > x_max)
@@ -777,15 +890,18 @@ cv::Rect ThreadProcessImage::GetBoundingBoxFromLandmarks(const std::vector<std::
     return Rect(x1, y1, x2 - x1, y2 - y1);
 }
 
-string ThreadProcessImage::GetPatientGender() {
+string ThreadProcessImage::GetPatientGender()
+{
     return msPatientGender;
 }
 
-int ThreadProcessImage::GetPatientAge() {
+int ThreadProcessImage::GetPatientAge()
+{
     return miPatientAge;
 }
 
-Mat ThreadProcessImage::getLatestFrame() {
+Mat ThreadProcessImage::getLatestFrame()
+{
     Mat frame;
     mtx_UpdateOutFrame.lock();
     outFrame.copyTo(frame);
