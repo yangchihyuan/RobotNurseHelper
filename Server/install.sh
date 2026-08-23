@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#2026 Jan 22
+#2026 Aug 23
 #Install Robot Nurse Helper to Ubuntu 24.04 and NVidia AGX Orin
 #Author: Chih-Yuan Yang
 #Project: Robot Nurse Helper
@@ -374,14 +374,17 @@ git checkout v0.9.5
 sed -i 's|this->cli->Post("/api/generate", request_string, "application/json", stream_callback)|this->cli->Post("/api/generate", request_string.size(), [\&](size_t offset, size_t length, httplib::DataSink \&sink) { size_t chunk_len = length; size_t remaining = request_string.size() - offset; if (chunk_len > remaining) chunk_len = remaining; sink.write(request_string.data() + offset, chunk_len); return true; }, "application/json", stream_callback, [](uint64_t, uint64_t){ return true; })|' include/ollama.hpp
 sed -i 's|this->cli->Post("/api/chat", request_string, "application/json", stream_callback)|this->cli->Post("/api/chat", request_string.size(), [\&](size_t offset, size_t length, httplib::DataSink \&sink) { size_t chunk_len = length; size_t remaining = request_string.size() - offset; if (chunk_len > remaining) chunk_len = remaining; sink.write(request_string.data() + offset, chunk_len); return true; }, "application/json", stream_callback, [](uint64_t, uint64_t){ return true; })|' include/ollama.hpp
 
-#dlib library for face recognition
-#The precompiled libdlib-dev does not work. It enables the DLIB_NO_GUI_SUPPORT
-#sudo apt -y install libdlib-dev       #Ubuntu 24.04 has dlib version 19.24.0-1 available in its repository
-cd ~/RobotNurseHelper_build/
-#This command will go wrong in the future because new versions will changes its download URL
-#curl https://dlib.net/files/dlib-20.0.tar.bz2 --output dlib-20.0.tar.bz2
-wget -O dlib-20.0.tar.bz2 https://dlib.net/files/dlib-20.0.tar.bz2
-tar -xjvf dlib-20.0.tar.bz2
+install_dlib=false
+if [ "$install_dlib" = "true" ]; then
+  #dlib library for face recognition
+  #The precompiled libdlib-dev does not work. It enables the DLIB_NO_GUI_SUPPORT
+  #sudo apt -y install libdlib-dev       #Ubuntu 24.04 has dlib version 19.24.0-1 available in its repository
+  cd ~/RobotNurseHelper_build/
+  #This command will go wrong in the future because new versions will changes its download URL
+  #curl https://dlib.net/files/dlib-20.0.tar.bz2 --output dlib-20.0.tar.bz2
+  wget -O dlib-20.0.tar.bz2 https://dlib.net/files/dlib-20.0.tar.bz2
+  tar -xjvf dlib-20.0.tar.bz2
+fi
 
 #InspireFace (The library has not been tested on AGX Orin, but it should work because it is based on OpenCV and ONNX Runtime, which are both tested on AGX Orin.
 #I need to test it on AGX Orin later. If there is a problem, I will try to fix it and update the code.

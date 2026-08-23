@@ -60,7 +60,9 @@ ThreadProcessImage::ThreadProcessImage()
     string modelPath = emotiEffLibRootDir + "/models/affectnet_emotions/onnx/" + modelName + ext;
     fer = EmotiEffLib::EmotiEffLibRecognizer::createInstance(backend, modelPath);
 
+#ifdef USE_dlib
     deserialize("dlib_face_recognition_resnet_model_v1.dat") >> net;
+#endif
 
     string filepath = std::filesystem::current_path() / "mediapipe_addition/graph_strings/face_cpu.txt";
     string graph_string = LoadFileToString(filepath);
@@ -644,6 +646,7 @@ void ThreadProcessImage::run()
                                 // model needs a vector of faces as input.
                                 if (msetting.bUseDlibForFaceRecognition)
                                 {
+#ifdef USE_dlib
                                     std::vector<dlib::matrix<dlib::rgb_pixel>> faces;
                                     dlib::matrix<dlib::rgb_pixel> dlib_face;
                                     // The face size has to be 150x150, which is the input size of
@@ -660,6 +663,7 @@ void ThreadProcessImage::run()
                                         cv::resize(face, resized_face, Size(150, 150));
                                         face = resized_face;
                                     }
+
                                     dlib::assign_image(dlib_face, dlib::cv_image<dlib::bgr_pixel>(face));
                                     faces.push_back(dlib_face);
                                     // dlib use GPU already, but it is still slow.
@@ -670,6 +674,7 @@ void ThreadProcessImage::run()
                                     // print it out
                                     cout << "face descriptor for one face: " << dlib::trans(face_descriptors[0])
                                          << endl;
+#endif
                                 }
                                 // how to create a cluster of the face descriptors for face
                                 // recognition? no idea now.

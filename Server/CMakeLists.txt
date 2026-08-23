@@ -190,8 +190,9 @@ target_include_directories(RobotNurseHelper PUBLIC "${ROBOTNURSEHELPER_BUILD_DIR
 
 #dlib for face recognition
 #The second parameter is the build directory of dlib
-add_subdirectory(${ROBOTNURSEHELPER_BUILD_DIR}/dlib-20.0/dlib ${ROBOTNURSEHELPER_BUILD_DIR}/dlib-20.0/dlib_build)
-target_link_libraries(RobotNurseHelper dlib::dlib)
+#23 Aug 2026: Disable dlib because I am not using it now.
+#add_subdirectory(${ROBOTNURSEHELPER_BUILD_DIR}/dlib-20.0/dlib ${ROBOTNURSEHELPER_BUILD_DIR}/dlib-20.0/dlib_build)
+#target_link_libraries(RobotNurseHelper dlib::dlib)
 
 #InspireFace
 add_library(LIBINSPIREFACE SHARED IMPORTED)
