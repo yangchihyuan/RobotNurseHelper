@@ -2,11 +2,11 @@
 This project aims to develop an interactive desktop multimedia robot system to alleviate the shortage of nurse educators in Taiwanese hospitals. We set our initial goal to deliver pre- and post-surgical health education to cataract patients. 
 
 #### Progress
-YouTube video:
-<iframe width="560" height="315" src="https://www.youtube.com/embed/gl8OrY62YNc?si=gfzQKkw7pNgGDvGY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+YouTube video, English version.
+[![Watch the video](https://img.youtube.com/vi/gl8OrY62YNc/maxresdefault.jpg)](https://youtu.be/gl8OrY62YNc)
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/itbHiq3a3BM?si=0wJArCKnm1h_--hw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
+YouTube video, Chinese version.
+[![Watch the video](https://img.youtube.com/vi/itbHiq3a3BM/maxresdefault.jpg)](https://youtu.be/itbHiq3a3BM)
 
 #### Robot Models
 For the desktop uage, robots in a small size are proper. We use Kebbi Air-S and Zenbo Junior II in our project.

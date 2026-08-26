@@ -6,10 +6,12 @@
         <activity
             android:name="tw.edu.cgu.ai.MainActivity"
             tools:node="merge">
-            <intent-filter>
+            <intent-filter tools:node="replace">
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="com.asus.intent.category.ZENBO" />
                 <category android:name="com.asus.intent.category.ZENBO_LAUNCHER" />
-                <data android:name="com.asus.intent.data.MIN_ROBOT_API_LEVEL.1" />
+                <category android:name="com.asus.intent.data.MIN_ROBOT_API_LEVEL.1" />
             </intent-filter>
         </activity>
     </application>

@@ -37,7 +37,7 @@ void ThreadReceiveMessage::run()
                     // mpThreadStateControl->NotifyEvent("onTTSComplete", protobufTimestampToTimePoint(timestamp));
                     // I have to use the server's time.
                     mpThreadStateControl->NotifyEvent("onTTSComplete", chrono::system_clock::now());
-                    mpWhisper->SkipCurrentSpeech(); // skip the current speech, because the robot has hear its own voice.
+                    //                    mpWhisper->SkipCurrentSpeech(); // skip the current speech, because the robot has hear its own voice.
                     mpLogger->LogToFile("Receive onTTSComplete signal");
                 }
                 else if (RTSmessage.description() == "onCompleteOfMotionPlay")

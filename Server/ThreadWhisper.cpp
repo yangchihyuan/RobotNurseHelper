@@ -183,15 +183,17 @@ void ThreadWhisper::run()
                 // clean the pcmf32 buffer and the pcmf32_old buffer
                 pcmf32.clear();
                 tempData.sOutput = strTemp;
+                mpLogger->LogToFile("Generate Whisper Result.");
                 tempData.tSTTComplete = chrono::system_clock::now();
                 if (bSkipCurrentSpeech)
                 {
                     bSkipCurrentSpeech = false;
+                    mpLogger->LogToFile("SkipCurrentSpeech.");
                     continue; // skip the current speech
                 }
                 mtx.lock();
                 mResult = tempData;
-                mpLogger->LogToFile("whisper mResult ready.");
+                mpLogger->LogToFile("Whisper Result ready.");
                 mtx.unlock();
             }
         }
