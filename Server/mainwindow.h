@@ -29,13 +29,12 @@
 #include "../VideoWindow.hpp"
 #include "Setting.hpp"
 
- 
 using namespace std;
 
-
 QT_BEGIN_NAMESPACE
-namespace Ui {
-class MainWindow;
+namespace Ui
+{
+    class MainWindow;
 }
 QT_END_NAMESPACE
 
@@ -52,31 +51,31 @@ public:
 
 protected:
     void closeEvent(QCloseEvent *event) override;
-    QAudioDevice  devAudio;
-    QAudioSource* audioSrc = nullptr;
+    QAudioDevice devAudio;
+    QAudioSource *audioSrc = nullptr;
     bool bListening = false;
     void UISetting(Ui::MainWindow *ui);
 
     Ui::MainWindow *ui;
     QTimer *timer;
 
-    QTcpServer* m_server_receive_image;
-    QSet<QTcpSocket*> connection_set;
+    QTcpServer *m_server_receive_image;
+    QSet<QTcpSocket *> connection_set;
     ThreadProcessImage thread_process_image;
 
-    QTcpServer* m_server_send_command;
-    QSet<QTcpSocket*> connection_set2;   //for send back command
+    QTcpServer *m_server_send_command;
+    QSet<QTcpSocket *> connection_set2; // for send back command
 
-    QTcpServer* m_server_receive_audio;
-    QSet<QTcpSocket*> connection_set3;   //for receive audio
+    QTcpServer *m_server_receive_audio;
+    QSet<QTcpSocket *> connection_set3; // for receive audio
     ThreadProcessAudio thread_process_audio;
 
-    QTcpServer* m_server_receive_message;
-    QSet<QTcpSocket*> connection_set4;   //for Tablet
+    QTcpServer *m_server_receive_message;
+    QSet<QTcpSocket *> connection_set4; // for Tablet
     SocketBufferParser socketHandler4;
     ThreadReceiveMessage thread_receive_message;
 
-    QSet<SocketClientHandler*> Handler_set;
+    QSet<SocketClientHandler *> Handler_set;
 
     ThreadWhisper thread_whisper;
 
@@ -90,31 +89,31 @@ protected:
     void send_move_head_command(int yaw, int pitch, int speed);
 
     SendMessageManager sendMessageManager;
-    bool bstream_recognition = true;        //whether to stream the voice recognition result
+    bool bstream_recognition = true; // whether to stream the voice recognition result
 
-    WhisperData oldWhisperData;     //for timer_event update UI
+    WhisperData oldWhisperData; // for timer_event update UI
 
     Setting msetting;
     int current_body_angle = 0;
-    void rotateAndTakePhoto(int targetAngle, const QString& prefix);
+    void rotateAndTakePhoto(int targetAngle, const QString &prefix);
 
     Logger mlogger;
 
 signals:
-    void newMessage(QString);   //where is the connect for this signal?
+    void newMessage(QString); // where is the connect for this signal?
     void addSendCommandMessage(RobotCommandProtobuf::RobotCommand);
 
 private slots:
-    void onPlayVideoRequested(const QString& videoPath);
-    void onPlayImageRequested(const QString& imagePath);
-    void onPlayTextRequested(const QString& ShowString);
+    void onPlayVideoRequested(const QString &videoPath);
+    void onPlayImageRequested(const QString &imagePath);
+    void onPlayTextRequested(const QString &ShowString);
 
     void newConnection_receive_image();
     void newConnection_send_command();
     void newConnection_receive_audio();
     void newConnection_receive_message();
-    void appendToSocketList2(QTcpSocket* socket);
-    void appendToSocketList3(QTcpSocket* socket);
+    void appendToSocketList2(QTcpSocket *socket);
+    void appendToSocketList3(QTcpSocket *socket);
 
     void readSocket3();
 
@@ -133,8 +132,8 @@ private slots:
 
     void on_listView_FacialExpressions_doubleClicked(const QModelIndex &index);
     void on_listView_PredefinedAction_doubleClicked(const QModelIndex &index);
-    void on_listView_Content_doubleClicked(const QModelIndex &index);       //Kebbi's mbtx file
-    void on_listView_Song_doubleClicked(const QModelIndex &index);          //Zenbo's song file
+    void on_listView_Content_doubleClicked(const QModelIndex &index); // Kebbi's mbtx file
+    void on_listView_Song_doubleClicked(const QModelIndex &index);    // Zenbo's song file
     void on_listView_Sentence1_doubleClicked(const QModelIndex &index);
     void on_listView_Sentence1_clicked(const QModelIndex &index);
     void on_listView_Sentence2_doubleClicked(const QModelIndex &index);
@@ -158,8 +157,8 @@ private slots:
     void on_pushButton_speak_2_clicked();
     void on_pushButton_hideface_clicked();
     void on_pushButton_stop_song_clicked();
+    void on_pushButton_stop_speak_clicked();
     void on_pushButton_take_photo_clicked();
     void on_pushButton_test_clicked();
-
 };
 #endif // MAINWINDOW_H

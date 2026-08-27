@@ -200,9 +200,15 @@ void MainWindow::setSettingFile(const QString &filePath)
 
     // After loading the setting, I can set the initial state of the state
     // control thread.
-    thread_state_control.SetSettingFile(filePath);
-    thread_LLM.SetSettingFile(filePath);
-    thread_process_image.SetSettingFile(filePath);
+    // thread_state_control.SetSettingFile(filePath);
+    thread_state_control.mpsetting = &msetting;
+    thread_state_control.InitializeStates();
+    //    thread_LLM.SetSettingFile(filePath);
+    thread_LLM.mpsetting = &msetting;
+    // thread_process_image.SetSettingFile(filePath);
+    thread_process_image.mpsetting = &msetting;
+    //    thread_receive_message.mpsetting = &msetting;
+    thread_receive_message.SetRobotModel(msetting.RobotModel);
 
     ui->checkBox_UseVisualCompass->setChecked(msetting.bUseVisualCompass);
     ui->checkBox_SaveImages->setChecked(msetting.bSaveImages);
@@ -1058,6 +1064,16 @@ void MainWindow::on_pushButton_stop_song_clicked()
     RobotCommandProtobuf::RobotCommand command;
     command.set_stopsong(1);
     sendMessageManager.AddMessage(command);
+}
+
+void MainWindow::on_pushButton_stop_speak_clicked()
+{
+    RobotCommandProtobuf::RobotCommand command;
+    command.set_stop_speaking(1);
+    sendMessageManager.AddMessage(command);
+    // Notify ThreadStateControl that TTS is complete
+    thread_state_control.NotifyEvent("onTTSComplete", chrono::system_clock::now());
+    mlogger.LogToFile("Notify ThreadStateControl that TTS is complete");
 }
 
 void MainWindow::comboBox_Processor_changed()

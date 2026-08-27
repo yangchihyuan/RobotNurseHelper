@@ -16,6 +16,7 @@
 #include "ThreadSafeQueue.hpp"
 #include "Logger.hpp"
 #include "RobotCommand.pb.h"
+#include "Setting.hpp"
 
 using namespace std;
 
@@ -37,13 +38,14 @@ public:
 
     void SetRobotModel(string sRobotModel)
     {
-        s_RobotModel = sRobotModel;
+        ms_RobotModel = sRobotModel;
     }
+    //    Setting *mpsetting = nullptr;
 
 protected:
     void run();
     mutex mtx;
-    string s_RobotModel = "Unknown"; // default value is Unknown. It will be set to "Kebbi" or "Zenbo" when the robot sends the first status message.
+    string ms_RobotModel = "Unknown"; // default value is Unknown. It will be set to "Kebbi" or "Zenbo" when the robot sends the first status message.
 };
 
 #endif

@@ -185,12 +185,14 @@ void ThreadWhisper::run()
                 tempData.sOutput = strTemp;
                 mpLogger->LogToFile("Generate Whisper Result.");
                 tempData.tSTTComplete = chrono::system_clock::now();
-                if (bSkipCurrentSpeech)
-                {
-                    bSkipCurrentSpeech = false;
-                    mpLogger->LogToFile("SkipCurrentSpeech.");
-                    continue; // skip the current speech
-                }
+                /*
+                                if (bSkipCurrentSpeech)
+                                {
+                                    bSkipCurrentSpeech = false;
+                                    mpLogger->LogToFile("SkipCurrentSpeech.");
+                                    continue; // skip the current speech
+                                }
+                */
                 mtx.lock();
                 mResult = tempData;
                 mpLogger->LogToFile("Whisper Result ready.");
@@ -236,7 +238,7 @@ float ThreadWhisper::ComputeVolume(const std::vector<float> &pcmf32)
 
 void ThreadWhisper::SkipCurrentSpeech()
 {
-    bSkipCurrentSpeech = true;
+    //    bSkipCurrentSpeech = true;
     mtx_whisper_buffer.lock();
     pcmf32.clear();
     pcmf32_new.clear();

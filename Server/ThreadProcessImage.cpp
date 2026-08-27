@@ -44,11 +44,6 @@ int is_dancing = 0;
 #include "SocketBufferParser.hpp" //DataFrame is defined in this hpp file
 #include "ThreadSafeQueue.hpp"
 
-void ThreadProcessImage::SetSettingFile(const QString &filePath)
-{
-    LoadJSONFile(msetting, filePath.toStdString());
-}
-
 ThreadProcessImage::ThreadProcessImage()
 {
     // Initialize the EmotiEffLib
@@ -126,12 +121,6 @@ ThreadProcessImage::ThreadProcessImage()
     m_LastCompassCheckTime = std::chrono::system_clock::now();
     m_bTurningToZero = false;
     m_bBodyAtZero = false;
-
-#ifdef USE_KEBBI
-    s_RobotModel = "Kebbi";
-#elif USE_ZENBO
-    s_RobotModel = "Zenbo";
-#endif
 }
 
 ThreadProcessImage::~ThreadProcessImage()
@@ -244,7 +233,7 @@ void ThreadProcessImage::run()
                     chrono::time_point<chrono::system_clock> protobufTimestamp =
                         protobufTimestampToTimePoint(RTSmessage.event_time());
                     if (iFrameCount == 0 || protobufTimestamp - previous_image_save_time >
-                                                chrono::milliseconds(msetting.iImageSaveIntervalMillisecond))
+                                                chrono::milliseconds(mpsetting->iImageSaveIntervalMillisecond))
                     {
                         const bool bMillisecond = true;
                         mstr_captured_timestamp =
@@ -291,21 +280,21 @@ void ThreadProcessImage::run()
                 mtx_UpdateOutFrame.lock();
                 // ToDo: remove this variable.
                 // if( b_HumanPoseEstimation)
-                if (msetting.bHumanPoseEstimation)
+                if (mpsetting->bHumanPoseEstimation)
                 {
                     mtx_Task.lock();
                     bool use_Yolo11n_Pose = true;
-                    if (msetting.PoseEstimationModel == "Yolo11n_Pose")
+                    if (mpsetting->PoseEstimationModel == "Yolo11n_Pose")
                     {
                         use_Yolo11n_Pose = true;
                     }
-                    else if (msetting.PoseEstimationModel == "MediaPipe_Pose")
+                    else if (mpsetting->PoseEstimationModel == "MediaPipe_Pose")
                     {
                         use_Yolo11n_Pose = false;
                     }
                     else
                     {
-                        cout << "Unknown PoseEstimationModel: " << msetting.PoseEstimationModel
+                        cout << "Unknown PoseEstimationModel: " << mpsetting->PoseEstimationModel
                              << ". Use Yolo11n_Pose by default." << endl;
                         use_Yolo11n_Pose = true;
                     }
@@ -376,7 +365,7 @@ void ThreadProcessImage::run()
                 }
 
                 // Draw hand landmarks
-                if (msetting.bHandLandmarkDetection)
+                if (mpsetting->bHandLandmarkDetection)
                 {
                     if (!libmp_hand->Process2(inputImage))
                     {
@@ -412,9 +401,9 @@ void ThreadProcessImage::run()
                 }
 
                 std::vector<std::vector<std::array<float, 3>>> NL_faces; // normalized_landmarks;
-                if (msetting.bFaceDetection)
+                if (mpsetting->bFaceDetection)
                 {
-                    if (msetting.FaceDetectionModel == "InspireFace")
+                    if (mpsetting->FaceDetectionModel == "InspireFace")
                     {
                         // Use InspireFace to detect faces.
                         HFImageBitmapData imageBitmapData;
@@ -565,7 +554,7 @@ void ThreadProcessImage::run()
                         }
                         HFReleaseImageStream(imageHandle);
                     }
-                    else if (msetting.FaceDetectionModel == "MediaPipe_Face")
+                    else if (mpsetting->FaceDetectionModel == "MediaPipe_Face")
                     {
                         // Use MediaPipe to detect faces.
                         if (!libmp_face->Process2(inputImage))
@@ -615,7 +604,7 @@ void ThreadProcessImage::run()
                                 // I sitll don't know why. But if I disable this imshow(),
                                 // Hinton works fine.
                                 //                            cv::imshow("Cropped face", face);
-                                if (msetting.bFacialExpressionRecognition)
+                                if (mpsetting->bFacialExpressionRecognition)
                                 {
                                     auto res =
                                         fer->predictEmotions(face, false); // false will return the softmax scores
@@ -644,7 +633,7 @@ void ThreadProcessImage::run()
                                 // Get face recognition features
                                 // Although there is only one face, the dlib face recognition
                                 // model needs a vector of faces as input.
-                                if (msetting.bUseDlibForFaceRecognition)
+                                if (mpsetting->bUseDlibForFaceRecognition)
                                 {
 #ifdef USE_dlib
                                     std::vector<dlib::matrix<dlib::rgb_pixel>> faces;
@@ -683,7 +672,7 @@ void ThreadProcessImage::run()
                     }
                     else
                     {
-                        cout << "Unknown FaceDetectionModel: " << msetting.FaceDetectionModel
+                        cout << "Unknown FaceDetectionModel: " << mpsetting->FaceDetectionModel
                              << ". Use InspireFace by default." << endl;
                     }
                 }

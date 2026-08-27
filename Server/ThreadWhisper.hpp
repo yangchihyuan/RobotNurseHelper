@@ -13,6 +13,7 @@
 #include "silero-vad-onnx.hpp"
 #include "Logger.hpp"
 #include "utility_time.hpp"
+#include "Setting.hpp"
 
 using namespace std;
 
@@ -60,7 +61,7 @@ public:
     ~ThreadWhisper();
 
     bool b_WhileLoop = true;
-    QBuffer *pOperatorBuffer = NULL; // This buffer is used by operator.
+    QBuffer *pOperatorBuffer = nullptr; // This buffer is used by operator.
     bool bOperatorBuffer_open = false;
     std::vector<float> pcmf32;
     std::vector<float> pcmf32_new;
@@ -79,10 +80,11 @@ public:
     void ClearBuffer();
     void SkipCurrentSpeech();
 
-    VadIterator *pVad = NULL; // This is the Silero VAD iterator.
+    VadIterator *pVad = nullptr; // This is the Silero VAD iterator.
 
     WhisperData getLatestResult();
-    Logger *mpLogger = NULL; // This is the logger pointer. It is used to log the whisper result.
+    Logger *mpLogger = nullptr; // This is the logger pointer. It is used to log the whisper result.
+    Setting *mpsetting = nullptr;
 
 protected:
     void run();

@@ -24,20 +24,9 @@ void ThreadReceiveMessage::run()
             {
                 if (RTSmessage.description() == "onTTSComplete")
                 {
-                    // debug
-                    {
-                        //                        google::protobuf::Timestamp timestamp = RTSmessage.event_time();
-                        //                        cout << "Receive Protobuf onTTSComplete signal, whose time is " << ConvertTimeToString(protobufTimestampToTimePoint(timestamp)) << endl;
-                        //                        cout << "On received moment, system time is " << GetCurrentTimeString() << endl;
-                        // They are not the same. It is difficult to control.
-                        // System time may be smaller than the Protobuf time, which shoes that the two clock is not synchronized.
-                    }
-                    // notify ThreadStateControl
-                    // 2025/8/20, The robot time is different from the server's time
-                    // mpThreadStateControl->NotifyEvent("onTTSComplete", protobufTimestampToTimePoint(timestamp));
-                    // I have to use the server's time.
                     mpThreadStateControl->NotifyEvent("onTTSComplete", chrono::system_clock::now());
-                    //                    mpWhisper->SkipCurrentSpeech(); // skip the current speech, because the robot has hear its own voice.
+                    if (ms_RobotModel == "ZenboJrII")
+                        mpWhisper->SkipCurrentSpeech(); // skip the current speech, because the robot has hear its own voice.
                     mpLogger->LogToFile("Receive onTTSComplete signal");
                 }
                 else if (RTSmessage.description() == "onCompleteOfMotionPlay")
@@ -64,45 +53,45 @@ void ThreadReceiveMessage::run()
                 {
                 case 1:
                     str_RobotSpeakSentence = "一";
-                    if (s_RobotModel == "Zenbo" || s_RobotModel == "ZenboJrII")
+                    if (ms_RobotModel == "Zenbo" || ms_RobotModel == "ZenboJrII")
                         sFace = "ACTIVE";
-                    else if (s_RobotModel == "Kebbi")
+                    else if (ms_RobotModel == "Kebbi")
                         sFace = "TTS_JoyA";
                     else
                         cout << "Unknown robot model." << endl;
                     break;
                 case 2:
                     str_RobotSpeakSentence = "二";
-                    if (s_RobotModel == "Zenbo" || s_RobotModel == "ZenboJrII")
+                    if (ms_RobotModel == "Zenbo" || ms_RobotModel == "ZenboJrII")
                         sFace = "AWARE_LEFT";
-                    else if (s_RobotModel == "Kebbi")
+                    else if (ms_RobotModel == "Kebbi")
                         sFace = "TTS_JoyB";
                     else
                         cout << "Unknown robot model." << endl;
                     break;
                 case 3:
                     str_RobotSpeakSentence = "三";
-                    if (s_RobotModel == "Zenbo" || s_RobotModel == "ZenboJrII")
+                    if (ms_RobotModel == "Zenbo" || ms_RobotModel == "ZenboJrII")
                         sFace = "AWARE_RIGHT";
-                    else if (s_RobotModel == "Kebbi")
+                    else if (ms_RobotModel == "Kebbi")
                         sFace = "TTS_JoyC";
                     else
                         cout << "Unknown robot model." << endl;
                     break;
                 case 4:
                     str_RobotSpeakSentence = "四";
-                    if (s_RobotModel == "Zenbo" || s_RobotModel == "ZenboJrII")
+                    if (ms_RobotModel == "Zenbo" || ms_RobotModel == "ZenboJrII")
                         sFace = "CONFIDENT";
-                    else if (s_RobotModel == "Kebbi")
+                    else if (ms_RobotModel == "Kebbi")
                         sFace = "TTS_SadnessA";
                     else
                         cout << "Unknown robot model." << endl;
                     break;
                 case 5:
                     str_RobotSpeakSentence = "五";
-                    if (s_RobotModel == "Zenbo" || s_RobotModel == "ZenboJrII")
+                    if (ms_RobotModel == "Zenbo" || ms_RobotModel == "ZenboJrII")
                         sFace = "DOUBTING";
-                    else if (s_RobotModel == "Kebbi")
+                    else if (ms_RobotModel == "Kebbi")
                         sFace = "TTS_SadnessB";
                     else
                         cout << "Unknown robot model." << endl;

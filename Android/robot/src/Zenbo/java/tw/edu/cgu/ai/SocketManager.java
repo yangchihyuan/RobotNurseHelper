@@ -53,7 +53,6 @@ public class SocketManager {
     String endString = "EndOfADataFrame";
 
     public RobotAPI mRobotAPI;
-    ArrayList<RobotCommandOuterClass.RobotCommand> ArrayListCommand = new ArrayList<RobotCommandOuterClass.RobotCommand>();
 
     public MediaPlayer mediaPlayer;
     public MediaPlayer mediaPlayer2;
@@ -63,178 +62,184 @@ public class SocketManager {
     public void startReceiveCommands()
     {
         //Debug information 2025/4/17. I need to complete this runnable bofore post it again. If there are two runnables in a handler, behaviors become unknown.
-        handlerReceiveCommand.post(new Runnable() {
-            @Override
-            public void run() {
-                mbReceiveCommand = true;
-                while(mbReceiveCommand) {
+        if (handlerReceiveCommand != null) {
+            handlerReceiveCommand.post(new Runnable() {
+                @Override
+                public void run() {
+                    mbReceiveCommand = true;
+                    while(mbReceiveCommand) {
 //                    Log.d ("mbReceiveCommand","still running");
-                    if (mSocketReceiveCommand != null && mSocketReceiveCommand.isConnected()) {
-                        //debug
-                        Log.d ("mbReceiveCommand","Enter if");
-                        try {
-                            BufferedInputStream dIn = new BufferedInputStream(mSocketReceiveCommand.getInputStream());
+                        if (mSocketReceiveCommand != null && mSocketReceiveCommand.isConnected()) {
                             //debug
-//                            Log.d("BufferedInputStream", "created");
-                            int length = 4096;
-                            byte[] message = new byte[length];
-                            int bytesRead = dIn.read(message, 0, length);
-                            //debug
-                            Log.d("bytesRead", Integer.toString((bytesRead)));
-                            if (bytesRead != -1) {
-                                System.arraycopy(message, 0, mMessagePool, effective_length, bytesRead);
-                                effective_length += bytesRead;
-                                String string = new String(mMessagePool, 0, effective_length, StandardCharsets.US_ASCII);
-
-                                int iBegin = string.indexOf(beginString);
-                                int iEnd = string.indexOf(endString);
-                                Log.d("iBegin", Integer.toString((iBegin)));
-                                Log.d("iEnd", Integer.toString((iEnd)));
-                                if (iBegin != -1 && iEnd != -1) {
-                                    byte[] slice = Arrays.copyOfRange(mMessagePool, iBegin + beginString.length(), iEnd);
-                                    int remaining = effective_length - (iEnd + endString.length());
-                                    if (remaining > 0) {
-                                        System.arraycopy(mMessagePool, (iEnd + endString.length()), mMessagePool, 0, remaining);
-                                    }
-                                    effective_length = remaining;
-
-                                    RobotCommandOuterClass.RobotCommand command = RobotCommandOuterClass.RobotCommand.parseFrom(slice);
-                                    Log.d("Debug", "Receive a message" + command.toString());
-                                    if (command.hasX()) {
-                                        Log.d("move body", command.toString());
-                                        int serial = mRobotAPI.motion.moveBody(((float) command.getX()) / 100.0f, ((float) command.getY()) / 100.0f, command.getDegree());
-                                        //The serial number will appear in the callback function.
-                                    }
-                                    //rotate only
-                                    if (!command.hasX() && !command.hasY() && command.hasDegree()) {
-                                        Log.d("rotate body", command.toString());
-                                        int serial = mRobotAPI.motion.moveBody(0.0f, 0.0f, command.getDegree());
-                                        //The serial number will appear in the callback function.
-                                    }
-                                    if (command.hasYaw()) {
-                                        MotionControl.SpeedLevel.Head speed;
-                                        switch (command.getHeadspeed()) {
-                                            case 1:
-                                                speed = MotionControl.SpeedLevel.Head.L1;
-                                                break;
-                                            case 2:
-                                                speed = MotionControl.SpeedLevel.Head.L2;
-                                                break;
-                                            default:
-                                                speed = MotionControl.SpeedLevel.Head.L3;
-                                        }
-                                        mRobotAPI.motion.moveHead(command.getYaw(), command.getPitch(), speed);
-                                    }
-                                    if( command.hasSface() && command.hasSpeakSentence())
-                                    {
-                                        RobotFace newFace = Converter.sFaceToRobotFace(command.getSface());
-                                        String sentence = command.getSpeakSentence();
-                                        int volume = command.hasVolume() ? command.getVolume() : 100;
-                                        int speed = command.hasSpeed() ? command.getSpeed() : 100;
-                                        int pitch = command.hasSpeakPitch() ? command.getSpeakPitch() : 100;
-
-                                        Log.d("RobotAction", String.format("Unified Expression: Face=%s, Sentence='%s', Vol=%d, Speed=%d, Pitch=%d",
-                                                newFace.name(), sentence, volume, speed, pitch));
-
-                                        ExpressionConfig config = new ExpressionConfig();
-                                        config.volume(volume).speed(speed).pitch(pitch);
-                                        mRobotAPI.robot.setExpression(newFace, sentence, config);
-                                        //For Zenbo, this first setExpression will launch the warning message.
-                                    } else if (command.hasFace() && command.hasSpeakSentence()) {
-                                        Log.d("command", command.toString());
-                                        RobotFace newFace = Converter.FaceIndexToRobotFace(command.getFace());
-                                        String sentence = command.getSpeakSentence();
-                                        int volume = command.hasVolume() ? command.getVolume() : 100;
-                                        int speed = command.hasSpeed() ? command.getSpeed() : 100;
-                                        int pitch = command.hasSpeakPitch() ? command.getSpeakPitch() : 100;
-
-                                        Log.d("RobotAction", String.format("Unified Expression (Index): Face=%s, Sentence='%s', Vol=%d, Speed=%d, Pitch=%d",
-                                                newFace.name(), sentence, volume, speed, pitch));
-
-                                        ExpressionConfig config = new ExpressionConfig();
-                                        config.volume(volume).speed(speed).pitch(pitch);
-                                        mRobotAPI.robot.setExpression(newFace, sentence, config);
-                                    } else if (command.hasSpeakSentence()) {
-                                        Log.d("Speak Sentence", command.getSpeakSentence());
-                                        SpeakConfig config = new SpeakConfig();
-                                        int volume = command.hasVolume() ? command.getVolume() : 100;
-                                        int speed = command.hasSpeed() ? command.getSpeed() : 100;
-                                        int pitch = command.hasSpeakPitch() ? command.getSpeakPitch() : 100;
-                                        config.volume(volume).speed(speed).pitch(pitch);
-                                        mRobotAPI.robot.speak(command.getSpeakSentence(), config);
-                                    } else if (command.hasFace()) {
-                                        RobotFace newFace = Converter.FaceIndexToRobotFace(command.getFace());
-                                        mRobotAPI.robot.setExpression(newFace);
-                                        Log.d("RobotAction", String.format("Unified Expression (Index): Face=%s", newFace.name()));
-                                    }
-
-
-                                    if (command.hasStopmove()) {
-                                        mRobotAPI.motion.stopMoving();   //this function does not work.
-                                    }
-                                    if (command.hasPredefinedAction()) {
-                                        //it will still return a serial, but for loop action, will the onResult() in the CallBack be called?
-                                        int serial = mRobotAPI.utility.playAction(Converter.PredefinedActionIndexToPlayAction(command.getPredefinedAction()));
-                                    }
-                                    if (command.hasHideface()) {
-                                        if (command.getHideface()) {
-                                            RobotFace newFace = RobotFace.HIDEFACE;
-                                            mRobotAPI.robot.setExpression(newFace);
-                                        }
-                                    }
-                                    if (command.hasSong()) {
-                                        if( command.getSong() == 0) {
-                                            if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
-                                                mediaPlayer.start();
-                                            }
-                                        }
-                                        else if( command.getSong() == 1) {
-                                            if (mediaPlayer2 != null && !mediaPlayer2.isPlaying()) {
-                                                mediaPlayer2.start();
-                                            }
-                                        }
-                                    }
-                                    if(command.hasStopsong())
-                                    {
-                                        if( mediaPlayer2.isPlaying()){
-                                            mediaPlayer2.stop();
-                                            mediaPlayer2.prepare();
-                                        }
-                                    }
-                                    if( command.hasSmotion())
-                                    {
-                                        int serial = mRobotAPI.utility.playAction(Converter.sMotionToPlayAction(command.getSmotion()));
-                                    }
-                                    if( command.hasKillapp() && command.getKillapp())
-                                    {
-                                        //This is the correct one
-                                        android.os.Process.killProcess(android.os.Process.myPid());
-                                        // this function only kill this activity
-                                        //activity.finish();
-                                    }
-                                }
-                            } else {
-                                //sleep 30 msecs;
-                                sleep(30);
-                            }
-                        } catch (Exception e) {
-                            Log.e("Exception", e.getMessage());
+                            Log.d ("mbReceiveCommand","Enter if");
                             try {
-                                mSocketReceiveCommand.close();
-                            }
-                            catch( Exception e2)
-                            {
-                                Log.d("closing socket fails", "closing socket fails" + e2.getMessage()); //sendto failed: EPIPE (Broken pipe)
-                            }
-                            finally
-                            {
-                                mSocketReceiveCommand = null;
+                                BufferedInputStream dIn = new BufferedInputStream(mSocketReceiveCommand.getInputStream());
+                                //debug
+//                            Log.d("BufferedInputStream", "created");
+                                int length = 4096;
+                                byte[] message = new byte[length];
+                                int bytesRead = dIn.read(message, 0, length);
+                                //debug
+                                Log.d("bytesRead", Integer.toString((bytesRead)));
+                                if (bytesRead != -1) {
+                                    System.arraycopy(message, 0, mMessagePool, effective_length, bytesRead);
+                                    effective_length += bytesRead;
+                                    String string = new String(mMessagePool, 0, effective_length, StandardCharsets.US_ASCII);
+
+                                    int iBegin = string.indexOf(beginString);
+                                    int iEnd = string.indexOf(endString);
+                                    Log.d("iBegin", Integer.toString((iBegin)));
+                                    Log.d("iEnd", Integer.toString((iEnd)));
+                                    if (iBegin != -1 && iEnd != -1) {
+                                        byte[] slice = Arrays.copyOfRange(mMessagePool, iBegin + beginString.length(), iEnd);
+                                        int remaining = effective_length - (iEnd + endString.length());
+                                        if (remaining > 0) {
+                                            System.arraycopy(mMessagePool, (iEnd + endString.length()), mMessagePool, 0, remaining);
+                                        }
+                                        effective_length = remaining;
+
+                                        RobotCommandOuterClass.RobotCommand command = RobotCommandOuterClass.RobotCommand.parseFrom(slice);
+                                        Log.d("Debug", "Receive a message" + command.toString());
+                                        if (command.hasX()) {
+                                            Log.d("move body", command.toString());
+                                            int serial = mRobotAPI.motion.moveBody(((float) command.getX()) / 100.0f, ((float) command.getY()) / 100.0f, command.getDegree());
+                                            //The serial number will appear in the callback function.
+                                        }
+                                        //rotate only
+                                        if (!command.hasX() && !command.hasY() && command.hasDegree()) {
+                                            Log.d("rotate body", command.toString());
+                                            int serial = mRobotAPI.motion.moveBody(0.0f, 0.0f, command.getDegree());
+                                            //The serial number will appear in the callback function.
+                                        }
+                                        if (command.hasYaw()) {
+                                            MotionControl.SpeedLevel.Head speed;
+                                            switch (command.getHeadspeed()) {
+                                                case 1:
+                                                    speed = MotionControl.SpeedLevel.Head.L1;
+                                                    break;
+                                                case 2:
+                                                    speed = MotionControl.SpeedLevel.Head.L2;
+                                                    break;
+                                                default:
+                                                    speed = MotionControl.SpeedLevel.Head.L3;
+                                            }
+                                            mRobotAPI.motion.moveHead(command.getYaw(), command.getPitch(), speed);
+                                        }
+                                        if( command.hasSface() && command.hasSpeakSentence())
+                                        {
+                                            RobotFace newFace = Converter.sFaceToRobotFace(command.getSface());
+                                            String sentence = command.getSpeakSentence();
+                                            int volume = command.hasVolume() ? command.getVolume() : 100;
+                                            int speed = command.hasSpeed() ? command.getSpeed() : 100;
+                                            int pitch = command.hasSpeakPitch() ? command.getSpeakPitch() : 100;
+
+                                            Log.d("RobotAction", String.format("Unified Expression: Face=%s, Sentence='%s', Vol=%d, Speed=%d, Pitch=%d",
+                                                    newFace.name(), sentence, volume, speed, pitch));
+
+                                            ExpressionConfig config = new ExpressionConfig();
+                                            config.volume(volume).speed(speed).pitch(pitch);
+                                            mRobotAPI.robot.setExpression(newFace, sentence, config);
+                                            //For Zenbo, this first setExpression will launch the warning message.
+                                        } else if (command.hasFace() && command.hasSpeakSentence()) {
+                                            Log.d("command", command.toString());
+                                            RobotFace newFace = Converter.FaceIndexToRobotFace(command.getFace());
+                                            String sentence = command.getSpeakSentence();
+                                            int volume = command.hasVolume() ? command.getVolume() : 100;
+                                            int speed = command.hasSpeed() ? command.getSpeed() : 100;
+                                            int pitch = command.hasSpeakPitch() ? command.getSpeakPitch() : 100;
+
+                                            Log.d("RobotAction", String.format("Unified Expression (Index): Face=%s, Sentence='%s', Vol=%d, Speed=%d, Pitch=%d",
+                                                    newFace.name(), sentence, volume, speed, pitch));
+
+                                            ExpressionConfig config = new ExpressionConfig();
+                                            config.volume(volume).speed(speed).pitch(pitch);
+                                            mRobotAPI.robot.setExpression(newFace, sentence, config);
+                                        } else if (command.hasSpeakSentence()) {
+                                            Log.d("Speak Sentence", command.getSpeakSentence());
+                                            SpeakConfig config = new SpeakConfig();
+                                            int volume = command.hasVolume() ? command.getVolume() : 100;
+                                            int speed = command.hasSpeed() ? command.getSpeed() : 100;
+                                            int pitch = command.hasSpeakPitch() ? command.getSpeakPitch() : 100;
+                                            config.volume(volume).speed(speed).pitch(pitch);
+                                            mRobotAPI.robot.speak(command.getSpeakSentence(), config);
+                                        } else if (command.hasFace()) {
+                                            RobotFace newFace = Converter.FaceIndexToRobotFace(command.getFace());
+                                            mRobotAPI.robot.setExpression(newFace);
+                                            Log.d("RobotAction", String.format("Unified Expression (Index): Face=%s", newFace.name()));
+                                        }
+
+
+                                        if (command.hasStopmove()) {
+                                            mRobotAPI.motion.stopMoving();   //this function does not work.
+                                        }
+                                        if (command.hasPredefinedAction()) {
+                                            //it will still return a serial, but for loop action, will the onResult() in the CallBack be called?
+                                            int serial = mRobotAPI.utility.playAction(Converter.PredefinedActionIndexToPlayAction(command.getPredefinedAction()));
+                                        }
+                                        if (command.hasHideface()) {
+                                            if (command.getHideface()) {
+                                                RobotFace newFace = RobotFace.HIDEFACE;
+                                                mRobotAPI.robot.setExpression(newFace);
+                                            }
+                                        }
+                                        if (command.hasSong()) {
+                                            if( command.getSong() == 0) {
+                                                if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
+                                                    mediaPlayer.start();
+                                                }
+                                            }
+                                            else if( command.getSong() == 1) {
+                                                if (mediaPlayer2 != null && !mediaPlayer2.isPlaying()) {
+                                                    mediaPlayer2.start();
+                                                }
+                                            }
+                                        }
+                                        if(command.hasStopsong())
+                                        {
+                                            if( mediaPlayer2 != null && mediaPlayer2.isPlaying()){
+                                                mediaPlayer2.stop();
+                                                mediaPlayer2.prepare();
+                                            }
+                                        }
+                                        if( command.hasSmotion())
+                                        {
+                                            int serial = mRobotAPI.utility.playAction(Converter.sMotionToPlayAction(command.getSmotion()));
+                                        }
+                                        if( command.hasKillapp() && command.getKillapp())
+                                        {
+                                            //This is the correct one
+                                            android.os.Process.killProcess(android.os.Process.myPid());
+                                            // this function only kill this activity
+                                            //activity.finish();
+                                        }
+                                        if( command.hasStopSpeaking() && command.getStopSpeaking())
+                                        {
+                                            mRobotAPI.robot.stopSpeak();
+                                        }
+                                    }
+                                } else {
+                                    //sleep 30 msecs;
+                                    sleep(30);
+                                }
+                            } catch (Exception e) {
+                                Log.e("Exception", e.getMessage() != null ? e.getMessage() : "Unknown error");
+                                try {
+                                    mSocketReceiveCommand.close();
+                                }
+                                catch( Exception e2)
+                                {
+                                    Log.d("closing socket fails", "closing socket fails" + e2.getMessage()); //sendto failed: EPIPE (Broken pipe)
+                                }
+                                finally
+                                {
+                                    mSocketReceiveCommand = null;
+                                }
                             }
                         }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     public void stopReceiveCommands()
@@ -290,78 +295,88 @@ public class SocketManager {
     }
 
     public void startThreads() {
-        threadSendToServer = new HandlerThread("threadSendToServer");
-        threadSendToServer.start();
-        handlerSendToServer = new Handler(threadSendToServer.getLooper());
+        if (threadSendToServer == null || !threadSendToServer.isAlive()) {
+            threadSendToServer = new HandlerThread("threadSendToServer");
+            threadSendToServer.start();
+            handlerSendToServer = new Handler(threadSendToServer.getLooper());
+        }
 
-        threadReceiveCommand = new HandlerThread(("threadReceiveCommand"));
-        threadReceiveCommand.start();
-        handlerReceiveCommand = new Handler(threadReceiveCommand.getLooper());
+        if (threadReceiveCommand == null || !threadReceiveCommand.isAlive()) {
+            threadReceiveCommand = new HandlerThread(("threadReceiveCommand"));
+            threadReceiveCommand.start();
+            handlerReceiveCommand = new Handler(threadReceiveCommand.getLooper());
+        }
 
-        threadCheckDiconnection = new HandlerThread(("threadCheckDisconnection"));
-        threadCheckDiconnection.start();
-        handlerCheckDiconnection = new Handler(threadCheckDiconnection.getLooper());
+        if (threadCheckDiconnection == null || !threadCheckDiconnection.isAlive()) {
+            threadCheckDiconnection = new HandlerThread(("threadCheckDisconnection"));
+            threadCheckDiconnection.start();
+            handlerCheckDiconnection = new Handler(threadCheckDiconnection.getLooper());
+        }
 
-        threadSendAudio = new HandlerThread(("threadSendAudio"));
-        threadSendAudio.start();
-        handlerSendAudio = new Handler(threadSendAudio.getLooper());
+        if (threadSendAudio == null || !threadSendAudio.isAlive()) {
+            threadSendAudio = new HandlerThread(("threadSendAudio"));
+            threadSendAudio.start();
+            handlerSendAudio = new Handler(threadSendAudio.getLooper());
+        }
     }
 
     public void startDisconnectionChecker()
     {
         bAutoReconnection = true;
-        handlerCheckDiconnection.post(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    //Debug Info 25/4/22: This sleep is necenssary. Otherwise, this thread will send another set of connection request.
-                    //The establishment of socket connection takes time.
-                    sleep(3000);
-                } catch (Exception e) {
-                    Log.e("SocketManager", "sleep fails " + e.getMessage());
-                }
+        if (handlerCheckDiconnection != null) {
+            handlerCheckDiconnection.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        //Debug Info 25/4/22: This sleep is necenssary. Otherwise, this thread will send another set of connection request.
+                        //The establishment of socket connection takes time.
+                        sleep(3000);
+                    } catch (Exception e) {
+                        Log.e("SocketManager", "sleep fails " + e.getMessage());
+                    }
 
-                while(bAutoReconnection) {
-                    Log.d("autoReconnection", "enableAutoReconnection");
-                    if( mSocketSendImages == null)
-                        //launch anther thread to connect sockets
-                        for( int i=0; i<200; i++) {
-                            if( bAutoReconnection == false)   //The user may cancel the connection while the for loop is running.
-                                break;
-                            connectSockets();
-                            //wait at least for 3 second
-                            int sleeptime = (int) Math.pow(2.0, i);
-                            if( sleeptime < 3000)
-                                sleeptime = 3000;
-                            Log.e("SocketManager", Integer.toString(i) + " sleep " + Integer.toString(sleeptime) + " ms");
+                    while(bAutoReconnection) {
+                        Log.d("autoReconnection", "enableAutoReconnection");
+                        if( mSocketSendImages == null)
+                            //launch anther thread to connect sockets
+                            for( int i=0; i<200; i++) {
+                                if( bAutoReconnection == false)   //The user may cancel the connection while the for loop is running.
+                                    break;
+                                connectSockets();
+                                //wait at least for 3 second
+                                int sleeptime = (int) Math.pow(2.0, i);
+                                if( sleeptime < 3000)
+                                    sleeptime = 3000;
+                                Log.e("SocketManager", Integer.toString(i) + " sleep " + Integer.toString(sleeptime) + " ms");
 
+                                try {
+                                    sleep(sleeptime);
+                                } catch (Exception e) {
+                                    Log.e("SocketManager", "sleep fails " + e.getMessage());
+                                }
+                                if(mSocketSendImages != null)
+                                {
+                                    break;
+                                }
+                            }
+                        else {
                             try {
-                                sleep(sleeptime);
+                                sleep(500);
                             } catch (Exception e) {
-                                Log.e("SocketManager", "sleep fails " + e.getMessage());
+                                Log.e("Exception enableAutoReconnection", e.getMessage());
                             }
-                            if(mSocketSendImages != null)
-                            {
-                                break;
-                            }
-                        }
-                    else {
-                        try {
-                            sleep(500);
-                        } catch (Exception e) {
-                            Log.e("Exception enableAutoReconnection", e.getMessage());
                         }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     public void disconnectSockets()
     {
         bAutoReconnection = false;
         try {
-            mSocketSendImages.close();
+            if (mSocketSendImages != null) mSocketSendImages.close();
         } catch (Exception e) {
             Log.e("disconnectSockets SendImages", e.getMessage());
         }
@@ -369,13 +384,13 @@ public class SocketManager {
         //Debug Info 25/4/23: The socketRecieveCommand may be broken by the server-side program's error. Thus, I need to close the three sockets separately.
         //Other, the process will jump out of the try when running this command and skip the mSocketSendAudio.close()
         try {
-            mSocketReceiveCommand.close();
+            if (mSocketReceiveCommand != null) mSocketReceiveCommand.close();
         } catch (Exception e) {
             Log.e("disconnectSockets ReceiveCommand", e.getMessage());
         }
 
         try {
-            mSocketSendAudio.close();
+            if (mSocketSendAudio != null) mSocketSendAudio.close();
         } catch (Exception e) {
             Log.e("disconnectSockets SendAudio", e.getMessage());
         }
@@ -383,26 +398,34 @@ public class SocketManager {
     }
 
     public void stopThreads() {
-        threadSendToServer.quitSafely();
-        threadReceiveCommand.quitSafely();
-        threadCheckDiconnection.quitSafely();
-        threadSendAudio.quitSafely();
+        if (threadSendToServer != null) threadSendToServer.quitSafely();
+        if (threadReceiveCommand != null) threadReceiveCommand.quitSafely();
+        if (threadCheckDiconnection != null) threadCheckDiconnection.quitSafely();
+        if (threadSendAudio != null) threadSendAudio.quitSafely();
         try {
-            threadSendToServer.join();
-            threadSendToServer = null;
-            handlerSendToServer = null;
+            if (threadSendToServer != null) {
+                threadSendToServer.join();
+                threadSendToServer = null;
+                handlerSendToServer = null;
+            }
 
-            threadReceiveCommand.join();
-            threadReceiveCommand = null;
-            handlerReceiveCommand = null;
+            if (threadReceiveCommand != null) {
+                threadReceiveCommand.join();
+                threadReceiveCommand = null;
+                handlerReceiveCommand = null;
+            }
 
-            threadCheckDiconnection.join();
-            threadCheckDiconnection = null;
-            handlerCheckDiconnection = null;
+            if (threadCheckDiconnection != null) {
+                threadCheckDiconnection.join();
+                threadCheckDiconnection = null;
+                handlerCheckDiconnection = null;
+            }
 
-            threadSendAudio.join();
-            threadSendAudio = null;
-            handlerSendAudio = null;
+            if (threadSendAudio != null) {
+                threadSendAudio.join();
+                threadSendAudio = null;
+                handlerSendAudio = null;
+            }
 
         } catch (final InterruptedException e) {
             Log.e("Exception stopThreads", e.getMessage());

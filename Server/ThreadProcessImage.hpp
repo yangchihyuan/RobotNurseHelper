@@ -153,7 +153,8 @@ public:
 
     string GetPatientGender();
     int GetPatientAge();
-    void SetSettingFile(const QString &filePath);
+    //    void SetSettingFile(const QString &filePath);
+    Setting *mpsetting = nullptr;
 
 protected:
     void run();
@@ -178,8 +179,6 @@ protected:
 
     Yolo11Pose yolo11pose;
     std::string mstr_captured_timestamp;
-
-    Setting msetting;
 
     // InspireFace
     HFSession session = {0};

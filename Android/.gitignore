@@ -55,3 +55,5 @@ captures/
 #weird path, I don't know why it is generated.
 app/.cxx/
 
+#Agent
+.artifacts/

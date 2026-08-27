@@ -321,6 +321,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        socketManager.startThreads();
         startThreads();
 
         View decorView = getWindow().getDecorView();
@@ -392,7 +393,14 @@ public class MainActivity extends Activity {
         socketManager.disconnectSockets();
         status = false;
         if( recorder != null) {
-            recorder.release();     //It causes an exception. Why?
+            try {
+                if (recorder.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
+                    recorder.stop();
+                }
+                recorder.release();
+            } catch (Exception e) {
+                Log.e("MainActivity", "Error releasing recorder: " + e.getMessage());
+            }
             recorder = null;
         }
         Log.d("VS","Recorder released");

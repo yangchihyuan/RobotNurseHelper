@@ -13,16 +13,16 @@
 
 using namespace std;
 
-class ThreadStateControl;       //Because ThreadLLM.hpp and ThreadStateControl.hpp include each other, I need to use forward declaration
+class ThreadStateControl; // Because ThreadLLM.hpp and ThreadStateControl.hpp include each other, I need to use forward declaration
 
 struct LLMTask
 {
     string str_message;
     chrono::time_point<std::chrono::system_clock> timestamp;
-    bool bNotify = true;        //Notify the ThreadStateControl
+    bool bNotify = true; // Notify the ThreadStateControl
 };
 
-class ThreadLLM: public QThread
+class ThreadLLM : public QThread
 {
     Q_OBJECT
 
@@ -32,19 +32,17 @@ public:
 
     bool b_WhileLoop = true;
     bool b_new_LLM_response = false;
-    
+
     condition_variable cond_var_thread_LLM;
     string strResponse;
-    
 
     void AddQueue(LLMTask task);
     ThreadStateControl *mpThreadStateControl;
-    void SetSettingFile(const QString &filePath);
+    Setting *mpsetting = nullptr;
 
 protected:
     void run();
     queue<LLMTask> mqueue;
-    Setting msetting;
 };
 
 #endif
