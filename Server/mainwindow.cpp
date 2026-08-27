@@ -207,8 +207,9 @@ void MainWindow::setSettingFile(const QString &filePath)
     thread_LLM.mpsetting = &msetting;
     // thread_process_image.SetSettingFile(filePath);
     thread_process_image.mpsetting = &msetting;
-    //    thread_receive_message.mpsetting = &msetting;
+    thread_receive_message.mpsetting = &msetting;
     thread_receive_message.SetRobotModel(msetting.RobotModel);
+    thread_whisper.mpsetting = &msetting;
 
     ui->checkBox_UseVisualCompass->setChecked(msetting.bUseVisualCompass);
     ui->checkBox_SaveImages->setChecked(msetting.bSaveImages);
@@ -341,7 +342,7 @@ void MainWindow::setLanguage(QString Language)
     if (Language == "Chinese")
     {
         thread_whisper.strLanguage =
-            "zh"; // set language to Chinese (可維持此行不變)
+            "zh"; // set language to Chinese (keep this line as-is)
         SentenceFileName = "Sentence_Chinese.txt";
     }
     else if (Language == "English")

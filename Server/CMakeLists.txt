@@ -13,7 +13,7 @@ FetchContent_MakeAvailable(json) # 2. Download and prepare it NOW
 option(USE_GPU "USE GPU" ON)
 option(COMPILE_WITH_G_FLAG "COMPILE WITH G FLAG" ON)   #if OFF, executable size 2.5MB; if ON, 88MB
 if(NOT DEFINED ROBOT_MODEL)
-  set(ROBOT_MODEL Kebbi)    #default robot model is Kebbi
+  set(ROBOT_MODEL Zenbo)    #default robot model is Zenbo (covers both Zenbo and ZenboJrII hardware; ZenboJrII vs Zenbo is selected at runtime via Setting.json's RobotModel, not at compile time)
 endif()
 
 set(CMAKE_CXX_STANDARD 20)    #17 is not enough, EmotiEffLib's xtensor requires C++20

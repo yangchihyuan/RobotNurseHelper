@@ -1,5 +1,6 @@
 #include "ThreadWhisper.hpp"
 
+#include <algorithm> // for std::max
 #include "common.h" //for vad_simple
 
 ThreadWhisper::ThreadWhisper()
@@ -102,6 +103,54 @@ void ThreadWhisper::run()
         // If the incoming audio data is greater than 0.5 seconds, we will merge them into our pcmf32 buffer. If the pcmf32 buffer is greater than 5 seconds, we will ignore the first-coming data.
         if (bufferlength >= n_samples_step) // n_samples_step = 8000; bufferlength is the new coming audio data.
         {
+            // Track the ambient noise floor on every chunk (fast-attack, slow-release): it snaps
+            // down immediately for a quieter chunk, but only creeps up slowly for a loud one (TTS
+            // echo or genuine speech). That asymmetry is what lets it self-calibrate continuously
+            // without a separate startup calibration step and without being thrown off by echo/speech.
+            float chunkVolume = ComputeVolume(pcmf32_new.data(), bufferlength);
+            if (!bAmbientCalibrated || chunkVolume < mAmbientNoiseFloor)
+            {
+                mAmbientNoiseFloor = chunkVolume;
+                bAmbientCalibrated = true;
+            }
+            else
+            {
+                mAmbientNoiseFloor += (chunkVolume - mAmbientNoiseFloor) * 0.01f;
+            }
+            mAmbientNoiseFloor = std::max(mAmbientNoiseFloor, 1e-6f);
+
+            // Echo-cancellation window (ZenboJrII): drop audio arriving after onTTSComplete until
+            // its volume decays back down to the ambient floor, since the mic can still be picking
+            // up the tail of the robot's own TTS playback. This must happen before the audio is
+            // merged into pcmf32, otherwise the echo can still reach whisper_full().
+            if (bIgnoreWhisperInput)
+            {
+                auto now = chrono::steady_clock::now();
+                bool bPastMinimum = now >= tEchoIgnoreMinUntil;
+                bool bPastMaximum = now >= tEchoIgnoreMaxUntil;
+                bool bDecayedToAmbient = chunkVolume <= mAmbientNoiseFloor * mpsetting->fEchoVolumeThresholdMultiplier;
+
+                if (bPastMaximum)
+                {
+                    bIgnoreWhisperInput = false;
+                    mpLogger->LogToFile("Echo ignore window hit its safety ceiling (iEchoIgnoreMaxMs) without decaying to the ambient floor; resuming Whisper input.");
+                }
+                else if (bPastMinimum && bDecayedToAmbient)
+                {
+                    bIgnoreWhisperInput = false;
+                    mpLogger->LogToFile("Echo volume decayed to the ambient floor; resuming Whisper input.");
+                }
+
+                if (bIgnoreWhisperInput)
+                {
+                    mtx_whisper_buffer.lock();
+                    bufferlength = 0;
+                    mtx_whisper_buffer.unlock();
+                    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                    continue;
+                }
+            }
+
             // n_samples_len = 80000; // 5 seconds, in samples
             mtx_whisper_buffer.lock();
             int n_samples_new = bufferlength;
@@ -185,14 +234,6 @@ void ThreadWhisper::run()
                 tempData.sOutput = strTemp;
                 mpLogger->LogToFile("Generate Whisper Result.");
                 tempData.tSTTComplete = chrono::system_clock::now();
-                /*
-                                if (bSkipCurrentSpeech)
-                                {
-                                    bSkipCurrentSpeech = false;
-                                    mpLogger->LogToFile("SkipCurrentSpeech.");
-                                    continue; // skip the current speech
-                                }
-                */
                 mtx.lock();
                 mResult = tempData;
                 mpLogger->LogToFile("Whisper Result ready.");
@@ -224,15 +265,22 @@ void ThreadWhisper::ClearBuffer()
     mtx_whisper_buffer.unlock();
 }
 
-// Compute the volume of the audio signal, too simple to take an affect
+// Compute the mean-square volume of an audio signal.
 float ThreadWhisper::ComputeVolume(const std::vector<float> &pcmf32)
 {
+    return ComputeVolume(pcmf32.data(), pcmf32.size());
+}
+
+float ThreadWhisper::ComputeVolume(const float *data, size_t n)
+{
+    if (n == 0)
+        return 0.0f;
     float volume = 0.0f;
-    for (size_t i = 0; i < pcmf32.size(); ++i)
+    for (size_t i = 0; i < n; ++i)
     {
-        volume += pcmf32[i] * pcmf32[i];
+        volume += data[i] * data[i];
     }
-    volume /= pcmf32.size();
+    volume /= n;
     return volume;
 }
 
@@ -245,4 +293,20 @@ void ThreadWhisper::SkipCurrentSpeech()
     bufferlength = 0;
     strTemp = "";
     mtx_whisper_buffer.unlock();
+}
+
+void ThreadWhisper::StartEchoIgnoreWindow()
+{
+    // Drop whatever we already have (it may be the tail of the robot's own TTS audio).
+    // The window is then released adaptively in run(), once live volume decays back
+    // down to mAmbientNoiseFloor, bounded by iEchoIgnoreMinMs/iEchoIgnoreMaxMs.
+    SkipCurrentSpeech();
+
+    int minMs = (mpsetting != nullptr) ? mpsetting->iEchoIgnoreMinMs : 150;
+    int maxMs = (mpsetting != nullptr) ? mpsetting->iEchoIgnoreMaxMs : 2000;
+    auto now = chrono::steady_clock::now();
+    bIgnoreWhisperInput = true;
+    tEchoIgnoreMinUntil = now + chrono::milliseconds(minMs);
+    tEchoIgnoreMaxUntil = now + chrono::milliseconds(maxMs);
+    mpLogger->LogToFile("Starting adaptive echo ignore window (ambient floor " + std::to_string(mAmbientNoiseFloor) + ") after onTTSComplete.");
 }

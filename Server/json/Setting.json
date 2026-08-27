@@ -6,7 +6,7 @@
     "bSaveImages": true,
     "iImageSaveIntervalMillisecond": 5000,
     "bFacialExpressionRecognition": false,
-    "bHumanPoseEstimation": true,
+    "bHumanPoseEstimation": false,
     "PoseEstimationModel": "MediaPipe_Pose",        //Yolo11n_Pose, MediaPipe_Pose
     "bHandLandmarkDetection": false,
     "bUseDlibForFaceRecognition": false,
@@ -21,5 +21,11 @@
     "AnythingLLM_workspace_slug": "cataract",
     "Machine": "PC",                      //AGXOrin, PC
     "bHideCursor": true,
-    "iTextFontSize": 48
+    "iTextFontSize": 48,
+    "LogDirectory": "logs",
+    "LogFileName": "server.log",
+    "RobotModel": "ZenboJrII",
+    "iEchoIgnoreMinMs": 150,
+    "iEchoIgnoreMaxMs": 2000,
+    "fEchoVolumeThresholdMultiplier": 2.0
 }

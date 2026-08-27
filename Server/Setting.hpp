@@ -35,8 +35,16 @@ struct Setting
     string LogDirectory = "$HOME/RobotNurseHelper/Server/logs";
     string LogFileName = "RobotNurseHelper.log";
     string RobotModel = "ZenboJrII"; // Zenbo, ZenboJrII, Kebbi
+
+    // ZenboJrII echo-cancellation tuning. The actual ignore duration is adaptive (ThreadWhisper
+    // tracks the live microphone volume against a continuously self-calibrating ambient noise
+    // floor and releases the ignore window once the echo has decayed), so these are safety
+    // rails rather than a value you need to hand-tune per room:
+    int iEchoIgnoreMinMs = 150;             // never release the window before this much time has passed, even if volume already looks quiet (covers onset artifacts)
+    int iEchoIgnoreMaxMs = 2000;            // release the window after this long regardless, in case the echo never decays below threshold (e.g. noisy room)
+    float fEchoVolumeThresholdMultiplier = 2.0f; // release once live volume <= ambient_floor * this multiplier
 };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Setting, StateControlFile, bServerPlaysRobotReceivedAudio, bVideoWindowFullScreen, bShowPreviewWindow, bSaveImages, iImageSaveIntervalMillisecond, bFacialExpressionRecognition, bHumanPoseEstimation, bHandLandmarkDetection, bUseDlibForFaceRecognition, bFaceDetection, PoseEstimationModel, FaceDetectionModel, bUseVisualCompass, WhisperModel, ImageSaveDirectory, LanguageModel, Language, AnythingLLM_API_key, AnythingLLM_workspace_slug, bHideCursor, Machine, LogDirectory, LogFileName, RobotModel)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Setting, StateControlFile, bServerPlaysRobotReceivedAudio, bVideoWindowFullScreen, bShowPreviewWindow, bSaveImages, iImageSaveIntervalMillisecond, bFacialExpressionRecognition, bHumanPoseEstimation, bHandLandmarkDetection, bUseDlibForFaceRecognition, bFaceDetection, PoseEstimationModel, FaceDetectionModel, bUseVisualCompass, WhisperModel, ImageSaveDirectory, LanguageModel, Language, AnythingLLM_API_key, AnythingLLM_workspace_slug, bHideCursor, Machine, LogDirectory, LogFileName, RobotModel, iEchoIgnoreMinMs, iEchoIgnoreMaxMs, fEchoVolumeThresholdMultiplier)
 
 #endif // SETTING_HPP

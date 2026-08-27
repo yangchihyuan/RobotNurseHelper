@@ -26,7 +26,7 @@ void ThreadReceiveMessage::run()
                 {
                     mpThreadStateControl->NotifyEvent("onTTSComplete", chrono::system_clock::now());
                     if (ms_RobotModel == "ZenboJrII")
-                        mpWhisper->SkipCurrentSpeech(); // skip the current speech, because the robot has hear its own voice.
+                        mpWhisper->StartEchoIgnoreWindow(); // Ignore Whisper input for a short buffer after TTS ends, because ZenboJrII's mic can still pick up the tail of its own voice.
                     mpLogger->LogToFile("Receive onTTSComplete signal");
                 }
                 else if (RTSmessage.description() == "onCompleteOfMotionPlay")
@@ -45,6 +45,8 @@ void ThreadReceiveMessage::run()
             {
                 int numberpressed = RTSmessage.numberpressed();
 
+                static const string sDigitWords[5] = {"One", "Two", "Three", "Four", "Five"};
+
                 std::string str_RobotSpeakSentence;
                 int RobotExpressionIndex = 0;
                 string sFace = "Unknown";
@@ -52,7 +54,7 @@ void ThreadReceiveMessage::run()
                 switch (numberpressed)
                 {
                 case 1:
-                    str_RobotSpeakSentence = "一";
+                    str_RobotSpeakSentence = sDigitWords[0];
                     if (ms_RobotModel == "Zenbo" || ms_RobotModel == "ZenboJrII")
                         sFace = "ACTIVE";
                     else if (ms_RobotModel == "Kebbi")
@@ -61,7 +63,7 @@ void ThreadReceiveMessage::run()
                         cout << "Unknown robot model." << endl;
                     break;
                 case 2:
-                    str_RobotSpeakSentence = "二";
+                    str_RobotSpeakSentence = sDigitWords[1];
                     if (ms_RobotModel == "Zenbo" || ms_RobotModel == "ZenboJrII")
                         sFace = "AWARE_LEFT";
                     else if (ms_RobotModel == "Kebbi")
@@ -70,7 +72,7 @@ void ThreadReceiveMessage::run()
                         cout << "Unknown robot model." << endl;
                     break;
                 case 3:
-                    str_RobotSpeakSentence = "三";
+                    str_RobotSpeakSentence = sDigitWords[2];
                     if (ms_RobotModel == "Zenbo" || ms_RobotModel == "ZenboJrII")
                         sFace = "AWARE_RIGHT";
                     else if (ms_RobotModel == "Kebbi")
@@ -79,7 +81,7 @@ void ThreadReceiveMessage::run()
                         cout << "Unknown robot model." << endl;
                     break;
                 case 4:
-                    str_RobotSpeakSentence = "四";
+                    str_RobotSpeakSentence = sDigitWords[3];
                     if (ms_RobotModel == "Zenbo" || ms_RobotModel == "ZenboJrII")
                         sFace = "CONFIDENT";
                     else if (ms_RobotModel == "Kebbi")
@@ -88,7 +90,7 @@ void ThreadReceiveMessage::run()
                         cout << "Unknown robot model." << endl;
                     break;
                 case 5:
-                    str_RobotSpeakSentence = "五";
+                    str_RobotSpeakSentence = sDigitWords[4];
                     if (ms_RobotModel == "Zenbo" || ms_RobotModel == "ZenboJrII")
                         sFace = "DOUBTING";
                     else if (ms_RobotModel == "Kebbi")

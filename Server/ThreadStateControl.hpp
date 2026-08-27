@@ -109,7 +109,7 @@ protected:
     Setting msetting;
 
     string msPatientName = "";  // default name is "patient"
-    string msPatientTitle = ""; // 先生 or 小姐, default is empty string. It is determined by the LLM result of patient name. If the patient name ends with "先生", then the title is "先生". If the patient name ends with "小姐", then the title is "小姐". Otherwise, the title is "".
+    string msPatientTitle = ""; // e.g. "Mr." or "Miss". Default is an empty string; it is derived from the patient's age/gender via m_mapPatientTitles in ReplaceVariables().
     string GetPatientName(string input_sentence);
     std::map<std::string, std::string> m_mapPatientTitles;
     void LoadPatientTitles();

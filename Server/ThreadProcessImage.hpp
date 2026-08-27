@@ -46,7 +46,7 @@ struct DataFrame;
 
 // InspireFace
 #include "inspireface.h"
-#include "herror.h" // 為了使用 HSUCCEED
+#include "herror.h" // needed for HSUCCEED
 
 // using namespace dlib;
 #ifdef USE_dlib

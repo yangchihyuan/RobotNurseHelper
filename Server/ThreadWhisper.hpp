@@ -80,6 +80,15 @@ public:
     void ClearBuffer();
     void SkipCurrentSpeech();
 
+    // Echo-cancellation for TTS self-hearing (ZenboJrII).
+    // onTTSComplete does not line up exactly with the true end of the audible speech,
+    // so the microphone can still pick up the tail of the robot's own voice for a
+    // short while after the signal arrives. StartEchoIgnoreWindow() discards audio
+    // arriving after the signal until its volume decays back down to the ambient
+    // noise floor (tracked continuously at runtime, so there is no fixed millisecond
+    // value to hand-tune), bounded by iEchoIgnoreMinMs/iEchoIgnoreMaxMs as safety rails.
+    void StartEchoIgnoreWindow();
+
     VadIterator *pVad = nullptr; // This is the Silero VAD iterator.
 
     WhisperData getLatestResult();
@@ -98,10 +107,24 @@ protected:
     int n_samples_silent;
     mutex mtx;
 
-    // ToDo: delete this function. I do not use it.
     float ComputeVolume(const std::vector<float> &pcmf32);
+    float ComputeVolume(const float *data, size_t n);
     WhisperData mResult;
     bool bSkipCurrentSpeech = false; // This variable is used to skip the current speech.
+
+    // Set by StartEchoIgnoreWindow() when RobotModel == "ZenboJrII" and onTTSComplete fires.
+    // While true, newly arrived audio is dropped instead of being merged into pcmf32,
+    // until its volume decays to the ambient floor (or the safety ceiling is hit).
+    bool bIgnoreWhisperInput = false;
+    chrono::steady_clock::time_point tEchoIgnoreMinUntil; // hard floor: never release before this
+    chrono::steady_clock::time_point tEchoIgnoreMaxUntil; // safety ceiling: always release by this
+
+    // Ambient microphone noise floor, self-calibrating at runtime via a fast-attack/
+    // slow-release tracker (see run()): it snaps down immediately whenever a quieter
+    // chunk arrives, but only creeps up slowly during loud audio (echo or speech), so
+    // it converges on the true room noise floor without a separate calibration step.
+    bool bAmbientCalibrated = false;
+    float mAmbientNoiseFloor = 0.0f;
 };
 
 #endif

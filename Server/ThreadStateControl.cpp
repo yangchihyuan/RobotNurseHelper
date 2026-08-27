@@ -2,8 +2,9 @@
 #include <fstream>
 #include "utility_time.hpp"
 
-#include <cstdlib> // For rand() and srand()
-#include <ctime>   // For time()
+#include <algorithm> // For transform()
+#include <cstdlib>   // For rand() and srand()
+#include <ctime>     // For time()
 #include "utility_json.hpp"
 #include "ollama.hpp" //This file is in the /home/Username/RobotNurseHelper_build/ollama-hpp/include
 
@@ -164,13 +165,17 @@ void ThreadStateControl::run()
                             }
                             else // string comparison
                             {
-                                // ToDo: I need to clear this piece of code. This is Mohamed's requirement.
-                                if (WhisperResult.sOutput.find("及") != string::npos || WhisperResult.sOutput.find("吉") != string::npos || WhisperResult.sOutput.find("極") != string::npos || WhisperResult.sOutput.find("級") != string::npos)
+                                // Keyword-based dance selection. Whisper often mis-transcribes short
+                                // spoken words into partial fragments, so we match on any of several
+                                // likely fragments rather than the full word.
+                                string sOutputLower = WhisperResult.sOutput;
+                                transform(sOutputLower.begin(), sOutputLower.end(), sOutputLower.begin(), ::tolower);
+                                if (sOutputLower.find("egypt") != string::npos)
                                 {
                                     chosen_dance = 1;
                                     dance_wait_duration = chrono::seconds(73);
                                 }
-                                else if (WhisperResult.sOutput.find("牛") != string::npos || WhisperResult.sOutput.find("仔") != string::npos)
+                                else if (sOutputLower.find("cowboy") != string::npos || sOutputLower.find("western") != string::npos)
                                 {
                                     chosen_dance = 2;
                                     dance_wait_duration = chrono::seconds(81);
@@ -387,17 +392,15 @@ string ThreadStateControl::GetPatientName(string input_sentence)
     options["temperature"] = 0.3;
     options["num_ctx"] = 131072; // number of context tokens, which is the maximum number of tokens the model can handle in a single request
 
-    // Todo: I need to repleace the Chinese prompt to English prompt.
-    //  建立更嚴謹的 Prompt，要求模型只輸出 JSON 或純名字
-    string prompt = "你是一個機器人助手。請從以下句子中提取說話者的姓名。"
-                    "規則：1.只回傳姓名 2.不要有任何標點或解釋。"
-                    "句子：\"" +
-                    input_sentence + "\"";
-    // 呼叫 Ollama
+    // Strict prompt: ask the model to return only the plain name, nothing else.
+    string prompt = "You are a robot assistant. Extract the speaker's name from the following sentence. "
+                     "Rules: 1. Return only the name. 2. Do not include any punctuation or explanation. "
+                     "Sentence: \"" +
+                     input_sentence + "\"";
     string ModelName = "gemma3:1b";
     string name = ollama::generate(ModelName, prompt, options);
 
-    // 去除 LLM 可能誤加的空白或換行
+    // Trim whitespace/newlines the LLM may have added by mistake
     name.erase(0, name.find_first_not_of(" \n\r\t"));
     name.erase(name.find_last_not_of(" \n\r\t") + 1);
 
@@ -493,24 +496,12 @@ void ThreadStateControl::LoadPatientTitles()
 {
     m_mapPatientTitles.clear();
 
-    // Set fallback defaults based on language
-    if (msetting.Language == "English")
-    {
-        m_mapPatientTitles["Child"] = "Kid";
-        m_mapPatientTitles["Youth"] = "Student";
-        m_mapPatientTitles["MaleAdult"] = "Mr.";
-        m_mapPatientTitles["FemaleYoungAdult"] = "Miss";
-        m_mapPatientTitles["FemaleOlderAdult"] = "Ms.";
-    }
-    else
-    {
-        // Default to Chinese
-        m_mapPatientTitles["Child"] = "小朋友";
-        m_mapPatientTitles["Youth"] = "同學";
-        m_mapPatientTitles["MaleAdult"] = "先生";
-        m_mapPatientTitles["FemaleYoungAdult"] = "小姐";
-        m_mapPatientTitles["FemaleOlderAdult"] = "女士";
-    }
+    // Default patient-title fallbacks (English only).
+    m_mapPatientTitles["Child"] = "Kid";
+    m_mapPatientTitles["Youth"] = "Student";
+    m_mapPatientTitles["MaleAdult"] = "Mr.";
+    m_mapPatientTitles["FemaleYoungAdult"] = "Miss";
+    m_mapPatientTitles["FemaleOlderAdult"] = "Ms.";
 
     // Try to load from dynamic text file
     string fileName = "PatientTitle_" + msetting.Language + ".txt";

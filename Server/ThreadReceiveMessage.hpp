@@ -40,7 +40,7 @@ public:
     {
         ms_RobotModel = sRobotModel;
     }
-    //    Setting *mpsetting = nullptr;
+    Setting *mpsetting = nullptr;
 
 protected:
     void run();

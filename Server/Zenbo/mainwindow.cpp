@@ -230,7 +230,7 @@ void MainWindow::UISetting(Ui::MainWindow *ui)
     ui->listView_PredefinedAction->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     QStringList strList_customaction;
-    strList_customaction.append("小布也愛你喲");
+    strList_customaction.append("Zenbo loves you too");
     strList_customaction.append("Chipi Chipi");
 
     QStandardItemModel *ItemModel_customaction = new QStandardItemModel(this);
