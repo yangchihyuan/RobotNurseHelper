@@ -69,7 +69,7 @@
         "iDurationLimitSeconds": 38,
         "iNextStateIndex": 4,
         "iStateIndex": 3,
-        "m_strFirstSentence": "這些都是白內障的典型症狀。白內障手術是目前唯一有效改善視力的方法，手術過程大約10到15分鐘，通常是局部麻醉，手術後隔天就可以回診。手術風險相對較低，但仍有可能出現感染、發炎或視網膜剝離等併發症。手術後需要遵守醫囑，按時使用眼藥水，並避免劇烈運動，以促進傷口癒合。接下來我會為您介紹水晶體手術。",
+        "m_strFirstSentence": "這些都是白內障的典型症狀。白內障手術是目前唯一有效改善視力的方法，手術過程大約十到十五分鐘，通常是局部麻醉，手術後隔天就可以回診。手術風險相對較低，但仍有可能出現感染、發炎或視網膜剝離等併發症。手術後需要遵守醫囑，按時使用眼藥水，並避免劇烈運動，以促進傷口癒合。接下來我會為您介紹水晶體手術。",
         "m_strStateName": "Greeting 3",
         "sFace": "TTS_PeaceB",
         "sMotion": "666_BA_ArmSSquare",
@@ -109,7 +109,7 @@
         "iDurationLimitSeconds": 56,
         "iNextStateIndex": 6,
         "iStateIndex": 5,
-        "m_strFirstSentence": "在手術前要先決定是否要保留近視度數，生活中看物體的距離大致可分成：遠距離開車、戶外活動、中距離使用電腦、煮飯，約50～75公分、近距離如閱讀、滑手機，約30公分。做完白內障手術，眼睛不會再有調節力，而是透過放入水晶體的度數，來決定能看清楚的距離。如果是放單焦點的人工水晶體，會以單個焦段最清楚，另外兩種距離則是需要眼鏡輔助。選擇多焦點水晶體則無需戴眼鏡，可以適應不同距離，但仍要留意是否有夜間眩光情況，以及眼睛無其他疾病，才能最佳發揮水晶體功能。",
+        "m_strFirstSentence": "在手術前要先決定是否要保留近視度數，生活中看物體的距離大致可分成：遠距離開車、戶外活動、中距離使用電腦、煮飯，約五十到七十五公分、近距離如閱讀、滑手機，約30公分。做完白內障手術，眼睛不會再有調節力，而是透過放入水晶體的度數，來決定能看清楚的距離。如果是放單焦點的人工水晶體，會以單個焦段最清楚，另外兩種距離則是需要眼鏡輔助。選擇多焦點水晶體則無需戴眼鏡，可以適應不同距離，但仍要留意是否有夜間眩光情況，以及眼睛無其他疾病，才能最佳發揮水晶體功能。",
         "m_strStateName": "keep nearsightedness or not",
         "sFace": "TTS_PeaceB",
         "sMotion": "666_BA_ArmSSquare",
@@ -180,13 +180,13 @@
         "v_str_KeyWordMoveToNextState": [],
         "v_str_Action": ["AccumulateConversation"],
         "sImageFileName": "Images/price.png",
-        "sDisplayString": "在這裡給你看一下，手術與水晶體的預估價錢。健保有給付最基本的單焦點球面水晶體，但只能看遠，近距離仍需配戴眼鏡。看近跟遠距離則是多焦點約六萬元。中遠距離則是延伸焦段約七萬五千元。若想同時兼顧遠、中、近的視力，可自費選擇三焦點水晶體，費用約八萬五千元至十萬元。有散光的患者，可以加選散光矯正款式有點焦段散光和延伸焦段散光。費用會因手術方式飛秒雷射與超音波乳化和水晶體種類而有所不同，建議與主治醫師討論最適合您的選擇。"
+        "sDisplayString": ""
       },
       {
         "iDurationLimitSeconds": 40,
         "iNextStateIndex": 10,
         "iStateIndex": 9,
-        "m_strFirstSentence": "多焦點水晶體在術後也可能會有一些後遺症，部分患者在術後，特別是夜間，可能會出現，看燈光時感覺光暈發散，光源周圍出現圓形光圈，或是光源向四周放射出光芒，這些現象因人而異，多數患者在 3 至 6 個月後會逐漸適應。若您有夜間開車需求，建議術前與醫師充分討論，選擇最適合您生活型態的水晶體。",
+        "m_strFirstSentence": "多焦點水晶體在術後也可能會有一些後遺症，部分患者在術後，特別是夜間，可能會出現，看燈光時感覺光暈發散，光源周圍出現圓形光圈，或是光源向四周放射出光芒，這些現象因人而異，多數患者在三至六個月後會逐漸適應。若您有夜間開車需求，建議術前與醫師充分討論，選擇最適合您生活型態的水晶體。",
         "m_strStateName": "laser sequence",
         "sFace": "TTS_PeaceA",
         "sMotion": "666_BA_ArmSCircle",
@@ -199,7 +199,7 @@
         "v_str_KeyWordMoveToNextState": [],
         "v_str_Action": ["AccumulateConversation"],
         "sImageFileName": "Images/sequence.png",
-        "sDisplayString": "多焦點水晶體在術後也可能會有一些後遺症，部分患者在術後，特別是夜間，可能會出現，看燈光時感覺光暈發散，光源周圍出現圓形光圈，或是光源向四周放射出光芒，這些現象因人而異，多數患者在 3 至 6 個月後會逐漸適應。若您有夜間開車需求，建議術前與醫師充分討論，選擇最適合您生活型態的水晶體。"
+        "sDisplayString": ""
     },
     {
         "iDurationLimitSeconds": 10,
@@ -220,7 +220,7 @@
         "iDurationLimitSeconds": 10,
         "iNextStateIndex": 12,
         "iStateIndex": 11,
-        "m_strFirstSentence": "第一題：如果您選擇『單焦點』水晶體，在看遠處很清楚的情況下，看手機或看書需不需要配戴老花眼鏡呢？",
+        "m_strFirstSentence": "第一題，如果您選擇單焦點水晶體，在看遠處很清楚的情況下，看手機或看書需不需要配戴老花眼鏡呢？",
         "m_strStateName": "Quiz Q1 - Vision Scope",
         "sFace": "TTS_PeaceA",
         "sMotion": "666_BA_Nodhead",
@@ -235,7 +235,7 @@
         "iDurationLimitSeconds": 10,
         "iNextStateIndex": 13,
         "iStateIndex": 12,
-        "m_strFirstSentence": "第二題：如果您平時很喜歡煮飯或用電腦，這屬於『中距離』。請問哪種水晶體在看中距離時比較自然，能提供連續的視力呢？",
+        "m_strFirstSentence": "第二題：如果您平時很喜歡煮飯或用電腦，這屬於中距離。請問哪種水晶體在看中距離時比較自然，能提供連續的視力呢？",
         "m_strStateName": "Quiz Q2 - Mid distance",
         "sFace": "TTS_PeaceB",
         "sMotion": "666_SA_Think",
@@ -282,7 +282,7 @@
         "iDurationLimitSeconds": 7,
         "iNextStateIndex": 16,
         "iStateIndex": 15,
-        "m_strFirstSentence": "接下來,請您先觀看這段術前衛教影片。",
+        "m_strFirstSentence": "接下來，請您先觀看這段術前衛教影片。",
         "m_strStateName": "Introduce preop care",
         "m_strSystemMessage": "",
         "sFace": "TTS_PeaceB",
@@ -297,7 +297,7 @@
         "v_str_KeyWordMoveToNextState": [],
         "v_str_Action": ["AccumulateConversation"],
         "sImageFileName": "",
-        "sDisplayString": "接下來,請您先觀看這段術前衛教影片。"
+        "sDisplayString": "接下來，請您先觀看這段術前衛教影片。"
     },    
     {
         "iDurationLimitSeconds": 99,
