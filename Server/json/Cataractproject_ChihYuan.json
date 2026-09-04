@@ -103,7 +103,7 @@
         "v_str_KeyWordMoveToNextState": [],
         "v_str_Action": ["AccumulateConversation"],
         "sImageFileName": "Images/state 4.png",
-        "sDisplayString": "白內障手術主要有兩種方式，一種是超音波乳化術，一種是「飛秒雷射輔助手術」。飛秒雷射可以幫忙完成一些比較精細的步驟，例如切口和水晶體的前處理，但兩種手術最後拿掉白內障、放人工水晶體的原理是相同的。雖然飛秒雷射的精準度較高，但是健保不給付，需自費費用。"
+        "sDisplayString": ""
     },
     {
         "iDurationLimitSeconds": 56,
@@ -123,7 +123,7 @@
         "v_str_KeyWordMoveToNextState": [],
         "v_str_Action": ["AccumulateConversation"],
         "sImageFileName": "Images/state 5.png",
-        "sDisplayString": "在手術前要先決定是否要保留近視度數，生活中看物體的距離大致可分成：遠距離開車、戶外活動、中距離使用電腦、煮飯，約50～75公分、近距離如閱讀、滑手機，約30公分。做完白內障手術，眼睛不會再有調節力，而是透過放入水晶體的度數，來決定能看清楚的距離。如果是放單焦點的人工水晶體，會以單個焦段最清楚，另外兩種距離則是需要眼鏡輔助。選擇多焦點水晶體則無需戴眼鏡，可以適應不同距離，但仍要留意是否有夜間眩光情況，以及眼睛無其他疾病，才能最佳發揮水晶體功能。"
+        "sDisplayString": ""
     },
    
   {
@@ -161,7 +161,7 @@
         "v_str_KeyWordMoveToNextState": ["有", "有的", "有了"],
         "v_str_Action": ["AccumulateConversation"],
         "sImageFileName": "Images/state 7.png",
-        "sDisplayString": "您可以根據平時最常做的事情來選擇。如果您常下廚、打牌或看電腦，延伸焦段能提供最舒服的視覺品質；如果您希望看手機、看電腦都不用找眼鏡，三焦點或多焦點會更便利。此外，常開夜車的人，建議選非球面或延伸焦段，因為它們能減少晚上的眩光，看路更安全。聽完這些，您心裡有比較中意的選擇了嗎？"
+        "sDisplayString": ""
     },
       {
         "iDurationLimitSeconds": 55,
@@ -334,7 +334,7 @@
         "v_str_KeyWordMoveToNextState": ["好", "可以", "準備好了", "準備好"],
         "v_str_Action": ["AccumulateConversation"],
         "sImageFileName": "",
-        "sDisplayString": "影片看完了，我們來做五題小問題，確認您記得術前注意事項。準備好了請說好。"
+        "sDisplayString": ""
     },
     {
         "iDurationLimitSeconds": 10,
@@ -350,7 +350,7 @@
         "v_str_KeyWordMoveToNextState": ["充足睡眠", "睡飽", "好好睡", "休息"],
         "v_str_Action": ["AccumulateConversation"],
         "sImageFileName": "Images/state 18.png",
-        "sDisplayString": "第一題：手術前一天最重要的準備是什麼？"
+        "sDisplayString": ""
     },
     {
         "iDurationLimitSeconds": 10,
@@ -366,7 +366,7 @@
         "v_str_KeyWordMoveToNextState": ["健保卡", "手術同意書", "相關文件", "文件"],
         "v_str_Action": ["AccumulateConversation"],
         "sImageFileName": "Images/state 19.png",
-        "sDisplayString": "第二題：手術當天要記得帶哪些重要的東西來辦理手續？"
+        "sDisplayString": ""
     },
     {
         "iDurationLimitSeconds": 10,
@@ -382,7 +382,7 @@
         "v_str_KeyWordMoveToNextState": ["輕便", "寬鬆", "容易穿脫", "好穿脫"],
         "v_str_Action": ["AccumulateConversation"],
         "sImageFileName": "Images/state 20.png",
-        "sDisplayString": "第三題：手術當天建議穿什麼樣的衣服比較方便？"
+        "sDisplayString": ""
     },
     {
         "iDurationLimitSeconds": 10,
@@ -398,7 +398,7 @@
         "v_str_KeyWordMoveToNextState": ["不可以", "不能", "不可", "不要"],
         "v_str_Action": ["AccumulateConversation"],
         "sImageFileName": "Images/state 21.png",
-        "sDisplayString": "第四題：手術前可以戴項鍊、耳環或手鍊嗎？"
+        "sDisplayString": ""
     },
     {
         "iDurationLimitSeconds": 10,
@@ -414,7 +414,7 @@
         "v_str_KeyWordMoveToNextState": ["領藥櫃檯", "領藥", "藥局", "領藥窗口"],
         "v_str_Action": ["AccumulateConversation"],
         "sImageFileName": "Images/state 22.png",
-        "sDisplayString": "第五題：手術結束後通常要去哪裡領藥，並聽護理人員說明照護注意事項？"
+        "sDisplayString": ""
     },
     {
         "iDurationLimitSeconds": 100,
@@ -618,8 +618,8 @@
         "vSmallMotion": [],
         "v_str_KeyWordMoveToNextState": ["好的", "再見", "再见", "謝謝", "谢谢"],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": "Images/state 35.png",
-        "sDisplayString": "好的，那我們今天衛教就作到這裏，祝您開刀順利，早日康復！如果有任何問題，隨時可以來找我喔！"
+        "sImageFileName": "Images/state 33.png",
+        "sDisplayString": ""
     },
     {
         "iDurationLimitSeconds": 100,
@@ -633,7 +633,7 @@
         "vSmallMotion": [],
         "v_str_KeyWordMoveToNextState": [],
         "v_str_Action": ["AccumulateConversation"],
-        "sImageFileName": "Images/state 36.png",
-        "sDisplayString": "再見！"
+        "sImageFileName": "Images/state 34.png",
+        "sDisplayString": ""
     }
 ]
