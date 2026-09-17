@@ -6,10 +6,11 @@
 #include <cstdlib>   // For rand() and srand()
 #include <ctime>     // For time()
 #include "utility_json.hpp"
-#include "ollama.hpp" //This file is in the /home/Username/RobotNurseHelper_build/ollama-hpp/include
+#include "ollama.hpp"
 
 ThreadStateControl::ThreadStateControl()
 {
+    msPatientName = ""; 
 }
 
 ThreadStateControl::~ThreadStateControl()
@@ -35,20 +36,31 @@ void ThreadStateControl::run()
 {
     chrono::time_point<chrono::system_clock> current_time;
 
-    // wait until Kebbi is connected.
+    auto faceExpressionForState = [this]()
+    {
+        string faceExpression = mStates[m_iStateIndex].sFace;
+        if ((m_iStateIndex >= 1 && m_iStateIndex <= 3) ||
+            (m_iStateIndex >= 11 && m_iStateIndex <= 14) ||
+            (m_iStateIndex >= 17 && m_iStateIndex <= 22))
+        {
+            faceExpression = m_iStateIndex >= 1 && m_iStateIndex <= 3 ? "serious" : "happy";
+        }
+        return faceExpression.empty() ? "default" : faceExpression;
+    };
+
+    // wait until robot is connected.
     mutex mtx;
     unique_lock<mutex> lk(mtx);
     cond_var_state_control.wait(lk);
-    chrono::milliseconds tolerance_duration(1000); // tolerance for onTTSComplete and patient's tSpeechStart
-    chrono::seconds dance_wait_duration;
-    chrono::time_point<chrono::system_clock> dance_start_time;
+    chrono::milliseconds tolerance_duration(1000); 
 
     // initialize the random seed.
     srand(time(0));
     bool bAccumulateConversation = false;
     string str_inserted_assistant_message;
     string str_assistant_message;
-    string str_voice_source = "Patient"; // or "Video"
+    string str_voice_source = "Patient"; 
+
     while (b_WhileLoop)
     {
         current_time = chrono::system_clock::now();
@@ -57,9 +69,12 @@ void ThreadStateControl::run()
         {
             cout << "Enter state " << m_iStateIndex << endl;
 
+            // Replace variables for both display and speech
+            string sReplacedDisplayString = "";
             if (mStates[m_iStateIndex].sDisplayString != "")
             {
-                emit playTextRequest(mStates[m_iStateIndex].sDisplayString.c_str());
+                sReplacedDisplayString = ReplaceVariables(mStates[m_iStateIndex].sDisplayString);
+                emit playTextRequest(sReplacedDisplayString.c_str());
             }
             else if (mStates[m_iStateIndex].sImageFileName != "")
             {
@@ -77,19 +92,16 @@ void ThreadStateControl::run()
 
                 if (s == "KeepSilent")
                 {
-                    // Do not send any message for a period of time
                     mbKeepSilent = true;
                 }
 
                 if (s == "KeepSilentOff")
                 {
-                    // Do not send any message for a period of time
                     mbKeepSilent = false;
                 }
 
                 if (s == "AccumulateConversation")
                 {
-                    // Do not clear the message history when entering this state.
                     mStates[m_iStateIndex].message_history = mStates[m_iStateIndex - 1].message_history;
                     bAccumulateConversation = true;
                 }
@@ -103,37 +115,39 @@ void ThreadStateControl::run()
 
             mStates[m_iStateIndex].bInitial = false;
             mStates[m_iStateIndex].m_Start_time = chrono::system_clock::now();
+            
             if (mStates[m_iStateIndex].m_strFirstSentence != "")
             {
                 string sReplacedFirstSentence = ReplaceVariables(mStates[m_iStateIndex].m_strFirstSentence);
                 str_assistant_message = sReplacedFirstSentence + str_inserted_assistant_message;
-                str_inserted_assistant_message = ""; // clear the string
+                str_inserted_assistant_message = ""; 
                 mStates[m_iStateIndex].message_history.push_back("Assistant: " + str_assistant_message);
+                
                 RobotCommandProtobuf::RobotCommand command;
-                command.set_speak_sentence(sReplacedFirstSentence);
-                command.set_sface(mStates[m_iStateIndex].sFace);
+                command.set_speak_sentence(sReplacedFirstSentence); // Spoken sentence now includes the extracted name!
+
+                // Realistic dynamic expression mapping based on state index or purpose
+                command.set_sface(faceExpressionForState());
+                
                 if (mStates[m_iStateIndex].sMotion != "")
                 {
                     command.set_smotion(mStates[m_iStateIndex].sMotion);
-                    if (KebbiMoveHeadDuringMotion(command.smotion()))
-                    {
-                        mpThreadProcessImage->NotifyEvent("KebbiMoveHeadDuringMotion", chrono::system_clock::now()); // pause watching patient
-                    }
                 }
+                
                 m_pSendMessageManager->AddMessage(command);
                 mbTTSComplete = false;
 
-                // just for display on UI
+                // Display on UI
                 mpThreadLLM->strResponse = sReplacedFirstSentence;
                 mpThreadLLM->b_new_LLM_response = true;
             }
-            mbWaitForTTSComplete = mStates[m_iStateIndex].bWaitForTTSComplete; // now it is always true
-            mbOldStateComplete = false;                                        // In the initial state, the old state is not complete.
+            mbWaitForTTSComplete = mStates[m_iStateIndex].bWaitForTTSComplete;
+            mbOldStateComplete = false;                                        
             mbReadyToChangeState = false;
 
         } // if(mStates[m_iStateIndex].bInitial)
 
-        if (mStates[m_iStateIndex].sStateType == "SaySomething" || mStates[m_iStateIndex].sStateType == "PlayVideo") // Robot does not wait for patient's response
+        if (mStates[m_iStateIndex].sStateType == "SaySomething" || mStates[m_iStateIndex].sStateType == "PlayVideo")
         {
             if (current_time - mStates[m_iStateIndex].m_Start_time > mStates[m_iStateIndex].m_secDurationLimit)
             {
@@ -145,88 +159,21 @@ void ThreadStateControl::run()
         {
             if (mbWaitForTTSComplete)
             {
-                // debug
-                // cout << "mbWaitForTTSComplete is true" << endl;
                 if (mbTTSComplete)
                 {
-                    // debug
-                    // cout << "mbTTSComplete is true" << endl;
                     WhisperData WhisperResult = mpThreadWhisper->getLatestResult();
-                    if (mStates[m_iStateIndex].m_strStateName == "Ask dance")
+                    
+                    if (WhisperResult.tSpeechStart > mtimestamp_TTSComplete - tolerance_duration ||
+                        (WhisperResult.tSpeechEnd > mtimestamp_TTSComplete && current_time - WhisperResult.tSpeechEnd > 3s))
                     {
-                        if (mStates[m_iStateIndex].iStage == 0) // Conversation
-                        {
-                            if (current_time - mStates[m_iStateIndex].m_Start_time > mStates[m_iStateIndex].m_secDurationLimit)
-                            {
-                                cout << "Time out, choose Egyptian dance." << endl;
-                                chosen_dance = 1;
-                                dance_wait_duration = chrono::seconds(73);
-                                cout << "CHOSEN_DANCE: " << chosen_dance << "\n";
-                            }
-                            else // string comparison
-                            {
-                                // Keyword-based dance selection. Whisper often mis-transcribes short
-                                // spoken words into partial fragments, so we match on any of several
-                                // likely fragments rather than the full word.
-                                string sOutputLower = WhisperResult.sOutput;
-                                transform(sOutputLower.begin(), sOutputLower.end(), sOutputLower.begin(), ::tolower);
-                                if (sOutputLower.find("egypt") != string::npos)
-                                {
-                                    chosen_dance = 1;
-                                    dance_wait_duration = chrono::seconds(73);
-                                }
-                                else if (sOutputLower.find("cowboy") != string::npos || sOutputLower.find("western") != string::npos)
-                                {
-                                    chosen_dance = 2;
-                                    dance_wait_duration = chrono::seconds(81);
-                                }
-                            }
-
-                            if (chosen_dance != 0)
-                            {
-#if defined(Kebbi)
-                                RobotCommandProtobuf::RobotCommand dance_command;
-                                // Only Kebbi has the dancetype command. Zenbo does not have this command.
-                                dance_command.set_dancetype(chosen_dance);
-                                m_pSendMessageManager->AddMessage(dance_command);
-                                mStates[m_iStateIndex].iStage = 1; // Waiting for Dance Complete
-#endif
-                                dance_start_time = chrono::system_clock::now();
-                            }
-                        }
-                        else if (mStates[m_iStateIndex].iStage == 1) // Wait for dance completion
-                        {
-                            // Use signal to control the state flow
-                            // debug
-                            // cout << "(K) wait for mbActivity_mbtx_Complete as true" << endl;
-                            if (mbActivity_mbtx_Complete)
-                            {
-                                mbOldStateComplete = true;
-                                mbReadyToChangeState = true;
-
-                                // turn of the face because the dance completes.
-                                RobotCommandProtobuf::RobotCommand command;
-                                command.set_hideface(0);
-                                m_pSendMessageManager->AddMessage(command);
-                            }
-                        }
-                    }
-                    // There are two cases I accept a patient's response
-                    // 1. The patient's tSpeechStart is within the tolerance_duration before the mtimestamp_TTSComplete
-                    // 2. The patient's tSpeechEnd is after the mtimestamp_TTSComplete, and current_time is a few seconds after tSpeechEnd
-                    // 2026/1/7 New case: the voice is from video playback rather than patient's response.
-                    // That is the case I need to distinguish the voice source.
-                    // Can I use any visual cue to help me determine whether the voice is from patient or video? It is very hard.
-                    else if (WhisperResult.tSpeechStart > mtimestamp_TTSComplete - tolerance_duration ||
-                             (WhisperResult.tSpeechEnd > mtimestamp_TTSComplete && current_time - WhisperResult.tSpeechEnd > 3s))
-                    {
-                        // debug
                         cout << "Patient's response: " << WhisperResult.sOutput << endl;
 
-                        // get patient's name
                         if (mStates[m_iStateIndex].m_strStateName == "Greeting 1 and ask name")
                         {
-                            msPatientName = GetPatientName(WhisperResult.sOutput);
+                            if (!WhisperResult.sOutput.empty())
+                            {
+                                msPatientName = GetPatientName(WhisperResult.sOutput);
+                            }
                             cout << "Extracted patient name: " << msPatientName << endl;
                         }
 
@@ -247,7 +194,7 @@ void ThreadStateControl::run()
 
                         if (mStates[m_iStateIndex].sStateType == "RobotAskPatientAnswer")
                         {
-                            mbReadyToChangeState = true; // After the patient answers the question, the robot can move to the next state without waiting for LLM response.
+                            mbReadyToChangeState = true; 
                         }
 
                         if (mbReadyToChangeState)
@@ -256,14 +203,18 @@ void ThreadStateControl::run()
                         }
                         else if (mStates[m_iStateIndex].sStateType == "Conversation")
                         {
-                            // generate LLM response
-                            // debug
                             DumpHistoryMessages(mStates[m_iStateIndex].message_history);
-                            // generate LLM result;
                             mbWaitForTTSComplete = false;
                             mbWaitForLLMResult = true;
                             LLMTask task;
-                            task.str_message = ConvertMessageHistoryToString(mStates[m_iStateIndex].message_history);
+
+                            vector<string> truncated_history = mStates[m_iStateIndex].message_history;
+                            if (truncated_history.size() > 6)
+                            {
+                                truncated_history.erase(truncated_history.begin(), truncated_history.end() - 6);
+                            }
+
+                            task.str_message = ConvertMessageHistoryToString(truncated_history);
                             task.timestamp = chrono::system_clock::now();
                             task.bNotify = true;
                             mpThreadLLM->AddQueue(task);
@@ -271,18 +222,14 @@ void ThreadStateControl::run()
                         }
                     }
                 }
-            } // if( mbWaitForTTSComplete)
+            }
 
             if (mbWaitForLLMResult)
             {
                 if (mbLLMResult)
                 {
-                    // Ollama.hpp's format is different from AnythingLLM.
-                    // Ollama.hpp does not have the "Assistant: " prefix in the response, while AnythingLLM has.
-                    //                    mStates[m_iStateIndex].message_history.push_back("Assistant: "+msLLMResult);
                     mStates[m_iStateIndex].message_history.push_back(msLLMResult);
 
-                    // Here is the command to let Kebbi speak the LLM result
                     if (!mbKeepSilent)
                     {
                         RobotCommandProtobuf::RobotCommand command;
@@ -296,8 +243,10 @@ void ThreadStateControl::run()
                         {
                             str_assistant_message = msLLMResult;
                         }
+                        str_assistant_message = ReplaceVariables(str_assistant_message);
                         command.set_speak_sentence(str_assistant_message);
-                        // randomly choose a motion
+                        command.set_sface(faceExpressionForState());
+
                         if (mStates[m_iStateIndex].vSmallMotion.size() > 0)
                         {
                             int randomNumber = (rand() % mStates[m_iStateIndex].vSmallMotion.size());
@@ -305,6 +254,8 @@ void ThreadStateControl::run()
                         }
 
                         m_pSendMessageManager->AddMessage(command);
+                        mpThreadLLM->strResponse = str_assistant_message;
+                        mpThreadLLM->b_new_LLM_response = true;
                         mbTTSComplete = false;
                         mbWaitForTTSComplete = true;
                         mbWaitForLLMResult = false;
@@ -313,15 +264,13 @@ void ThreadStateControl::run()
                 }
             }
 
-            // Check if the time exceed the state limit
             if (current_time - mStates[m_iStateIndex].m_Start_time > mStates[m_iStateIndex].m_secDurationLimit)
             {
                 mbReadyToChangeState = true;
             }
         }
-        else // neither StateAndListen nor Conversation
+        else
         {
-            // unknown state type
             cout << "Unknown state type: " << mStates[m_iStateIndex].sStateType << endl;
         }
 
@@ -348,18 +297,12 @@ void ThreadStateControl::NotifyEvent(string description, chrono::time_point<chro
     {
         mbTTSComplete = true;
         mtimestamp_TTSComplete = timestamp;
-        // debug
-        // cout << "(E)" << endl;
-        // cout << "NotifyEvent mtimestamp_TTSComplete " << ConvertTimeToString(mtimestamp_TTSComplete) << endl;
     }
     else if (description == "onLLMResult")
     {
         mbLLMResult = true;
         mtimestamp_LLMResult = timestamp;
         msLLMResult = sLLMResult;
-        // debug
-        // cout << "(H)" << endl;
-        // cout << "NotifyEvent onLLMResult" << endl;
     }
     else if (description == "onActivityRestart")
     {
@@ -368,15 +311,13 @@ void ThreadStateControl::NotifyEvent(string description, chrono::time_point<chro
     }
     else if (description == "onVideoComplete")
     {
-        // debug
         cout << "NotifyEvent onVideoComplete" << endl;
         mbReadyToChangeState = true;
         mbOldStateComplete = true;
-        mtimestamp_VideoComplete = timestamp; // In fact, it is not TTSComplete, but I reuse this variable to store the time when video is complete.
+        mtimestamp_VideoComplete = timestamp;
     }
 }
 
-// N is the initial state index
 void ThreadStateControl::SetIntialStateIndex(int N)
 {
     if (N < 0 || N >= m_iNumberOfStates)
@@ -387,22 +328,24 @@ void ThreadStateControl::SetIntialStateIndex(int N)
 string ThreadStateControl::GetPatientName(string input_sentence)
 {
     ollama::options options;
-    // options["seed"] = 1;
     options["seed"] = rand();
-    options["temperature"] = 0.3;
-    options["num_ctx"] = 131072; // number of context tokens, which is the maximum number of tokens the model can handle in a single request
+    options["temperature"] = 0.1;
+    options["num_ctx"] = 131072;
 
-    // Strict prompt: ask the model to return only the plain name, nothing else.
-    string prompt = "You are a robot assistant. Extract the speaker's name from the following sentence. "
-                     "Rules: 1. Return only the name. 2. Do not include any punctuation or explanation. "
+    string prompt = "You are a precise name extractor. Look at the speaker's sentence and extract only their name or what they want to be called. "
+                     "Rules: 1. Return ONLY the name (e.g., if they say 'My name is KK', return 'KK'). 2. Do not include punctuation, quotes, or explanation. "
                      "Sentence: \"" +
                      input_sentence + "\"";
     string ModelName = "gemma3:1b";
     string name = ollama::generate(ModelName, prompt, options);
 
-    // Trim whitespace/newlines the LLM may have added by mistake
     name.erase(0, name.find_first_not_of(" \n\r\t"));
     name.erase(name.find_last_not_of(" \n\r\t") + 1);
+
+    if (name.empty())
+    {
+        name = input_sentence;
+    }
 
     cout << "Extracted patient name by LLM: " << name << endl;
 
@@ -431,53 +374,25 @@ void ThreadStateControl::DumpHistoryMessages(vector<string> messages)
 
 string ThreadStateControl::ReplaceVariables(string sentence)
 {
-    // This function is used to replace the variables in the sentence with the real values. For example, replace {PatientName} with the real patient name.
     string result = sentence;
-    if (result.find("{PatientName}") != string::npos)
+
+    const string namePlaceholder = "{PatientName}";
+    const string nameToUse = msPatientName.empty() ? "Friend" : msPatientName;
+    size_t namePosition = 0;
+    while ((namePosition = result.find(namePlaceholder, namePosition)) != string::npos)
     {
-        result.replace(result.find("{PatientName}"), string("{PatientName}").length(), msPatientName);
+        result.replace(namePosition, namePlaceholder.length(), nameToUse);
+        namePosition += nameToUse.length();
     }
 
-    if (result.find("{PatientTitle}") != string::npos)
+    const string titlePlaceholder = "{PatientTitle}";
+    size_t titlePosition = 0;
+    while ((titlePosition = result.find(titlePlaceholder, titlePosition)) != string::npos)
     {
-        string sPatientGender = mpThreadProcessImage->GetPatientGender(); // update the patient
-        int iPatientAge = mpThreadProcessImage->GetPatientAge();
-        if (iPatientAge != -1)
-        {
-            if (iPatientAge < 10)
-            {
-                msPatientTitle = m_mapPatientTitles["Child"];
-            }
-            else if (iPatientAge < 20)
-            {
-                msPatientTitle = m_mapPatientTitles["Youth"];
-            }
-            else
-            {
-                if (sPatientGender == "Male")
-                {
-                    msPatientTitle = m_mapPatientTitles["MaleAdult"];
-                }
-                else if (sPatientGender == "Female")
-                {
-                    if (iPatientAge < 40)
-                    {
-                        msPatientTitle = m_mapPatientTitles["FemaleYoungAdult"];
-                    }
-                    else
-                    {
-                        msPatientTitle = m_mapPatientTitles["FemaleOlderAdult"];
-                    }
-                }
-                else
-                {
-                    msPatientTitle = "";
-                }
-            }
-        }
-
-        result.replace(result.find("{PatientTitle}"), string("{PatientTitle}").length(), msPatientTitle);
+        result.replace(titlePosition, titlePlaceholder.length(), msPatientTitle);
+        titlePosition += msPatientTitle.length();
     }
+    
     return result;
 }
 
@@ -495,57 +410,4 @@ void ThreadStateControl::Restart()
 void ThreadStateControl::LoadPatientTitles()
 {
     m_mapPatientTitles.clear();
-
-    // Default patient-title fallbacks (English only).
-    m_mapPatientTitles["Child"] = "Kid";
-    m_mapPatientTitles["Youth"] = "Student";
-    m_mapPatientTitles["MaleAdult"] = "Mr.";
-    m_mapPatientTitles["FemaleYoungAdult"] = "Miss";
-    m_mapPatientTitles["FemaleOlderAdult"] = "Ms.";
-
-    // Try to load from dynamic text file
-    string fileName = "PatientTitle_" + msetting.Language + ".txt";
-    ifstream file(fileName);
-    if (!file.is_open())
-    {
-        if (msetting.Language == "Arabic")
-        {
-            fileName = "PatientTitle_English.txt";
-            file.open(fileName);
-        }
-    }
-
-    if (file.is_open())
-    {
-        string line;
-        while (getline(file, line))
-        {
-            // Trim whitespace
-            line.erase(0, line.find_first_not_of(" \t\r\n"));
-            line.erase(line.find_last_not_of(" \t\r\n") + 1);
-
-            if (line.empty() || line[0] == '#')
-                continue;
-
-            size_t sep = line.find(':');
-            if (sep != string::npos)
-            {
-                string key = line.substr(0, sep);
-                string value = line.substr(sep + 1);
-
-                // Trim key and value
-                key.erase(0, key.find_first_not_of(" \t\r\n"));
-                key.erase(key.find_last_not_of(" \t\r\n") + 1);
-                value.erase(0, value.find_first_not_of(" \t\r\n"));
-                value.erase(value.find_last_not_of(" \t\r\n") + 1);
-
-                m_mapPatientTitles[key] = value;
-            }
-        }
-        file.close();
-    }
-    else
-    {
-        cout << "Warning: Could not open patient title text file: " << fileName << ". Using defaults." << endl;
-    }
 }
